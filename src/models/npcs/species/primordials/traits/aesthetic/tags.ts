@@ -1,0 +1,11 @@
+export type primordial__aesthetic_trait_tags =
+  | 'exotic petals'
+  | 'exotic leaves'
+  | 'variegated leaves'
+  | 'scent'
+  | 'polymorphic'
+  | 'bells'
+  | 'chorus'
+  | 'mimicry'
+  | 'bioluminescence'
+  | 'floral_phasing'

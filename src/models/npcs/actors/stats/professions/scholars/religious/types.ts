@@ -1,0 +1,11 @@
+export type religious_professions =
+  | 'acolyte'
+  | 'monk'
+  | 'abbot'
+  | 'templar'
+  | 'inquisitor'
+  | 'missionary'
+  | 'priest (petty)'
+  | 'priest (minor)'
+  | 'priest (major)'
+  | 'priest (great)'

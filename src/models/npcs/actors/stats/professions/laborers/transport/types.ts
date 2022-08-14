@@ -1,0 +1,17 @@
+export type transport_professions =
+  | 'sailor (merchant, novice)'
+  | 'sailor (navy, novice)'
+  | 'sailor (pirate, novice)'
+  | 'sailor (merchant, seasoned)'
+  | 'sailor (navy, seasoned)'
+  | 'sailor (pirate, seasoned)'
+  | 'ferryman'
+  | 'dock worker'
+  | 'dock master'
+  | 'coachman'
+  | 'waggoner'
+  | 'ship captain (merchant)'
+  | 'ship captain (navy)'
+  | 'ship captain (pirate)'
+
+export type sailor_specs = 'cannoneer' | 'navigator' | 'boatswain' | 'helmsman' | 'deckhand'

@@ -1,0 +1,23 @@
+export type merchant_professions =
+  | 'caravan (trader)'
+  | 'caravan (master)'
+  | 'innkeeper'
+  | 'tavern keeper'
+  | 'merchant (prince)'
+  | 'merchant'
+  | 'banker'
+
+export type merchant_specializations =
+  | 'alchemical'
+  | 'arcane'
+  | 'armor'
+  | 'books'
+  | 'clothing'
+  | 'cosmetics'
+  | 'general'
+  | 'instruments'
+  | 'leather'
+  | 'produce'
+  | 'religious'
+  | 'ships'
+  | 'weapons'

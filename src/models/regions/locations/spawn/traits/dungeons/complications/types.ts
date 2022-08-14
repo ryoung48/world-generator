@@ -1,0 +1,13 @@
+export type dungeon__complications =
+  | 'allies'
+  | 'civil war'
+  | 'failed incursion'
+  | 'freshly looted'
+  | 'grand delusion'
+  | 'hospitable natives'
+  | 'rivals'
+  | 'sacrificial bargain'
+  | 'sealed evil'
+  | 'secret alliance'
+  | 'survivor'
+  | 'zealous'

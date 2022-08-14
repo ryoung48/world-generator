@@ -1,0 +1,12 @@
+export type shrine__icon =
+  | 'shrine_1'
+  | 'shrine_2'
+  | 'shrine_3'
+  | 'shrine_4'
+  | 'shrine_5'
+  | 'shrine_6'
+  | 'shrine_7'
+  | 'shrine_8'
+  | 'shrine_9'
+  | 'shrine_10'
+  | 'shrine_11'

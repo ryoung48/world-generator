@@ -1,0 +1,11 @@
+export type wizard_professions =
+  | 'wizard (petty)'
+  | 'wizard (minor)'
+  | 'wizard (major)'
+  | 'wizard (great)'
+  | 'oracle'
+  | 'fortune teller'
+  | 'druid (petty)'
+  | 'druid (minor)'
+  | 'druid (major)'
+  | 'druid (great)'

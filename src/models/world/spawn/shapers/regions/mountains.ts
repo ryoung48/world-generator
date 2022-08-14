@@ -1,0 +1,115 @@
+import { scaleExp } from '../../../../utilities/math'
+import { cell__neighbors } from '../../../cells'
+import { mountains_cutoff, sea_level_cutoff } from '../../../types'
+import { Shaper } from '..'
+import { remove_lake } from './coasts'
+
+const mountain_distances = () => {
+  const queue = Shaper.land.filter(p => p.is_mountains)
+  queue.forEach(c => {
+    c.mountain_dist = 0
+  })
+  while (queue.length > 0) {
+    const curr = queue.shift()
+    cell__neighbors(curr)
+      .filter(n => n.mountain_dist === -1 && !n.is_water)
+      .forEach(n => {
+        n.mountain_dist = curr.mountain_dist + 1
+        queue.push(n)
+      })
+  }
+}
+
+export const regional__mountainous_borders = (
+  mountain_prospects: Record<number, Record<number, Set<number>>>
+) => {
+  Shaper.land.filter(p => p.is_mountains).forEach(p => (p.is_mountains = false))
+  const lakes = Shaper.water.filter(cell => !cell.ocean)
+  const total = Math.floor(Shaper.land.length * 0.35)
+  let mounts = 0
+  const prospects = window.dice.shuffle(
+    window.world.regions.filter(r => Object.keys(mountain_prospects[r.idx]).length > 0)
+  )
+  const used: Record<string, boolean> = {}
+  while (mounts < total && prospects.length > 0) {
+    const region = prospects.pop()
+    if (used[region.idx]) continue
+    const [n, borders] = Object.entries(mountain_prospects[region.idx])
+      .filter(([n]) => !used[n])
+      .reduce(
+        (max: [string, Set<number>], [n, cells]) => {
+          return max[1].size > cells.size ? max : [n, cells]
+        },
+        ['-1', new Set()]
+      )
+    if (borders.size < 1) continue
+    used[region.idx] = true
+    used[n] = true
+    Array.from(borders).forEach(i => {
+      const cell = window.world.cells[i]
+      if (cell.is_water) remove_lake({ lakes, lake: cell.landmark })
+      const high =
+        window.world.landmarks[cell.landmark].type === 'continent' && window.dice.flip
+          ? borders.size > 20
+            ? 1.05
+            : 0.95
+          : borders.size > 20
+          ? 0.95
+          : 0.75
+      const queue = [{ cell, h: high }]
+      while (queue.length > 0 && mounts < total) {
+        const { cell: curr, h } = queue.pop()
+        curr.h = h
+        curr.is_mountains = curr.h > mountains_cutoff
+        mounts += 1
+        queue.push(
+          ...cell__neighbors(curr)
+            .filter(c => !c.is_water && !c.beach && !c.is_mountains)
+            .map(c => ({ cell: c, h: borders.has(c.idx) ? high : h - 0.1 }))
+            .filter(c => c.h > mountains_cutoff)
+        )
+      }
+    })
+  }
+  mountain_distances()
+  const land = Shaper.land.filter(p => !p.is_mountains)
+  const island_scale = window.world.cells.length / 4266 // ~30 at 8k resolution
+  land.forEach(l => {
+    const { ocean_dist, mountain_dist } = l
+    if (mountain_dist > 0) {
+      const total = ocean_dist + mountain_dist
+      l.h = scaleExp([0, total], [sea_level_cutoff, mountains_cutoff], total - mountain_dist, 2)
+    } else {
+      l.h = scaleExp([0, island_scale], [sea_level_cutoff, mountains_cutoff], ocean_dist, 2)
+    }
+  })
+  // mark mountains
+  let idx = window.world.mountains.length
+  // find all cells above the mountain cutoff
+  let mountains = Shaper.land.filter(p => p.is_mountains)
+  // iterate through all mountain ranges
+  while (mountains.length > 0) {
+    let queue = [mountains[0].idx]
+    window.world.mountains.push('none')
+    // floodfill all connecting mountain cells to mark a mountain range
+    while (queue.length > 0) {
+      // grab the next item in the queue
+      const current = window.world.cells[queue.shift()]
+      // mark it with the current mountain feature index
+      current.mountain = idx
+      // add neighboring mountain cells to the queue
+      queue = queue.concat(
+        current.n.filter(
+          p =>
+            window.world.cells[p].is_mountains &&
+            window.world.cells[p].mountain === undefined &&
+            !queue.includes(p)
+        )
+      )
+    }
+    // only consider cells that haven't been marked
+    mountains = mountains.filter(poly => poly.mountain === undefined)
+    // increment the mountain feature index after a completed floodfill
+    idx += 1
+  }
+}

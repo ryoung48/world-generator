@@ -1,0 +1,102 @@
+import { item__lookup } from '../../items'
+import { npc__adjusted_cr, npc__sum_cr } from '../stats'
+import { difficulty__cr, difficulty__stats } from '../stats/difficulty'
+import { NPC } from '../types'
+import { Actor } from './types'
+
+/**
+ * Used to differentiate NPCs (simple) from Actors (complex)
+ * @param npc - npc that could be an actor
+ * @returns {boolean}
+ */
+export const npc__is_actor = (npc: NPC): npc is Actor => npc.tag === 'actor'
+
+/**
+ * how much is an actor carrying in their inventory + equipment?
+ * @param actor
+ * @returns {number} weight (lbs)
+ */
+export const actor__carry_weight = (actor: Actor): number => {
+  const { inventory, equipment } = actor
+  return (
+    Object.values(inventory.items).reduce((total, item) => {
+      const { weight } = item__lookup[item.tag]
+      return total + weight * item.quantity
+    }, 0) +
+    Object.values(equipment)
+      .filter(item => item)
+      .reduce((total, item) => {
+        const { weight } = item__lookup[item.tag]
+        return total + weight
+      }, 0)
+  )
+}
+/**
+ * finds actor relations for a given type
+ * @param params.actor
+ * @param params.type - relation type to filter
+ * @returns {Actor[]} - list of actors that match the given relation type
+ */
+export const actor__relation = (params: {
+  actor: Actor
+  type: Actor['relations'][number]['type']
+}) => {
+  const { actor, type: relation } = params
+  return actor.relations
+    .filter(({ type }) => type === relation)
+    .map(({ actor }) => window.world.actors[actor])
+}
+
+export const actor__location = ({ location }: Actor) => {
+  const curr = window.world.locations[location.curr]
+  const residence = window.world.locations[location.residence]
+  return curr ?? residence
+}
+
+interface ActorBackgroundParams {
+  actor: Actor
+  time: number
+}
+
+const actor__find_background = ({ actor, time }: ActorBackgroundParams) =>
+  actor.history.backgrounds.find(background => time >= background.start && time < background.end)
+
+export const actor__past_location = (params: ActorBackgroundParams) => {
+  const background = actor__find_background(params)
+  const loc = window.world.locations[background?.loc]
+  return loc ?? window.world.locations[params.actor.location.residence]
+}
+
+/**
+ * determines the challenge rating for a given actor
+ * @param params.actor - the reference actor
+ * @param params.total - max cr or adjusted (for health) cr
+ * @returns the numeric challenge rating
+ */
+export const actor__cr = (params: { actor: Actor; max: boolean }) => {
+  const { actor, max } = params
+  const party = actor__relation({ actor, type: 'party' })
+  const sum = max ? npc__sum_cr : npc__adjusted_cr
+  return sum(party)
+}
+
+/**
+ * determines an appropriate challenge rating for a given actor
+ * @param ref - the reference actor
+ * @returns the numeric challenge rating
+ */
+export const actor__enemy_cr = (actor: Actor) => {
+  const cr = actor__cr({ actor, max: true })
+  return difficulty__cr({ ref: cr })
+}
+/**
+ * determines the difficulty of a challenge rating for an actor
+ * @param params.actor - the reference actor
+ * @param params.cr - the reference challenge rating
+ * @returns  the CR ratio, success rate, and the corresponding difficulty tier
+ */
+export const actor__difficulty_stats = (params: { actor: Actor; cr: number }) => {
+  const { actor, cr } = params
+  const actor_cr = actor__cr({ actor, max: false })
+  return difficulty__stats({ ref: actor_cr, adversary: cr })
+}

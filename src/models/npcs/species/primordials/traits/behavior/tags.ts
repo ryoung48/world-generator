@@ -1,0 +1,12 @@
+export type primordial__behavior_trait_tags =
+  | 'carnivorous'
+  | 'attractors'
+  | 'symbiotic'
+  | 'hazardous'
+  | 'necrotic'
+  | 'ambient'
+  | 'extinct'
+  | 'weeds'
+  | 'resilient'
+  | 'bloom quirk'
+  | 'algal blooms'
