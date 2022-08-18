@@ -1,12 +1,12 @@
 import { Grid, IconButton } from '@mui/material'
 import { Update } from 'mdi-material-ui'
 
-import { view__context } from '../../../../context'
 import { actor__relation } from '../../../../models/npcs/actors'
 import { location__travel } from '../../../../models/regions/locations'
 import { location__templates } from '../../../../models/regions/locations/spawn/taxonomy'
 import { province__neighborhood } from '../../../../models/regions/provinces'
-import { deconstruct_hours, hour_ms } from '../../../../models/utilities/math/time'
+import { deconstructHours, hourMS } from '../../../../models/utilities/math/time'
+import { view__context } from '../../../context'
 import { DataTable, DetailedTableRow } from '../../common/DataTable'
 import { ToggleButtons } from '../../common/navigation/ToggleButtons'
 import { WaitView } from './Wait'
@@ -31,7 +31,7 @@ export function TravelView() {
                   idx,
                   name,
                   type: subtype ?? type,
-                  time: deconstruct_hours(hours),
+                  time: deconstructHours(hours),
                   miles: `${miles.toFixed(1)} miles`,
                   hours,
                   travel: null
@@ -78,7 +78,7 @@ export function TravelView() {
                           })
                           dispatch({
                             type: 'tick',
-                            payload: { duration: dest.hours * hour_ms }
+                            payload: { duration: dest.hours * hourMS }
                           })
                         }}
                       >

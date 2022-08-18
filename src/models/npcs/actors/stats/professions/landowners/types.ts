@@ -1,4 +1,4 @@
-export type aristocrat_professions =
+export type AristocratProfessions =
   | 'gentry (major)'
   | 'gentry (minor)'
   | 'noble (major)'

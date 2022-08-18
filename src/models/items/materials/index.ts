@@ -1,4 +1,4 @@
-import { item__basic_details, ItemDetails } from '../types'
+import { item__basicDetails, ItemDetails } from '../types'
 import { Material, material__tag } from './types'
 
 abstract class MaterialDetails extends ItemDetails {
@@ -7,26 +7,26 @@ abstract class MaterialDetails extends ItemDetails {
 
 const _material: Omit<MaterialDetails, 'tag' | 'weight' | 'markets'> = {
   category: 'materials',
-  ...item__basic_details
+  ...item__basicDetails
 }
 export const materials: Record<material__tag, MaterialDetails> = {
   herbs: {
     tag: 'herbs',
-    base_price: 50,
+    basePrice: 50,
     weight: 0.1,
     markets: ['reagents (alchemical)'],
     ..._material
   },
   reagent: {
     tag: 'reagent',
-    base_price: 80,
+    basePrice: 80,
     weight: 0.1,
     markets: ['reagents (alchemical)'],
     ..._material
   },
   gemstone: {
     tag: 'gemstone',
-    base_price: 1000,
+    basePrice: 1000,
     weight: 0.1,
     markets: ['metals (gemstones)'],
     ..._material

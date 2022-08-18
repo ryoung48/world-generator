@@ -1,16 +1,16 @@
-import { scholar_skills } from '../../../skills/categories'
-import { scholar_attributes } from '../../scholars/academics'
+import { scholarSkills } from '../../../skills/categories'
+import { scholarAttributes } from '../../scholars/academics'
 import { ProfessionKit } from '../../types'
 
 const wizard: ProfessionKit = {
-  attributes: scholar_attributes,
+  attributes: scholarAttributes,
   skills: {
     primary: ['arcana'],
-    tertiary: scholar_skills
+    tertiary: scholarSkills
   }
 }
 
-export const wizard_kits: Record<'wizard' | 'sorcerer' | 'witch' | 'druid', ProfessionKit> = {
+export const wizardKits: Record<'wizard' | 'sorcerer' | 'witch' | 'druid', ProfessionKit> = {
   wizard,
   sorcerer: {
     ...wizard
@@ -20,7 +20,7 @@ export const wizard_kits: Record<'wizard' | 'sorcerer' | 'witch' | 'druid', Prof
     skills: {
       primary: ['arcana'],
       secondary: ['alchemy', 'nature', 'survival'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   druid: {
@@ -28,7 +28,7 @@ export const wizard_kits: Record<'wizard' | 'sorcerer' | 'witch' | 'druid', Prof
     skills: {
       primary: ['arcana'],
       secondary: ['nature', 'survival'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   }
 }

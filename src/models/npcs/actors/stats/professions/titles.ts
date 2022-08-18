@@ -6,5 +6,5 @@ interface GenderBasedTitleParams {
   actor: Actor
 }
 
-export const gender_based_title = ({ male, female, actor }: GenderBasedTitleParams) =>
+export const genderBasedTitle = ({ male, female, actor }: GenderBasedTitleParams) =>
   actor.gender === 'male' ? male : female

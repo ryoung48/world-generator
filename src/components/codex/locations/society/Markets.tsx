@@ -1,10 +1,10 @@
 import { Grid } from '@mui/material'
 
-import { view__context } from '../../../../context'
 import { province__markets } from '../../../../models/regions/provinces/networks/trade_goods'
 import { scarcity } from '../../../../models/utilities/quality'
-import { proper_list, title_case } from '../../../../models/utilities/text'
+import { properList, titleCase } from '../../../../models/utilities/text'
 import { formatters } from '../../../../models/utilities/text/formatters'
+import { view__context } from '../../../context'
 import { DataTable } from '../../common/DataTable'
 import { SectionList } from '../../common/text/SectionList'
 
@@ -28,17 +28,17 @@ export function MarketsView() {
   const { state } = view__context()
   const location = window.world.locations[state.codex.location]
   const province = window.world.provinces[location.province]
-  const trade_goods = province__markets(province)
-  const exports = Object.entries(trade_goods)
+  const tradeGoods = province__markets(province)
+  const exports = Object.entries(tradeGoods)
     .filter(([_, v]) => v.supply)
     .sort((a, b) => b[1].supply - a[1].supply)
     .map(([k], i) => (i === 0 ? k : k.toLowerCase()))
-  const imports = Object.entries(trade_goods)
+  const imports = Object.entries(tradeGoods)
     .filter(([_, v]) => !v.supply)
     .sort((a, b) => b[1].demand - a[1].demand)
     .slice(0, 5)
     .map(([k], i) => (i === 0 ? k : k.toLowerCase()))
-  const items = Object.entries(trade_goods).map(([k, v]) => {
+  const items = Object.entries(tradeGoods).map(([k, v]) => {
     const price = v.rarity + v.demand
     return {
       name: `${k}${v.supply > 0 ? '**' : ''}`,
@@ -52,8 +52,8 @@ export function MarketsView() {
       <Grid item xs={12}>
         <SectionList
           list={[
-            { label: 'Imports', content: proper_list(imports, 'and') },
-            { label: 'Exports', content: proper_list(exports, 'and') }
+            { label: 'Imports', content: properList(imports, 'and') },
+            { label: 'Exports', content: properList(exports, 'and') }
           ]}
         ></SectionList>
       </Grid>
@@ -67,7 +67,7 @@ export function MarketsView() {
               value: item => {
                 return (
                   <Grid container p='3px'>
-                    {`${formatters.percent({ value: item.rarity })} (${title_case(
+                    {`${formatters.percent({ value: item.rarity })} (${titleCase(
                       rarity(item.rarity)
                     )})`}
                   </Grid>

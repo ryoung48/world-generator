@@ -1,20 +1,21 @@
-import { location_icon__size } from '../common'
-import { LocationIcon } from '../types'
+/* eslint-disable camelcase */
+import { locationIcon__size } from '../common'
+import { LocationIconDetails } from '../types'
 import { mines__icon } from './types'
 
-const generic = location_icon__size
+const generic = locationIcon__size
 
-export const mines__icons: Record<mines__icon, LocationIcon> = {
+export const mines__icons: Record<mines__icon, LocationIconDetails> = {
   mines_1: {
     height: generic.height,
     path: 'locations/mines/1.png',
     opacity: 1,
-    font_scale: generic.font
+    fontScale: generic.font
   },
   mines_2: {
     height: generic.height,
     path: 'locations/mines/2.png',
     opacity: 1,
-    font_scale: generic.font
+    fontScale: generic.font
   }
 }

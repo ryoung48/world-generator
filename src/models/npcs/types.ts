@@ -1,6 +1,6 @@
 import { Inventory } from './inventory/types'
 import { species__sizes } from './species/size'
-import { Species } from './species/types'
+import { SpeciesTypes } from './species/types'
 
 export const npc__mods = { cr: 0, exp: 0 }
 export interface NPC {
@@ -11,7 +11,7 @@ export interface NPC {
   inventory: Inventory
   tag?: 'actor'
   species: {
-    type: Species['tag']
+    type: SpeciesTypes
     idx?: number
     size?: species__sizes
     family?: string

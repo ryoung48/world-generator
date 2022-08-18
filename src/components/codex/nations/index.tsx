@@ -1,15 +1,15 @@
 import { Grid } from '@mui/material'
 
-import { view__context } from '../../../context'
-import { decorated_culture } from '../../../models/npcs/species/humanoids/cultures'
+import { culture__decorations } from '../../../models/npcs/species/cultures'
 import { region__population } from '../../../models/regions'
-import { region__war_rivals } from '../../../models/regions/diplomacy/relations'
-import { location__is_village } from '../../../models/regions/locations/spawn/taxonomy/settlements'
+import { region__warRivals } from '../../../models/regions/diplomacy/relations'
+import { location__isVillage } from '../../../models/regions/locations/spawn/taxonomy/settlements'
 import { province__hub } from '../../../models/regions/provinces'
-import { decorate_text } from '../../../models/utilities/text/decoration'
+import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { climate_lookup } from '../../../models/world/climate/types'
-import { css_colors } from '../../theme/colors'
+import { climateLookup } from '../../../models/world/climate/types'
+import { view__context } from '../../context'
+import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
 import { StyledTabs } from '../common/navigation/StyledTabs'
 import { SectionList } from '../common/text/SectionList'
@@ -19,7 +19,7 @@ import { Geography } from './Geography'
 export function NationView() {
   const { state } = view__context()
   const nation = window.world.regions[state.codex.nation]
-  const climate = climate_lookup[nation.climate]
+  const climate = climateLookup[nation.climate]
   const overlord = window.world.regions[nation.overlord.idx]
   const { regions, religion } = nation
   const rebellions = regions
@@ -30,45 +30,43 @@ export function NationView() {
     .filter(region => region.rebellions.current !== -1)
   const ruling = window.world.cultures[nation.culture.ruling]
   const native = window.world.cultures[nation.culture.native]
-  const current_wars = region__war_rivals(nation).map(rival => {
+  const currentWars = region__warRivals(nation).map(rival => {
     const war = rival.wars.current
       .map(i => window.world.wars[i])
       .find(w => {
         return w.invader.idx === nation.idx || w.defender.idx === nation.idx
       })
-    return decorate_text({
-      link: war,
+    return decorateText({
       label: rival.name,
       tooltip: `${war.name}`
     })
   })
-  const current_rebellions = rebellions.map(subject => {
+  const currentRebellions = rebellions.map(subject => {
     const rebellion = window.world.rebellions[subject.rebellions.current]
-    return decorate_text({
+    return decorateText({
       label: subject.name,
-      link: rebellion,
       tooltip: rebellion.name
     })
   })
-  const conflicts = current_wars.concat(current_rebellions)
-  const total_pop = region__population(nation)
-  const urban_pop = nation.provinces
+  const conflicts = currentWars.concat(currentRebellions)
+  const totalPop = region__population(nation)
+  const urbanPop = nation.provinces
     .map(i => province__hub(window.world.provinces[i]))
-    .filter(hub => !location__is_village(hub))
+    .filter(hub => !location__isVillage(hub))
     .reduce((sum, hub) => sum + hub.population, 0)
   return (
     <CodexPage
       title={nation.name}
       subtitle={
         <StyledText
-          color={css_colors.subtitle}
+          color={cssColors.subtitle}
           text={`(${nation.idx}) ${
             overlord
-              ? decorate_text({
+              ? decorateText({
                   label: 'Vassal',
                   link: overlord,
                   tooltip: overlord?.name ?? undefined,
-                  color: css_colors.subtitle
+                  color: cssColors.subtitle
                 })
               : 'Nation'
           } (${climate.zone.toLowerCase()}, ${nation.development})`}
@@ -83,12 +81,12 @@ export function NationView() {
                   label: 'Culture',
                   content: (
                     <StyledText
-                      text={`${decorated_culture({ culture: ruling, title: true })}${
+                      text={`${culture__decorations({ culture: ruling, title: true })}${
                         ruling !== native
-                          ? `, ${decorated_culture({
+                          ? `, ${culture__decorations({
                               culture: native,
                               title: true,
-                              color: css_colors.subtitle
+                              color: cssColors.subtitle
                             })}`
                           : ''
                       }`}
@@ -104,8 +102,8 @@ export function NationView() {
               list={[
                 {
                   label: 'Population',
-                  content: `${formatters.compact(total_pop)} (${(
-                    (urban_pop / total_pop) *
+                  content: `${formatters.compact(totalPop)} (${(
+                    (urbanPop / totalPop) *
                     100
                   ).toFixed(0)}% Urban)`
                 },

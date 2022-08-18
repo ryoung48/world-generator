@@ -1,4 +1,4 @@
-import { location_icon } from '../../../../../components/maps/icons/locations/types'
+import { LocationIcon } from '../../../../../components/maps/icons/locations/types'
 import { ExteriorCell } from '../../../../world/cells/types'
 import { Province } from '../../../provinces/types'
 import { Loc } from '../../types'
@@ -8,7 +8,7 @@ export interface LocationTemplate {
   type: Loc['type']
   population?: [number, number]
   coastal?: number
-  icon: ((_loc: Loc) => location_icon) | location_icon
+  icon: ((_loc: Loc) => LocationIcon) | LocationIcon
   group: 'settlement' | 'wilderness'
   spawn?: ((_province: Province) => number) | number
   hostile?: boolean

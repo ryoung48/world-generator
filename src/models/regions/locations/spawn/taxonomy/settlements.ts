@@ -1,8 +1,8 @@
-import { location_icon } from '../../../../../components/maps/icons/locations/types'
+import { LocationIcon } from '../../../../../components/maps/icons/locations/types'
 import { Loc } from '../../types'
 import { location__templates } from '.'
 
-const settlement_type = (city: Loc): Loc['type'] => {
+const settlementType = (city: Loc): Loc['type'] => {
   const { population } = city
   return population >= location__templates.metropolis.population[0]
     ? 'metropolis'
@@ -23,22 +23,22 @@ const settlement_type = (city: Loc): Loc['type'] => {
     : 'tiny village'
 }
 
-export const location__icon = (loc: Loc): location_icon => {
+export const location__icon = (loc: Loc): LocationIcon => {
   if (!loc._icon) {
     const { icon } = location__templates[loc.type]
-    loc._icon = typeof icon === 'string' ? icon : icon(loc)
+    loc._icon = typeof icon === 'function' ? icon(loc) : icon
   }
   return loc._icon
 }
 
-export const location__set_population = (city: Loc, pop: number) => {
+export const location__setPopulation = (city: Loc, pop: number) => {
   city.population = Math.ceil(pop)
-  city.type = settlement_type(city)
+  city.type = settlementType(city)
 }
-export const location__is_city = (city: Loc) =>
+export const location__isCity = (city: Loc) =>
   city.population >= location__templates['small city'].population[0]
-export const location__is_town = (city: Loc) =>
+export const location__isTown = (city: Loc) =>
   city.population < location__templates['small city'].population[0] &&
   city.population >= location__templates['small town'].population[0]
-export const location__is_village = (city: Loc) =>
+export const location__isVillage = (city: Loc) =>
   city.population < location__templates['small town'].population[0]

@@ -13,7 +13,7 @@ export const formatters = {
   dateTime: (value: number) => dayjs(value).format('MM/DD/YYYY, h:mm A')
 }
 
-export const format__date_range = (params: { start: number; end?: number }) => {
+export const format__dateRange = (params: { start: number; end?: number }) => {
   const start = formatters.date(params.start)
   const end = Number.isFinite(params.end) ? formatters.date(params.end) : 'Present'
   return `${start} - ${end}`

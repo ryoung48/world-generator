@@ -1,6 +1,8 @@
-import { percentage_scale, range, weighted_distribution } from '..'
+import { range } from 'd3'
 
-export function generate_id(seed = Math.random()) {
+import { percentageScale, WeightedDistribution } from '..'
+
+export function generateId(seed = Math.random()) {
   return Math.floor(seed * Number.MAX_SAFE_INTEGER).toString(36)
 }
 
@@ -65,7 +67,7 @@ export class Dice {
    * @param param0 range of the distribution
    * @param n distribution power
    */
-  public power_law([x0, x1]: [number, number], n: number) {
+  public powerLaw([x0, x1]: [number, number], n: number) {
     const exp = 1 - n
     const xp1 = x1 ** exp
     const xp0 = x0 ** exp
@@ -79,11 +81,11 @@ export class Dice {
     return arr[~~(this.random * arr.length)]
   }
 
-  public weighted_choice<T>(arr: weighted_distribution<T>) {
+  public weightedChoice<T>(arr: WeightedDistribution<T>) {
     const keys = arr.map(({ v }) => v)
     const weights = arr.map(({ w }) => w)
     const rng = this.random
-    const scaled = percentage_scale(weights)
+    const scaled = percentageScale(weights)
     let acc = 0
     for (let i = 0; i < scaled.length; i++) {
       acc += scaled[i]
@@ -101,35 +103,27 @@ export class Dice {
   public sample<T>(arr: T[], cnt: number) {
     return this.shuffle(arr).slice(0, cnt)
   }
-  public weighted_sample<T>(arr: { v: T; w: number }[], num: number) {
+  public weightedSample<T>(arr: { v: T; w: number }[], num: number) {
     let items = [...arr]
     const selected: T[] = []
     let count = num
     while (count-- > 0 && items.length > 0) {
-      const chosen = this.weighted_choice(items)
+      const chosen = this.weightedChoice(items)
       selected.push(chosen)
       items = items.filter(({ v }) => v !== chosen)
     }
     return selected
   }
-  public uniform_dist(count: number) {
+  public uniformDist(count: number) {
     const rolls = range(count).map(() => this.random)
     const sum = rolls.reduce((total, roll) => total + roll, 0)
     return rolls.map(w => w / sum)
   }
-  public weighted_dist(params: { weights: number[]; std: number; total?: number }) {
+  public weightedDist(params: { weights: number[]; std: number; total?: number }) {
     const { weights, std, total = weights.reduce((sum, w) => w + sum, 0) } = params
     const rolls = weights.map(w => window.dice.norm(w, w * std))
     const sum = rolls.reduce((total, roll) => total + roll, 0)
     return rolls.map(w => (w / sum) * total)
-  }
-  public uniform_keys(keys: string[]) {
-    const dist: Record<string, number> = {}
-    keys.forEach(p => (dist[p] = 0))
-    return window.dice.uniform_dist(keys.length).reduce((dict, w, i) => {
-      dict[keys[i]] += w
-      return dict
-    }, dist)
   }
   public roll(dice: number, sides: number, drops = 0, advantage = true) {
     const rolls = Array(dice)
@@ -139,14 +133,6 @@ export class Dice {
       .slice(0, dice - drops)
     return rolls.reduce((sum, i) => sum + i, 0)
   }
-  public roll_metrics(dice: number, sides: number, mod = 0) {
-    const mean = (dice * (1 + sides)) / 2 + mod
-    const std = (dice * (sides ** 2 - 1)) ** 0.5 / (2 * 3 ** 0.5)
-    const common = [mean - std, mean + std]
-    const rare = [mean - 2 * std, mean + 2 * std]
-    const extreme = [dice + mod, dice * sides + mod]
-    return { mean, std, common, rare, extreme }
-  }
   public color(target?: [number, number]) {
     const space = target ?? [0, 360]
     const hue = this.randint(...space)
@@ -154,14 +140,14 @@ export class Dice {
     const lum = this.randint(20, 60)
     return `hsl(${hue}, ${saturation}%, ${lum}%)`
   }
-  public dark_color(target?: [number, number]) {
+  public darkColor(target?: [number, number]) {
     const space = target ?? [0, 360]
     const hue = this.randint(...space)
     const saturation = this.randint(20, 80)
     const lum = this.randint(20, 40)
     return `hsl(${hue}, ${saturation}%, ${lum}%)`
   }
-  public generate_id() {
-    return generate_id(this.random)
+  public generateId() {
+    return generateId(this.random)
   }
 }

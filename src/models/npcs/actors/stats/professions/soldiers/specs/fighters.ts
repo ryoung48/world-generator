@@ -1,29 +1,29 @@
-import { all_skills } from '../../../skills/categories'
+import { allSkills } from '../../../skills/categories'
 import { ProfessionKit as SpecializationKit } from '../../types'
 
-const tertiary = [...all_skills]
+const tertiary = [...allSkills]
 
-const fighter_skills: SpecializationKit['skills'] = {
+const fighterSkills: SpecializationKit['skills'] = {
   primary: ['martial'],
   secondary: ['athletics', 'survival'],
   tertiary
 }
 
-export const fighter_kits: Record<
+export const fighterKits: Record<
   'defender' | 'brute' | 'berserker' | 'battlemage',
   SpecializationKit
 > = {
   defender: {
     attributes: [12, 11, 12, 10, 11, 10],
-    skills: fighter_skills
+    skills: fighterSkills
   },
   berserker: {
     attributes: [12, 11, 12, 10, 11, 10],
-    skills: fighter_skills
+    skills: fighterSkills
   },
   brute: {
     attributes: [12, 11, 12, 10, 11, 10],
-    skills: fighter_skills
+    skills: fighterSkills
   },
   battlemage: {
     attributes: [12, 10, 11, 12, 10, 11],

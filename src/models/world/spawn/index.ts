@@ -1,12 +1,12 @@
-import PriorityQueue from 'js-priority-queue'
+import * as PriorityQueue from 'js-priority-queue'
 
 import { WorldEvent } from '../../history/types'
-import { humanoid__species_init } from '../../npcs/species/humanoids/taxonomy'
-import { canvas_dims } from '../../utilities/dimensions'
+import { humanoid__speciesInit } from '../../npcs/species/taxonomy'
+import { canvasDims } from '../../utilities/dimensions'
 import { Dice } from '../../utilities/math/dice'
-import { day_ms } from '../../utilities/math/time'
+import { dayMS } from '../../utilities/math/time'
 import { profile__spawn, profile__switch } from '../../utilities/performance'
-import { memoize__clear_cache } from '../../utilities/performance/memoization'
+import { memoize__clearCache } from '../../utilities/performance/memoization'
 import { World } from '../types'
 import { ContinentTemplate } from './shapers/continents/templates'
 
@@ -22,7 +22,7 @@ export const world__spawn = (params: {
     current: profile__spawn('Total')
   }
   profile__switch(window.profiles.history)
-  memoize__clear_cache()
+  memoize__clearCache()
   // start date
   const year = window.dice.randint(100, 3000)
   const month = window.dice.randint(0, 11)
@@ -30,7 +30,7 @@ export const world__spawn = (params: {
   const hours = window.dice.randint(0, 23)
   const minutes = window.dice.randint(0, 59)
   const date = new Date(year, month, day, hours, minutes).getTime()
-  const first_new_moon = date - day_ms * window.dice.randint(0, 30)
+  const firstNewMoon = date - dayMS * window.dice.randint(0, 30)
   const world: World = {
     id: seed,
     cells: [],
@@ -56,7 +56,7 @@ export const world__spawn = (params: {
     coasts: [],
     dim: {
       // display image width / height (pixels)
-      ...canvas_dims,
+      ...canvasDims,
       // voronoi cell resolution
       cells: 16000 * res,
       // actual width / height (miles)
@@ -68,24 +68,22 @@ export const world__spawn = (params: {
       sh: 0,
       sw: 0,
       // cell dimensions
-      cell_area: 0,
-      cell_length: 0
+      cellArea: 0,
+      cellLength: 0
     },
     regions: [],
     provinces: [],
     locations: [],
     cultures: [],
-    humanoids: humanoid__species_init(),
-    beasts: [],
-    primordials: [],
+    humanoids: humanoid__speciesInit(),
     actors: [],
-    actor_events: [],
+    actorEvents: [],
     religions: [],
     threads: [],
-    unique_names: {},
+    uniqueNames: {},
     date,
-    first_new_moon,
-    lunar_cycle: 28,
+    firstNewMoon,
+    lunarCycle: 28,
     rotation: 24,
     tilt: 23.5,
     seasons: {
@@ -94,7 +92,7 @@ export const world__spawn = (params: {
       summer: [4, 5, 6],
       fall: [7, 8, 9]
     },
-    geo_bounds: {
+    geoBounds: {
       lat: [-10, 90],
       long: [0, 80]
     },
@@ -102,7 +100,7 @@ export const world__spawn = (params: {
     future: new PriorityQueue({
       comparator: (a: WorldEvent, b: WorldEvent) => a.time - b.time
     }),
-    history_recording: false,
+    historyRecording: false,
     rebellions: [],
     wars: [],
     statistics: {
@@ -111,15 +109,15 @@ export const world__spawn = (params: {
     }
   }
   // average voronoi cell area (square miles)
-  world.dim.cell_area = (world.dim.rh * world.dim.rw) / world.dim.cells
-  world.dim.cell_length = world.dim.cell_area ** 0.5
+  world.dim.cellArea = (world.dim.rh * world.dim.rw) / world.dim.cells
+  world.dim.cellLength = world.dim.cellArea ** 0.5
   // scaled height & width (used in distance calculations)
   world.dim.sh = world.dim.rh / world.dim.h
   world.dim.sw = world.dim.rw / world.dim.w
   // determine hemisphere
-  const southern_hemisphere = window.dice.flip
-  if (southern_hemisphere) {
-    world.geo_bounds.lat = world.geo_bounds.lat.reverse().map(l => -l)
+  const southernHemisphere = window.dice.flip
+  if (southernHemisphere) {
+    world.geoBounds.lat = world.geoBounds.lat.reverse().map(l => -l)
     const { winter, spring, summer, fall } = world.seasons
     world.seasons.winter = summer
     world.seasons.spring = fall

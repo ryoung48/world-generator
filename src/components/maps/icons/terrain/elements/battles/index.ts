@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { IconDef } from '../../../types'
 import { battle_icon } from './types'
 

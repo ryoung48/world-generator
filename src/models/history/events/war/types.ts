@@ -11,7 +11,7 @@ export interface WarActorRecord {
   idx: number // region index
   allies: AllyRecord[] // allies of this actor
   pop: number // pop at the time of the war's start (used for troop conscription)
-  wealth_percent: number // wealth % at war's start
+  wealthPercent: number // wealth % at war's start
   wealth: number // wealth at war's start
 }
 
@@ -25,7 +25,6 @@ export interface WarRecord extends EventRecord {
 
 export interface War extends MajorEvent {
   type: 'war'
-  tag: 'war'
   invader: WarActorRecord
   defender: WarActorRecord
   background: {
@@ -47,7 +46,7 @@ export interface War extends MajorEvent {
   } // cause of the war
   result?: string
   events: WarRecord[] // battles
-  next_battle: NextBattle
+  nextBattle: NextBattle
 }
 
 export interface WarEvent extends WorldEvent {
@@ -57,10 +56,10 @@ export interface WarEvent extends WorldEvent {
   vassalize: boolean
   invader: number
   defender: number
-  owned_provinces: {
+  ownedProvinces: {
     invader: number[]
     defender: number[]
   }
   battles: Record<string, Battle>
-  starting_wealth: number // for invader morale
+  startingWealth: number // for invader morale
 }

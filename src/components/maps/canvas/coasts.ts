@@ -1,6 +1,6 @@
 import { world__nations } from '../../../models/regions'
 import { Region } from '../../../models/regions/types'
-import { canvas__breakpoints, canvas__map_styles } from './draw_styles'
+import { map__breakpoints, map__styles } from './draw_styles'
 
 const waves = [
   {
@@ -21,7 +21,7 @@ const waves = [
   }
 ]
 
-export const draw_oceans = (params: {
+export const map__drawOceans = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
@@ -38,8 +38,8 @@ export const draw_oceans = (params: {
         .flat()
     )
   )
-  const global_scale = scale <= canvas__breakpoints.global
-  const drawn_lands = global_scale
+  const globalScale = scale <= map__breakpoints.global
+  const drawnLands = globalScale
     ? Array.from(
         new Set(
           world__nations()
@@ -53,16 +53,16 @@ export const draw_oceans = (params: {
       )
     : landmarks
   ctx.save()
-  ctx.fillStyle = canvas__map_styles.oceans.color
+  ctx.fillStyle = map__styles.oceans.color
   ctx.fillRect(0, 0, window.world.dim.w, window.world.dim.h)
   const { islands } = window.world.display
   ctx.lineCap = 'round'
   ctx.fillStyle = '#aaa8a2'
-  const mod = scale < canvas__breakpoints.regional ? 1 : 0.5
+  const mod = scale < map__breakpoints.regional ? 1 : 0.5
   waves.forEach(({ strokeWidth, opacity }) => {
-    drawn_lands.forEach(i => {
+    drawnLands.forEach(i => {
       const island = islands[i]
-      ctx.strokeStyle = `rgba(${canvas__map_styles.oceans.waves},${opacity})`
+      ctx.strokeStyle = `rgba(${map__styles.oceans.waves},${opacity})`
       ctx.lineWidth = strokeWidth * mod
       const p = new Path2D(island.d)
       ctx.stroke(p)
@@ -73,17 +73,17 @@ export const draw_oceans = (params: {
   return new Set(landmarks)
 }
 
-export const draw_lakes = (params: {
+export const map__drawLakes = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
 }) => {
   const { ctx, scale, nations } = params
-  const global_scale = scale <= canvas__breakpoints.global
-  const drawn_lands = global_scale ? world__nations() : nations
+  const globalScale = scale <= map__breakpoints.global
+  const drawnLands = globalScale ? world__nations() : nations
   const landmarks = Array.from(
     new Set(
-      drawn_lands
+      drawnLands
         .map(r =>
           r.provinces
             .map(p => Object.keys(window.world.provinces[p].lakes).map(i => parseInt(i)))
@@ -94,8 +94,8 @@ export const draw_lakes = (params: {
   )
   const { lakes } = window.world.display
   ctx.lineCap = 'round'
-  const mod = scale < canvas__breakpoints.regional ? 0.3 : 0.15
-  const { border, interior } = canvas__map_styles.lakes
+  const mod = scale < map__breakpoints.regional ? 0.3 : 0.15
+  const { border, interior } = map__styles.lakes
   waves.forEach(({ strokeWidth, opacity }, j) => {
     landmarks.forEach(i => {
       ctx.save()

@@ -1,17 +1,17 @@
 import { scale } from '../../../../utilities/math'
-import { day_ms } from '../../../../utilities/math/time'
-import { decorated_profile } from '../../../../utilities/performance'
+import { dayMS } from '../../../../utilities/math/time'
+import { decoratedProfile } from '../../../../utilities/performance'
 import { BasicCache, memoize } from '../../../../utilities/performance/memoization'
 import { province__culture } from '../../../provinces'
 import { province__network } from '../../../provinces/networks'
-import { location__get_closest_settlement } from '../..'
+import { location__getClosestSettlement } from '../..'
 import { Loc } from '../../types'
 
 interface Demographics {
   provinces: Record<string, number>
   regions: Record<string, number>
-  common_cultures: Record<string, number>
-  ruling_cultures: Record<string, number>
+  commonCultures: Record<string, number>
+  rulingCultures: Record<string, number>
   species: Record<string, number>
 }
 
@@ -20,36 +20,36 @@ export const location__culture = (location: Loc) => {
   return province__culture(province)
 }
 
-const scale_demographic = (demographic: Record<string, number>) => {
-  const total_provinces = Object.values(demographic).reduce((sum, v) => sum + v, 0)
+const scaleDemographic = (demographic: Record<string, number>) => {
+  const totalProvinces = Object.values(demographic).reduce((sum, v) => sum + v, 0)
   Object.entries(demographic).forEach(([k, v]) => {
-    demographic[k] = v / total_provinces
+    demographic[k] = v / totalProvinces
   })
 }
-const _settlement_demographics = (loc: Loc): Demographics => {
+const _settlementDemographics = (loc: Loc): Demographics => {
   const demographics: Demographics = {
     provinces: {},
     regions: {},
-    common_cultures: {},
-    ruling_cultures: {},
+    commonCultures: {},
+    rulingCultures: {},
     species: {}
   }
   window.world.provinces.forEach(k => (demographics.provinces[k.idx] = 0))
   window.world.regions.forEach(k => (demographics.regions[k.idx] = 0))
-  window.world.cultures.forEach(k => (demographics.common_cultures[k.idx] = 0))
-  const pop_scale = scale([0, 100000], [40, 400], loc.population)
+  window.world.cultures.forEach(k => (demographics.commonCultures[k.idx] = 0))
+  const popScale = scale([0, 100000], [40, 400], loc.population)
   const origins = scale([0, 100000], [0.9, 0.6], loc.population)
   const province = window.world.provinces[loc.province]
   const network = province__network(province)
   Object.entries(network)
     .map(([k, v]) => {
-      const mod = v / pop_scale + 1
-      const province_idx = parseInt(k)
+      const mod = v / popScale + 1
+      const provinceIdx = parseInt(k)
       const traffic = 1 / v ** mod
-      const { local, ruling } = province__culture(window.world.provinces[province_idx])
+      const { local, ruling } = province__culture(window.world.provinces[provinceIdx])
       return {
         province: {
-          idx: province_idx,
+          idx: provinceIdx,
           value: traffic
         },
         regional: {
@@ -70,32 +70,32 @@ const _settlement_demographics = (loc: Loc): Demographics => {
       demographics.provinces[province.idx] += province.value
       demographics.regions[regional.region] += regional.value
       demographics.regions[national.region] += national.value
-      demographics.common_cultures[regional.ruling] += regional.value * 0.3
-      demographics.common_cultures[national.ruling] += national.value * 0.3
-      demographics.common_cultures[regional.native] += regional.value * 0.7
-      demographics.common_cultures[national.native] += national.value * 0.7
+      demographics.commonCultures[regional.ruling] += regional.value * 0.3
+      demographics.commonCultures[national.ruling] += national.value * 0.3
+      demographics.commonCultures[regional.native] += regional.value * 0.7
+      demographics.commonCultures[national.native] += national.value * 0.7
     })
-  const native_idx = window.world.regions[province.region].culture.native
-  const ruling_idx = window.world.regions[province.curr_nation].culture.ruling
-  const majority_mod = 4
-  demographics.ruling_cultures = {
-    ...demographics.common_cultures,
-    [native_idx]: demographics.common_cultures[native_idx] * majority_mod,
-    [ruling_idx]: demographics.common_cultures[ruling_idx] * majority_mod
+  const nativeIdx = window.world.regions[province.region].culture.native
+  const rulingIdx = window.world.regions[province.currNation].culture.ruling
+  const majorityMod = 4
+  demographics.rulingCultures = {
+    ...demographics.commonCultures,
+    [nativeIdx]: demographics.commonCultures[nativeIdx] * majorityMod,
+    [rulingIdx]: demographics.commonCultures[rulingIdx] * majorityMod
   }
-  scale_demographic(demographics.provinces)
-  scale_demographic(demographics.regions)
-  scale_demographic(demographics.common_cultures)
-  scale_demographic(demographics.ruling_cultures)
-  scale_demographic(demographics.species)
+  scaleDemographic(demographics.provinces)
+  scaleDemographic(demographics.regions)
+  scaleDemographic(demographics.commonCultures)
+  scaleDemographic(demographics.rulingCultures)
+  scaleDemographic(demographics.species)
   return demographics
 }
-const compute_demographics = memoize(_settlement_demographics, {
+const computeDemographics = memoize(_settlementDemographics, {
   store: (): BasicCache<Demographics> => ({}),
   get: (cache, loc) => {
     // recompute very 10 days
     if (loc.memory.demographics === undefined || loc.memory.demographics < window.world.date) {
-      loc.memory.demographics = window.world.date + 10 * day_ms
+      loc.memory.demographics = window.world.date + 10 * dayMS
     } else {
       return cache[loc.idx]
     }
@@ -105,7 +105,7 @@ const compute_demographics = memoize(_settlement_demographics, {
   }
 })
 const _location__demographics = (loc: Loc): Demographics => {
-  const settlement = location__get_closest_settlement(loc)
-  return compute_demographics(settlement)
+  const settlement = location__getClosestSettlement(loc)
+  return computeDemographics(settlement)
 }
-export const location__demographics = decorated_profile(_location__demographics)
+export const location__demographics = decoratedProfile(_location__demographics)

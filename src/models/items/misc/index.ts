@@ -1,6 +1,6 @@
-import { market_groups } from '../economy'
-import { item__basic_details, ItemDetails } from '../types'
-import { misc_item__tag, MiscItem } from './types'
+import { marketGroups } from '../economy'
+import { item__basicDetails, ItemDetails } from '../types'
+import { MiscItem, miscItem__tag } from './types'
 
 abstract class MiscItemDetails extends ItemDetails {
   abstract value(_item: MiscItem): number
@@ -8,35 +8,35 @@ abstract class MiscItemDetails extends ItemDetails {
 
 const _misc: Omit<MiscItemDetails, 'tag' | 'weight' | 'markets'> = {
   category: 'misc',
-  ...item__basic_details
+  ...item__basicDetails
 }
-export const misc_items: Record<misc_item__tag, MiscItemDetails> = {
+export const miscItems: Record<miscItem__tag, MiscItemDetails> = {
   saddle: {
     tag: 'saddle',
-    base_price: 500,
+    basePrice: 500,
     weight: 15,
-    markets: market_groups.leather,
+    markets: marketGroups.leather,
     ..._misc
   },
   waterskin: {
     tag: 'waterskin',
-    base_price: 20,
+    basePrice: 20,
     weight: 5,
-    markets: market_groups.leather,
+    markets: marketGroups.leather,
     ..._misc
   },
   book: {
     tag: 'book',
-    base_price: 700,
+    basePrice: 700,
     weight: 5,
-    markets: market_groups.texts,
+    markets: marketGroups.texts,
     ..._misc
   },
   rope: {
     tag: 'book',
-    base_price: 100,
+    basePrice: 100,
     weight: 5,
-    markets: market_groups.textiles,
+    markets: marketGroups.textiles,
     ..._misc
   }
 }

@@ -25,10 +25,10 @@ export abstract class Enchantment {
   public abstract key(_instance: EnchantmentInstance): string
 }
 
-export const enchantment__basic_details = {
+export const enchantment__basicDetails = {
   key: (instance: EnchantmentInstance) => instance.tag,
   spawn: (instance: EnchantmentInstance) => instance
 }
 
-export const enchantment__item_tag = (item: BasicEnchantmentDescription['item']) =>
+export const enchantment__itemTag = (item: BasicEnchantmentDescription['item']) =>
   `this ${item.tag}`

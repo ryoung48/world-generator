@@ -1,14 +1,15 @@
-import { actor__enemy_cr } from '../npcs/actors'
+import { range } from 'd3'
+
+import { actor__enemyCR } from '../npcs/actors'
 import { actor__spawn } from '../npcs/actors/spawn'
 import { Actor } from '../npcs/actors/types'
-import { lang__lorem_sentences } from '../npcs/species/humanoids/languages/words'
+import { lang__loremSentences } from '../npcs/species/languages/words'
 import { location__culture } from '../regions/locations/actors/demographics'
-import { location__spawn_traits } from '../regions/locations/spawn/traits'
+import { location__spawnTraits } from '../regions/locations/spawn/traits'
 import { Loc } from '../regions/locations/types'
 import { province__hub } from '../regions/provinces'
-import { range } from '../utilities/math'
-import { hour_ms, minute_ms } from '../utilities/math/time'
-import { decorate_text } from '../utilities/text/decoration'
+import { hourMS, minuteMS } from '../utilities/math/time'
+import { decorateText } from '../utilities/text/decoration'
 import { goal__spawn } from './goals'
 import { ChildTask, Task, Thread, ThreadedEntity } from './types'
 
@@ -16,7 +17,7 @@ export const thread__placeholder = -1
 
 const task__difficulty = (thread: Thread) => window.dice.uniform(0.7, 1.3) * thread.difficulty.cr
 
-const thread__spawn_task = (params: {
+const thread__spawnTask = (params: {
   thread: Thread
   transition: string
   strengthen: boolean
@@ -29,7 +30,7 @@ const thread__spawn_task = (params: {
     goal: goal.tag,
     text: `${goal.text()}${
       strengthen
-        ? ` ${decorate_text({
+        ? ` ${decorateText({
             label: `Your enemies grow stronger (${mod.toFixed(2)}).`,
             italics: true
           })}`
@@ -37,19 +38,19 @@ const thread__spawn_task = (params: {
     }${transition ?? ''}`,
     status: 'in progress',
     difficulty: { cr: task__difficulty(thread) },
-    duration: window.dice.weighted_choice([
-      { w: 2, v: () => window.dice.uniform(minute_ms * 30, hour_ms * 4) },
-      { w: 1, v: () => window.dice.uniform(hour_ms * 4, hour_ms * 24) }
+    duration: window.dice.weightedChoice([
+      { w: 2, v: () => window.dice.uniform(minuteMS * 30, hourMS * 4) },
+      { w: 1, v: () => window.dice.uniform(hourMS * 4, hourMS * 24) }
     ])()
   }
 }
 
-const thread__transition_text = (params: { origin: Loc; transition: Loc }) => {
+const thread__transitionText = (params: { origin: Loc; transition: Loc }) => {
   const { origin, transition } = params
-  return ` ${decorate_text({
+  return ` ${decorateText({
     link: origin,
     tooltip: origin.type
-  })} → ${decorate_text({
+  })} → ${decorateText({
     link: transition,
     tooltip: transition.type
   })}. `
@@ -60,14 +61,14 @@ const thread__transition = (thread: Thread) => {
   const location = window.world.locations[thread.location]
   const chosen = window.dice.choice(window.world.provinces[location.province].neighbors)
   const transition = province__hub(window.world.provinces[chosen])
-  location__spawn_traits(transition)
+  location__spawnTraits(transition)
   return {
     loc: transition.idx,
-    text: thread__transition_text({ origin: location, transition })
+    text: thread__transitionText({ origin: location, transition })
   }
 }
 
-export const thread__add_task = (params: {
+export const thread__addTask = (params: {
   thread: Thread
   fork?: boolean
   plaza?: boolean
@@ -79,12 +80,12 @@ export const thread__add_task = (params: {
   const transition = !branched && thread__transition(thread)
   const diff = thread.complexity - thread.progress
   if (transition) thread.location = transition.loc
-  return window.dice.weighted_choice([
+  return window.dice.weightedChoice([
     {
       // normal task
       w: plaza ? 0 : 0.9,
       v: () => {
-        const task = thread__spawn_task({
+        const task = thread__spawnTask({
           thread,
           transition: transition?.text,
           strengthen: !branched && thread.tasks.length > 0 && window.dice.random > 0.9
@@ -105,15 +106,15 @@ export const thread__add_task = (params: {
       // forked task
       w: !branched && !transition ? 0.05 : 0,
       v: () => {
-        const origin_loc = window.world.locations[location]
-        const { local } = location__culture(origin_loc)
+        const originLoc = window.world.locations[location]
+        const { local } = location__culture(originLoc)
         const { language } = window.world.cultures[local.culture.native]
         const forks = window.dice.randint(2, 3)
         const tasks = range(forks)
-          .map(() => thread__add_task({ thread, fork: true }))
+          .map(() => thread__addTask({ thread, fork: true }))
           .flat()
         thread.fork = {
-          text: lang__lorem_sentences(language, 1),
+          text: lang__loremSentences(language, 1),
           tasks
         }
         return tasks
@@ -125,7 +126,7 @@ export const thread__add_task = (params: {
       v: () => {
         const options = window.dice.randint(2, 3)
         const tasks = range(options)
-          .map(() => thread__add_task({ thread, plaza: true }))
+          .map(() => thread__addTask({ thread, plaza: true }))
           .flat()
         return tasks
       }
@@ -140,14 +141,14 @@ export const thread__spawn = (params: {
   difficulty?: number
   target: ThreadedEntity
 }) => {
-  const { avatar, loc, depth = 0, difficulty = actor__enemy_cr(avatar), target } = params
+  const { avatar, loc, depth = 0, difficulty = actor__enemyCR(avatar), target } = params
   const goal = goal__spawn()
   const thread: Thread = {
     idx: window.world.threads.length,
     goal: goal.tag,
     text: goal.text(),
     difficulty: { cr: difficulty },
-    complexity: window.dice.weighted_choice([
+    complexity: window.dice.weightedChoice([
       { w: 128, v: () => window.dice.randint(1, 3) },
       { w: 64, v: () => window.dice.randint(3, 7) },
       { w: 32, v: () => window.dice.randint(8, 12) },
@@ -166,12 +167,12 @@ export const thread__spawn = (params: {
     tasks: []
   }
   window.world.threads.push(thread)
-  thread__add_task({ thread })
+  thread__addTask({ thread })
   target.threads = [...target.threads, thread.idx]
   return thread
 }
 
-const thread__add_child = (params: {
+const thread__addChild = (params: {
   thread: Thread
   fork?: boolean
   target: ThreadedEntity
@@ -192,14 +193,14 @@ const thread__add_child = (params: {
   return child.idx
 }
 
-export const thread__spawn_children = (params: { thread: Thread; avatar: Actor }) => {
+export const thread__spawnChildren = (params: { thread: Thread; avatar: Actor }) => {
   const { avatar, thread } = params
-  const old_count = avatar.threads.length
+  const oldCount = avatar.threads.length
   thread.opened = true
   thread.tasks = thread.tasks.map(task => {
     if (typeof task === 'number') {
       if (window.world.threads[task]) return task
-      return thread__add_child({ thread, target: avatar, avatar })
+      return thread__addChild({ thread, target: avatar, avatar })
     }
     return task
   })
@@ -207,10 +208,10 @@ export const thread__spawn_children = (params: { thread: Thread; avatar: Actor }
     thread.fork.tasks = thread.fork.tasks.map(task => {
       if (typeof task === 'number') {
         if (window.world.threads[task]) return task
-        return thread__add_child({ thread, fork: true, target: avatar, avatar })
+        return thread__addChild({ thread, fork: true, target: avatar, avatar })
       }
       return task
     })
   }
-  return old_count !== avatar.threads.length
+  return oldCount !== avatar.threads.length
 }

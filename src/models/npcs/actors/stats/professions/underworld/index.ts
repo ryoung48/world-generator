@@ -1,31 +1,26 @@
-import { age_ranges } from '../../age/life_phases'
-import {
-  artisan_skills,
-  laborer_skills,
-  social_skills,
-  worldly_skills
-} from '../../skills/categories'
-import { fighter_kits } from '../soldiers/specs/fighters'
-import { ranger_kits } from '../soldiers/specs/ranger'
-import { rogue_kits } from '../soldiers/specs/rogues'
-import { wizard_kits } from '../soldiers/specs/wizards'
+import { ageRanges } from '../../age/life_phases'
+import { artisanSkills, laborerSkills, socialSkills, worldlySkills } from '../../skills/categories'
+import { fighterKits } from '../soldiers/specs/fighters'
+import { rangerKits } from '../soldiers/specs/ranger'
+import { rogueKits } from '../soldiers/specs/rogues'
+import { wizardKits } from '../soldiers/specs/wizards'
 import { Profession } from '../types'
-import { underworld_professions } from './types'
+import { UnderworldProfessions } from './types'
 
-const thief_occurrence: Profession['occurrence'] = ({ context }) =>
+const thiefOccurrence: Profession['occurrence'] = ({ context }) =>
   context.city ? 1 : !context.tribal ? 0.1 : 0
 
-export const underworld: Record<underworld_professions, Profession> = {
+export const underworld: Record<UnderworldProfessions, Profession> = {
   'thief (minor)': {
     key: 'thief (minor)',
     lifestyle: 'poor',
     category: 'underclass',
     prevalence: 'common',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['streetwise'],
       secondary: ['martial'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'thief (major)': {
@@ -33,11 +28,11 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'rare',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['streetwise'],
       secondary: ['martial'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'assassin (minor)': {
@@ -45,11 +40,11 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'rare',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['martial'],
       secondary: ['alchemy', 'streetwise'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'assassin (major)': {
@@ -57,11 +52,11 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'comfortable',
     category: 'underclass',
     prevalence: 'rare',
-    occurrence: params => thief_occurrence(params) * 0.5,
+    occurrence: params => thiefOccurrence(params) * 0.5,
     skills: {
       primary: ['martial'],
       secondary: ['alchemy', 'streetwise'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'courtesan (minor)': {
@@ -69,10 +64,10 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'poor',
     category: 'underclass',
     prevalence: 'common',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['charm', 'insight', 'perception', 'negotiate', 'carouse'],
-      tertiary: [...laborer_skills, ...social_skills, 'martial']
+      tertiary: [...laborerSkills, ...socialSkills, 'martial']
     }
   },
   'courtesan (major)': {
@@ -80,10 +75,10 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'uncommon',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['charm', 'insight', 'perception', 'negotiate', 'carouse'],
-      tertiary: [...laborer_skills, ...social_skills, 'martial']
+      tertiary: [...laborerSkills, ...socialSkills, 'martial']
     }
   },
   forger: {
@@ -91,10 +86,10 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'uncommon',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['streetwise', 'scribing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   beggar: {
@@ -105,7 +100,7 @@ export const underworld: Record<underworld_professions, Profession> = {
     occurrence: ({ context }) => (context.city ? 1 : 0),
     skills: {
       primary: ['survival', 'streetwise'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   smuggler: {
@@ -113,10 +108,10 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'poor',
     category: 'underclass',
     prevalence: 'common',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['streetwise'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   'con artist': {
@@ -124,10 +119,10 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'poor',
     category: 'underclass',
     prevalence: 'uncommon',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['streetwise', 'bluff'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   fence: {
@@ -135,10 +130,10 @@ export const underworld: Record<underworld_professions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'common',
-    occurrence: params => thief_occurrence(params),
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['streetwise', 'accounting', 'negotiate'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   brigand: {
@@ -146,24 +141,24 @@ export const underworld: Record<underworld_professions, Profession> = {
     category: 'underclass',
     lifestyle: 'poor',
     ages: [20, 45],
-    after_spawn: ({ inventory }) => {
+    afterSpawn: ({ inventory }) => {
       inventory.currency += window.dice.randint(0, 5)
     },
     skills: ({ actor }) => {
       const spec = actor.occupation.spec
-      if (spec === 'defender') return fighter_kits.defender.skills
-      if (spec === 'brute') return fighter_kits.brute.skills
-      if (spec === 'marksman') return ranger_kits.marksman.skills
-      if (spec === 'rogue') return rogue_kits.rogue.skills
-      return wizard_kits.sorcerer.skills
+      if (spec === 'defender') return fighterKits.defender.skills
+      if (spec === 'brute') return fighterKits.brute.skills
+      if (spec === 'marksman') return rangerKits.marksman.skills
+      if (spec === 'rogue') return rogueKits.rogue.skills
+      return wizardKits.sorcerer.skills
     },
     attributes: ({ actor }) => {
       const spec = actor.occupation.spec
-      if (spec === 'defender') return fighter_kits.defender.attributes
-      if (spec === 'brute') return fighter_kits.brute.attributes
-      if (spec === 'marksman') return ranger_kits.marksman.attributes
-      if (spec === 'rogue') return rogue_kits.rogue.attributes
-      return wizard_kits.sorcerer.attributes
+      if (spec === 'defender') return fighterKits.defender.attributes
+      if (spec === 'brute') return fighterKits.brute.attributes
+      if (spec === 'marksman') return rangerKits.marksman.attributes
+      if (spec === 'rogue') return rogueKits.rogue.attributes
+      return wizardKits.sorcerer.attributes
     },
     specialization: () => window.dice.choice(['defender', 'brute', 'marksman', 'rogue', 'sorcerer'])
   },
@@ -183,9 +178,9 @@ export const underworld: Record<underworld_professions, Profession> = {
     skills: {
       primary: ['logistics'],
       secondary: ['martial', 'oratory', 'intimidate'],
-      tertiary: [...social_skills, ...worldly_skills]
+      tertiary: [...socialSkills, ...worldlySkills]
     },
-    ages: age_ranges.expert
+    ages: ageRanges.expert
   },
   'boss (criminal, major)': {
     key: 'boss (criminal, major)',
@@ -194,9 +189,9 @@ export const underworld: Record<underworld_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics', 'streetwise'],
-      tertiary: [...laborer_skills, ...social_skills]
+      tertiary: [...laborerSkills, ...socialSkills]
     },
-    ages: age_ranges.veteran
+    ages: ageRanges.veteran
   },
   'advisor (criminal, major)': {
     key: 'advisor (criminal, major)',
@@ -205,9 +200,9 @@ export const underworld: Record<underworld_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics', 'streetwise'],
-      tertiary: [...laborer_skills, ...social_skills]
+      tertiary: [...laborerSkills, ...socialSkills]
     },
-    ages: age_ranges.expert
+    ages: ageRanges.expert
   },
   'boss (criminal, minor)': {
     key: 'boss (criminal, minor)',
@@ -216,9 +211,9 @@ export const underworld: Record<underworld_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics', 'streetwise'],
-      tertiary: [...laborer_skills, ...social_skills]
+      tertiary: [...laborerSkills, ...socialSkills]
     },
-    ages: age_ranges.veteran
+    ages: ageRanges.veteran
   },
   'advisor (criminal, minor)': {
     key: 'advisor (criminal, minor)',
@@ -227,8 +222,8 @@ export const underworld: Record<underworld_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics', 'streetwise'],
-      tertiary: [...laborer_skills, ...social_skills]
+      tertiary: [...laborerSkills, ...socialSkills]
     },
-    ages: age_ranges.expert
+    ages: ageRanges.expert
   }
 }

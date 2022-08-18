@@ -1,4 +1,4 @@
-export type scholar_professions =
+export type ScholarProfessions =
   | 'historian'
   | 'botanist'
   | 'astronomer'

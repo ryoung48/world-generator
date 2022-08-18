@@ -1,13 +1,13 @@
 import dayjs from 'dayjs'
 
-import { hour_ms } from '../../../utilities/math/time'
-import { decorate_text } from '../../../utilities/text/decoration'
-import { world__day_length, world__gps, world__timezone_offset } from '../../../world'
-import { climate_lookup } from '../../../world/climate/types'
-import { compute_heat, compute_rain, procedural_weather } from '../../../world/climate/weather'
+import { hourMS } from '../../../utilities/math/time'
+import { decorateText } from '../../../utilities/text/decoration'
+import { world__dayLength, world__gps, world__timezoneOffset } from '../../../world'
+import { climateLookup } from '../../../world/climate/types'
+import { computeHeat, computeRain, proceduralWeather } from '../../../world/climate/weather'
 import { Loc } from '../types'
 
-const default_weather = (): Loc['_weather']['day'] => ({
+const defaultWeather = (): Loc['_weather']['day'] => ({
   conditions: '',
   heat: { degrees: 0, desc: '' },
   clouds: '',
@@ -20,95 +20,95 @@ const default_weather = (): Loc['_weather']['day'] => ({
 
 const sunlight = (exterior: Loc) => {
   const { latitude } = world__gps(exterior)
-  const day_len = world__day_length(latitude)
-  const hours = day_len / 2
+  const dayLen = world__dayLength(latitude)
+  const hours = dayLen / 2
   const eod = window.world.rotation
   const mid = eod / 2
-  exterior._weather.sun.hours = day_len
-  exterior._weather.sun.rise = day_len >= eod ? 0 : day_len <= 0 ? mid - 0.01 : mid - hours
-  exterior._weather.sun.set = day_len >= eod ? eod - 0.01 : day_len <= 0 ? mid : mid + hours
+  exterior._weather.sun.hours = dayLen
+  exterior._weather.sun.rise = dayLen >= eod ? 0 : dayLen <= 0 ? mid - 0.01 : mid - hours
+  exterior._weather.sun.set = dayLen >= eod ? eod - 0.01 : dayLen <= 0 ? mid : mid + hours
 }
 const moonlight = (exterior: Loc) => {
-  const day_hours = window.world.rotation
-  const day_unit = day_hours * 60 * 60 * 1000
-  const days = (window.world.date - window.world.first_new_moon) / day_unit
-  const full_cycle = window.world.lunar_cycle
-  const half_cycle = full_cycle / 2
-  const quarter_cycle = full_cycle / 4
-  const phase = Math.round(days) % full_cycle
-  const waxing_p = ((phase / half_cycle) * 100).toFixed(1)
+  const dayHours = window.world.rotation
+  const dayUnit = dayHours * 60 * 60 * 1000
+  const days = (window.world.date - window.world.firstNewMoon) / dayUnit
+  const fullCycle = window.world.lunarCycle
+  const halfCycle = fullCycle / 2
+  const quarterCycle = fullCycle / 4
+  const phase = Math.round(days) % fullCycle
+  const waxingP = ((phase / halfCycle) * 100).toFixed(1)
   const { latitude } = world__gps(window.world.cells[exterior.cell])
-  const north_hemisphere = latitude > 0
-  const waxing_side = north_hemisphere ? 'Right' : 'Left'
-  const waning_p = (200 - (phase / half_cycle) * 100).toFixed(1)
-  const waning_side = north_hemisphere ? 'Left' : 'Right'
+  const northHemisphere = latitude > 0
+  const waxingSide = northHemisphere ? 'Right' : 'Left'
+  const waningP = (200 - (phase / halfCycle) * 100).toFixed(1)
+  const waningSide = northHemisphere ? 'Left' : 'Right'
   const { hours: sunlight, rise: sunrise, set: sunset } = exterior._weather.sun
-  const moonlight = day_hours - sunlight
-  const early_morning = (sunrise + sunlight / 4) % day_hours
-  const noon = (sunrise + sunlight / 2) % day_hours
-  const late_afternoon = (sunrise + (3 * sunlight) / 4) % day_hours
-  const early_evening = (sunset + moonlight / 4) % day_hours
-  const midnight = (sunset + moonlight / 2) % day_hours
-  const late_evening = (sunset + (3 * moonlight) / 4) % day_hours
+  const moonlight = dayHours - sunlight
+  const earlyMorning = (sunrise + sunlight / 4) % dayHours
+  const noon = (sunrise + sunlight / 2) % dayHours
+  const lateAfternoon = (sunrise + (3 * sunlight) / 4) % dayHours
+  const earlyEvening = (sunset + moonlight / 4) % dayHours
+  const midnight = (sunset + moonlight / 2) % dayHours
+  const lateEvening = (sunset + (3 * moonlight) / 4) % dayHours
   if (phase === 0) {
     exterior._weather.moon.rise = sunrise
     exterior._weather.moon.set = sunset
     exterior._weather.moon.phase = 'New Moon (0%)'
     exterior._weather.moon.icon = 'new'
-  } else if (phase < quarter_cycle) {
-    exterior._weather.moon.rise = early_morning
-    exterior._weather.moon.set = early_evening
-    exterior._weather.moon.phase = decorate_text({
+  } else if (phase < quarterCycle) {
+    exterior._weather.moon.rise = earlyMorning
+    exterior._weather.moon.set = earlyEvening
+    exterior._weather.moon.phase = decorateText({
       label: `Waxing crescent`,
-      tooltip: `${waxing_side} ${waxing_p}%`
+      tooltip: `${waxingSide} ${waxingP}%`
     })
     exterior._weather.moon.icon = 'waxing-crescent'
-  } else if (phase === quarter_cycle) {
+  } else if (phase === quarterCycle) {
     exterior._weather.moon.rise = noon
     exterior._weather.moon.set = midnight
-    exterior._weather.moon.phase = decorate_text({
+    exterior._weather.moon.phase = decorateText({
       label: `First Quarter`,
-      tooltip: `${waxing_side} 50%`
+      tooltip: `${waxingSide} 50%`
     })
     exterior._weather.moon.icon = 'first-quarter'
-  } else if (phase < half_cycle) {
-    exterior._weather.moon.rise = late_afternoon
-    exterior._weather.moon.set = late_evening
-    exterior._weather.moon.phase = decorate_text({
+  } else if (phase < halfCycle) {
+    exterior._weather.moon.rise = lateAfternoon
+    exterior._weather.moon.set = lateEvening
+    exterior._weather.moon.phase = decorateText({
       label: `Waxing gibbous`,
-      tooltip: `${waxing_side} ${waxing_p}%`
+      tooltip: `${waxingSide} ${waxingP}%`
     })
     exterior._weather.moon.icon = 'waxing-gibbous'
-  } else if (phase === half_cycle) {
+  } else if (phase === halfCycle) {
     exterior._weather.moon.rise = sunset
     exterior._weather.moon.set = sunrise
-    exterior._weather.moon.phase = decorate_text({
+    exterior._weather.moon.phase = decorateText({
       label: `Full Moon`,
       tooltip: `100%`
     })
     exterior._weather.moon.icon = 'full'
-  } else if (phase < quarter_cycle * 3) {
-    exterior._weather.moon.rise = early_evening
-    exterior._weather.moon.set = early_morning
-    exterior._weather.moon.phase = decorate_text({
+  } else if (phase < quarterCycle * 3) {
+    exterior._weather.moon.rise = earlyEvening
+    exterior._weather.moon.set = earlyMorning
+    exterior._weather.moon.phase = decorateText({
       label: `Waning gibbous`,
-      tooltip: `${waning_side} ${waning_p}%`
+      tooltip: `${waningSide} ${waningP}%`
     })
     exterior._weather.moon.icon = 'waning-gibbous'
-  } else if (phase === quarter_cycle * 3) {
+  } else if (phase === quarterCycle * 3) {
     exterior._weather.moon.rise = midnight
     exterior._weather.moon.set = noon
-    exterior._weather.moon.phase = decorate_text({
+    exterior._weather.moon.phase = decorateText({
       label: `Last Quarter`,
-      tooltip: `${waning_side} 50%`
+      tooltip: `${waningSide} 50%`
     })
     exterior._weather.moon.icon = 'last-quarter'
-  } else if (phase < full_cycle) {
-    exterior._weather.moon.rise = late_evening
-    exterior._weather.moon.set = late_afternoon
-    exterior._weather.moon.phase = decorate_text({
+  } else if (phase < fullCycle) {
+    exterior._weather.moon.rise = lateEvening
+    exterior._weather.moon.set = lateAfternoon
+    exterior._weather.moon.phase = decorateText({
       label: `Waning crescent`,
-      tooltip: `${waning_side} ${waning_p}%`
+      tooltip: `${waningSide} ${waningP}%`
     })
     exterior._weather.moon.icon = 'waning-crescent'
   }
@@ -117,7 +117,7 @@ const moonlight = (exterior: Loc) => {
       ? exterior._weather.moon.set + 24
       : exterior._weather.moon.set
   exterior._weather.moon.hours = moonset - exterior._weather.moon.rise
-  exterior._weather.moon.next_day = exterior._weather.moon.rise > exterior._weather.moon.set
+  exterior._weather.moon.nextDay = exterior._weather.moon.rise > exterior._weather.moon.set
 }
 const season = (exterior: Loc) => {
   const month = new Date(window.world.date).getMonth()
@@ -132,42 +132,42 @@ const location__weather = (loc: Loc) => {
   const month = new Date(window.world.date).getMonth()
   // day temperature
   const cell = window.world.cells[loc.cell]
-  const climate = climate_lookup[window.world.regions[cell.region].climate]
-  const rain = compute_rain({ climate, month, cell })
-  const mean_temp = compute_heat({ cell, month, climate })
-  const local_temp = window.dice.norm(mean_temp, 4)
+  const climate = climateLookup[window.world.regions[cell.region].climate]
+  const rain = computeRain({ climate, month, cell })
+  const meanTemp = computeHeat({ cell, month, climate })
+  const localTemp = window.dice.norm(meanTemp, 4)
   // night temperature
-  const { diurnal_heat } = climate
-  const diurnal_var = Math.max(1, window.dice.norm(...diurnal_heat))
-  const night_temp = local_temp - diurnal_var
-  loc._weather.rain_chance = rain
-  loc._weather.day = procedural_weather({
-    rain_chance: rain,
-    temp: local_temp,
+  const { diurnalHeat } = climate
+  const diurnalVar = Math.max(1, window.dice.norm(...diurnalHeat))
+  const nightTemp = localTemp - diurnalVar
+  loc._weather.rainChance = rain
+  loc._weather.day = proceduralWeather({
+    rainChance: rain,
+    temp: localTemp,
     climate: climate.type
   })
-  loc._weather.night = procedural_weather({
-    rain_chance: rain,
-    temp: night_temp,
+  loc._weather.night = proceduralWeather({
+    rainChance: rain,
+    temp: nightTemp,
     climate: climate.type
   })
 }
 
-export const location__local_time = (loc: Loc) => {
-  const local_time = window.world.date + world__timezone_offset(loc)
-  const transformed_time = dayjs(local_time)
-  const hour = transformed_time.hour() + transformed_time.minute() / 60
-  return { local_time, hour }
+export const location__localTime = (loc: Loc) => {
+  const localTime = window.world.date + world__timezoneOffset(loc)
+  const transformedTime = dayjs(localTime)
+  const hour = transformedTime.hour() + transformedTime.minute() / 60
+  return { localTime, hour }
 }
 
 export const location__conditions = (location: Loc) => {
-  const { local_time, hour } = location__local_time(location)
-  if (local_time > location.memory.weather) {
+  const { localTime, hour } = location__localTime(location)
+  if (localTime > location.memory.weather) {
     location._weather = {
       season: '',
-      rain_chance: 0,
-      day: default_weather(),
-      night: default_weather(),
+      rainChance: 0,
+      day: defaultWeather(),
+      night: defaultWeather(),
       sun: {
         hours: 0,
         rise: 0,
@@ -178,7 +178,7 @@ export const location__conditions = (location: Loc) => {
         rise: 0,
         set: 0,
         hours: 0,
-        next_day: false,
+        nextDay: false,
         icon: 'new'
       }
     }
@@ -186,33 +186,33 @@ export const location__conditions = (location: Loc) => {
     moonlight(location)
     season(location)
     location__weather(location)
-    location.memory.weather = local_time + window.dice.randint(2, 8) * hour_ms
+    location.memory.weather = localTime + window.dice.randint(2, 8) * hourMS
   }
   const conditions = location._weather
   const { sun, moon, day, night } = conditions
-  const sun_visible = hour >= sun.rise && hour <= sun.set
-  let moon_visible = hour >= moon.rise && hour <= moon.set
-  if (moon.next_day) {
-    moon_visible = hour >= moon.rise || hour <= moon.set
+  const sunVisible = hour >= sun.rise && hour <= sun.set
+  let moonVisible = hour >= moon.rise && hour <= moon.set
+  if (moon.nextDay) {
+    moonVisible = hour >= moon.rise || hour <= moon.set
   }
   const dusk = hour >= sun.set && hour < sun.set + 1
   const dawn = hour >= sun.rise && hour < sun.rise + 1
-  const weather_icon = sun_visible ? day.icon : night.icon
+  const weatherIcon = sunVisible ? day.icon : night.icon
   return {
     conditions,
     visible: {
-      sun: sun_visible,
-      moon: moon_visible
+      sun: sunVisible,
+      moon: moonVisible
     },
     icon:
-      weather_icon === 'sunny'
+      weatherIcon === 'sunny'
         ? dusk || dawn
           ? 'sunset'
-          : sun_visible
+          : sunVisible
           ? 'sunny'
           : 'night'
-        : weather_icon,
-    local_time,
-    summary: dawn ? 'dawn' : dusk ? 'dusk' : sun_visible ? 'day' : 'night'
+        : weatherIcon,
+    localTime,
+    summary: dawn ? 'dawn' : dusk ? 'dusk' : sunVisible ? 'day' : 'night'
   } as const
 }

@@ -1,25 +1,25 @@
-import { academic_skills, scholar_skills } from '../../../skills/categories'
+import { academicSkills, scholarSkills } from '../../../skills/categories'
 import { Profession } from '../../types'
-import { scholar_professions } from './types'
+import { ScholarProfessions } from './types'
 
-const academic_occurrence: Profession['occurrence'] = ({ context }) =>
+const academicOccurrence: Profession['occurrence'] = ({ context }) =>
   context.text ? 0.5 : context.city ? 0.2 : 0
 
-export const scholar_attributes = [9, 9, 9, 12, 10, 11]
+export const scholarAttributes = [9, 9, 9, 12, 10, 11]
 
-export const scholars: Record<scholar_professions, Profession> = {
+export const scholars: Record<ScholarProfessions, Profession> = {
   historian: {
     key: 'historian',
     lifestyle: 'comfortable',
     category: 'scholars',
     subcategory: 'academic',
     prevalence: 'uncommon',
-    occurrence: params => academic_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => academicOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['history'],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   botanist: {
@@ -28,12 +28,12 @@ export const scholars: Record<scholar_professions, Profession> = {
     category: 'scholars',
     subcategory: 'academic',
     prevalence: 'uncommon',
-    occurrence: params => academic_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => academicOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['nature'],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   astronomer: {
@@ -42,12 +42,12 @@ export const scholars: Record<scholar_professions, Profession> = {
     category: 'scholars',
     subcategory: 'academic',
     prevalence: 'uncommon',
-    occurrence: params => academic_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => academicOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['astronomy'],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   philosopher: {
@@ -56,12 +56,12 @@ export const scholars: Record<scholar_professions, Profession> = {
     category: 'scholars',
     subcategory: 'academic',
     prevalence: 'uncommon',
-    occurrence: params => academic_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => academicOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['philosophy'],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   linguist: {
@@ -70,12 +70,12 @@ export const scholars: Record<scholar_professions, Profession> = {
     category: 'scholars',
     subcategory: 'academic',
     prevalence: 'uncommon',
-    occurrence: params => academic_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => academicOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['linguistics', 'history'],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   archivist: {
@@ -84,11 +84,11 @@ export const scholars: Record<scholar_professions, Profession> = {
     category: 'scholars',
     subcategory: 'academic',
     occurrence: ({ context }) => (context.text ? 1 : context.city ? 0.5 : 0),
-    attributes: scholar_attributes,
+    attributes: scholarAttributes,
     skills: {
-      primary: [...academic_skills],
+      primary: [...academicSkills],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   }
 }

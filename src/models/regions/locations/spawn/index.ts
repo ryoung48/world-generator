@@ -1,36 +1,36 @@
 // https://gitlab.com/rayoung788/project-muse/-/blob/0d2b6286b758bbd81851ba2fa5c867a2908ee0f0/src/models/regions/locations/spawn.ts
 
-import { lang__unique_name } from '../../../npcs/species/humanoids/languages/words'
+import { lang__uniqueName } from '../../../npcs/species/languages/words'
 import { Point, point__distance } from '../../../utilities/math/points'
-import { cell__bfs_neighborhood, cell__move_to_coast } from '../../../world/cells'
+import { cell__bfsNeighborhood, cell__moveToCoast } from '../../../world/cells'
 import { ExteriorCell } from '../../../world/cells/types'
 import { province__neighborhood } from '../../provinces'
 import { Province } from '../../provinces/types'
 import { Loc } from '../types'
 import { location__templates } from './taxonomy'
 
-const point_variance = 0
+const pointVariance = 0
 
 /**
  * adds some noise to the locations coordinates so that they are not always
  * at the center of voronoi polygons; will move coastal locations to the coastline
  * @param location - location to be moved
  */
-const placement_variation = (params: { cell: ExteriorCell; coastal: number }) => {
+const placementVariation = (params: { cell: ExteriorCell; coastal: number }) => {
   const { coastal, cell } = params
-  const coastal_placement = coastal
-    ? cell__move_to_coast({
+  const coastalPlacement = coastal
+    ? cell__moveToCoast({
         cell,
         distance: coastal
       })
     : false
-  if (!coastal_placement) {
+  if (!coastalPlacement) {
     return {
-      x: cell.x + window.dice.uniform(-point_variance, point_variance),
-      y: cell.y + window.dice.uniform(-point_variance, point_variance)
+      x: cell.x + window.dice.uniform(-pointVariance, pointVariance),
+      y: cell.y + window.dice.uniform(-pointVariance, pointVariance)
     }
   }
-  return coastal_placement
+  return coastalPlacement
 }
 
 /**
@@ -38,25 +38,25 @@ const placement_variation = (params: { cell: ExteriorCell; coastal: number }) =>
  * @param origin - origin cell to sprawl out from
  * @returns cell
  */
-const province_sprawl = (params: {
+const provinceSprawl = (params: {
   origin: ExteriorCell
   restrictions?: (_cell: ExteriorCell) => boolean
 }) => {
   const { origin, restrictions } = params
   const province = window.world.provinces[origin.province]
   const used = province.locations.map(l => window.world.locations[l].cell)
-  const sphere = cell__bfs_neighborhood({
+  const sphere = cell__bfsNeighborhood({
     start: origin,
     spread: cell => cell.province === origin.province
   })
   const land = sphere
-    .filter(({ is_water, idx }) => !is_water && !used.includes(idx))
+    .filter(({ isWater, idx }) => !isWater && !used.includes(idx))
     .filter(restrictions ?? (() => true))
   return land.length > 0 ? window.dice.choice(land) : origin
 }
 
 // max attempts for placing locations
-const max_attempts = 5
+const maxAttempts = 5
 
 /**
  * Find suitable coordinates to place location that are not
@@ -77,11 +77,11 @@ const place__location = (params: {
   restrictions?: (_cell: ExteriorCell) => boolean
 }): (Point & { cell: ExteriorCell }) | false => {
   const { origin, coastal, sprawl, attempts = 0, restrictions } = params
-  const cell = sprawl ? province_sprawl({ origin, restrictions }) : origin
+  const cell = sprawl ? provinceSprawl({ origin, restrictions }) : origin
   const { sw, sh } = window.world.dim
-  const point = placement_variation({ cell, coastal })
+  const point = placementVariation({ cell, coastal })
   const province = window.world.provinces[cell.province]
-  if (!province || attempts >= max_attempts) return sprawl ? false : { x: cell.x, y: cell.y, cell }
+  if (!province || attempts >= maxAttempts) return sprawl ? false : { x: cell.x, y: cell.y, cell }
   const dist = sprawl ? 5 : 10
   const collision = province__neighborhood(province).some(
     loc => point__distance({ points: [loc, point], scale: [sw, sh] }) <= dist
@@ -91,7 +91,7 @@ const place__location = (params: {
       origin: cell,
       coastal,
       sprawl,
-      attempts: !sprawl ? max_attempts : attempts + 1,
+      attempts: !sprawl ? maxAttempts : attempts + 1,
       restrictions
     })
   return { ...point, cell }
@@ -101,7 +101,7 @@ const place__location = (params: {
  * move location to coast if possible
  * @param loc - location to move
  */
-export const location__move_to_coast = (loc: Loc) => {
+export const location__moveToCoast = (loc: Loc) => {
   const { coastal } = location__templates[loc.type]
   const point = place__location({ origin: window.world.cells[loc.cell], coastal, sprawl: false })
   if (point) {
@@ -110,13 +110,13 @@ export const location__move_to_coast = (loc: Loc) => {
   }
 }
 
-const template_list = Object.values(location__templates)
-const random__location_type = (province: Province) => {
-  const dist = template_list.map(template => {
+const templateList = Object.values(location__templates)
+const random__locationType = (province: Province) => {
+  const dist = templateList.map(template => {
     const { spawn, type } = template
     return { v: type, w: typeof spawn === 'number' ? spawn : spawn?.(province) ?? 0 }
   })
-  return window.dice.weighted_choice(dist)
+  return window.dice.weightedChoice(dist)
 }
 
 export const location__spawn = (params: {
@@ -127,7 +127,7 @@ export const location__spawn = (params: {
 }) => {
   const idx = window.world.locations.length
   const origin = window.world.provinces[params.cell.province]
-  const { cell, type = random__location_type(origin), hub, sprawl } = params
+  const { cell, type = random__locationType(origin), hub, sprawl } = params
   const region = window.world.regions[cell.region]
   const culture = window.world.cultures[region?.culture.native]
   const {
@@ -144,7 +144,7 @@ export const location__spawn = (params: {
   }
   const { x, y } = point
   const location: Loc = {
-    name: culture?.language ? lang__unique_name({ key: names, lang: culture.language }) : '',
+    name: culture?.language ? lang__uniqueName({ key: names, lang: culture.language }) : '',
     idx,
     tag: 'location',
     type,

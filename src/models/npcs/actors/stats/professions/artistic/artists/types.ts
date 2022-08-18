@@ -1,4 +1,4 @@
-export type artist_professions =
+export type ArtistProfessions =
   | 'woodcarver'
   | 'barber'
   | 'artist'

@@ -6,21 +6,21 @@ import { Uncle } from './sibling'
 
 export class Cousin implements Relation {
   private ref: Actor
-  private location_locked: boolean
-  constructor(params: { ref: Actor; location_locked: boolean }) {
+  private locationLocked: boolean
+  constructor(params: { ref: Actor; locationLocked: boolean }) {
     this.ref = params.ref
-    this.location_locked = params.location_locked
+    this.locationLocked = params.locationLocked
   }
-  public before_spawn(params: ActorParams) {
+  public beforeSpawn(params: ActorParams) {
     const { ages } = params
     const uncle = actor__spawn({
       location: window.world.locations[this.ref.location.birth],
-      relation: new Uncle({ ref: this.ref, location_locked: this.location_locked }),
+      relation: new Uncle({ ref: this.ref, locationLocked: this.locationLocked }),
       ages: params.ages ? [ages[0] + 20, ages[1] + 40] : undefined,
       living: false
     })
-    params.relation = new Child({ ref: uncle, location_locked: this.location_locked })
-    params.relation.before_spawn(params)
+    params.relation = new Child({ ref: uncle, locationLocked: this.locationLocked })
+    params.relation.beforeSpawn(params)
   }
-  public after_spawn() {}
+  public afterSpawn() {}
 }

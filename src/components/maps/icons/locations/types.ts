@@ -17,7 +17,7 @@ import { shrine__icon } from './shrines/types'
 import { temple__icon } from './temples/types'
 import { watchtower__icon } from './watchtower/types'
 
-export type location_icon =
+export type LocationIcon =
   | battlefield__icon
   | camp__icon
   | cave__icon
@@ -36,6 +36,6 @@ export type location_icon =
   | temple__icon
   | watchtower__icon
 
-export interface LocationIcon extends IconDef {
-  font_scale: number
+export interface LocationIconDetails extends IconDef {
+  fontScale: number
 }

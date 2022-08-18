@@ -1,21 +1,20 @@
-import { region__is_active, region__population } from '../../../regions'
+import { region__isActive, region__population } from '../../../regions'
 import {
   region__allies,
-  region__ally_relation,
-  region__has_same_religion,
-  region__has_subject_relation,
-  region__neutral_reason,
-  region__set_relation
+  region__allyRelation,
+  region__hasSameReligion,
+  region__hasSubjectRelation,
+  region__neutralReason,
+  region__setRelation
 } from '../../../regions/diplomacy/relations'
 import {
-  region__at_peace,
+  region__atPeace,
   region__overextended,
-  region__wealth_percent
+  region__wealthPercent
 } from '../../../regions/diplomacy/status'
 import { Region } from '../../../regions/types'
 import { romanize } from '../../../utilities/text'
-import { decorate_text } from '../../../utilities/text/decoration'
-import { log_event } from '../..'
+import { logEvent } from '../..'
 import { EventController } from '../../types'
 import { war__background } from './background'
 import { war__battle, war__plan } from './battles'
@@ -28,13 +27,13 @@ class WarController extends EventController {
     const invader = window.world.regions[event.invader]
     const defender = window.world.regions[event.defender]
     const war = window.world.wars[event.idx]
-    const battleground = window.world.provinces[war.next_battle.province]
-    const aggressor = window.world.regions[war.next_battle.aggressor]
+    const battleground = window.world.provinces[war.nextBattle.province]
+    const aggressor = window.world.regions[war.nextBattle.aggressor]
     const path = battleground.neighbors
       .map(n => window.world.provinces[n])
-      .some(n => n.curr_nation === aggressor.idx)
-    battleground.memory.next_invasion.time = -Infinity
-    if (!region__is_active(aggressor)) {
+      .some(n => n.currNation === aggressor.idx)
+    battleground.memory.nextInvasion.time = -Infinity
+    if (!region__isActive(aggressor)) {
       // the war was ended by external forces
       war__resolve(event, { external: true })
     } else if (invader.wealth <= 0 && defender.wealth <= 0) {
@@ -64,7 +63,7 @@ class WarController extends EventController {
       invader,
       defender,
       war: idx,
-      holy_war: background.type === 'jihad' || background.type === 'excommunication'
+      holyWar: background.type === 'jihad' || background.type === 'excommunication'
     })
     const type = 'war'
     // how many wars have been fought by these two regions (used for the title)
@@ -78,7 +77,6 @@ class WarController extends EventController {
     const title = `${sorted}${rank > 1 ? ` ${romanize(rank)}` : ''}`
     window.world.wars.push({
       idx,
-      tag: 'war',
       name: title,
       start: window.world.date,
       end: Infinity,
@@ -86,31 +84,28 @@ class WarController extends EventController {
       background,
       invader: {
         idx: invader.idx,
-        allies: gathered_allies(invader).concat(neutral_allies(invader)),
-        wealth: non_allied_wealth(invader),
-        wealth_percent: region__wealth_percent(invader),
+        allies: gatheredAllies(invader).concat(neutralAllies(invader)),
+        wealth: nonAlliedWealth(invader),
+        wealthPercent: region__wealthPercent(invader),
         pop: region__population(invader)
       },
       defender: {
         idx: defender.idx,
-        allies: gathered_allies(defender).concat(neutral_allies(defender)),
-        wealth: non_allied_wealth(defender),
-        wealth_percent: region__wealth_percent(defender),
+        allies: gatheredAllies(defender).concat(neutralAllies(defender)),
+        wealth: nonAlliedWealth(defender),
+        wealthPercent: region__wealthPercent(defender),
         pop: region__population(defender)
       },
       events: [],
-      next_battle: { province: -1, aggressor: invader.idx }
+      nextBattle: { province: -1, aggressor: invader.idx }
     })
     const record = {
-      title: `Start of War: ${decorate_text({
-        label: title,
-        link: window.world.wars[idx]
-      })}`,
+      title: `Start of War: ${window.world.wars[idx].name}`,
       text: background.text,
-      event_idx: idx,
-      event_type: type
+      eventIdx: idx,
+      eventType: type
     }
-    log_event({ ...record, actors: [invader, defender], event_type: type })
+    logEvent({ ...record, actors: [invader, defender], eventType: type })
     const event: WarEvent = {
       idx,
       time: window.world.date,
@@ -119,12 +114,12 @@ class WarController extends EventController {
       invader: invader.idx,
       defender: defender.idx,
       vassalize,
-      owned_provinces: {
+      ownedProvinces: {
         invader: [...invader.provinces],
         defender: [...defender.provinces]
       },
       battles: {},
-      starting_wealth: invader.wealth
+      startingWealth: invader.wealth
     }
     war__plan({ event, aggressor: invader, init: true })
   }
@@ -141,40 +136,40 @@ const region__invade = (params: {
   invader: Region
   defender: Region
   war: number
-  holy_war?: boolean
+  holyWar?: boolean
 }) => {
-  const { invader, defender, war, holy_war } = params
+  const { invader, defender, war, holyWar } = params
   // add the war to each actor's list of wars
   invader.wars.current.push(war)
   defender.wars.current.push(war)
   // increment the global war count
   window.world.statistics.current.wars += 1
   // set the relation between actors to rival
-  region__set_relation({ relation: 'at war', n1: invader, n2: defender })
+  region__setRelation({ relation: 'at war', n1: invader, n2: defender })
   // gather defender's allies
-  const defender_allies = region__allies(defender)
-  defender_allies
+  const defenderAllies = region__allies(defender)
+  defenderAllies
     // nations allied to both remain neutral
-    .filter(ally => region__is_active(ally) && invader.allies[ally.idx] === undefined)
+    .filter(ally => region__isActive(ally) && invader.allies[ally.idx] === undefined)
     // allies cannot double commit
-    .filter(ally => region__at_peace(ally) && defender.allies[ally.idx] === 0)
+    .filter(ally => region__atPeace(ally) && defender.allies[ally.idx] === 0)
     .forEach(ally => {
       const contrib = ally.wealth * 0.5
       defender.wealth += contrib
       ally.wealth -= contrib
       defender.allies[ally.idx] = contrib
     })
-  const invader_allies = region__allies(invader)
-  invader_allies
+  const invaderAllies = region__allies(invader)
+  invaderAllies
     // nations allied to both remain neutral
-    .filter(ally => region__is_active(ally) && defender.allies[ally.idx] === undefined)
+    .filter(ally => region__isActive(ally) && defender.allies[ally.idx] === undefined)
     // gather invader's vassals / overlord / fellow crusaders
     .filter(ally => {
-      const crusader = holy_war && region__has_same_religion(invader, ally)
-      return crusader || region__has_subject_relation(invader, ally)
+      const crusader = holyWar && region__hasSameReligion(invader, ally)
+      return crusader || region__hasSubjectRelation(invader, ally)
     })
     // allies cannot double commit
-    .filter(ally => region__at_peace(ally) && invader.allies[ally.idx] === 0)
+    .filter(ally => region__atPeace(ally) && invader.allies[ally.idx] === 0)
     .forEach(ally => {
       const contrib = ally.wealth * 0.5
       invader.wealth += contrib
@@ -186,13 +181,13 @@ const region__invade = (params: {
 /**
  * gets each of a region's ally and its respective relation
  */
-const gathered_allies = (region: Region) =>
+const gatheredAllies = (region: Region) =>
   Object.entries(region.allies)
     .filter(([, v]) => v > 0)
     .map(([k]) => parseInt(k))
     .map(idx => {
       const ally = window.world.regions[idx]
-      return { idx, relation: region__ally_relation({ ref: region, ally }) }
+      return { idx, relation: region__allyRelation({ ref: region, ally }) }
     })
 
 /**
@@ -200,7 +195,7 @@ const gathered_allies = (region: Region) =>
  * @param region
  * @returns {number} total wealth not indebted
  */
-const non_allied_wealth = (region: Region) =>
+const nonAlliedWealth = (region: Region) =>
   region.wealth - Object.values(region.allies).reduce((sum, v) => sum + v, 0)
 
 /**
@@ -208,14 +203,14 @@ const non_allied_wealth = (region: Region) =>
  * @param region
  * @returns
  */
-const neutral_allies = (region: Region) =>
+const neutralAllies = (region: Region) =>
   Object.entries(region.allies)
     .filter(([, v]) => v === 0)
     .map(([k]) => parseInt(k))
     .map(idx => {
       const ally = window.world.regions[idx]
-      const relation = region__ally_relation({ ref: region, ally, no_funds: true })
-      const reason = region__neutral_reason(ally)
+      const relation = region__allyRelation({ ref: region, ally, noFunds: true })
+      const reason = region__neutralReason(ally)
       return { idx, relation: `${relation} (${reason})`, neutral: true }
     })
 

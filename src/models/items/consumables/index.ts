@@ -1,7 +1,7 @@
 import { attributes } from '../../npcs/actors/stats/attributes/types'
 import { resistances } from '../../npcs/stats/types'
-import { market_groups } from '../economy'
-import { item__basic_details, ItemDetails } from '../types'
+import { marketGroups } from '../economy'
+import { item__basicDetails, ItemDetails } from '../types'
 import { AttributeConsumable, Consumable, consumable__tag, ResistanceConsumable } from './types'
 
 abstract class ConsumableDetails extends ItemDetails {
@@ -9,63 +9,63 @@ abstract class ConsumableDetails extends ItemDetails {
 }
 
 const _consumable: Omit<ConsumableDetails, 'tag'> = {
-  ...item__basic_details,
+  ...item__basicDetails,
   category: 'consumables',
   weight: 1,
-  base_price: 1200,
-  markets: market_groups.alchemical
+  basePrice: 1200,
+  markets: marketGroups.alchemical
 }
 const _poison: Omit<ConsumableDetails, 'tag'> = {
   ..._consumable,
-  base_price: 2400
+  basePrice: 2400
 }
 
 abstract class ResistancePotionDetails extends ConsumableDetails {
   abstract key(_item: ResistanceConsumable): string
   abstract spawn(_item: ResistanceConsumable): ResistanceConsumable
 }
-const resistance_key: ResistancePotionDetails['key'] = item =>
+const resistanceKey: ResistancePotionDetails['key'] = item =>
   `${item.tag}:${item.tier}:${item.resistance}`
-const resistance_spawn: ResistancePotionDetails['spawn'] = item => {
+const resistanceSpawn: ResistancePotionDetails['spawn'] = item => {
   item.resistance = item.resistance ?? window.dice.choice([...resistances])
   return item
 }
-const resistance_consumables: Record<ResistanceConsumable['tag'], ResistancePotionDetails> = {
+const resistanceConsumables: Record<ResistanceConsumable['tag'], ResistancePotionDetails> = {
   'poison (resistance)': {
     ..._poison,
     tag: 'poison (resistance)',
-    key: resistance_key,
-    spawn: resistance_spawn
+    key: resistanceKey,
+    spawn: resistanceSpawn
   },
   'potion (resistance)': {
     ..._consumable,
     tag: 'potion (resistance)',
-    key: resistance_key,
-    spawn: resistance_spawn
+    key: resistanceKey,
+    spawn: resistanceSpawn
   }
 }
 abstract class AttributePotionDetails extends ConsumableDetails {
   abstract key(_item: AttributeConsumable): string
   abstract spawn(_item: AttributeConsumable): AttributeConsumable
 }
-const attribute_key: AttributePotionDetails['key'] = item =>
+const attributeKey: AttributePotionDetails['key'] = item =>
   `${item.tag}:${item.tier}:${item.attribute}`
-const attribute_spawn: AttributePotionDetails['spawn'] = item => {
+const attributeSpawn: AttributePotionDetails['spawn'] = item => {
   item.attribute = item.attribute ?? window.dice.choice([...attributes])
   return item
 }
-const attribute_consumables: Record<AttributeConsumable['tag'], AttributePotionDetails> = {
+const attributeConsumables: Record<AttributeConsumable['tag'], AttributePotionDetails> = {
   'poison (attribute)': {
     ..._poison,
     tag: 'poison (attribute)',
-    key: attribute_key,
-    spawn: attribute_spawn
+    key: attributeKey,
+    spawn: attributeSpawn
   },
   'potion (attribute)': {
     ..._consumable,
     tag: 'potion (attribute)',
-    key: attribute_key,
-    spawn: attribute_spawn
+    key: attributeKey,
+    spawn: attributeSpawn
   }
 }
 export const consumables: Record<consumable__tag, ConsumableDetails> = {
@@ -105,12 +105,12 @@ export const consumables: Record<consumable__tag, ConsumableDetails> = {
     tag: 'potion (stoneskin)',
     ..._consumable
   },
-  ...attribute_consumables,
-  ...resistance_consumables,
+  ...attributeConsumables,
+  ...resistanceConsumables,
   ink: {
     tag: 'ink',
     ..._consumable,
-    base_price: 500,
+    basePrice: 500,
     weight: 0.1
   }
 }

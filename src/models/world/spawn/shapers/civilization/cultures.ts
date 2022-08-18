@@ -3,56 +3,56 @@ import {
   culture__flavorize,
   culture__regions,
   culture__spawn,
-  culture__sub_culture
-} from '../../../../npcs/species/humanoids/cultures'
-import { Culture } from '../../../../npcs/species/humanoids/cultures/types'
-import { humanoid__species_dist } from '../../../../npcs/species/humanoids/taxonomy'
+  culture__subCulture
+} from '../../../../npcs/species/cultures'
+import { Culture } from '../../../../npcs/species/cultures/types'
+import { humanoid__speciesDist } from '../../../../npcs/species/taxonomy'
 import { region__borders } from '../../../../regions'
-import { development_rank } from '../../../../regions/development'
+import { DevelopmentRank } from '../../../../regions/development'
 import { Region } from '../../../../regions/types'
-import { tagged__bfs_partition } from '../../../../utilities/codex/grouping'
+import { entity__partitionBFS } from '../../../../utilities/codex/entities'
 import { directions } from '../../../../utilities/math/points'
-import { climate_lookup, climates } from '../../../climate/types'
+import { climateLookup, climates } from '../../../climate/types'
 
-const culture__culture_score = (culture: Culture) =>
+const culture__cultureScore = (culture: Culture) =>
   culture__regions(culture)
-    .map(r => climate_lookup[r.climate].population * (r.coastal ? 1.5 : 1))
+    .map(r => climateLookup[r.climate].population * (r.coastal ? 1.5 : 1))
     .reduce((sum, pop) => sum + pop, 0) / culture.regions.length
 
-const distant_climates = [climates.POLAR, climates.EQUATORIAL]
+const distantClimates = [climates.POLAR, climates.EQUATORIAL]
 
-const tribal_lands = [
+const tribalLands = [
   climates.HOT_STEPPE,
   climates.COLD_DESERT,
   climates.COLD_STEPPE,
   climates.SAVANNA
 ]
 
-const is_distant = (culture: Culture) => {
+const isDistant = (culture: Culture) => {
   const regions = culture__regions(culture)
   const distant = regions.reduce((sum, r) => {
-    const is_remote = distant_climates.includes(r.climate)
-    return sum + (is_remote ? 1 : 0)
+    const isRemote = distantClimates.includes(r.climate)
+    return sum + (isRemote ? 1 : 0)
   }, 0)
   return distant / regions.length > 0.5
 }
 
-const is_tribal = (culture: Culture) => {
+const isTribal = (culture: Culture) => {
   const regions = culture__regions(culture)
   const grass = regions.reduce((sum, r) => {
-    const has_biome = tribal_lands.includes(r.climate)
-    return sum + (has_biome ? 1 : 0)
+    const hasBiome = tribalLands.includes(r.climate)
+    return sum + (hasBiome ? 1 : 0)
   }, 0)
   return grass / regions.length > 0.5
 }
 const civilized = ['civilized', 'frontier']
-const set_development = (region: Region, development: development_rank) => {
+const setDevelopment = (region: Region, development: DevelopmentRank) => {
   region.development = development
   region.civilized = civilized.includes(development)
 }
 
-const assign_cultures = () => {
-  tagged__bfs_partition({
+const assignCultures = () => {
+  entity__partitionBFS({
     items: window.world.regions,
     target: 4,
     // regions in the same culture must have the same climate
@@ -61,60 +61,60 @@ const assign_cultures = () => {
   }).forEach(group => {
     const [origin] = group
     const culture = culture__spawn(origin)
-    group.forEach(n => culture__sub_culture(culture, n))
+    group.forEach(n => culture__subCulture(culture, n))
   })
 }
 
-const civilization_center = (side: directions) => {
+const civilizationCenter = (side: directions) => {
   let civil = 0
   const { cultures } = window.world
   const partition = Object.values(cultures)
-    .filter(c => c.side === side && culture__coastal(c) && !is_distant(c) && !is_tribal(c))
+    .filter(c => c.side === side && culture__coastal(c) && !isDistant(c) && !isTribal(c))
     .sort((a, b) => {
-      return culture__culture_score(b) - culture__culture_score(a)
+      return culture__cultureScore(b) - culture__cultureScore(a)
     })
   const count = partition.length
   // civilized
   const civilized = Math.floor(count * 0.5)
   partition.slice(0, civilized).forEach(c => {
     const development = civil < 3 && c.zone === 'Temperate' ? 'civilized' : 'frontier'
-    c.regions.map(r => window.world.regions[r]).forEach(r => set_development(r, development))
+    c.regions.map(r => window.world.regions[r]).forEach(r => setDevelopment(r, development))
     civil += development === 'civilized' ? 1 : 0
   })
 }
 
-const assign_development = () => {
-  civilization_center('E')
-  civilization_center('W')
+const assignDevelopment = () => {
+  civilizationCenter('E')
+  civilizationCenter('W')
   const { cultures } = window.world
   // tribal
   Object.values(cultures)
     .filter(c => window.world.regions[c.origin].development === undefined)
     .forEach(c => {
-      const majority_distant = is_distant(c)
-      const development = majority_distant ? 'remote' : 'tribal'
-      c.regions.map(r => window.world.regions[r]).forEach(r => set_development(r, development))
+      const majorityDistant = isDistant(c)
+      const development = majorityDistant ? 'remote' : 'tribal'
+      c.regions.map(r => window.world.regions[r]).forEach(r => setDevelopment(r, development))
     })
   // frontier
   const civilized = window.world.regions.filter(r => r.development === 'civilized')
   civilized.forEach(c => {
     c.borders
       .map(n => window.world.regions[n])
-      .filter(n => !n.civilized && !is_distant(window.world.cultures[n.culture.ruling]))
+      .filter(n => !n.civilized && !isDistant(window.world.cultures[n.culture.ruling]))
       .forEach(n => {
-        set_development(n, 'frontier')
+        setDevelopment(n, 'frontier')
       })
   })
-  const all_cultures = Object.values(cultures)
-  const civil = all_cultures.filter(c => window.world.regions[c.origin].civilized)
-  const civil_species = humanoid__species_dist(civil.length, false)
-  civil.forEach(culture => culture__flavorize(culture, civil_species.pop()))
-  const non_civil = all_cultures.filter(c => !window.world.regions[c.origin].civilized)
-  const species = humanoid__species_dist(non_civil.length)
-  non_civil.forEach(culture => culture__flavorize(culture, species.pop()))
+  const allCultures = Object.values(cultures)
+  const civil = allCultures.filter(c => window.world.regions[c.origin].civilized)
+  const civilSpecies = humanoid__speciesDist(civil.length, false)
+  civil.forEach(culture => culture__flavorize(culture, civilSpecies.pop()))
+  const nonCivil = allCultures.filter(c => !window.world.regions[c.origin].civilized)
+  const species = humanoid__speciesDist(nonCivil.length)
+  nonCivil.forEach(culture => culture__flavorize(culture, species.pop()))
 }
 
-export const cultural_spheres = () => {
-  assign_cultures()
-  assign_development()
+export const culturalSpheres = () => {
+  assignCultures()
+  assignDevelopment()
 }

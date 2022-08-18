@@ -1,4 +1,4 @@
-export type martial_professions =
+export type MartialProfessions =
   | 'soldier (military, recruit)'
   | 'soldier (military, seasoned)'
   | 'officer (military, minor)'
@@ -18,5 +18,5 @@ export type martial_professions =
   | 'mercenary'
   | 'mercenary (captain)'
 
-export type mercenary_specs = 'defender' | 'brute' | 'marksman' | 'rogue' | 'sorcerer'
-export type soldier_specs = 'scout' | 'infantry' | 'cavalry' | 'artillery' | 'sapper'
+export type MercenarySpecs = 'defender' | 'brute' | 'marksman' | 'rogue' | 'sorcerer'
+export type SoldierSpecs = 'scout' | 'infantry' | 'cavalry' | 'artillery' | 'sapper'

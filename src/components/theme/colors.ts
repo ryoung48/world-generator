@@ -1,4 +1,4 @@
-export const css_colors = {
+export const cssColors = {
   primary: '#58180d',
   blue: '#0d1456',
   purple: '#420d54',

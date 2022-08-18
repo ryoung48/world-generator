@@ -1,76 +1,72 @@
-import { compute_weight, imperial_height } from '../../../../utilities/math'
-import { title_case } from '../../../../utilities/text'
-import { decorate_text } from '../../../../utilities/text/decoration'
+import { computeWeight, imperialHeight } from '../../../../utilities/math'
+import { titleCase } from '../../../../utilities/text'
+import { decorateText } from '../../../../utilities/text/decoration'
 import { actor__details } from '../../../../utilities/text/entities/actor'
-import { entity_placeholder, replace_placeholders } from '../../../../utilities/text/placeholders'
-import { species__by_culture } from '../../../species/humanoids/taxonomy'
-import {
-  earings,
-  facial_wounds,
-  tattoo_styles
-} from '../../../species/humanoids/taxonomy/common/appearance'
+import { entityPlaceholder, replacePlaceholders } from '../../../../utilities/text/placeholders'
+import { species__byCulture } from '../../../species/taxonomy'
+import { earings, facialWounds, tattooStyles } from '../../../species/taxonomy/common/appearance'
 import { Actor, ActorAppearance } from '../../types'
-import { actor__is_child, actor__life_phase } from '../age'
-import { actor__social_class } from '../professions'
+import { actor__isChild, actor__lifePhase } from '../age'
+import { actor__socialClass } from '../professions'
 import { actor__outfit } from './outfit'
 
 export const actor__physique = (actor: Actor) => {
   const looks: ActorAppearance = { bmi: 0, height: 0, piercings: {} }
   // height
   const culture = window.world.cultures[actor.culture]
-  const { heights, bmi } = species__by_culture(culture)
-  const short_height = heights[actor.gender] - heights.std
-  const tall_height = heights[actor.gender] + heights.std
-  const height_range = window.dice.choice([
-    [short_height - heights.std, short_height],
-    [short_height, tall_height],
-    [short_height, tall_height],
-    [short_height, tall_height],
-    [tall_height, tall_height + heights.std]
+  const { heights, bmi } = species__byCulture(culture)
+  const shortHeight = heights[actor.gender] - heights.std
+  const tallHeight = heights[actor.gender] + heights.std
+  const heightRange = window.dice.choice([
+    [shortHeight - heights.std, shortHeight],
+    [shortHeight, tallHeight],
+    [shortHeight, tallHeight],
+    [shortHeight, tallHeight],
+    [tallHeight, tallHeight + heights.std]
   ])
-  looks.height = window.dice.uniform(...height_range)
+  looks.height = window.dice.uniform(...heightRange)
   // bmi (weight)
-  const thin_weight = bmi.mean - bmi.std
-  const wide_weight = bmi.mean + bmi.std
-  const weight_range = window.dice.choice([
-    [thin_weight - bmi.std, thin_weight],
-    [thin_weight, wide_weight],
-    [thin_weight, wide_weight],
-    [thin_weight, wide_weight],
-    [wide_weight, wide_weight + bmi.std]
+  const thinHeight = bmi.mean - bmi.std
+  const wideHeight = bmi.mean + bmi.std
+  const weightRange = window.dice.choice([
+    [thinHeight - bmi.std, thinHeight],
+    [thinHeight, wideHeight],
+    [thinHeight, wideHeight],
+    [thinHeight, wideHeight],
+    [wideHeight, wideHeight + bmi.std]
   ])
-  looks.bmi = window.dice.uniform(...weight_range)
+  looks.bmi = window.dice.uniform(...weightRange)
   // appearance
   const { appearance } = culture
-  const skin_color = window.dice.choice(appearance.skin.colors)
-  looks.skin = { color: skin_color }
-  const eye_color = window.dice.choice(appearance.eyes.colors)
-  looks.eyes = { color: eye_color }
+  const skinColor = window.dice.choice(appearance.skin.colors)
+  looks.skin = { color: skinColor }
+  const eyeColor = window.dice.choice(appearance.eyes.colors)
+  looks.eyes = { color: eyeColor }
   if (appearance.hair) {
-    const hair_texture = window.dice.choice(appearance.hair.textures)
-    const hair_color = window.dice.choice(appearance.hair.colors)
-    const hair_style = window.dice.weighted_choice(appearance.hair.styles[actor.gender])
-    looks.hair = { texture: hair_texture, color: hair_color, style: hair_style }
+    const hairTexture = window.dice.choice(appearance.hair.textures)
+    const hairColor = window.dice.choice(appearance.hair.colors)
+    const hairStyle = window.dice.weightedChoice(appearance.hair.styles[actor.gender])
+    looks.hair = { texture: hairTexture, color: hairColor, style: hairStyle }
   }
-  if (actor.gender === 'male' && appearance?.facial_hair?.chance > window.dice.random) {
-    looks.facial_hair = window.dice.choice(appearance.facial_hair.styles)
+  if (actor.gender === 'male' && appearance?.facialHair?.chance > window.dice.random) {
+    looks.facialHair = window.dice.choice(appearance.facialHair.styles)
   }
-  if (facial_wounds.chance > window.dice.random) {
+  if (facialWounds.chance > window.dice.random) {
     looks.wounds = {
-      type: window.dice.choice(facial_wounds.type),
-      intensity: window.dice.choice(facial_wounds.intensity),
-      side: window.dice.choice(facial_wounds.side)
+      type: window.dice.choice(facialWounds.type),
+      intensity: window.dice.choice(facialWounds.intensity),
+      side: window.dice.choice(facialWounds.side)
     }
   }
-  const { nose_piercing, horn_dressing, tattoos } = appearance
-  const lifestyle = actor__social_class({ actor, time: window.world.date })
+  const { nosePiercing, hornDressing, tattoos } = appearance
+  const lifestyle = actor__socialClass({ actor, time: window.world.date })
   const tribal = !culture.civilized
   const upper = lifestyle === 'upper'
   const lower = lifestyle === 'lower'
-  const tribal_or_commoner = !upper || tribal
-  if (tattoos && tribal_or_commoner && 0.05 > window.dice.random) {
+  const tribalOrCommoner = !upper || tribal
+  if (tattoos && tribalOrCommoner && 0.05 > window.dice.random) {
     looks.tattoos = {
-      style: window.dice.choice(tattoo_styles),
+      style: window.dice.choice(tattooStyles),
       location: window.dice.choice(['face', 'body'])
     }
   }
@@ -83,39 +79,39 @@ export const actor__physique = (actor: Actor) => {
     if (upper) prospects.push(...earings.rare)
     looks.piercings.ears = window.dice.choice(prospects)
   }
-  if (nose_piercing && tribal_or_commoner && nose_piercing.chance > window.dice.random) {
-    const styles = [...nose_piercing.styles]
+  if (nosePiercing && tribalOrCommoner && nosePiercing.chance > window.dice.random) {
+    const styles = [...nosePiercing.styles]
     if (tribal) styles.push('bone')
     looks.piercings.nose =
       styles.includes(looks.piercings.ears) && !earings.tribal.includes(looks.piercings.nose)
         ? looks.piercings.ears
         : window.dice.choice(styles)
   }
-  if (horn_dressing && horn_dressing.chance > window.dice.random) {
+  if (hornDressing && hornDressing.chance > window.dice.random) {
     const ring = `has an ${lower ? 'iron' : 'gold'} ring`
     looks.horns = {
-      dressing: window.dice.choice([...horn_dressing.styles, ring]),
-      side: window.dice.choice(horn_dressing.side)
+      dressing: window.dice.choice([...hornDressing.styles, ring]),
+      side: window.dice.choice(hornDressing.side)
     }
   }
   actor.appearance = looks
 }
 
 const actor__weight = (actor: Actor) =>
-  Math.round(compute_weight(actor.appearance.height, actor.appearance.bmi))
-const actor__imperial_height = (actor: Actor) => imperial_height(actor.appearance.height)
-const actor__relative_height = (actor: Actor) => {
+  Math.round(computeWeight(actor.appearance.height, actor.appearance.bmi))
+const actor__imperialHeight = (actor: Actor) => imperialHeight(actor.appearance.height)
+const actor__relativeHeight = (actor: Actor) => {
   const { gender, culture, appearance } = actor
   const { height } = appearance
-  const { male, female, std } = species__by_culture(window.world.cultures[culture]).heights
+  const { male, female, std } = species__byCulture(window.world.cultures[culture]).heights
   const mean = gender === 'male' ? male : female
   const bound = std
   return height > mean + bound ? 'tall' : height < mean - bound ? 'short' : 'average height'
 }
-const actor__relative_weight = (actor: Actor) => {
+const actor__relativeWeight = (actor: Actor) => {
   const { appearance, culture } = actor
   const { bmi } = appearance
-  const { boundary, mean } = species__by_culture(window.world.cultures[culture]).bmi
+  const { boundary, mean } = species__byCulture(window.world.cultures[culture]).bmi
   const muscular = actor.attributes.strength >= 13
   return bmi > mean + boundary
     ? muscular
@@ -131,11 +127,11 @@ const actor__relative_weight = (actor: Actor) => {
 }
 
 const actor__hair = (actor: Actor) => {
-  const { hair, facial_hair } = actor.appearance
-  if (!hair) return facial_hair ? ` ${entity_placeholder} has a ${facial_hair}.` : ''
+  const { hair, facialHair } = actor.appearance
+  if (!hair) return facialHair ? ` ${entityPlaceholder} has a ${facialHair}.` : ''
   const { ageless } = window.world.cultures[actor.culture].appearance.hair
-  const adult = !actor__is_child({ actor })
-  const phase = actor__life_phase({ actor, expire_cap: true })
+  const adult = !actor__isChild({ actor })
+  const phase = actor__lifePhase({ actor, expireCap: true })
   const color =
     hair.color === 'white' || ageless
       ? hair.color
@@ -144,7 +140,7 @@ const actor__hair = (actor: Actor) => {
       : phase === 'old'
       ? 'gray'
       : phase === 'middle age'
-      ? decorate_text({ label: hair.color, tooltip: 'graying' })
+      ? decorateText({ label: hair.color, tooltip: 'graying' })
       : hair.color
   const tied = ['ponytail', 'bun', 'topknot']
   if (!adult) return ` ${hair.texture} ${color} hair.`
@@ -152,12 +148,12 @@ const actor__hair = (actor: Actor) => {
   let description = bald ? 'is bald' : `has ${hair.style}, ${hair.texture} ${color} hair`
   if (tied.includes(hair.style))
     description = `has ${hair.texture} ${color} hair tied in a ${hair.style}`
-  if (facial_hair)
-    description += ` and ${bald ? 'has ' : ''}a ${decorate_text({
-      label: facial_hair,
+  if (facialHair)
+    description += ` and ${bald ? 'has ' : ''}a ${decorateText({
+      label: facialHair,
       tooltip: color
     })}`
-  return ` ${entity_placeholder} ${description}.`
+  return ` ${entityPlaceholder} ${description}.`
 }
 
 const actor__wounds = (actor: Actor) => {
@@ -174,60 +170,60 @@ const actor__tattoos = (actor: Actor) => {
   const { appearance } = actor
   return `${
     appearance.tattoos
-      ? ` There are ${appearance.tattoos.style} tattoos visible on ${actor__details.name_s({
+      ? ` There are ${appearance.tattoos.style} tattoos visible on ${actor__details.nameS({
           actor
         })} ${appearance.tattoos.location}.`
       : ''
   }`
 }
-const actor__horn_dressing = (actor: Actor) => {
+const actor__hornDressing = (actor: Actor) => {
   const { appearance } = actor
   return `${
     appearance.horns
-      ? ` ${actor__details.name_s({ actor })} ${appearance.horns.side} horn ${
+      ? ` ${actor__details.nameS({ actor })} ${appearance.horns.side} horn ${
           appearance.horns.dressing
         }.`
       : ''
   }`
 }
 
-const describe_adult = (actor: Actor) => {
+const describeAdult = (actor: Actor) => {
   const { culture, appearance } = actor
-  const actor_culture = window.world.cultures[culture]
-  const { skin } = actor_culture.appearance
-  return `${entity_placeholder} is ${decorate_text({
-    label: actor__relative_height(actor),
-    tooltip: `${actor__imperial_height(actor)} ft`
-  })} and ${decorate_text({
-    label: actor__relative_weight(actor),
+  const actorCulture = window.world.cultures[culture]
+  const { skin } = actorCulture.appearance
+  return `${entityPlaceholder} is ${decorateText({
+    label: actor__relativeHeight(actor),
+    tooltip: `${actor__imperialHeight(actor)} ft`
+  })} and ${decorateText({
+    label: actor__relativeWeight(actor),
     tooltip: `${actor__weight(actor)} lbs`
   })} with ${appearance.skin.color} ${
-    skin.texture ? decorate_text({ label: skin.type, tooltip: skin.texture }) : skin.type
+    skin.texture ? decorateText({ label: skin.type, tooltip: skin.texture }) : skin.type
   } and ${appearance.eyes.color} eyes.${actor__hair(actor)}${actor__wounds(actor)}${actor__tattoos(
     actor
-  )}${actor__horn_dressing(actor)}${actor__outfit(actor)}`
+  )}${actor__hornDressing(actor)}${actor__outfit(actor)}`
 }
 
-const describe_youth = (actor: Actor) => {
+const describeYouth = (actor: Actor) => {
   const { culture, appearance } = actor
-  const actor_culture = window.world.cultures[culture]
-  return `${entity_placeholder} has ${appearance.skin.color} ${actor_culture.appearance.skin.type}${
+  const actorCulture = window.world.cultures[culture]
+  return `${entityPlaceholder} has ${appearance.skin.color} ${actorCulture.appearance.skin.type}${
     appearance.hair ? `,` : ' and'
   } ${appearance.eyes.color} eyes${
     appearance.hair ? `, and ${actor__hair(actor)}` : ''
   }${actor__outfit(actor)}`
 }
 
-export const actor__describe_appearance = (actor: Actor) => {
-  const appearance_text = actor__is_child({ actor }) ? describe_youth(actor) : describe_adult(actor)
-  return replace_placeholders({
+export const actor__describeAppearance = (actor: Actor) => {
+  const appearanceText = actor__isChild({ actor }) ? describeYouth(actor) : describeAdult(actor)
+  return replacePlaceholders({
     primary: actor.name,
-    secondary: title_case(actor__details.subject({ actor }))
+    secondary: titleCase(actor__details.subject({ actor }))
   })(
-    `${entity_placeholder} is ${actor__details.age({ actor })} ${
+    `${entityPlaceholder} is ${actor__details.age({ actor })} ${
       actor.gender
     } ${actor__details.species({
       actor
-    })}. ${appearance_text}`
+    })}. ${appearanceText}`
   )
 }

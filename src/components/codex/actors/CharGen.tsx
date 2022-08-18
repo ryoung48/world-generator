@@ -13,32 +13,29 @@ import { range } from 'd3'
 import { Refresh } from 'mdi-material-ui'
 import React from 'react'
 
-import { view__context } from '../../../context'
 import { actor__spawn } from '../../../models/npcs/actors/spawn'
 import { Cousin } from '../../../models/npcs/actors/spawn/relations/cousins'
 import { Sibling } from '../../../models/npcs/actors/spawn/relations/sibling'
 import { Relation } from '../../../models/npcs/actors/spawn/types'
-import { npc__random_gender } from '../../../models/npcs/actors/stats/appearance/gender'
+import { npc__randomGender } from '../../../models/npcs/actors/stats/appearance/gender'
 import { Actor } from '../../../models/npcs/actors/types'
-import {
-  lang__first,
-  lang__last
-} from '../../../models/npcs/species/humanoids/languages/words/actors'
+import { lang__first, lang__last } from '../../../models/npcs/species/languages/words/actors'
 import { location__hub } from '../../../models/regions/locations'
 import { location__demographics } from '../../../models/regions/locations/actors/demographics'
+import { view__context } from '../../context'
 import { StyledSelect } from '../common/input/Select'
 import { CodexTitle } from '../common/text/title'
 
 export function CharGen() {
-  const [open, set_open] = React.useState(false)
-  const handle_close = () => set_open(false)
+  const [open, setOpen] = React.useState(false)
+  const handleClose = () => setOpen(false)
   const { state, dispatch } = view__context()
   const avatar = window.world.actors[state.avatar]
   const location = window.world.locations[state.codex.location]
   const nation = window.world.regions[state.codex.nation]
   const hub = location__hub(location)
-  const { common_cultures } = location__demographics(hub)
-  const cultures = Object.entries(common_cultures)
+  const { commonCultures } = location__demographics(hub)
+  const cultures = Object.entries(commonCultures)
     .sort((a, b) => {
       return b[1] - a[1]
     })
@@ -50,30 +47,30 @@ export function CharGen() {
         idx: parseInt(culture)
       }
     })
-  const [gender, _set_gender] = React.useState(npc__random_gender())
-  const [culture, set_culture] = React.useState(cultures[0].idx)
+  const [gender, _setGender] = React.useState(npc__randomGender())
+  const [culture, setCulture] = React.useState(cultures[0].idx)
   const { language, species } = window.world.cultures[culture]
-  const [first, set_first] = React.useState(lang__first(language, gender))
-  const [last, set_last] = React.useState(lang__last(language))
-  const disabled_last = language?.surnames?.patronymic
-  const random_names = (_gender: typeof gender) => {
-    set_first(lang__first(language, _gender))
-    set_last(lang__last(language))
+  const [first, setFirst] = React.useState(lang__first(language, gender))
+  const [last, setLast] = React.useState(lang__last(language))
+  const disabledLast = language?.surnames?.patronymic
+  const randomNames = (_gender: typeof gender) => {
+    setFirst(lang__first(language, _gender))
+    setLast(lang__last(language))
   }
-  const set_gender = (val: typeof gender) => {
-    _set_gender(val)
-    random_names(val)
+  const setGender = (val: typeof gender) => {
+    _setGender(val)
+    randomNames(val)
   }
   return (
     <div>
       <Button
         onClick={() =>
-          !avatar ? set_open(true) : dispatch({ type: 'update codex', payload: { target: avatar } })
+          !avatar ? setOpen(true) : dispatch({ type: 'update codex', payload: { target: avatar } })
         }
       >
         PC
       </Button>
-      <Dialog open={open} onClose={handle_close}>
+      <Dialog open={open} onClose={handleClose}>
         <DialogTitle>
           <CodexTitle
             title='Character Creation'
@@ -88,23 +85,23 @@ export function CharGen() {
                 spellCheck={false}
                 label='First:'
                 value={first}
-                onChange={event => set_first(event.currentTarget.value)}
+                onChange={event => setFirst(event.currentTarget.value)}
               ></TextField>
             </Grid>
             <Grid item xs={5}>
               <TextField
                 spellCheck={false}
                 label={'Last:'}
-                value={disabled_last ? 'Patronymic Surname:' : last}
-                disabled={disabled_last}
-                onChange={event => set_last(event.currentTarget.value)}
+                value={disabledLast ? 'Patronymic Surname:' : last}
+                disabled={disabledLast}
+                onChange={event => setLast(event.currentTarget.value)}
               ></TextField>
             </Grid>
             <Grid item xs={5}>
               <StyledSelect
                 label='Gender:'
                 selected={gender}
-                set_selected={val => set_gender(val as typeof gender)}
+                setSelected={val => setGender(val as typeof gender)}
                 items={['male', 'female'].map(val => ({ label: val, value: val }))}
               ></StyledSelect>
             </Grid>
@@ -112,9 +109,9 @@ export function CharGen() {
               <StyledSelect
                 label='Culture:'
                 selected={culture}
-                set_selected={val => {
-                  set_culture(parseInt(val))
-                  set_gender(npc__random_gender())
+                setSelected={val => {
+                  setCulture(parseInt(val))
+                  setGender(npc__randomGender())
                 }}
                 items={cultures.map(val => ({ label: val.name, value: val.idx }))}
                 hint={species}
@@ -124,12 +121,12 @@ export function CharGen() {
         </DialogContent>
         <Divider />
         <DialogActions>
-          <IconButton color='primary' onClick={() => random_names(gender)}>
+          <IconButton color='primary' onClick={() => randomNames(gender)}>
             <Refresh></Refresh>
           </IconButton>
           <Button
             onClick={() => {
-              const starting_level = 1
+              const startingLevel = 1
               const ages = [20, 40]
               const avatar = actor__spawn({
                 occupation: { key: 'mercenary' },
@@ -141,7 +138,7 @@ export function CharGen() {
                 living: true,
                 unbound: true,
                 venerable: true,
-                level: starting_level,
+                level: startingLevel,
                 ages
               })
               const party: Actor[] = [avatar]
@@ -153,13 +150,13 @@ export function CharGen() {
                     living: true,
                     unbound: true,
                     venerable: true,
-                    level: starting_level,
-                    relation: window.dice.weighted_choice<() => Relation>([
+                    level: startingLevel,
+                    relation: window.dice.weightedChoice<() => Relation>([
                       {
                         v: () => {
                           const sibling = window.dice.choice(party)
                           console.log(`spawning sibling of ${sibling.name}`)
-                          return new Sibling({ ref: sibling, location_locked: true })
+                          return new Sibling({ ref: sibling, locationLocked: true })
                         },
                         w: 0.05
                       },
@@ -167,7 +164,7 @@ export function CharGen() {
                         v: () => {
                           const cousin = window.dice.choice(party)
                           console.log(`spawning cousin of ${cousin.name}`)
-                          return new Cousin({ ref: cousin, location_locked: true })
+                          return new Cousin({ ref: cousin, locationLocked: true })
                         },
                         w: 0.05
                       },
@@ -184,8 +181,8 @@ export function CharGen() {
               })
               dispatch({ type: 'set avatar', payload: { avatar } })
               dispatch({ type: 'update codex', payload: { target: avatar } })
-              set_gender(npc__random_gender())
-              handle_close()
+              setGender(npc__randomGender())
+              handleClose()
             }}
             size='small'
           >

@@ -27,7 +27,7 @@ export const weapon__enchantments = [
 export type weapon__enchant = typeof weapon__enchantments[number]
 
 export interface BaneEnchantmentInstance extends EnchantmentInstance {
-  species_type: 'beasts' | 'primordials' | 'vessels' | 'spirits'
+  speciesType: 'beasts' | 'primordials' | 'vessels' | 'spirits'
 }
 export interface CelestialEnchantmentInstance extends EnchantmentInstance {
   time: 'dusk' | 'dawn'
@@ -39,5 +39,5 @@ export interface SentientEnchantmentInstance extends EnchantmentInstance {
   spirit: 'elemental' | 'fiend' | 'celestial' | 'shadow'
 }
 export interface SentinelEnchantmentInstance extends EnchantmentInstance {
-  species_type: BaneEnchantmentInstance['species_type']
+  speciesType: BaneEnchantmentInstance['speciesType']
 }

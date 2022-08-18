@@ -1,22 +1,22 @@
-import { view__context } from '../../../../context'
 import {
   profession__colors,
   profession__map,
-  profession__social_class
+  profession__socialClass
 } from '../../../../models/npcs/actors/stats/professions'
 import {
   location__professions,
-  social_class_distributions
-} from '../../../../models/regions/locations/actors/professions'
+  socialClassDistributions
+} from '../../../../models/regions/locations/actors'
 import { Loc } from '../../../../models/regions/locations/types'
-import { title_case } from '../../../../models/utilities/text'
-import { pie_chart__percent_tooltips } from '../../common/charts'
+import { titleCase } from '../../../../models/utilities/text'
+import { view__context } from '../../../context'
+import { pieChart__percentTooltips } from '../../common/charts'
 import { NestedPieChart } from '../../common/charts/NestedPirChart'
 import { NestedPieData } from '../../common/charts/types'
 
-const prepare_nested_data = (node: NestedPieData) => {
+const prepareNestedData = (node: NestedPieData) => {
   node.children.forEach(child => {
-    if (child.children.length > 0) prepare_nested_data(child)
+    if (child.children.length > 0) prepareNestedData(child)
   })
   node.children.sort((a, b) => b.value - a.value)
 }
@@ -27,8 +27,8 @@ const occupations = (loc: Loc) => {
     middle: location__professions({ loc, time: window.world.date, social: 'middle' }),
     upper: location__professions({ loc, time: window.world.date, social: 'upper' })
   }
-  const social_classes = social_class_distributions(loc)
-  const nested_jobs: NestedPieData = {
+  const socialClasses = socialClassDistributions(loc)
+  const nestedJobs: NestedPieData = {
     label: '',
     value: 0,
     color: '',
@@ -37,7 +37,7 @@ const occupations = (loc: Loc) => {
   Object.entries(jobs).forEach(([, v]) => {
     v.forEach(({ v: job, w }) => {
       const { category, subcategory } = profession__map[job]
-      let nested = nested_jobs.children.find(child => child.label === category)
+      let nested = nestedJobs.children.find(child => child.label === category)
       if (!nested) {
         nested = {
           label: category,
@@ -45,7 +45,7 @@ const occupations = (loc: Loc) => {
           color: profession__colors.category[category],
           children: []
         }
-        nested_jobs.children.push(nested)
+        nestedJobs.children.push(nested)
       }
       let curr = nested
       if (subcategory) {
@@ -61,9 +61,9 @@ const occupations = (loc: Loc) => {
         }
         curr = sub
       }
-      const social = social_classes.find(({ v: s }) => s === profession__social_class(job))
+      const social = socialClasses.find(({ v: s }) => s === profession__socialClass(job))
       const weight = w * social.w
-      nested_jobs.value += weight
+      nestedJobs.value += weight
       nested.value += weight
       if (curr !== nested) curr.value += weight
       curr.children.push({
@@ -74,8 +74,8 @@ const occupations = (loc: Loc) => {
       })
     })
   })
-  prepare_nested_data(nested_jobs)
-  return nested_jobs
+  prepareNestedData(nestedJobs)
+  return nestedJobs
 }
 
 export function OccupationsView() {
@@ -84,9 +84,9 @@ export function OccupationsView() {
   return (
     <NestedPieChart
       data={occupations(location)}
-      tooltips={pie_chart__percent_tooltips}
+      tooltips={pieChart__percentTooltips}
       title={node =>
-        node.label ? `${title_case(node.label)} (${(node.value * 100).toFixed(2)}%)` : ''
+        node.label ? `${titleCase(node.label)} (${(node.value * 100).toFixed(2)}%)` : ''
       }
     ></NestedPieChart>
   )

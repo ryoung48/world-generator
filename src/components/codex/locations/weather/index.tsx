@@ -21,18 +21,18 @@ import {
   WeatherWindy
 } from 'mdi-material-ui'
 
-import { view__context } from '../../../../context'
 import { location__conditions } from '../../../../models/regions/locations/environment/conditions'
-import { format_hours } from '../../../../models/utilities/math/time'
-import { decorate_text } from '../../../../models/utilities/text/decoration'
+import { formatHours } from '../../../../models/utilities/math/time'
+import { decorateText } from '../../../../models/utilities/text/decoration'
 import { formatters } from '../../../../models/utilities/text/formatters'
-import { freezing_point } from '../../../../models/world/climate/weather'
-import { css_colors } from '../../../theme/colors'
+import { freezingPoint } from '../../../../models/world/climate/weather'
+import { view__context } from '../../../context'
+import { cssColors } from '../../../theme/colors'
 import { SectionList } from '../../common/text/SectionList'
 import { StyledText } from '../../common/text/StyledText'
 import { ClimateView } from './Climate'
 
-const weather_icon_map = {
+const weatherIconMap = {
   cloudy: WeatherCloudy,
   fog: WeatherFog,
   lightning: WeatherLightning,
@@ -46,7 +46,7 @@ const weather_icon_map = {
   windy: WeatherWindy
 }
 
-const moon_icon_map = {
+const moonIconMap = {
   new: MoonNew,
   'waxing-crescent': MoonWaningCrescent,
   'first-quarter': MoonFirstQuarter,
@@ -59,7 +59,7 @@ const moon_icon_map = {
 
 const classes = {
   icon: css`
-    color: ${css_colors.primary};
+    color: ${cssColors.primary};
     font-size: 50px !important;
   `
 }
@@ -68,17 +68,17 @@ export function WeatherView() {
   const { state } = view__context()
   const location = window.world.locations[state.codex.location]
   const { conditions, visible, icon } = location__conditions(location)
-  const { sun, moon, day, night, rain_chance } = conditions
-  const is_day = visible.sun
-  const current = is_day ? day : night
+  const { sun, moon, day, night, rainChance } = conditions
+  const isDay = visible.sun
+  const current = isDay ? day : night
   const { heat, wind } = current
-  const sunrise = format_hours(sun.rise)
-  const sunset = format_hours(sun.set)
-  const moonrise = format_hours(moon.rise)
-  const moonset = format_hours(moon.set)
-  const precipitation = heat.degrees <= freezing_point ? 'snow' : 'rain'
-  const WeatherIcon = weather_icon_map[icon]
-  const MoonIcon = moon_icon_map[moon.icon]
+  const sunrise = formatHours(sun.rise)
+  const sunset = formatHours(sun.set)
+  const moonrise = formatHours(moon.rise)
+  const moonset = formatHours(moon.set)
+  const precipitation = heat.degrees <= freezingPoint ? 'snow' : 'rain'
+  const WeatherIcon = weatherIconMap[icon]
+  const MoonIcon = moonIconMap[moon.icon]
   return (
     <Grid container alignContent='center' justifyContent='center'>
       <Grid item xs={2}>
@@ -91,10 +91,10 @@ export function WeatherView() {
               label: 'Conditions',
               content: (
                 <StyledText
-                  text={`${decorate_text({
+                  text={`${decorateText({
                     label: current.conditions,
                     tooltip: `${formatters.percent({
-                      value: rain_chance
+                      value: rainChance
                     })} chance of ${precipitation}`
                   })}`}
                 ></StyledText>
@@ -104,7 +104,7 @@ export function WeatherView() {
               label: 'Temperature',
               content: (
                 <StyledText
-                  text={decorate_text({
+                  text={decorateText({
                     label: heat.desc,
                     tooltip: `${heat.degrees.toFixed(0)}°F`
                   })}
@@ -115,7 +115,7 @@ export function WeatherView() {
               label: 'Wind Speed',
               content: (
                 <StyledText
-                  text={decorate_text({
+                  text={decorateText({
                     label: wind.desc,
                     tooltip: `${wind.speed.toFixed(0)} mph`
                   })}
@@ -134,7 +134,7 @@ export function WeatherView() {
               content: (
                 <Box
                   component='span'
-                  sx={{ color: visible.sun ? css_colors.black : css_colors.subtitle }}
+                  sx={{ color: visible.sun ? cssColors.black : cssColors.subtitle }}
                 >{`${sunrise} - ${sunset}`}</Box>
               )
             },
@@ -143,7 +143,7 @@ export function WeatherView() {
               content: (
                 <Box
                   component='span'
-                  sx={{ color: visible.moon ? css_colors.black : css_colors.subtitle }}
+                  sx={{ color: visible.moon ? cssColors.black : cssColors.subtitle }}
                 >{`${moonrise} - ${moonset}`}</Box>
               )
             }

@@ -1,15 +1,15 @@
 import { item__key } from '../../../items'
-import { item__is_armor } from '../../../items/armor'
+import { item__isArmor } from '../../../items/armor'
 import { armor__types } from '../../../items/armor/types'
 import { Item } from '../../../items/types'
-import { item__is_two_handed_weapon, item__is_weapon, weapons } from '../../../items/weapons'
+import { item__isTwoHandedWeapon, item__isWeapon, weapons } from '../../../items/weapons'
 import { Weapon, weapon__types } from '../../../items/weapons/types'
-import { inventory__filter, npc__add_item, npc__remove_item } from '../../inventory'
+import { inventory__filter, npc__addItem, npc__removeItem } from '../../inventory'
 import { Actor } from '../types'
-import { Equipable, equipable_slot, Equipment } from './types'
+import { Equipable, EquipableSlot, Equipment } from './types'
 
 const equipables: string[] = [...armor__types, ...weapon__types]
-export const item__is_equipable = (item: Item): item is Equipable => {
+export const item__isEquipable = (item: Item): item is Equipable => {
   return equipables.includes(item.tag)
 }
 
@@ -19,17 +19,17 @@ export const equipment__spawn = (): Equipment => ({
   mainhand: null
 })
 
-export const equipable__slot = (item: Item): equipable_slot => {
-  if (item__is_armor(item)) return 'armor'
-  if (item__is_weapon(item) && weapons[item.tag].handing === 'offhand') return 'offhand'
+export const equipable__slot = (item: Item): EquipableSlot => {
+  if (item__isArmor(item)) return 'armor'
+  if (item__isWeapon(item) && weapons[item.tag].handing === 'offhand') return 'offhand'
   return 'mainhand'
 }
 
-export const actor__unequip_item = (params: { actor: Actor; slot: equipable_slot }) => {
+export const actor__unequipItem = (params: { actor: Actor; slot: EquipableSlot }) => {
   const { actor, slot } = params
   const { equipment } = actor
   if (equipment[slot]) {
-    npc__add_item({ npc: actor, item: equipment[slot] })
+    npc__addItem({ npc: actor, item: equipment[slot] })
     equipment[slot] = null
     actor.equipment = { ...equipment }
   }
@@ -39,10 +39,10 @@ interface EquipItemParams<T extends Equipable> {
   actor: Actor
   item: T
   force?: boolean
-  slot?: equipable_slot
+  slot?: EquipableSlot
 }
 
-export const equip_item = ({
+export const item__equip = ({
   actor,
   item,
   force,
@@ -50,45 +50,45 @@ export const equip_item = ({
 }: EquipItemParams<Equipable>) => {
   const { equipment } = actor
   if (!equipment[slot] || item.tier > equipment[slot].tier || force) {
-    npc__remove_item({ npc: actor, key: item__key(item), quantity: 1 })
-    actor__unequip_item({ actor, slot })
+    npc__removeItem({ npc: actor, key: item__key(item), quantity: 1 })
+    actor__unequipItem({ actor, slot })
     equipment[slot] = item
     actor.equipment = { ...equipment }
   }
 }
 
-const equip_weapon = ({ actor, item, force }: EquipItemParams<Weapon>) => {
+const equipWeapon = ({ actor, item, force }: EquipItemParams<Weapon>) => {
   const { handing } = weapons[item.tag]
   const mainhand = actor.equipment.mainhand
-  const twohanded = item__is_two_handed_weapon(mainhand)
+  const twohanded = item__isTwoHandedWeapon(mainhand)
   let slot = equipable__slot(item)
   // attempt to dual wield one handed weapons if possible
   if (handing === 'one-handed') {
     slot = !twohanded && mainhand.tier >= item.tier ? 'offhand' : 'mainhand'
   }
-  equip_item({ actor, item, force, slot })
+  item__equip({ actor, item, force, slot })
   // unequip offhand if equipping a two-handed weapon
-  if (handing === 'two-handed') actor__unequip_item({ actor, slot: 'offhand' })
+  if (handing === 'two-handed') actor__unequipItem({ actor, slot: 'offhand' })
   // unequip mainhand if equipping an offhand and holding a two-handed weapon
-  else if (slot === 'offhand' && twohanded) actor__unequip_item({ actor, slot: 'mainhand' })
+  else if (slot === 'offhand' && twohanded) actor__unequipItem({ actor, slot: 'mainhand' })
 }
 
-export const actor__equip_item = ({ item, actor, force }: EquipItemParams<Equipable>) => {
-  if (item__is_weapon(item)) equip_weapon({ item, actor, force })
-  else equip_item({ item, actor, force })
+export const actor__equipItem = ({ item, actor, force }: EquipItemParams<Equipable>) => {
+  if (item__isWeapon(item)) equipWeapon({ item, actor, force })
+  else item__equip({ item, actor, force })
 }
 
-const tier_compare = (a: Equipable, b: Equipable) => b.tier - a.tier
+const tierCompare = (a: Equipable, b: Equipable) => b.tier - a.tier
 
-export const actor__equip_best = (actor: Actor) => {
+export const actor__equipBest = (actor: Actor) => {
   const armor = inventory__filter(actor.inventory, 'armor') as Equipable[]
-  armor.sort(tier_compare).forEach(item => actor__equip_item({ actor, item }))
+  armor.sort(tierCompare).forEach(item => actor__equipItem({ actor, item }))
   const weapons = inventory__filter(actor.inventory, 'weapons') as Equipable[]
-  weapons.sort(tier_compare).forEach(item => actor__equip_item({ actor, item }))
+  weapons.sort(tierCompare).forEach(item => actor__equipItem({ actor, item }))
 }
 
-export const actor__unequip_all = (actor: Actor) => {
+export const actor__unequipAll = (actor: Actor) => {
   Object.values(actor.equipment)
     .filter(item => item)
-    .forEach(item => actor__unequip_item({ actor, slot: equipable__slot(item) }))
+    .forEach(item => actor__unequipItem({ actor, slot: equipable__slot(item) }))
 }

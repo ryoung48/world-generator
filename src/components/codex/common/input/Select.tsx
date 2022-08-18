@@ -3,17 +3,17 @@ import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from '@mui/
 export function StyledSelect(props: {
   items: { label: string; value: string | number }[]
   selected: string | number
-  set_selected: (_value: string) => void
+  setSelected: (_value: string) => void
   label: string
   hint?: string
 }) {
-  const { items, selected, set_selected, label, hint } = props
+  const { items, selected, setSelected, label, hint } = props
   return (
     <FormControl variant='standard' fullWidth>
       <InputLabel>{label}</InputLabel>
       <Select
         value={selected}
-        onChange={event => set_selected(event.target.value.toString())}
+        onChange={event => setSelected(event.target.value.toString())}
         label={label}
       >
         {items.map((item, i) => (

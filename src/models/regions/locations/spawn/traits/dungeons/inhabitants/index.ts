@@ -1,29 +1,29 @@
-import { recent_battle_window } from '../../../../../../history/events/war/battles'
+import { recentBattleWindow } from '../../../../../../history/events/war/battles'
 import { location__raiders } from '../../../..'
 import { Loc } from '../../../../types'
 import { LocationTrait } from '../../types'
 import { dungeon__inhabitant, dungeon__inhabitants } from './types'
 
 const inhabitants = new Set<string>(dungeon__inhabitants)
-const inhabitant_spawn = (weight: number) => (params: { entity: Loc }) => {
-  const curr_inhabitants = params.entity.traits.reduce((sum, { tag }) => {
+const inhabitantSpawn = (weight: number) => (params: { entity: Loc }) => {
+  const currInhabitants = params.entity.traits.reduce((sum, { tag }) => {
     return sum + (inhabitants.has(tag) ? 1 : 0)
   }, 0)
-  return curr_inhabitants > 1 ? 0 : curr_inhabitants > 0 ? weight * 0.5 : weight
+  return currInhabitants > 1 ? 0 : currInhabitants > 0 ? weight * 0.5 : weight
 }
 
-const lesser_intelligence: LocationTrait['tag'][] = ['beasts', 'primordials']
-export const dungeon__requires_inhabitants =
+const lesserIntelligence: LocationTrait['tag'][] = ['beasts', 'primordials']
+export const dungeon__requiresInhabitants =
   (params: { weight: number; intelligent?: boolean }) => (args: { entity: Loc }) => {
     const { weight, intelligent } = params
-    const has_inhabitants = args.entity.traits.some(({ tag }) => {
-      const required_intellect = !intelligent || !lesser_intelligence.includes(tag)
-      return required_intellect && inhabitants.has(tag)
+    const hasInhabitants = args.entity.traits.some(({ tag }) => {
+      const requiredIntellect = !intelligent || !lesserIntelligence.includes(tag)
+      return requiredIntellect && inhabitants.has(tag)
     })
-    return has_inhabitants ? weight : 0
+    return hasInhabitants ? weight : 0
   }
 
-export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTrait> = {
+export const dungeon__inhabitantTraits: Record<dungeon__inhabitant, LocationTrait> = {
   'exiled noble': {
     tag: 'exiled noble',
     text: () => {
@@ -32,7 +32,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         `An exiled noble is searching at this site for something that might restore them to power. Elite mercenaries accompany the noble on this expedition.`
       ])
     },
-    spawn: inhabitant_spawn(0.5)
+    spawn: inhabitantSpawn(0.5)
   },
   aberrations: {
     tag: 'aberrations',
@@ -49,7 +49,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         swarm ? 'these creatures' : 'this creature'
       } extremely aggressive and a constant danger to nearby communities.`
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   automatons: {
     tag: 'automatons',
@@ -57,7 +57,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
       return `This site is fiercely guarded by enchanted constructs.`
     },
     spawn: ({ entity: loc }) =>
-      loc.type === 'ruins' || loc.type === 'laboratory' ? inhabitant_spawn(1)({ entity: loc }) : 0
+      loc.type === 'ruins' || loc.type === 'laboratory' ? inhabitantSpawn(1)({ entity: loc }) : 0
   },
   bandits: {
     tag: 'bandits',
@@ -67,7 +67,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         `Bandits are present at this site searching for valuables.`
       ])
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   beasts: {
     tag: 'beasts',
@@ -81,7 +81,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'territorial'
       ])} and should be avoided if possible.`
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   cultists: {
     tag: 'cultists',
@@ -92,7 +92,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         `A dark cult is searching for something at this site.`
       ])
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   deserters: {
     tag: 'deserters',
@@ -100,9 +100,9 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
       return 'Deserters from a recent conflict are camped at this site, causing problems for nearby communities.'
     },
     spawn: ({ entity: loc }) => {
-      const { last_invasion } = window.world.provinces[loc.province].memory
-      return last_invasion.time > window.world.date - recent_battle_window
-        ? 5 * inhabitant_spawn(1)({ entity: loc })
+      const { lastInvasion } = window.world.provinces[loc.province].memory
+      return lastInvasion.time > window.world.date - recentBattleWindow
+        ? 5 * inhabitantSpawn(1)({ entity: loc })
         : 0
     }
   },
@@ -111,7 +111,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
     text: () => {
       return 'Some great atrocity occurred at this site. The wraiths of those involved on both sides are trapped restlessly searching for resolution and often react violently towards any intruder.'
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   hivemind: {
     tag: 'hivemind',
@@ -122,7 +122,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'aberration'
       ])}). Conflict with these creatures is apt to be very dangerous, as they're capable of coordination at a level impossible to others, yet their single mind makes them more vulnerable to a single point of failure.`
     },
-    spawn: inhabitant_spawn(0.5)
+    spawn: inhabitantSpawn(0.5)
   },
   occultists: {
     tag: 'occultists',
@@ -134,7 +134,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'warlocks'
       ])} perform dark ${window.dice.choice(['rituals', 'experiments'])} at this site.`
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   primordials: {
     tag: 'primordials',
@@ -155,7 +155,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'territorial'
       ])} and should be avoided if possible.`
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   raiders: {
     tag: 'raiders',
@@ -166,8 +166,8 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
       ])
     },
     spawn: ({ entity: loc }) => {
-      const raiders_present = location__raiders(loc).length > 0 ? 3 : 0
-      return inhabitant_spawn(1)({ entity: loc }) * raiders_present
+      const raidersPresent = location__raiders(loc).length > 0 ? 3 : 0
+      return inhabitantSpawn(1)({ entity: loc }) * raidersPresent
     }
   },
   sentient: {
@@ -178,7 +178,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'a vast microcosm (primordial)'
       ])}. Physical damage to the site usually brings some hostile response, however muted by age and disrepair, and the structure itself may be conscious enough to strike bargains with inhabitants.`
     },
-    spawn: inhabitant_spawn(0.5)
+    spawn: inhabitantSpawn(0.5)
   },
   spirits: {
     tag: 'spirits',
@@ -191,7 +191,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'an arcane summoning ritual'
       ])}.`
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   titan: {
     tag: 'titan',
@@ -213,7 +213,7 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         'wandering aimlessly long after their dark masters have perished'
       ])}.`
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   },
   vampiric: {
     tag: 'vampiric',
@@ -223,6 +223,6 @@ export const dungeon__inhabitant_traits: Record<dungeon__inhabitant, LocationTra
         `Vampires are present at this site searching for valuables.`
       ])
     },
-    spawn: inhabitant_spawn(1)
+    spawn: inhabitantSpawn(1)
   }
 }

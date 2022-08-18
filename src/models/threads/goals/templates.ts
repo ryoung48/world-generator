@@ -105,7 +105,7 @@ export const goal__templates: Record<Goal['tag'], Goal> = {
     tag: 'meeting',
     text: () =>
       `Meet person at location and get ${window.dice.choice('information|item'.split('|'))}.`,
-    non_empty: true,
+    nonEmpty: true,
     weight: 2
   },
   discord: {
@@ -146,7 +146,7 @@ export const goal__templates: Record<Goal['tag'], Goal> = {
       `The group needs to escape from a ${window.dice.choice(
         'dangerous|misunderstood'.split('|')
       )} situation.`,
-    non_empty: true,
+    nonEmpty: true,
     weight: 1
   },
   survive: {
@@ -155,7 +155,7 @@ export const goal__templates: Record<Goal['tag'], Goal> = {
       `The group needs to escape from a ${window.dice.choice(
         'dangerous|misunderstood'.split('|')
       )} situation.`,
-    non_empty: true,
+    nonEmpty: true,
     weight: 1
   },
   prevent: {

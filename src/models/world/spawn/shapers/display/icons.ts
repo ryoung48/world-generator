@@ -1,11 +1,11 @@
 import { curveLinear, line, scaleLinear } from 'd3'
 
-import { terrain_icon } from '../../../../../components/maps/icons/terrain/types'
+import { TerrainIcon } from '../../../../../components/maps/icons/terrain/types'
 import { world__gps } from '../../..'
-import { cell__has_roads, cell__is_hub, cell__neighbors } from '../../../cells'
+import { cell__hasRoads, cell__isHub, cell__neighbors } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'
-import { glacier_latitude_cutoff } from '../../../climate/terrain'
-import { climate_lookup, climates } from '../../../climate/types'
+import { glacierLatitudeCutoff } from '../../../climate/terrain'
+import { climateLookup, climates } from '../../../climate/types'
 import { Shaper } from '..'
 import { Display } from './types'
 
@@ -27,11 +27,9 @@ export const display__icons = () => {
   // no icons on rivers
   // 10% chance for no icon placement
   let valid = (m: ExteriorCell) =>
-    window.dice.random > 0.5 &&
-    !cell__has_roads(m) &&
-    cell__neighbors(m).every(n => !cell__is_hub(n))
+    window.dice.random > 0.5 && !cell__hasRoads(m) && cell__neighbors(m).every(n => !cell__isHub(n))
   // mountains
-  const mountains = window.world.cells.filter(p => p.is_mountains)
+  const mountains = window.world.cells.filter(p => p.isMountains)
   const volcanoes: Display['icons'][number]['type'][] = ['volcano_0', 'volcano_1', 'volcano_2']
   mountains
     .filter(m => valid(m))
@@ -115,16 +113,16 @@ export const display__icons = () => {
       }
     })
   valid = m =>
-    !m.is_coast &&
-    !cell__has_roads(m) &&
+    !m.isCoast &&
+    !cell__hasRoads(m) &&
     !used.has(m.idx) &&
     window.dice.random > 0.8 &&
     m.n.every(i => !used.has(i))
   // grass
   const grasslands = [climates.SAVANNA, climates.HOT_STEPPE, climates.COLD_STEPPE]
-  const biomes = Shaper.land.filter(p => !p.is_mountains && !p.is_water && !p.is_coast)
+  const biomes = Shaper.land.filter(p => !p.isMountains && !p.isWater && !p.isCoast)
   const grass = biomes.filter(p => grasslands.includes(window.world.regions[p.region].climate))
-  const grass_icons: Display['icons'][number]['type'][] = [
+  const grassIcons: Display['icons'][number]['type'][] = [
     'grass_5',
     'grass_6',
     'grass_7',
@@ -138,41 +136,41 @@ export const display__icons = () => {
         y: m.y,
         type: window.dice.choice(
           window.dice.random > 0.8
-            ? climate_lookup[window.world.regions[m.region].climate].zone === 'Tropical'
+            ? climateLookup[window.world.regions[m.region].climate].zone === 'Tropical'
               ? ['savanna_1', 'savanna_2', 'savanna_3', 'savanna_4']
-              : climate_lookup[window.world.regions[m.region].climate].zone === 'Temperate'
+              : climateLookup[window.world.regions[m.region].climate].zone === 'Temperate'
               ? ['grass_1', 'grass_2', 'grass_3', 'grass_4']
-              : grass_icons
-            : grass_icons
+              : grassIcons
+            : grassIcons
         ),
         cell: m.idx
       })
     }
   })
   // forest
-  const swamp_icons: terrain_icon[] = ['swamp_1', 'swamp_2', 'swamp_3', 'swamp_4']
-  const is_lake = (cell: ExteriorCell) => cell.is_water && !cell.ocean
-  const near_lake = (cell: ExteriorCell) =>
-    cell__neighbors(cell).some(n => is_lake(n) || cell__neighbors(n).some(is_lake))
+  const swampIcons: TerrainIcon[] = ['swamp_1', 'swamp_2', 'swamp_3', 'swamp_4']
+  const isLake = (cell: ExteriorCell) => cell.isWater && !cell.ocean
+  const nearLake = (cell: ExteriorCell) =>
+    cell__neighbors(cell).some(n => isLake(n) || cell__neighbors(n).some(isLake))
   const deciduous = [
     climates.MEDITERRANEAN,
     climates.SUBTROPICAL,
     climates.TEMPERATE_MONSOON,
     climates.CONTINENTAL
   ]
-  const forest_styles: Record<number, number> = {}
+  const forestStyles: Record<number, number> = {}
   const forest = biomes.filter(p => deciduous.includes(window.world.regions[p.region].climate))
   forest.forEach(m => {
     if (valid(m)) {
       used.add(m.idx)
-      if (!forest_styles[m.region]) forest_styles[m.region] = window.dice.choice([1, 2])
+      if (!forestStyles[m.region]) forestStyles[m.region] = window.dice.choice([1, 2])
       display.icons.push({
         x: m.x,
         y: m.y,
         type: window.dice.choice(
-          near_lake(m)
-            ? swamp_icons
-            : forest_styles[m.region] === 1
+          nearLake(m)
+            ? swampIcons
+            : forestStyles[m.region] === 1
             ? ['temperate_1', 'temperate_2', 'temperate_3']
             : [
                 'temperate_4',
@@ -189,20 +187,20 @@ export const display__icons = () => {
   })
   // boreal
   const coniferous = [climates.SUBARCTIC, climates.OCEANIC, climates.MANCHURIAN, climates.SIBERIAN]
-  const cold_swamp_icons: terrain_icon[] = ['swamp_5', 'swamp_6', 'swamp_7', 'swamp_8']
-  const boreal_styles: Record<number, number> = {}
+  const coldSwampIcons: TerrainIcon[] = ['swamp_5', 'swamp_6', 'swamp_7', 'swamp_8']
+  const borealStyles: Record<number, number> = {}
   const boreal = biomes.filter(p => coniferous.includes(window.world.regions[p.region].climate))
   boreal.forEach(m => {
     if (valid(m)) {
       used.add(m.idx)
-      if (!boreal_styles[m.region]) boreal_styles[m.region] = window.dice.choice([1, 2])
+      if (!borealStyles[m.region]) borealStyles[m.region] = window.dice.choice([1, 2])
       display.icons.push({
         x: m.x,
         y: m.y,
         type: window.dice.choice(
-          near_lake(m)
-            ? cold_swamp_icons
-            : boreal_styles[m.region] === 1
+          nearLake(m)
+            ? coldSwampIcons
+            : borealStyles[m.region] === 1
             ? ['boreal_1', 'boreal_2', 'boreal_3', 'boreal_4']
             : ['boreal_5', 'boreal_6', 'boreal_7', 'boreal_8']
         ),
@@ -212,19 +210,19 @@ export const display__icons = () => {
   })
   // tropical
   const jungles = [climates.EQUATORIAL, climates.TROPICAL_MONSOON]
-  const tropical_styles: Record<number, number> = {}
+  const tropicalStyles: Record<number, number> = {}
   const tropical = biomes.filter(p => jungles.includes(window.world.regions[p.region].climate))
   tropical.forEach(m => {
     if (valid(m)) {
       used.add(m.idx)
-      if (!tropical_styles[m.region]) tropical_styles[m.region] = window.dice.choice([1, 2])
+      if (!tropicalStyles[m.region]) tropicalStyles[m.region] = window.dice.choice([1, 2])
       display.icons.push({
         x: m.x,
         y: m.y,
-        type: window.dice.choice<terrain_icon>(
-          near_lake(m)
-            ? swamp_icons
-            : tropical_styles[m.region] === 1
+        type: window.dice.choice<TerrainIcon>(
+          nearLake(m)
+            ? swampIcons
+            : tropicalStyles[m.region] === 1
             ? ['tropical_1', 'tropical_2', 'tropical_3', 'tropical_4']
             : ['tropical_5', 'tropical_6', 'tropical_7', 'tropical_8']
         ),
@@ -232,11 +230,11 @@ export const display__icons = () => {
       })
     }
   })
-  valid = m => !cell__has_roads(m) && window.dice.random > 0.8 && m.n.every(i => !used.has(i))
+  valid = m => !cell__hasRoads(m) && window.dice.random > 0.8 && m.n.every(i => !used.has(i))
   // desert
   const deserts = [climates.HOT_DESERT, climates.COLD_DESERT]
   const desert = biomes.filter(p => deserts.includes(window.world.regions[p.region].climate))
-  const desert_icons: terrain_icon[] = [
+  const desertIcons: TerrainIcon[] = [
     'desert_1',
     'desert_2',
     'desert_3',
@@ -252,27 +250,27 @@ export const display__icons = () => {
       display.icons.push({
         x: m.x,
         y: m.y,
-        type: window.dice.choice(desert_icons),
+        type: window.dice.choice(desertIcons),
         cell: m.idx
       })
     }
   })
   // polar
-  const polar_climates = [climates.POLAR]
-  const polar = biomes.filter(p => polar_climates.includes(window.world.regions[p.region].climate))
+  const polarClimates = [climates.POLAR]
+  const polar = biomes.filter(p => polarClimates.includes(window.world.regions[p.region].climate))
   polar.forEach(m => {
     if (valid(m)) {
       const { latitude } = world__gps(m)
       const lat = Math.abs(latitude)
-      const glacier = lat > glacier_latitude_cutoff
+      const glacier = lat > glacierLatitudeCutoff
       used.add(m.idx)
       display.icons.push({
         x: m.x,
         y: m.y,
         type: window.dice.choice(
-          window.dice.weighted_choice([
-            { w: 1, v: desert_icons },
-            { w: glacier ? 0 : 0.3, v: grass_icons }
+          window.dice.weightedChoice([
+            { w: 1, v: desertIcons },
+            { w: glacier ? 0 : 0.3, v: grassIcons }
           ])
         ),
         cell: m.idx
@@ -280,13 +278,13 @@ export const display__icons = () => {
     }
   })
   // ships
-  const sea_routes = window.dice.shuffle(Object.values(window.world.routes.sea))
-  const valid_sea_icon = (p: ExteriorCell) =>
+  const seaRoutes = window.dice.shuffle(Object.values(window.world.routes.sea))
+  const validSeaIcon = (p: ExteriorCell) =>
     p.ocean &&
     !used.has(p.idx) &&
-    p.n.every(i => !used.has(i) && window.world.cells[i].is_water && !window.world.cells[i].shallow)
-  sea_routes.slice(0, Math.floor(sea_routes.length * 0.15)).forEach(route => {
-    const cells = route.path.map(p => window.world.cells[p]).filter(valid_sea_icon)
+    p.n.every(i => !used.has(i) && window.world.cells[i].isWater && !window.world.cells[i].shallow)
+  seaRoutes.slice(0, Math.floor(seaRoutes.length * 0.15)).forEach(route => {
+    const cells = route.path.map(p => window.world.cells[p]).filter(validSeaIcon)
     if (cells.length > 0) {
       const cell = window.dice.choice(cells)
       used.add(cell.idx)
@@ -315,7 +313,7 @@ export const display__icons = () => {
     }
   })
   // icebergs
-  const polar_coast = Shaper.land
+  const polarCoast = Shaper.land
     .filter(cell => cell.beach && window.world.regions[cell.region].climate === climates.POLAR)
     .map(cell =>
       cell__neighbors(cell)
@@ -331,20 +329,20 @@ export const display__icons = () => {
             n.ocean &&
             window.world.regions[n.region].climate === climates.POLAR &&
             !n.shallow &&
-            !cell__has_roads(n) &&
+            !cell__hasRoads(n) &&
             !used.has(n.idx) &&
             n.n.every(
               i =>
                 !used.has(i) &&
-                !cell__has_roads(window.world.cells[i]) &&
+                !cell__hasRoads(window.world.cells[i]) &&
                 !window.world.cells[i].shallow
             )
         )
     )
     .flat()
-  const valid_ice_icon = (p: ExteriorCell) => !used.has(p.idx) && p.n.every(i => !used.has(i))
-  window.dice.shuffle(polar_coast.slice(0, Math.floor(polar_coast.length * 0.25))).forEach(m => {
-    if (valid_ice_icon(m)) {
+  const validIceIcon = (p: ExteriorCell) => !used.has(p.idx) && p.n.every(i => !used.has(i))
+  window.dice.shuffle(polarCoast.slice(0, Math.floor(polarCoast.length * 0.25))).forEach(m => {
+    if (validIceIcon(m)) {
       used.add(m.idx)
       window.world.display.icebergs.push({
         idx: m.idx,

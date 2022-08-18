@@ -17,7 +17,7 @@ export const personas = [
 
 export type persona = typeof personas[number]
 
-export const actor__persona_roll = (npc: Actor) => {
+export const actor__personaRoll = (npc: Actor) => {
   npc.persona = {
     altruism: window.dice.norm(0.5, 0.15),
     lawful: window.dice.norm(0.5, 0.15),

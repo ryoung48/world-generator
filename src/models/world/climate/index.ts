@@ -1,7 +1,7 @@
 import { Region } from '../../regions/types'
 import { climates } from './types'
 
-export const classify_climate = (params: {
+export const classifyClimate = (params: {
   region: Region
   location: 'inland' | 'west_coast' | 'east_coast'
   latitude: number

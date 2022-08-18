@@ -1,27 +1,27 @@
-import { artisan_skills, laborer_skills } from '../../skills/categories'
-import { gender_based_title } from '../titles'
+import { artisanSkills, laborerSkills } from '../../skills/categories'
+import { genderBasedTitle } from '../titles'
 import { Profession } from '../types'
-import { craftsman_professions } from './types'
+import { CraftsmanProfessions } from './types'
 
-const smithing_occurrence: Profession['occurrence'] = ({ context }) =>
+const smithingOccurrence: Profession['occurrence'] = ({ context }) =>
   context.smiths ? 1.5 : context.urban ? 1 : !context.tribal ? 0.1 : 0
-const gold_occurrence: Profession['occurrence'] = ({ context }) =>
+const goldOccurrence: Profession['occurrence'] = ({ context }) =>
   context.gold ? 1.5 : context.urban ? 1 : !context.tribal ? 0.1 : 0
-const jewels_occurrence: Profession['occurrence'] = ({ context }) =>
+const jewelsOccurrence: Profession['occurrence'] = ({ context }) =>
   context.jewels ? 1.5 : context.urban ? 1 : !context.tribal ? 0.1 : 0
-const glass_occurrence: Profession['occurrence'] = ({ context }) =>
+const glassOccurrence: Profession['occurrence'] = ({ context }) =>
   context.glass ? 1.5 : context.urban ? 1 : !context.tribal ? 0.1 : 0
-const mechanics_occurrence: Profession['occurrence'] = ({ context }) =>
+const mechanicsOccurrence: Profession['occurrence'] = ({ context }) =>
   context.mechanics ? 1.5 : !context.tribal && context.urban ? 1 : 0
-const herbs_occurrence: Profession['occurrence'] = ({ context }) => (context.herbs ? 1 : 0.5)
-const woodwork_occurrence: Profession['occurrence'] = ({ context }) =>
+const herbsOccurrence: Profession['occurrence'] = ({ context }) => (context.herbs ? 1 : 0.5)
+const woodworkOccurrence: Profession['occurrence'] = ({ context }) =>
   context.woodwork ? 1.5 : context.urban ? 1 : 0.1
-const leather_occurrence: Profession['occurrence'] = ({ context }) =>
+const leatherOccurrence: Profession['occurrence'] = ({ context }) =>
   context.leather || context.fur ? 1.5 : context.urban ? 1 : 0.1
-const textile_occurrence: Profession['occurrence'] = ({ context }) =>
+const textileOccurrence: Profession['occurrence'] = ({ context }) =>
   context.textiles ? 1.5 : context.urban ? 1 : 0.1
 
-export const craftsman: Record<craftsman_professions, Profession> = {
+export const craftsman: Record<CraftsmanProfessions, Profession> = {
   alchemist: {
     category: 'artisans',
     key: 'alchemist',
@@ -30,7 +30,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['alchemy'],
       secondary: ['nature', 'survival', 'medicine'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'alchemical'
@@ -43,7 +43,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['architecture'],
       secondary: ['masonry', 'carpentry'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'construction'
@@ -51,11 +51,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   armorer: {
     category: 'artisans',
     key: 'armorer',
-    occurrence: params => smithing_occurrence(params),
+    occurrence: params => smithingOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['blacksmithing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'blacksmithing'
@@ -63,11 +63,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   artificer: {
     category: 'artisans',
     key: 'artificer',
-    occurrence: params => smithing_occurrence(params),
+    occurrence: params => smithingOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['arcana'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'blacksmithing'
@@ -78,7 +78,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     occurrence: ({ context }) => (context.grain ? 1 : 0.5),
     skills: {
       primary: ['baking'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'produce'
@@ -90,17 +90,17 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['basketry'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'modest'
   },
   blacksmith: {
     category: 'artisans',
     key: 'blacksmith',
-    occurrence: params => smithing_occurrence(params),
+    occurrence: params => smithingOccurrence(params),
     skills: {
       primary: ['blacksmithing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'blacksmithing'
@@ -112,7 +112,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['brewing'],
       secondary: ['cultivation'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'produce'
@@ -124,7 +124,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['cooking'],
       secondary: ['animal handling'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'produce'
@@ -135,7 +135,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     occurrence: ({ context }) => (context.remote ? 0 : context.urban ? 1 : 0.1),
     skills: {
       primary: ['carpentry'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'woodworking'
@@ -143,11 +143,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   clockmaker: {
     category: 'artisans',
     key: 'clockmaker',
-    occurrence: params => mechanics_occurrence(params),
+    occurrence: params => mechanicsOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['mechanics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'mechanics'
@@ -158,7 +158,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     occurrence: ({ context }) => (context.urban ? 1 : 0.2),
     skills: {
       primary: ['cobbling'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'leatherworking'
@@ -170,7 +170,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['distillation'],
       secondary: ['cultivation'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'produce'
@@ -178,43 +178,43 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   fletcher: {
     category: 'artisans',
     key: 'fletcher',
-    occurrence: params => woodwork_occurrence(params),
+    occurrence: params => woodworkOccurrence(params),
     skills: {
       primary: ['fletching'],
       secondary: ['survival'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable'
   },
   florist: {
     category: 'artisans',
     key: 'florist',
-    occurrence: params => herbs_occurrence(params),
+    occurrence: params => herbsOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['cultivation'],
       secondary: ['nature', 'survival', 'medicine'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable'
   },
   glassblower: {
     category: 'artisans',
     key: 'glassblower',
-    occurrence: params => glass_occurrence(params),
+    occurrence: params => glassOccurrence(params),
     skills: {
       primary: ['glazing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable'
   },
   goldsmith: {
     category: 'artisans',
     key: 'goldsmith',
-    occurrence: params => gold_occurrence(params),
+    occurrence: params => goldOccurrence(params),
     skills: {
       primary: ['whitesmithing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'whitesmithing'
@@ -222,12 +222,12 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   gunsmith: {
     category: 'artisans',
     key: 'gunsmith',
-    occurrence: params => mechanics_occurrence(params),
+    occurrence: params => mechanicsOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['blacksmithing'],
       secondary: ['mechanics'],
-      tertiary: [...artisan_skills, 'mechanics']
+      tertiary: [...artisanSkills, 'mechanics']
     },
     lifestyle: 'comfortable',
     subcategory: 'mechanics'
@@ -235,11 +235,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   herbalist: {
     category: 'artisans',
     key: 'herbalist',
-    occurrence: params => herbs_occurrence(params),
+    occurrence: params => herbsOccurrence(params),
     skills: {
       primary: ['medicine'],
       secondary: ['survival', 'alchemy', 'nature'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'alchemical'
@@ -247,20 +247,20 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   jeweler: {
     category: 'artisans',
     key: 'jeweler',
-    occurrence: params => jewels_occurrence(params),
+    occurrence: params => jewelsOccurrence(params),
     skills: {
       primary: ['jeweling'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable'
   },
   leatherworker: {
     category: 'artisans',
     key: 'leatherworker',
-    occurrence: params => leather_occurrence(params),
+    occurrence: params => leatherOccurrence(params),
     skills: {
       primary: ['leatherworking'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'leatherworking'
@@ -272,7 +272,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['mechanics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'mechanics'
@@ -284,7 +284,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['alchemy'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'alchemical'
@@ -292,11 +292,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   rugmaker: {
     category: 'artisans',
     key: 'rugmaker',
-    occurrence: params => textile_occurrence(params),
+    occurrence: params => textileOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['weaving'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'textiles'
@@ -304,11 +304,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   sailmaker: {
     category: 'artisans',
     key: 'sailmaker',
-    occurrence: params => (params.context.coastal ? textile_occurrence(params) : 0),
+    occurrence: params => (params.context.coastal ? textileOccurrence(params) : 0),
     prevalence: 'uncommon',
     skills: {
       primary: ['weaving'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'textiles'
@@ -320,7 +320,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['carpentry'],
       secondary: ['seafaring'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'woodworking'
@@ -328,10 +328,10 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   silversmith: {
     category: 'artisans',
     key: 'silversmith',
-    occurrence: params => gold_occurrence(params),
+    occurrence: params => goldOccurrence(params),
     skills: {
       primary: ['whitesmithing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'whitesmithing'
@@ -342,22 +342,22 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     occurrence: ({ context }) => (context.urban ? 1 : 0.1),
     skills: {
       primary: ['medicine'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable'
   },
   tailor: {
     category: 'artisans',
     key: 'tailor',
-    occurrence: params => textile_occurrence(params),
+    occurrence: params => textileOccurrence(params),
     skills: {
       primary: ['tailoring'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'textiles',
     title: ({ actor }) =>
-      gender_based_title({
+      genderBasedTitle({
         male: 'Tailor',
         female: 'Seamstress',
         actor
@@ -369,7 +369,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     occurrence: ({ context }) => (context.herders ? 1.5 : 0.5),
     skills: {
       primary: ['leatherworking'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'leatherworking'
@@ -377,11 +377,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   tinkerer: {
     category: 'artisans',
     key: 'tinkerer',
-    occurrence: params => mechanics_occurrence(params),
+    occurrence: params => mechanicsOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['mechanics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'mechanics'
@@ -394,7 +394,7 @@ export const craftsman: Record<craftsman_professions, Profession> = {
     skills: {
       primary: ['vintner'],
       secondary: ['cultivation'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'produce'
@@ -402,11 +402,11 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   weaponsmith: {
     category: 'artisans',
     key: 'weaponsmith',
-    occurrence: params => smithing_occurrence(params),
+    occurrence: params => smithingOccurrence(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['blacksmithing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'blacksmithing'
@@ -414,10 +414,10 @@ export const craftsman: Record<craftsman_professions, Profession> = {
   weaver: {
     category: 'artisans',
     key: 'weaver',
-    occurrence: params => textile_occurrence(params),
+    occurrence: params => textileOccurrence(params),
     skills: {
       primary: ['weaving'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     lifestyle: 'comfortable',
     subcategory: 'textiles'

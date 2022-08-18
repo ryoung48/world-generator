@@ -1,23 +1,23 @@
-import { decorated_culture } from '../../../../npcs/species/humanoids/cultures'
-import { nation__release_region } from '../../../../regions/diplomacy/claims'
-import { region__formatted_wealth } from '../../../../regions/diplomacy/status'
-import { province__foreign_neighbors } from '../../../../regions/provinces'
+import { culture__decorations } from '../../../../npcs/species/cultures'
+import { nation__releaseRegion } from '../../../../regions/diplomacy/claims'
+import { region__formattedWealth } from '../../../../regions/diplomacy/status'
+import { province__foreignNeighbors } from '../../../../regions/provinces'
 import { Region } from '../../../../regions/types'
-import { decorate_text } from '../../../../utilities/text/decoration'
+import { decorateText } from '../../../../utilities/text/decoration'
 import { Rebellion } from '../types'
 import { RebellionBackground, RebellionBackgroundArgs } from './types'
 
-const fractured_state = (nation: Region) =>
+const fracturedState = (nation: Region) =>
   nation.government.structure === 'confederation' || nation.government.structure === 'autonomous'
 
-const native_leadership = (rebellion: Rebellion) => {
+const nativeLeadership = (rebellion: Rebellion) => {
   const rebels = window.world.regions[rebellion.rebels.idx]
   const { ruling, native } = rebels.culture
   const cultures = [ruling, native]
   return window.dice.choice(cultures)
 }
-const random_leadership = (rebellion: Rebellion) => {
-  const native = native_leadership(rebellion)
+const randomLeadership = (rebellion: Rebellion) => {
+  const native = nativeLeadership(rebellion)
   const nation = window.world.regions[rebellion.loyalists.idx]
   return window.dice.choice([native, nation.culture.ruling])
 }
@@ -27,31 +27,31 @@ const separatists = ({ nation, rebels }: RebellionBackgroundArgs) =>
   nation.provinces
     .map(t => window.world.provinces[t])
     .filter(t => t.region === rebels.idx)
-    .some(province => province__foreign_neighbors(province).length > 0)
+    .some(province => province__foreignNeighbors(province).length > 0)
 
 const separation = (params: { rebellion: Rebellion; culture: number }) => {
   const { rebellion, culture } = params
   const rebels = window.world.regions[rebellion.rebels.idx]
   const nation = window.world.regions[rebellion.loyalists.idx]
   // rebels secede and gain full autonomy when victorious
-  nation__release_region({ nation, subject: rebels })
-  const old_rulers = rebels.culture.ruling
+  nation__releaseRegion({ nation, subject: rebels })
+  const oldRulers = rebels.culture.ruling
   rebels.culture.ruling = culture
   // the amount of wealth the rebels start with as a new nation
-  const rebel_funds = rebels.max_wealth * window.dice.uniform(0.3, 0.6)
-  rebels.wealth = rebel_funds
-  rebellion.result += ` ${decorate_text({
+  const rebelFunds = rebels.maxWealth * window.dice.uniform(0.3, 0.6)
+  rebels.wealth = rebelFunds
+  rebellion.result += ` ${decorateText({
     link: rebels,
-    tooltip: region__formatted_wealth(rebels)
-  })} has seceded from ${decorate_text({
+    tooltip: region__formattedWealth(rebels)
+  })} has seceded from ${decorateText({
     link: nation,
-    tooltip: region__formatted_wealth(nation)
+    tooltip: region__formattedWealth(nation)
   })}.${
-    old_rulers !== rebels.culture.ruling
-      ? ` Culture: ${decorated_culture({
-          culture: window.world.cultures[old_rulers],
+    oldRulers !== rebels.culture.ruling
+      ? ` Culture: ${culture__decorations({
+          culture: window.world.cultures[oldRulers],
           title: true
-        })} → ${decorated_culture({
+        })} → ${culture__decorations({
           culture: window.world.cultures[rebels.culture.ruling],
           title: true
         })}`
@@ -62,7 +62,7 @@ const separation = (params: { rebellion: Rebellion; culture: number }) => {
 const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionBackground> = {
   anarchism: {
     tag: 'anarchism',
-    spawn: ({ nation }) => (fractured_state(nation) || nation.development === 'remote' ? 1 : 0),
+    spawn: ({ nation }) => (fracturedState(nation) || nation.development === 'remote' ? 1 : 0),
     text: ({ nation }) =>
       `Regional ${
         nation.civilized ? 'warlords' : 'chieftains'
@@ -73,7 +73,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
       const nation = window.world.regions[rebellion.loyalists.idx]
       const rebels = window.world.regions[rebellion.rebels.idx]
       if (window.dice.random > 0.5 && separatists({ nation, rebels })) {
-        separation({ rebellion, culture: random_leadership(rebellion) })
+        separation({ rebellion, culture: randomLeadership(rebellion) })
       }
     }
   },
@@ -81,7 +81,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
     tag: 'aristocratic',
     spawn: ({ nation }) => (nation.development === 'remote' ? 0 : 1),
     text: ({ nation }) =>
-      `Aristocrats rebel against the ineffectual ${decorate_text({
+      `Aristocrats rebel against the ineffectual ${decorateText({
         link: nation
       })} regime`,
     goal: ({ rebellion }) => {
@@ -110,20 +110,20 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
       const nation = window.world.regions[rebellion.loyalists.idx]
       const rebels = window.world.regions[rebellion.rebels.idx]
       if (window.dice.random > 0.5 && separatists({ nation, rebels })) {
-        separation({ rebellion, culture: native_leadership(rebellion) })
+        separation({ rebellion, culture: nativeLeadership(rebellion) })
       }
     }
   },
   ideology: {
     tag: 'ideology',
-    spawn: ({ nation }) => (nation.civilized && !fractured_state(nation) ? 0.5 : 0),
+    spawn: ({ nation }) => (nation.civilized && !fracturedState(nation) ? 0.5 : 0),
     text: () => `Revolutionaries seek government reforms`,
     goal: ({ rebellion }) => {
       rebellion.result += ' The revolutionaries take power and the government is reformed.'
       const nation = window.world.regions[rebellion.loyalists.idx]
       const rebels = window.world.regions[rebellion.rebels.idx]
       if (window.dice.random > 0.5 && separatists({ nation, rebels })) {
-        separation({ rebellion, culture: random_leadership(rebellion) })
+        separation({ rebellion, culture: randomLeadership(rebellion) })
       }
     }
   },
@@ -142,7 +142,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
     tag: 'praetorian',
     spawn: params => (separatists(params) ? 1 : 0),
     text: () => `Rogue generals seek to carve out their own state`,
-    goal: params => separation({ ...params, culture: random_leadership(params.rebellion) })
+    goal: params => separation({ ...params, culture: randomLeadership(params.rebellion) })
   },
   schism: {
     tag: 'schism',
@@ -156,10 +156,10 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
     tag: 'separatists',
     spawn: params => (separatists(params) ? 4 : 0),
     text: ({ nation, rebels }) =>
-      `${decorate_text({ link: rebels })} rebels seek freedom from ${decorate_text({
+      `${decorateText({ link: rebels })} rebels seek freedom from ${decorateText({
         link: nation
       })} rule`,
-    goal: params => separation({ ...params, culture: native_leadership(params.rebellion) })
+    goal: params => separation({ ...params, culture: nativeLeadership(params.rebellion) })
   },
   peasants: {
     tag: 'peasants',
@@ -172,7 +172,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
   unification: {
     tag: 'unification',
     spawn: ({ nation, rebels }) =>
-      nation.development === 'remote' || rebels.idx !== nation.idx || !fractured_state(nation)
+      nation.development === 'remote' || rebels.idx !== nation.idx || !fracturedState(nation)
         ? 0
         : 1,
     text: () => `A charismatic leader attempts to unify a fractured state`,
@@ -191,7 +191,7 @@ const backgrounds = Object.values(rebellion__backgrounds)
  * @returns background type + text
  */
 export const rebellion__background = (params: RebellionBackgroundArgs) => {
-  const background = window.dice.weighted_choice(
+  const background = window.dice.weightedChoice(
     backgrounds.map(background => {
       return { v: background.tag, w: background.spawn(params) }
     })
@@ -205,6 +205,6 @@ export const rebellion__background = (params: RebellionBackgroundArgs) => {
   }
 }
 
-export const rebellion__achieve_goals = (rebellion: Rebellion) => {
+export const rebellion__achieveGoals = (rebellion: Rebellion) => {
   rebellion__backgrounds[rebellion.background.type].goal({ rebellion })
 }

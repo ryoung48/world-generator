@@ -1,14 +1,15 @@
-import { range } from '../../../../utilities/math'
-import { actor__relation } from '../..'
-import { profession__social_class } from '../../stats/professions'
-import { Actor } from '../../types'
-import { actor__add_event, actor__events, actor__union_date, find_birth_date } from './'
+import { range } from 'd3'
 
-const actor__plan_children = (actor: Actor) => {
+import { actor__relation } from '../..'
+import { profession__socialClass } from '../../stats/professions'
+import { Actor } from '../../types'
+import { actor__addEvent, actor__events, actor__findBirthDate, actor__unionDate } from './'
+
+const actor__planChildren = (actor: Actor) => {
   const preplanned = actor__events({ actor, type: 'child' }).map(e => e.time)
-  const child_count = Math.max(
+  const childCount = Math.max(
     0,
-    window.dice.weighted_choice([
+    window.dice.weightedChoice([
       { v: 0, w: 0.05 },
       { v: 1, w: 0.25 },
       { v: 2, w: 0.45 },
@@ -16,23 +17,23 @@ const actor__plan_children = (actor: Actor) => {
     ]) - preplanned.length
   )
   const children: number[] = []
-  range(child_count).forEach(() => {
-    const birth_date = find_birth_date({ actor })
-    if (birth_date !== undefined)
-      children.push(actor__add_event({ actor, event: { type: 'child', time: birth_date } }))
+  range(childCount).forEach(() => {
+    const birthDate = actor__findBirthDate({ actor })
+    if (birthDate !== undefined)
+      children.push(actor__addEvent({ actor, event: { type: 'child', time: birthDate } }))
   })
 }
 
-export const actor__plan_history = (actor: Actor) => {
+export const actor__planHistory = (actor: Actor) => {
   if (!actor.history.unbound && !actor.history.planned) {
     actor.history.planned = true
     // plan union
     const children = actor__relation({ actor, type: 'child' })
-    const social_class = profession__social_class(actor.occupation.key)
-    const noble = social_class === 'upper' ? 1 : 0
-    const union_chance = children.length > 0 ? 1 : noble ? 0.95 : 0.9
-    const union_date = actor__union_date({ actor, chance: union_chance })
+    const socialClass = profession__socialClass(actor.occupation.key)
+    const noble = socialClass === 'upper' ? 1 : 0
+    const unionChance = children.length > 0 ? 1 : noble ? 0.95 : 0.9
+    const unionDate = actor__unionDate({ actor, chance: unionChance })
     // plan children
-    if (union_date !== undefined) actor__plan_children(actor)
+    if (unionDate !== undefined) actor__planChildren(actor)
   }
 }

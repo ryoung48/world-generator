@@ -11,39 +11,39 @@ const location__traits: Record<location__tag, LocationTrait> = {
   ...settlement__traits
 }
 
-const dungeon_traits = new Set(Object.keys(dungeon__traits))
-const settlement_traits = new Set(Object.keys(settlement__traits))
+const dungeonTraits = new Set(Object.keys(dungeon__traits))
+const settlementTraits = new Set(Object.keys(settlement__traits))
 
 type categories = 'dungeon' | 'settlement'
-const trait_categories: Record<categories, (_trait: LocationTrait) => boolean> = {
-  dungeon: trait => dungeon_traits.has(trait.tag),
-  settlement: trait => settlement_traits.has(trait.tag)
+const traitCategories: Record<categories, (_trait: LocationTrait) => boolean> = {
+  dungeon: trait => dungeonTraits.has(trait.tag),
+  settlement: trait => settlementTraits.has(trait.tag)
 }
 
 const { colors, spawn } = entity__traits({ traits: location__traits, tag: 'location' })
 
-const check_embassy = (loc: Loc) => {
+const checkEmbassy = (loc: Loc) => {
   const region = window.world.regions[loc.region]
   const colonists = region__colonists(region)
-  return loc.hub && loc.province === region.colonial_presence.embassy && colonists.length > 1
+  return loc.hub && loc.province === region.colonialPresence.embassy && colonists.length > 1
 }
 
 /**
  * Assigns traits to a location site
  * @param loc - location site
  */
-export const location__spawn_traits = (loc: Loc) => {
+export const location__spawnTraits = (loc: Loc) => {
   if (!loc.finalized) {
     loc.finalized = true
     if (!loc.hostile && !loc.population) return
-    const pre_selected = location__templates[loc.type]?.traits?.(loc) ?? []
+    const preSelected = location__templates[loc.type]?.traits?.(loc) ?? []
     const type = loc.hostile ? 'dungeon' : 'settlement'
-    if (!loc.hostile && check_embassy(loc)) pre_selected.push('colonial embassies')
-    pre_selected.map(tag => location__traits[tag]).forEach(trait => spawn({ entity: loc, trait }))
+    if (!loc.hostile && checkEmbassy(loc)) preSelected.push('colonial embassies')
+    preSelected.map(tag => location__traits[tag]).forEach(trait => spawn({ entity: loc, trait }))
     while (loc.traits.length < 3) {
-      spawn({ entity: loc, filter: trait_categories[type] })
+      spawn({ entity: loc, filter: traitCategories[type] })
     }
   }
 }
 
-export const location__trait_colors = colors
+export const location__traitColors = colors

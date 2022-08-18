@@ -10,4 +10,4 @@ export interface NestedPieData extends PieData {
   children: NestedPieData[] // child nodes
 }
 
-export type pie__tooltip = (_item: TooltipItem<'pie'>) => string
+export type PieTooltip = (_item: TooltipItem<'pie'>) => string

@@ -1,12 +1,12 @@
-import { location__move_to_coast } from '../../../../regions/locations/spawn'
-import { world__water_features } from '../../..'
-import { cell__common_edge, cell__neighbors } from '../../../cells'
+import { location__moveToCoast } from '../../../../regions/locations/spawn'
+import { world__waterFeatures } from '../../..'
+import { cell__commonEdge, cell__neighbors } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'
 import { climates } from '../../../climate/types'
-import { sea_level_cutoff } from '../../../types'
+import { seaLevelCutoff } from '../../../types'
 import { Shaper } from '..'
 
-const arid_climates = [
+const aridClimates = [
   climates.SAVANNA,
   climates.HOT_DESERT,
   climates.HOT_STEPPE,
@@ -15,60 +15,60 @@ const arid_climates = [
   climates.POLAR
 ]
 
-export const remove_lake = (params: { lakes: ExteriorCell[]; lake: number }) => {
+export const removeLake = (params: { lakes: ExteriorCell[]; lake: number }) => {
   const { lakes, lake } = params
-  const lake_cells = lakes.filter(cell => cell.landmark === lake)
-  const shallow = lake_cells.find(cell => cell.shallow)
+  const lakeCells = lakes.filter(cell => cell.landmark === lake)
+  const shallow = lakeCells.find(cell => cell.shallow)
   const { landmark } = cell__neighbors(shallow).find(cell => cell.landmark !== lake)
-  lake_cells.forEach(cell => {
+  lakeCells.forEach(cell => {
     cell.landmark = landmark
-    cell.is_water = false
+    cell.isWater = false
     cell.shallow = false
-    cell.h = sea_level_cutoff
-    Shaper.region_land[cell.region].push(cell)
+    cell.h = seaLevelCutoff
+    Shaper.regionLand[cell.region].push(cell)
     cell__neighbors(cell)
-      .filter(n => !n.is_water)
+      .filter(n => !n.isWater)
       .forEach(n => {
-        const coast = n.n.filter(p => window.world.cells[p].is_water)
-        n.is_coast = coast.length > 0
+        const coast = n.n.filter(p => window.world.cells[p].isWater)
+        n.isCoast = coast.length > 0
       })
   })
   delete window.world.landmarks[lake]
-  window.world.landmarks[landmark].size += lake_cells.length
+  window.world.landmarks[landmark].size += lakeCells.length
 }
 
-const cleanup_lakes = () => {
+const cleanupLakes = () => {
   const lakes = Shaper.water.filter(cell => !cell.ocean)
   const shallow = lakes.filter(cell => cell.shallow)
-  world__water_features()
+  world__waterFeatures()
     .filter(idx => window.world.landmarks[idx].type !== 'ocean')
     .forEach(landmark => {
       const border = shallow.filter(cell => cell.landmark === landmark)
       const arid = border.some(cell =>
-        arid_climates.includes(window.world.regions[cell.region].climate)
+        aridClimates.includes(window.world.regions[cell.region].climate)
       )
-      const mountainous = border.some(cell => cell__neighbors(cell).some(n => n.is_mountains))
-      if (arid || mountainous) remove_lake({ lakes, lake: landmark })
+      const mountainous = border.some(cell => cell__neighbors(cell).some(n => n.isMountains))
+      if (arid || mountainous) removeLake({ lakes, lake: landmark })
     })
   Shaper.reset('water')
   Shaper.reset('land')
 }
 
-export const regional__coastal_edges = () => {
-  cleanup_lakes()
+export const regional__coastalEdges = () => {
+  cleanupLakes()
   // iterate through all coastal polygons
   window.world.cells
-    .filter(p => p.is_coast)
+    .filter(p => p.isCoast)
     .forEach(p => {
-      p.coastal_edges = []
-      p.water_sources = new Set()
+      p.coastalEdges = []
+      p.waterSources = new Set()
       cell__neighbors(p)
-        .filter(n => n.is_water)
+        .filter(n => n.isWater)
         .forEach(neighbor => {
           // add water source
-          p.water_sources.add(neighbor.landmark)
+          p.waterSources.add(neighbor.landmark)
           // mark edge as coastal
-          const edge = cell__common_edge(p.idx, neighbor.idx)
+          const edge = cell__commonEdge(p.idx, neighbor.idx)
           window.world.coasts.push({
             land: p.landmark,
             water: neighbor.landmark,
@@ -76,7 +76,7 @@ export const regional__coastal_edges = () => {
           })
           // get coastal edge coordinates
           // add them to the coastal polygon coordinates list (used for location placement)
-          p.coastal_edges.push([
+          p.coastalEdges.push([
             {
               x: edge[0][0],
               y: edge[0][1]
@@ -89,5 +89,5 @@ export const regional__coastal_edges = () => {
         })
     })
   // fix regional capitals
-  window.world.locations.forEach(loc => location__move_to_coast(loc))
+  window.world.locations.forEach(loc => location__moveToCoast(loc))
 }

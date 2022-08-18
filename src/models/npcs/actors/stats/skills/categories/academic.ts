@@ -1,37 +1,37 @@
-import { profession__social_class } from '../../professions'
-import { skill_gate__intellect, skill_gate__non_poor } from '../common/checks'
+import { profession__socialClass } from '../../professions'
+import { skillGate__intellect, skillGate__nonPoor } from '../common/checks'
 import { ActorSkill } from '../types'
-import { academic_skill } from '.'
-import { language_skill_checks } from './worldly'
+import { AcademicSkill } from '.'
+import { languageSkillChecks } from './worldly'
 
-export const actor_skills__academic: Record<academic_skill, ActorSkill> = {
+export const actorSkills__academic: Record<AcademicSkill, ActorSkill> = {
   accounting: {
     key: 'accounting',
-    valid: ({ actor }) => (profession__social_class(actor.occupation.key) === 'upper' ? 0.1 : 0)
+    valid: ({ actor }) => (profession__socialClass(actor.occupation.key) === 'upper' ? 0.1 : 0)
   },
   alchemy: {
     key: 'alchemy',
-    valid: skill_gate__intellect
+    valid: skillGate__intellect
   },
   arcana: {
     key: 'arcana',
-    valid: skill_gate__intellect
+    valid: skillGate__intellect
   },
   astronomy: {
     key: 'astronomy',
-    valid: params => skill_gate__intellect(params) * skill_gate__non_poor(params)
+    valid: params => skillGate__intellect(params) * skillGate__nonPoor(params)
   },
   divination: {
     key: 'divination',
-    valid: skill_gate__intellect
+    valid: skillGate__intellect
   },
   history: {
     key: 'history',
-    valid: skill_gate__intellect
+    valid: skillGate__intellect
   },
   investigation: {
     key: 'investigation',
-    valid: skill_gate__intellect
+    valid: skillGate__intellect
   },
   law: {
     key: 'law',
@@ -39,20 +39,20 @@ export const actor_skills__academic: Record<academic_skill, ActorSkill> = {
   },
   linguistics: {
     key: 'linguistics',
-    ...language_skill_checks,
+    ...languageSkillChecks,
     valid: 0
   },
   mechanics: {
     key: 'mechanics',
-    valid: params => skill_gate__intellect(params) * skill_gate__non_poor(params)
+    valid: params => skillGate__intellect(params) * skillGate__nonPoor(params)
   },
   nature: {
     key: 'nature',
-    valid: skill_gate__intellect
+    valid: skillGate__intellect
   },
   philosophy: {
     key: 'philosophy',
-    valid: params => skill_gate__intellect(params) * skill_gate__non_poor(params)
+    valid: params => skillGate__intellect(params) * skillGate__nonPoor(params)
   },
   theology: {
     key: 'theology'

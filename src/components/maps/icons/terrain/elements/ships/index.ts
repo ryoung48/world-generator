@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { IconDef } from '../../../types'
 import { ship_icon } from './types'
 

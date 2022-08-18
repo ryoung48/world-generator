@@ -1,36 +1,36 @@
-import { age_ranges } from '../../../age/life_phases'
-import { laborer_skills, social_skills } from '../../../skills/categories'
+import { ageRanges } from '../../../age/life_phases'
+import { laborerSkills, socialSkills } from '../../../skills/categories'
 import { Profession } from '../../types'
-import { transport_professions } from './types'
+import { TransportProfessions } from './types'
 
-const sailor_occurrence: Profession['occurrence'] = ({ context }) =>
+const sailorOccurrence: Profession['occurrence'] = ({ context }) =>
   !context.coastal || context.remote ? 0 : context.urban ? 1 : 0.1
-const dock_occurrence: Profession['occurrence'] = ({ context }) =>
+const dockOccurrence: Profession['occurrence'] = ({ context }) =>
   !context.coastal || context.remote ? 0 : context.city ? 0.5 : 0
 
-const sailor_skills: Profession['skills'] = {
+const sailorSkills: Profession['skills'] = {
   primary: ['seafaring'],
-  tertiary: laborer_skills
+  tertiary: laborerSkills
 }
 
-const captain_skills: Profession['skills'] = {
+const captainSkills: Profession['skills'] = {
   primary: ['logistics'],
   secondary: ['seafaring', 'accounting'],
-  tertiary: [...laborer_skills, ...social_skills]
+  tertiary: [...laborerSkills, ...socialSkills]
 }
 
-const coachman_skills: Profession['skills'] = {
+const coachmanSkills: Profession['skills'] = {
   primary: ['wagoneering'],
-  tertiary: laborer_skills
+  tertiary: laborerSkills
 }
 
-const sailor_title = (params: { title: string; spec: string }) => {
+const sailorTitle = (params: { title: string; spec: string }) => {
   const { title, spec } = params
   return title.replace('seasoned', spec)
 }
 
-const sailor_specialization: Profession['specialization'] = () => {
-  return window.dice.weighted_choice([
+const sailorSpecialization: Profession['specialization'] = () => {
+  return window.dice.weightedChoice([
     { v: 'deckhand', w: 5 },
     { v: 'cannoneer', w: 1 },
     { v: 'navigator', w: 1 },
@@ -39,23 +39,23 @@ const sailor_specialization: Profession['specialization'] = () => {
   ])
 }
 
-export const transport: Record<transport_professions, Profession> = {
+export const transport: Record<TransportProfessions, Profession> = {
   'sailor (merchant, novice)': {
     key: 'sailor (merchant, novice)',
     lifestyle: 'poor',
     category: 'laborers',
     subcategory: 'docks',
-    skills: sailor_skills
+    skills: sailorSkills
   },
   'sailor (merchant, seasoned)': {
     key: 'sailor (merchant, seasoned)',
-    title: ({ spec }) => sailor_title({ title: 'sailor (merchant, seasoned)', spec }),
+    title: ({ spec }) => sailorTitle({ title: 'sailor (merchant, seasoned)', spec }),
     lifestyle: 'modest',
     category: 'laborers',
     subcategory: 'docks',
-    occurrence: params => sailor_occurrence(params),
-    specialization: sailor_specialization,
-    skills: sailor_skills,
+    occurrence: params => sailorOccurrence(params),
+    specialization: sailorSpecialization,
+    skills: sailorSkills,
     progression: {
       'sailor (merchant, novice)': { weight: 10, years: 5, transition: true },
       'sailor (navy, seasoned)': { weight: 1, years: 1, transition: true },
@@ -66,14 +66,14 @@ export const transport: Record<transport_professions, Profession> = {
     key: 'ship captain (merchant)',
     lifestyle: 'comfortable',
     category: 'merchants',
-    occurrence: params => sailor_occurrence(params),
-    skills: captain_skills,
+    occurrence: params => sailorOccurrence(params),
+    skills: captainSkills,
     progression: {
       'sailor (merchant, seasoned)': { weight: 10, years: 5, transition: true },
       'sailor (navy, seasoned)': { weight: 1, years: 5, transition: true },
       'sailor (pirate, seasoned)': { weight: 1, years: 5, transition: true }
     },
-    ages: age_ranges.expert
+    ages: ageRanges.expert
   },
   'sailor (navy, novice)': {
     key: 'sailor (navy, novice)',
@@ -81,18 +81,18 @@ export const transport: Record<transport_professions, Profession> = {
     category: 'laborers',
     subcategory: 'docks',
     prevalence: 'uncommon',
-    skills: sailor_skills
+    skills: sailorSkills
   },
   'sailor (navy, seasoned)': {
     key: 'sailor (navy, seasoned)',
-    title: ({ spec }) => sailor_title({ title: 'sailor (navy, seasoned)', spec }),
+    title: ({ spec }) => sailorTitle({ title: 'sailor (navy, seasoned)', spec }),
     lifestyle: 'modest',
     category: 'laborers',
     subcategory: 'docks',
     prevalence: 'uncommon',
-    occurrence: params => (params.context.city ? sailor_occurrence(params) : 0),
-    specialization: sailor_specialization,
-    skills: sailor_skills,
+    occurrence: params => (params.context.city ? sailorOccurrence(params) : 0),
+    specialization: sailorSpecialization,
+    skills: sailorSkills,
     progression: {
       'sailor (merchant, seasoned)': { weight: 1, years: 1, transition: true },
       'sailor (navy, novice)': { weight: 10, years: 5, transition: true },
@@ -104,14 +104,14 @@ export const transport: Record<transport_professions, Profession> = {
     lifestyle: 'comfortable',
     category: 'merchants',
     prevalence: 'uncommon',
-    occurrence: params => (params.context.city ? sailor_occurrence(params) : 0),
-    skills: captain_skills,
+    occurrence: params => (params.context.city ? sailorOccurrence(params) : 0),
+    skills: captainSkills,
     progression: {
       'sailor (merchant, seasoned)': { weight: 1, years: 5, transition: true },
       'sailor (navy, seasoned)': { weight: 10, years: 5, transition: true },
       'sailor (pirate, seasoned)': { weight: 1, years: 5, transition: true }
     },
-    ages: age_ranges.expert
+    ages: ageRanges.expert
   },
   'sailor (pirate, novice)': {
     key: 'sailor (pirate, novice)',
@@ -119,17 +119,17 @@ export const transport: Record<transport_professions, Profession> = {
     category: 'laborers',
     subcategory: 'docks',
     prevalence: 'uncommon',
-    skills: sailor_skills
+    skills: sailorSkills
   },
   'sailor (pirate, seasoned)': {
     key: 'sailor (pirate, seasoned)',
-    title: ({ spec }) => sailor_title({ title: 'sailor (pirate, seasoned)', spec }),
+    title: ({ spec }) => sailorTitle({ title: 'sailor (pirate, seasoned)', spec }),
     lifestyle: 'modest',
     category: 'laborers',
     subcategory: 'docks',
     prevalence: 'uncommon',
-    skills: sailor_skills,
-    specialization: sailor_specialization,
+    skills: sailorSkills,
+    specialization: sailorSpecialization,
     progression: {
       'sailor (merchant, seasoned)': { weight: 1, years: 1, transition: true },
       'sailor (navy, seasoned)': { weight: 1, years: 1, transition: true },
@@ -141,24 +141,24 @@ export const transport: Record<transport_professions, Profession> = {
     lifestyle: 'comfortable',
     category: 'merchants',
     prevalence: 'uncommon',
-    skills: captain_skills,
+    skills: captainSkills,
     progression: {
       'sailor (merchant, seasoned)': { weight: 1, years: 5, transition: true },
       'sailor (navy, seasoned)': { weight: 1, years: 5, transition: true },
       'sailor (pirate, seasoned)': { weight: 10, years: 5, transition: true }
     },
-    ages: age_ranges.expert
+    ages: ageRanges.expert
   },
   'dock worker': {
     key: 'dock worker',
     lifestyle: 'poor',
     category: 'laborers',
     subcategory: 'docks',
-    occurrence: params => dock_occurrence(params) * 1.5,
+    occurrence: params => dockOccurrence(params) * 1.5,
     skills: {
       primary: ['athletics'],
       secondary: ['seafaring'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   'dock master': {
@@ -166,13 +166,13 @@ export const transport: Record<transport_professions, Profession> = {
     lifestyle: 'comfortable',
     category: 'laborers',
     subcategory: 'docks',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'uncommon',
-    occurrence: params => dock_occurrence(params),
+    occurrence: params => dockOccurrence(params),
     skills: {
       primary: ['logistics'],
       secondary: ['seafaring'],
-      tertiary: [...laborer_skills, ...social_skills]
+      tertiary: [...laborerSkills, ...socialSkills]
     }
   },
   ferryman: {
@@ -181,7 +181,7 @@ export const transport: Record<transport_professions, Profession> = {
     category: 'laborers',
     subcategory: 'transportation',
     occurrence: ({ context }) => (context.coastal ? 0.2 : 0),
-    skills: sailor_skills
+    skills: sailorSkills
   },
   coachman: {
     key: 'coachman',
@@ -189,7 +189,7 @@ export const transport: Record<transport_professions, Profession> = {
     category: 'laborers',
     subcategory: 'transportation',
     occurrence: ({ context }) => (context.tribal || !context.urban ? 0 : 0.1),
-    skills: coachman_skills
+    skills: coachmanSkills
   },
   waggoner: {
     key: 'waggoner',
@@ -197,6 +197,6 @@ export const transport: Record<transport_professions, Profession> = {
     category: 'laborers',
     subcategory: 'transportation',
     occurrence: ({ context }) => (context.remote ? 0 : context.urban ? 0.3 : 0.1),
-    skills: coachman_skills
+    skills: coachmanSkills
   }
 }

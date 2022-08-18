@@ -1,9 +1,9 @@
 import { Actor } from '../../types'
-import { profession__map, profession__social_class } from '../professions'
-import { social_class } from '../professions/types'
+import { profession__map, profession__socialClass } from '../professions'
+import { SocialClass } from '../professions/types'
 import { attribute } from './types'
 
-const social_class_weights: Record<social_class, number[][]> = {
+const socialClassWeights: Record<SocialClass, number[][]> = {
   lower: [
     [12, 12, 9, 9, 9, 9],
     [11, 11, 10, 10, 9, 9],
@@ -17,13 +17,13 @@ const social_class_weights: Record<social_class, number[][]> = {
   ]
 }
 
-const social_class_points: Record<social_class, number> = {
+const socialClassPoints: Record<SocialClass, number> = {
   lower: 64,
   middle: 66,
   upper: 68
 }
 
-const attribute_roll = (params: {
+const attributeRoll = (params: {
   weights: number[]
   points: number
   min: number
@@ -31,21 +31,21 @@ const attribute_roll = (params: {
 }): Actor['attributes'] => {
   const { weights, points, min, max } = params
   const scores = window.dice
-    .weighted_dist({ weights, std: 0.15, total: points })
+    .weightedDist({ weights, std: 0.15, total: points })
     .map(w => Math.ceil(w))
-  if (scores.some(score => score < min || score > max)) return attribute_roll(params)
+  if (scores.some(score => score < min || score > max)) return attributeRoll(params)
   const [strength, dexterity, constitution, intellect, wisdom, charisma] = scores
   return { strength, dexterity, constitution, intellect, wisdom, charisma }
 }
 
-export const actor__attribute_roll = (actor: Actor) => {
-  const social_class = profession__social_class(actor.occupation.key)
+export const actor__attributeRoll = (actor: Actor) => {
+  const socialClass = profession__socialClass(actor.occupation.key)
   const _weights =
     profession__map[actor.occupation.key].attributes ??
-    window.dice.choice(social_class_weights[social_class])
+    window.dice.choice(socialClassWeights[socialClass])
   const weights = Array.isArray(_weights) ? _weights : _weights({ actor })
-  const points = social_class_points[social_class]
-  actor.attributes = attribute_roll({ weights, points, min: 8, max: 18 })
+  const points = socialClassPoints[socialClass]
+  actor.attributes = attributeRoll({ weights, points, min: 8, max: 18 })
 }
 
 const attribute__descriptors: Record<attribute, [string, string, string, string]> = {
@@ -65,7 +65,7 @@ const attribute__describe = (params: { key: attribute; value: number }) => {
   return attribute__descriptors[key][3]
 }
 
-export const npc__describe_attributes = (
+export const npc__describeAttributes = (
   attributes: Actor['attributes']
 ): { attribute: string; value: number; desc: string }[] => {
   return [

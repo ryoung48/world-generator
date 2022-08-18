@@ -1,23 +1,95 @@
-import { actor__expired } from '../../../npcs/actors/stats/age'
-import { Profession } from '../../../npcs/actors/stats/professions/types'
-import { Actor } from '../../../npcs/actors/types'
+import { profession__map, profession__socialClass } from '../../../npcs/actors/stats/professions'
+import {
+  ActorProfessions,
+  Profession,
+  SocialClass
+} from '../../../npcs/actors/stats/professions/types'
+import { buildDistribution, scale, WeightedDistribution } from '../../../utilities/math'
+import { location__getClosestSettlement, location__isSettlement } from '..'
+import { location__context } from '../context'
+import { LocationContext } from '../context/types'
 import { Loc } from '../types'
 
-const location__living_actors = (location: Loc) =>
-  location.actors.map(a => window.world.actors[a]).filter(actor => !actor__expired(actor))
-
-const location__find_actor = (params: { location: Loc; condition: (_actor: Actor) => boolean }) => {
-  const { location, condition } = params
-  return location__living_actors(location).filter(actor => condition(actor))
+const prevalenceMods: Record<Profession['prevalence'], number> = {
+  rare: 1,
+  uncommon: 3,
+  common: 9,
+  abundant: 27
 }
 
-export const location__find_profession = (params: {
-  location: Loc
-  professions: Profession['key'][]
+/**
+ * weights the chance of finding an occupation at a given location
+ * @param params.profession - npc profession to be weighted
+ * @param params.context - location context used to determine weight
+ * @returns
+ */
+const professionWeight = (params: {
+  profession: Profession
+  context: LocationContext
+  time: number
 }) => {
-  const { location, professions } = params
-  return location__find_actor({
-    location,
-    condition: (npc: Actor) => professions.includes(npc.occupation.key)
-  })
+  const { profession, context, time } = params
+  const { key, occurrence, prevalence } = profession
+  const weight = typeof occurrence === 'number' ? occurrence : occurrence?.({ context, time }) ?? 0
+  const prevalenceMod = prevalenceMods[prevalence ?? 'common']
+  return { v: key, w: weight * prevalenceMod }
+}
+
+const socialFilter =
+  (social: SocialClass) =>
+  ({ v }: WeightedDistribution<Profession['key']>[number]) =>
+    profession__socialClass(v) === social
+
+export const location__professions = (params: { loc: Loc; time: number; social: SocialClass }) => {
+  const { time, social } = params
+  const loc = location__getClosestSettlement(params.loc)
+  const context = location__context(loc)
+  const professionDists = Object.values(profession__map)
+    .map(profession => professionWeight({ profession, context, time }))
+    .filter(({ w }) => w > 0)
+  return buildDistribution(professionDists.filter(socialFilter(social)), 1)
+}
+
+// used as a fallback when no social class and no profession is given a npc creation
+export const socialClassDistributions = (loc: Loc): WeightedDistribution<SocialClass> => {
+  const pop = location__isSettlement(loc) ? loc.population : 0
+  const upper = scale([0, 100000], [0.0001, 0.0005], pop)
+  const middle = scale([0, 100000], [0.05, 0.3], pop)
+  return [
+    { v: 'upper', w: upper },
+    { v: 'middle', w: middle },
+    { v: 'lower', w: 1 - upper - middle }
+  ]
+}
+
+const defaultProfessions: Record<SocialClass, ActorProfessions> = {
+  lower: 'farmer (tenant)',
+  middle: 'merchant',
+  upper: 'noble (minor)'
+}
+
+export const location__randomProfession = (params: {
+  loc: Loc
+  social?: SocialClass
+  time: number
+}) => {
+  const { loc, social = window.dice.weightedChoice(socialClassDistributions(loc)), time } = params
+  const professions = location__professions({ loc, time, social })
+  return professions.length === 0
+    ? defaultProfessions[social]
+    : window.dice.weightedChoice(professions)
+}
+
+export const location__validProfession = (params: {
+  loc: Loc
+  profession: Profession['key']
+  time: number
+}) => {
+  const { loc, profession, time } = params
+  const social = profession__socialClass(profession)
+  const professions = location__professions({ loc, time, social })
+  return (
+    profession__map[profession].occurrence === undefined ||
+    professions.find(({ v }) => v === profession)?.w > 0
+  )
 }

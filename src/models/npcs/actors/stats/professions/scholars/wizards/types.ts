@@ -1,4 +1,4 @@
-export type wizard_professions =
+export type WizardProfessions =
   | 'wizard (petty)'
   | 'wizard (minor)'
   | 'wizard (major)'

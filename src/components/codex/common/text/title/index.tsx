@@ -2,13 +2,13 @@ import { css } from '@emotion/css'
 import { Box, Grid } from '@mui/material'
 
 import { style__subtitle } from '../../../../theme'
-import { css_colors } from '../../../../theme/colors'
+import { cssColors } from '../../../../theme/colors'
 import { CodexTitleProps } from './types'
 
 const classes = {
   title: css`
     font-family: 'serif';
-    color: ${css_colors.primary};
+    color: ${cssColors.primary};
     font-weight: 600;
     font-size: 40px;
   `,

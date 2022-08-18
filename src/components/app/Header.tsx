@@ -1,20 +1,20 @@
 import { AppBar, Box, Button, Grid, Toolbar, Typography } from '@mui/material'
 import { Dispatch, SetStateAction } from 'react'
 
-import { view__context } from '../../context'
 import { location__conditions } from '../../models/regions/locations/environment/conditions'
 import { formatters } from '../../models/utilities/text/formatters'
-import { css_colors } from '../theme/colors'
+import { view__context } from '../context'
+import { cssColors } from '../theme/colors'
 
-export function Header(props: { stats: boolean; toggle_stats: Dispatch<SetStateAction<boolean>> }) {
-  const { stats, toggle_stats } = props
+export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAction<boolean>> }) {
+  const { stats, toggleStats } = props
   const { state } = view__context()
   let time = Date.now()
   let context = ''
   if (state.id) {
     const location = window.world.locations[state.codex.location]
-    const { conditions, summary, local_time } = location__conditions(location)
-    time = local_time
+    const { conditions, summary, localTime } = location__conditions(location)
+    time = localTime
     context = `(${conditions.season.toLowerCase()}, ${summary})`
   }
   return (
@@ -22,8 +22,8 @@ export function Header(props: { stats: boolean; toggle_stats: Dispatch<SetStateA
       <AppBar
         position='fixed'
         sx={{
-          backgroundColor: `${css_colors.background.cards} !important`,
-          color: css_colors.primary
+          backgroundColor: `${cssColors.background.cards} !important`,
+          color: cssColors.primary
         }}
       >
         <Toolbar>
@@ -37,7 +37,7 @@ export function Header(props: { stats: boolean; toggle_stats: Dispatch<SetStateA
               <Typography
                 variant='subtitle2'
                 component='div'
-                sx={{ lineHeight: 0.2, color: css_colors.subtitle, fontSize: 12 }}
+                sx={{ lineHeight: 0.2, color: cssColors.subtitle, fontSize: 12 }}
               >
                 {state?.id || '∞'}
               </Typography>
@@ -48,17 +48,17 @@ export function Header(props: { stats: boolean; toggle_stats: Dispatch<SetStateA
               style={{
                 fontSize: '20px',
                 lineHeight: 1.2,
-                color: css_colors.primary,
+                color: cssColors.primary,
                 marginRight: 50
               }}
             >
               {formatters.date(time)}
             </div>
-            <div style={{ fontSize: '12px', lineHeight: 0.5, color: css_colors.subtitle }}>
+            <div style={{ fontSize: '12px', lineHeight: 0.5, color: cssColors.subtitle }}>
               {formatters.time(time)} {context}
             </div>
           </div>
-          <Button onClick={() => toggle_stats(!stats)} disabled={!state.id}>
+          <Button onClick={() => toggleStats(!stats)} disabled={!state.id}>
             {stats ? 'world' : 'stats'}
           </Button>
         </Toolbar>

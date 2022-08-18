@@ -1,13 +1,13 @@
-import { region__is_active, region__rebellion_in_progress, world__nations } from '../../../regions'
-import { region__allies, region__war_rivals } from '../../../regions/diplomacy/relations'
-import { region__at_peace } from '../../../regions/diplomacy/status'
+import { region__isActive, region__rebellionInProgress, world__nations } from '../../../regions'
+import { region__allies, region__warRivals } from '../../../regions/diplomacy/relations'
+import { region__atPeace } from '../../../regions/diplomacy/status'
 import { Region } from '../../../regions/types'
-import { year_ms } from '../../../utilities/math/time'
-import { add_event, log_event } from '../..'
+import { yearMS } from '../../../utilities/math/time'
+import { addEvent, logEvent } from '../..'
 import { EventController, LogRecord } from '../../types'
 import { HealthCheckEvent } from './types'
 
-export const status_splitter = '###' // used to create new lines within tooltips
+export const statusSplitter = '###' // used to create new lines within tooltips
 
 /**
  * gets the current political status for a given region
@@ -15,8 +15,8 @@ export const status_splitter = '###' // used to create new lines within tooltips
 export const region__politics = (nation: Region): Omit<LogRecord, 'idx'> => {
   const capital = window.world.provinces[nation.capital]
   const suzerain = window.world.regions[nation.overlord.idx]
-  const sovereignty = !region__is_active(nation)
-    ? `Conquered by ${window.world.regions[capital.curr_nation].name}`
+  const sovereignty = !region__isActive(nation)
+    ? `Conquered by ${window.world.regions[capital.currNation].name}`
     : suzerain
     ? `vassal of ${suzerain.name}`
     : 'Sovereign'
@@ -24,12 +24,12 @@ export const region__politics = (nation: Region): Omit<LogRecord, 'idx'> => {
   const { current } = nation.wars
   if (current.length > 0)
     text.push(
-      `At war with ${region__war_rivals(nation)
+      `At war with ${region__warRivals(nation)
         .map(r => r.name)
         .join(', ')}`
     )
-  if (region__rebellion_in_progress(nation)) text.push('Civil war in progress')
-  if (region__at_peace(nation)) text.push('At Peace')
+  if (region__rebellionInProgress(nation)) text.push('Civil war in progress')
+  if (region__atPeace(nation)) text.push('At Peace')
   if (nation.subjects.length > 0)
     text.push(
       `Current Subjects (${nation.subjects.length}): ${nation.subjects
@@ -44,9 +44,9 @@ export const region__politics = (nation: Region): Omit<LogRecord, 'idx'> => {
   return {
     time: window.world.date,
     title: 'Pulse Check',
-    type: 'health_check',
-    text: text.join(status_splitter),
-    actors: [{ idx: nation.idx, wealth: nation.wealth, max_wealth: nation.max_wealth }]
+    type: 'healthCheck',
+    text: text.join(statusSplitter),
+    actors: [{ idx: nation.idx, wealth: nation.wealth, maxWealth: nation.maxWealth }]
   }
 }
 
@@ -59,16 +59,16 @@ class HealthCheckController extends EventController {
   public spawn() {
     const event: HealthCheckEvent = {
       time: window.world.date,
-      type: 'health_check'
+      type: 'healthCheck'
     }
-    add_event(event)
+    addEvent(event)
   }
   public tick(event: HealthCheckEvent) {
     // record health check
     window.world.regions.forEach(nation => {
       const status = region__politics(nation)
-      log_event({
-        event_type: status.type,
+      logEvent({
+        eventType: status.type,
         title: status.title,
         text: status.text,
         actors: [nation]
@@ -81,9 +81,9 @@ class HealthCheckController extends EventController {
       time: window.world.date
     })
     // repeat every year
-    event.time = window.world.date + year_ms
-    add_event(event)
+    event.time = window.world.date + yearMS
+    addEvent(event)
   }
 }
 
-export const event__health_check = new HealthCheckController()
+export const event__healthCheck = new HealthCheckController()

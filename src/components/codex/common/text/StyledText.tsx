@@ -2,17 +2,17 @@ import { css } from '@emotion/css'
 import { Tooltip } from '@mui/material'
 import { CSSProperties } from 'react'
 
-import { view__context } from '../../../../context'
-import { codex_categories, TaggedEntity } from '../../../../models/utilities/codex/entities'
-import { css_colors } from '../../../theme/colors'
+import { entity__tags, TaggedEntity } from '../../../../models/utilities/codex/entities'
+import { view__context } from '../../../context'
+import { cssColors } from '../../../theme/colors'
 
 const style__links = css`
   a {
-    color: ${css_colors.black};
-    border-bottom: 1px solid ${css_colors.black};
+    color: ${cssColors.black};
+    border-bottom: 1px solid ${cssColors.black};
     &:hover {
-      color: ${css_colors.primary} !important;
-      border-bottom: 1px dotted ${css_colors.primary} !important;
+      color: ${cssColors.primary} !important;
+      border-bottom: 1px dotted ${cssColors.primary} !important;
     }
   }
 `
@@ -20,11 +20,15 @@ const style__links = css`
 const style__italics = css`
   font-style: italic;
 `
-
+/**
+ * @component
+ * @param props - test
+ * @returns
+ */
 export function StyledText(props: { text: string; color?: string }) {
   const { dispatch } = view__context()
   const { text } = props
-  const base_color = props.color ?? 'black'
+  const baseColor = props.color ?? 'black'
   return (
     <span className={style__links}>
       {text.split(/@(.+?)@/g).map((text, j) => {
@@ -32,17 +36,17 @@ export function StyledText(props: { text: string; color?: string }) {
           const [label, i, cat, tooltip, color, italics] = text.split('|')
           const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
-          const onClick = codex_categories.includes(tag)
+          const onClick = entity__tags.includes(tag)
             ? () => dispatch({ type: 'update codex', payload: { target: { tag, idx } } })
             : false
-          const text_color = color !== '' ? color : base_color
+          const textColor = color !== '' ? color : baseColor
           const style: CSSProperties = {
             cursor: onClick || tooltip ? 'pointer' : undefined,
-            color: text_color,
+            color: textColor,
             borderBottom: onClick
-              ? `1px solid ${text_color}`
+              ? `1px solid ${textColor}`
               : tooltip
-              ? `1px dotted ${text_color}`
+              ? `1px dotted ${textColor}`
               : undefined
           }
           const link = onClick ? (
@@ -60,7 +64,7 @@ export function StyledText(props: { text: string; color?: string }) {
           )
         }
         return (
-          <span key={j} style={{ color: base_color }}>
+          <span key={j} style={{ color: baseColor }}>
             {text}
           </span>
         )

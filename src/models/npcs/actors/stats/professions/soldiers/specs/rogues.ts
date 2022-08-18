@@ -1,9 +1,9 @@
-import { all_skills } from '../../../skills/categories'
+import { allSkills } from '../../../skills/categories'
 import { ProfessionKit } from '../../types'
 
-const tertiary = [...all_skills]
+const tertiary = [...allSkills]
 
-export const rogue_kits: Record<'assassin' | 'trickster' | 'rogue', ProfessionKit> = {
+export const rogueKits: Record<'assassin' | 'trickster' | 'rogue', ProfessionKit> = {
   assassin: {
     attributes: [10, 12, 11, 12, 10, 11],
     skills: {

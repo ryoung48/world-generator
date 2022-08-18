@@ -3,26 +3,26 @@ import { Item, item__categories, ItemDetails } from '../../items/types'
 import { NPC } from '../types'
 import { Inventory } from './types'
 
-const item__cat_filter = (cat: ItemDetails['category']) => (item: Item) =>
+const item__catFilter = (cat: ItemDetails['category']) => (item: Item) =>
   item__lookup[item.tag].category === cat
 
 export const inventory__categories = ({ items }: Inventory): ItemDetails['category'][] => {
-  const all_items = Object.values(items)
-  return item__categories.filter(cat => all_items.some(item__cat_filter(cat)))
+  const allItems = Object.values(items)
+  return item__categories.filter(cat => allItems.some(item__catFilter(cat)))
 }
 
 export const inventory__filter = ({ items }: Inventory, cat: ItemDetails['category']) => {
-  const all_items = Object.values(items)
-  return all_items.filter(item__cat_filter(cat))
+  const allItems = Object.values(items)
+  return allItems.filter(item__catFilter(cat))
 }
 
 export const inventory__spawn = (params?: { currency?: number; items?: Item[] }): Inventory => {
   const inventory: Inventory = { items: {}, currency: params?.currency ?? 0 }
-  params?.items?.forEach(item => inventory__add_item({ inventory, item }))
+  params?.items?.forEach(item => inventory__addItem({ inventory, item }))
   return inventory
 }
 
-const inventory__add_item = (params: { inventory: Inventory; item: Item }): void => {
+const inventory__addItem = (params: { inventory: Inventory; item: Item }): void => {
   const { inventory, item } = params
   const { items } = inventory
   const key = item__key(item)
@@ -31,9 +31,9 @@ const inventory__add_item = (params: { inventory: Inventory; item: Item }): void
   items[key] = item
   inventory.items = { ...items }
 }
-export const npc__add_item = (params: { npc: NPC; item: Item }): void => {
+export const npc__addItem = (params: { npc: NPC; item: Item }): void => {
   const { npc, item } = params
-  inventory__add_item({ inventory: npc.inventory, item })
+  inventory__addItem({ inventory: npc.inventory, item })
 }
 
 export const inventory__merge = (npcs: NPC[]): Inventory => {
@@ -42,11 +42,7 @@ export const inventory__merge = (npcs: NPC[]): Inventory => {
   return inventory__spawn({ currency, items })
 }
 
-const inventory__remove_item = (params: {
-  inventory: Inventory
-  key: string
-  quantity: number
-}) => {
+const inventory__removeItem = (params: { inventory: Inventory; key: string; quantity: number }) => {
   const { inventory, key, quantity } = params
   const { items } = inventory
   const curr = items[key]
@@ -55,7 +51,7 @@ const inventory__remove_item = (params: {
   inventory.items = { ...items }
   return { ...curr, quantity }
 }
-export const npc__remove_item = (params: { npc: NPC; key: string; quantity: number }) => {
+export const npc__removeItem = (params: { npc: NPC; key: string; quantity: number }) => {
   const { npc, key, quantity } = params
-  return inventory__remove_item({ inventory: npc.inventory, key, quantity })
+  return inventory__removeItem({ inventory: npc.inventory, key, quantity })
 }

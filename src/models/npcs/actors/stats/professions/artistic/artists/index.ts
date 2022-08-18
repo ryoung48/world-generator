@@ -1,28 +1,28 @@
-import { artisan_skills } from '../../../skills/categories'
-import { gender_based_title } from '../../titles'
+import { artisanSkills } from '../../../skills/categories'
+import { genderBasedTitle } from '../../titles'
 import { Profession } from '../../types'
-import { artist_professions } from './types'
+import { ArtistProfessions } from './types'
 
-const rural_artists: Profession['occurrence'] = ({ context }) =>
+const ruralArtists: Profession['occurrence'] = ({ context }) =>
   !context.urban || context.tribal ? 1 : 0.3
-const urban_artists: Profession['occurrence'] = ({ context }) => (context.urban ? 1 : 0.1)
-const urban_only: Profession['occurrence'] = ({ context }) => (context.urban ? 1 : 0)
+const urbanArtists: Profession['occurrence'] = ({ context }) => (context.urban ? 1 : 0.1)
+const urbanOnly: Profession['occurrence'] = ({ context }) => (context.urban ? 1 : 0)
 
-const writer_occurrence: Profession['occurrence'] = params =>
-  params.context.tribal ? 0 : urban_artists(params)
+const writerOccurrence: Profession['occurrence'] = params =>
+  params.context.tribal ? 0 : urbanArtists(params)
 
-const artists_mod = 0.5
+const artistsMod = 0.5
 
-export const artists: Record<artist_professions, Profession> = {
+export const artists: Record<ArtistProfessions, Profession> = {
   woodcarver: {
     key: 'woodcarver',
     category: 'artistic',
     subcategory: 'artists',
     lifestyle: 'modest',
-    occurrence: params => rural_artists(params) * artists_mod,
+    occurrence: params => ruralArtists(params) * artistsMod,
     skills: {
       primary: ['carving'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   barber: {
@@ -30,11 +30,11 @@ export const artists: Record<artist_professions, Profession> = {
     category: 'artistic',
     subcategory: 'artists',
     lifestyle: 'modest',
-    title: ({ actor }) => gender_based_title({ male: 'Barber', female: 'Stylist', actor }),
-    occurrence: ({ context }) => (context.urban && !context.tribal ? 1 : 0.5) * artists_mod,
+    title: ({ actor }) => genderBasedTitle({ male: 'Barber', female: 'Stylist', actor }),
+    occurrence: ({ context }) => (context.urban && !context.tribal ? 1 : 0.5) * artistsMod,
     skills: {
       primary: ['hair styling'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   artist: {
@@ -42,10 +42,10 @@ export const artists: Record<artist_professions, Profession> = {
     lifestyle: 'modest',
     category: 'artistic',
     subcategory: 'artists',
-    occurrence: params => urban_artists(params) * artists_mod,
+    occurrence: params => urbanArtists(params) * artistsMod,
     skills: {
       primary: ['painting', 'sketching', 'engraving', 'sculpting', 'carving'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   painter: {
@@ -53,10 +53,10 @@ export const artists: Record<artist_professions, Profession> = {
     lifestyle: 'modest',
     category: 'artistic',
     subcategory: 'artists',
-    occurrence: params => urban_artists(params) * artists_mod,
+    occurrence: params => urbanArtists(params) * artistsMod,
     skills: {
       primary: ['painting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   potter: {
@@ -64,10 +64,10 @@ export const artists: Record<artist_professions, Profession> = {
     lifestyle: 'modest',
     category: 'artistic',
     subcategory: 'artists',
-    occurrence: ({ context }) => (context.ceramics ? 1 : 0.5) * artists_mod,
+    occurrence: ({ context }) => (context.ceramics ? 1 : 0.5) * artistsMod,
     skills: {
       primary: ['pottery'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   sculptor: {
@@ -75,10 +75,10 @@ export const artists: Record<artist_professions, Profession> = {
     lifestyle: 'modest',
     category: 'artistic',
     subcategory: 'artists',
-    occurrence: params => urban_artists(params) * artists_mod,
+    occurrence: params => urbanArtists(params) * artistsMod,
     skills: {
       primary: ['sculpting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   tattooer: {
@@ -87,10 +87,10 @@ export const artists: Record<artist_professions, Profession> = {
     category: 'artistic',
     subcategory: 'artists',
     prevalence: 'uncommon',
-    occurrence: params => urban_artists(params) * artists_mod,
+    occurrence: params => urbanArtists(params) * artistsMod,
     skills: {
       primary: ['painting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   cartographer: {
@@ -99,10 +99,10 @@ export const artists: Record<artist_professions, Profession> = {
     category: 'artistic',
     subcategory: 'artists',
     prevalence: 'uncommon',
-    occurrence: params => writer_occurrence(params) * artists_mod,
+    occurrence: params => writerOccurrence(params) * artistsMod,
     skills: {
       primary: ['painting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   illuminator: {
@@ -111,10 +111,10 @@ export const artists: Record<artist_professions, Profession> = {
     category: 'artistic',
     subcategory: 'artists',
     prevalence: 'uncommon',
-    occurrence: params => writer_occurrence(params) * artists_mod,
+    occurrence: params => writerOccurrence(params) * artistsMod,
     skills: {
       primary: ['painting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   writer: {
@@ -122,11 +122,11 @@ export const artists: Record<artist_professions, Profession> = {
     lifestyle: 'modest',
     category: 'artistic',
     subcategory: 'artists',
-    occurrence: params => writer_occurrence(params) * artists_mod,
+    occurrence: params => writerOccurrence(params) * artistsMod,
     skills: {
       primary: ['literature'],
       secondary: ['scribing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   poet: {
@@ -134,11 +134,11 @@ export const artists: Record<artist_professions, Profession> = {
     lifestyle: 'modest',
     category: 'artistic',
     subcategory: 'artists',
-    occurrence: params => writer_occurrence(params) * artists_mod,
+    occurrence: params => writerOccurrence(params) * artistsMod,
     skills: {
       primary: ['literature'],
       secondary: ['scribing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   calligrapher: {
@@ -147,10 +147,10 @@ export const artists: Record<artist_professions, Profession> = {
     category: 'artistic',
     subcategory: 'artists',
     prevalence: 'uncommon',
-    occurrence: params => writer_occurrence(params) * artists_mod,
+    occurrence: params => writerOccurrence(params) * artistsMod,
     skills: {
       primary: ['scribing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   curator: {
@@ -159,11 +159,11 @@ export const artists: Record<artist_professions, Profession> = {
     category: 'artistic',
     subcategory: 'artists',
     prevalence: 'uncommon',
-    occurrence: params => urban_only(params) * artists_mod,
+    occurrence: params => urbanOnly(params) * artistsMod,
     skills: {
       primary: ['history'],
       secondary: ['painting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   }
 }

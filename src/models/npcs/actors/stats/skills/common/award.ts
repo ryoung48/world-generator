@@ -1,21 +1,21 @@
 import { scale } from '../../../../../utilities/math'
-import { year_ms } from '../../../../../utilities/math/time'
-import { species__by_culture } from '../../../../species/humanoids/taxonomy'
+import { yearMS } from '../../../../../utilities/math/time'
+import { species__byCulture } from '../../../../species/taxonomy'
 import { Actor } from '../../../types'
-import { actor__life_phase } from '../../age'
-import { convert_age_standard, life_phases } from '../../age/life_phases'
-import { actor_skill__lookup } from '..'
+import { actor__lifePhase } from '../../age'
+import { convertAgeStandard, LifePhase } from '../../age/life_phases'
+import { actorSkill__lookup } from '..'
 import { SkillApplyParams } from '../types'
-import { actor_skills__apply } from './apply'
-import { actor__roll_skills } from './roll'
+import { actorSkills__apply } from './apply'
+import { actor__rollSkills } from './roll'
 
-const exp_tiers = {
+const expTiers = {
   primary: 20,
   secondary: 10,
   tertiary: 5
 }
 
-const skill_mods: Record<life_phases, number> = {
+const skillMods: Record<LifePhase, number> = {
   venerable: 0,
   old: 0.2,
   'middle age': 0.5,
@@ -25,48 +25,48 @@ const skill_mods: Record<life_phases, number> = {
   childhood: 0
 }
 
-const apply_skill = ({ actor, exp, key, loc }: SkillApplyParams) => {
-  const { apply = actor_skills__apply } = actor_skill__lookup[key]
+const applySkill = ({ actor, exp, key, loc }: SkillApplyParams) => {
+  const { apply = actorSkills__apply } = actorSkill__lookup[key]
   apply({ actor, exp, key, loc })
 }
 
-export const actor__award_skill_exp = (actor: Actor) => {
-  const { ages } = species__by_culture(window.world.cultures[actor.culture])
-  let period = convert_age_standard(ages, 5) * year_ms
+export const actor__awardSkillExp = (actor: Actor) => {
+  const { ages } = species__byCulture(window.world.cultures[actor.culture])
+  let period = convertAgeStandard(ages, 5) * yearMS
   if (period > 5) period = scale([5, 10], [5, 7.5], period)
-  const intelligence_mod = scale([8, 18], [0.5, 1.5], Math.max(actor.attributes.intellect, 8))
+  const intelligenceMod = scale([8, 18], [0.5, 1.5], Math.max(actor.attributes.intellect, 8))
   actor.history.backgrounds
     .filter(({ occupation, skills }) => occupation && skills)
     .forEach(({ skills, loc, occupation }) => {
       skills
-        .filter(({ check_date, end = window.world.date }) => check_date < end)
+        .filter(({ checkDate, end = window.world.date }) => checkDate < end)
         .forEach(skill => {
           const { end = window.world.date } = skill
-          if (!skill.tiers) skill.tiers = actor__roll_skills({ actor, occupation, loc })
+          if (!skill.tiers) skill.tiers = actor__rollSkills({ actor, occupation, loc })
           const { primary, secondary, tertiary } = skill.tiers
           // compute the awarded exp
-          const diff = Math.max(0, (end - skill.check_date) / period)
+          const diff = Math.max(0, (end - skill.checkDate) / period)
           const weights = [
-            ...primary.map(() => exp_tiers.primary),
-            ...secondary.map(() => exp_tiers.secondary),
-            ...tertiary.map(() => exp_tiers.tertiary)
-          ].map(w => w * diff * intelligence_mod)
-          const phase = actor__life_phase({ actor, ref_date: skill.check_date })
-          const mod = skill_mods[phase]
+            ...primary.map(() => expTiers.primary),
+            ...secondary.map(() => expTiers.secondary),
+            ...tertiary.map(() => expTiers.tertiary)
+          ].map(w => w * diff * intelligenceMod)
+          const phase = actor__lifePhase({ actor, refDate: skill.checkDate })
+          const mod = skillMods[phase]
           const total = weights.reduce((sum, w) => sum + w, 0)
-          const reward = window.dice.weighted_dist({
+          const reward = window.dice.weightedDist({
             weights,
             std: 0.15,
-            total: (primary.length > 0 ? total : total + exp_tiers.primary) * mod
+            total: (primary.length > 0 ? total : total + expTiers.primary) * mod
           })
-          const skill_rewards = [...primary, ...secondary, ...tertiary]
-          skill_rewards.forEach((key, i) => {
+          const skillRewards = [...primary, ...secondary, ...tertiary]
+          skillRewards.forEach((key, i) => {
             const exp = reward[i]
             if (!skill.exp[key]) skill.exp[key] = 0
             skill.exp[key] += exp
-            apply_skill({ actor, exp, key, loc })
+            applySkill({ actor, exp, key, loc })
           })
-          skill.check_date = end
+          skill.checkDate = end
         })
     })
 }

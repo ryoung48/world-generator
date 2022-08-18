@@ -1,11 +1,12 @@
+import { range } from 'd3'
+
 import { actor__location } from '../../../npcs/actors'
 import { Actor } from '../../../npcs/actors/types'
 import { thread__collect } from '../../../threads'
 import { thread__spawn } from '../../../threads/spawn'
-import { range } from '../../../utilities/math'
-import { year_ms } from '../../../utilities/math/time'
+import { yearMS } from '../../../utilities/math/time'
 import { Loc } from '../types'
-import { location__is_city, location__is_town } from './taxonomy/settlements'
+import { location__isCity, location__isTown } from './taxonomy/settlements'
 
 /**
  * Gets all active threads at a location.
@@ -16,10 +17,10 @@ import { location__is_city, location__is_town } from './taxonomy/settlements'
  */
 export const location__threads = (params: { loc: Loc; avatar: Actor }) => {
   const { loc, avatar } = params
-  const avatar_at_loc = avatar && actor__location(avatar) === loc
-  if (avatar_at_loc && loc.memory.threads < window.world.date) {
-    loc.memory.threads = window.world.date + 1 * year_ms
-    const mod = location__is_city(loc) ? 2 : location__is_town(loc) ? 1 : 0
+  const avatarAtLoc = avatar && actor__location(avatar) === loc
+  if (avatarAtLoc && loc.memory.threads < window.world.date) {
+    loc.memory.threads = window.world.date + 1 * yearMS
+    const mod = location__isCity(loc) ? 2 : location__isTown(loc) ? 1 : 0
     const target = window.dice.randint(3, 5) + mod
     const diff = target - loc.threads.length
     range(diff).forEach(() => thread__spawn({ loc: loc, target: loc, avatar }))

@@ -1,5 +1,5 @@
 import { item__lookup } from '../../items'
-import { npc__adjusted_cr, npc__sum_cr } from '../stats'
+import { npc__adjustedCR, npc__sumCR } from '../stats'
 import { difficulty__cr, difficulty__stats } from '../stats/difficulty'
 import { NPC } from '../types'
 import { Actor } from './types'
@@ -9,14 +9,14 @@ import { Actor } from './types'
  * @param npc - npc that could be an actor
  * @returns {boolean}
  */
-export const npc__is_actor = (npc: NPC): npc is Actor => npc.tag === 'actor'
+export const npc__isActor = (npc: NPC): npc is Actor => npc.tag === 'actor'
 
 /**
  * how much is an actor carrying in their inventory + equipment?
  * @param actor
  * @returns {number} weight (lbs)
  */
-export const actor__carry_weight = (actor: Actor): number => {
+export const actor__carryWeight = (actor: Actor): number => {
   const { inventory, equipment } = actor
   return (
     Object.values(inventory.items).reduce((total, item) => {
@@ -58,11 +58,11 @@ interface ActorBackgroundParams {
   time: number
 }
 
-const actor__find_background = ({ actor, time }: ActorBackgroundParams) =>
+const actor__findBackground = ({ actor, time }: ActorBackgroundParams) =>
   actor.history.backgrounds.find(background => time >= background.start && time < background.end)
 
-export const actor__past_location = (params: ActorBackgroundParams) => {
-  const background = actor__find_background(params)
+export const actor__pastLocation = (params: ActorBackgroundParams) => {
+  const background = actor__findBackground(params)
   const loc = window.world.locations[background?.loc]
   return loc ?? window.world.locations[params.actor.location.residence]
 }
@@ -76,7 +76,7 @@ export const actor__past_location = (params: ActorBackgroundParams) => {
 export const actor__cr = (params: { actor: Actor; max: boolean }) => {
   const { actor, max } = params
   const party = actor__relation({ actor, type: 'party' })
-  const sum = max ? npc__sum_cr : npc__adjusted_cr
+  const sum = max ? npc__sumCR : npc__adjustedCR
   return sum(party)
 }
 
@@ -85,7 +85,7 @@ export const actor__cr = (params: { actor: Actor; max: boolean }) => {
  * @param ref - the reference actor
  * @returns the numeric challenge rating
  */
-export const actor__enemy_cr = (actor: Actor) => {
+export const actor__enemyCR = (actor: Actor) => {
   const cr = actor__cr({ actor, max: true })
   return difficulty__cr({ ref: cr })
 }
@@ -95,8 +95,8 @@ export const actor__enemy_cr = (actor: Actor) => {
  * @param params.cr - the reference challenge rating
  * @returns  the CR ratio, success rate, and the corresponding difficulty tier
  */
-export const actor__difficulty_stats = (params: { actor: Actor; cr: number }) => {
+export const actor__difficultyStats = (params: { actor: Actor; cr: number }) => {
   const { actor, cr } = params
-  const actor_cr = actor__cr({ actor, max: false })
-  return difficulty__stats({ ref: actor_cr, adversary: cr })
+  const actorCR = actor__cr({ actor, max: false })
+  return difficulty__stats({ ref: actorCR, adversary: cr })
 }

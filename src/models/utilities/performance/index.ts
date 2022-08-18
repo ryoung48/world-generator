@@ -34,13 +34,13 @@ export const profile = <T>(params: { label?: string; f: () => T }): T => {
   const { label, f } = params
   const key = label ?? f.name
   if (!context.children[key]) context.children[key] = profile__spawn(key)
-  const old_context = context
+  const oldContext = context
   context = context.children[key]
   const start = performance.now()
   const result = f()
   const end = performance.now()
   context.value += end - start
-  context = old_context
+  context = oldContext
   return result
 }
 
@@ -50,7 +50,7 @@ export const profile = <T>(params: { label?: string; f: () => T }): T => {
  * @param name - optional override for functions that don't have names
  * @returns decorated function
  */
-export const decorated_profile =
+export const decoratedProfile =
   <T, K extends unknown[]>(f: (..._args: K) => T, name?: string) =>
   (...args: K) =>
     profile({

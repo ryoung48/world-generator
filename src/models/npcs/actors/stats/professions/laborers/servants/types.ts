@@ -1,4 +1,4 @@
-export type servant_professions =
+export type ServantProfessions =
   | 'servant'
   | 'porter'
   | 'gardner'

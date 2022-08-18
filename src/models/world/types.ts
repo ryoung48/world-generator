@@ -6,11 +6,9 @@ import { War } from '../history/events/war/types'
 import { LogRecord, WorldEvent } from '../history/types'
 import { ActorEvent } from '../npcs/actors/history/events/types'
 import { Actor } from '../npcs/actors/types'
-import { Beast } from '../npcs/species/beasts/types'
-import { Culture } from '../npcs/species/humanoids/cultures/types'
-import { Religion } from '../npcs/species/humanoids/religions/types'
-import { Humanoid, humanoid__species } from '../npcs/species/humanoids/taxonomy/types'
-import { Primordial } from '../npcs/species/primordials/types'
+import { Culture } from '../npcs/species/cultures/types'
+import { Religion } from '../npcs/species/religions/types'
+import { Humanoid, humanoid__species } from '../npcs/species/taxonomy/types'
 import { Loc } from '../regions/locations/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
@@ -19,10 +17,10 @@ import { Dimensions } from '../utilities/dimensions'
 import { ExteriorCell } from './cells/types'
 import { ContinentTemplate } from './spawn/shapers/continents/templates'
 import { Display } from './spawn/shapers/display/types'
-import { route_types } from './travel/types'
+import { RouteTypes } from './travel/types'
 
-export const sea_level_cutoff = 0.06
-export const mountains_cutoff = 0.5
+export const seaLevelCutoff = 0.06
+export const mountainsCutoff = 0.5
 
 export interface CoastalEdge {
   water: number
@@ -39,8 +37,8 @@ interface WorldDimensions extends Dimensions {
   // noise resolution
   res: number
   // cell dimensions
-  cell_area: number
-  cell_length: number
+  cellArea: number
+  cellLength: number
 }
 
 interface EventCounts {
@@ -67,7 +65,7 @@ export interface World {
   mountains: string[]
   coasts: CoastalEdge[]
   routes: Record<
-    route_types,
+    RouteTypes,
     { path: number[]; length: number; src: number; dst: number; imperial?: boolean }[]
   >
   display: Display
@@ -79,17 +77,15 @@ export interface World {
   locations: Loc[]
   cultures: Culture[]
   humanoids: Record<humanoid__species, Humanoid>
-  beasts: Beast[]
-  primordials: Primordial[]
   actors: Actor[]
-  actor_events: ActorEvent[]
+  actorEvents: ActorEvent[]
   religions: Religion[]
   threads: Thread[]
-  unique_names: Record<string, boolean>
+  uniqueNames: Record<string, boolean>
   // planet info
   date: number
-  first_new_moon: number // first new moon on record
-  lunar_cycle: number // synodic month (days)
+  firstNewMoon: number // first new moon on record
+  lunarCycle: number // synodic month (days)
   rotation: number // daily period (hours)
   tilt: number // axial tilt (degrees)
   seasons: {
@@ -98,7 +94,7 @@ export interface World {
     summer: number[]
     fall: number[]
   }
-  geo_bounds: {
+  geoBounds: {
     lat: number[]
     long: number[]
   }
@@ -107,6 +103,6 @@ export interface World {
   future: PriorityQueue<WorldEvent>
   wars: War[]
   rebellions: Rebellion[]
-  history_recording: boolean // used to halt detailed npc generation
+  historyRecording: boolean // used to halt detailed npc generation
   statistics: { current: EventCounts; past: (EventCounts & { time: number })[] }
 }

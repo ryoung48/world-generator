@@ -1,7 +1,7 @@
-import { actor__birth_date, actor__expiration_date, get_age } from '../../../npcs/actors/stats/age'
-import { region__is_active } from '../../../regions'
+import { actor__birthDate, actor__expirationDate, getAge } from '../../../npcs/actors/stats/age'
+import { region__isActive } from '../../../regions'
 import { Region } from '../../../regions/types'
-import { add_event, log_event } from '../..'
+import { addEvent, logEvent } from '../..'
 import { EventController } from '../../types'
 import { SuccessionEvent } from './types'
 
@@ -10,15 +10,15 @@ const ruler__spawn = (params: { nation: Region; culture?: number }) => {
   const culture = window.world.cultures[params.culture ?? nation.culture.ruling]
   const { succession } = nation.government
   const inherited = succession === 'hereditary'
-  const succession_date = window.world.date
-  const birth_date = actor__birth_date({ culture, ages: [inherited ? 1 : 30, 60] })
-  const expiration_date = actor__expiration_date({
+  const successionDate = window.world.date
+  const birthDate = actor__birthDate({ culture, ages: [inherited ? 1 : 30, 60] })
+  const expirationDate = actor__expirationDate({
     culture,
-    birth_date,
+    birthDate: birthDate,
     living: true,
     venerable: false
   })
-  nation.ruler = { birth_date, succession_date, expiration_date, culture: culture.idx }
+  nation.ruler = { birthDate, successionDate, expirationDate, culture: culture.idx }
 }
 
 /**
@@ -33,10 +33,10 @@ const spawn = (params: { nation: Region; time: number; death: boolean }) => {
     time,
     type: 'succession',
     nation: nation.idx,
-    start: nation.ruler.succession_date,
+    start: nation.ruler.successionDate,
     death
   }
-  add_event(event)
+  addEvent(event)
 }
 
 /**
@@ -46,28 +46,28 @@ const spawn = (params: { nation: Region; time: number; death: boolean }) => {
  * @param params.ruler - pre-generated ruler (used by rebels)
  * @returns the new ruler
  */
-const transition_leadership = (params: { nation: Region; init?: boolean; ruler?: number }) => {
+const transitionLeadership = (params: { nation: Region; init?: boolean; ruler?: number }) => {
   const { nation, init } = params
   // generate the new ruler
   ruler__spawn({ nation })
   const { ruler } = nation
   // set next election date
   // add noise to the date on the first transition of the sim
-  const next_passing = ruler.expiration_date
+  const nextPassing = ruler.expirationDate
   // get the date of the next succession
   // if monarchy or the leader expires before the next election date - use expiration date
   // otherwise use the next election date
-  const next_succession = next_passing
+  const nextSuccession = nextPassing
   // record the succession event on first transition
   if (init) {
-    log_event({
-      event_type: 'succession',
+    logEvent({
+      eventType: 'succession',
       title: 'Succession Event',
-      text: succession_text(nation),
+      text: successionText(nation),
       actors: [nation]
     })
   }
-  spawn({ nation, time: next_succession, death: true })
+  spawn({ nation, time: nextSuccession, death: true })
 }
 
 /**
@@ -76,53 +76,53 @@ const transition_leadership = (params: { nation: Region; init?: boolean; ruler?:
  * @param ruler - reference ruler
  * @returns {text} textual transition description
  */
-const succession_text = (nation: Region) => {
+const successionText = (nation: Region) => {
   const { succession } = nation.government
-  const { birth_date } = nation.ruler
+  const { birthDate } = nation.ruler
   const inherited = succession === 'hereditary'
   return `A new ruler ${inherited ? 'inherits the throne of' : 'is elected in'} ${
     nation.name
-  } at age ${get_age({ birth: birth_date, ref: window.world.date })}.`
+  } at age ${getAge({ birth: birthDate, ref: window.world.date })}.`
 }
 
 class SuccessionController extends EventController {
   public title = 'Succession'
-  public spawn(...args: Parameters<typeof transition_leadership>) {
-    transition_leadership(...args)
+  public spawn(...args: Parameters<typeof transitionLeadership>) {
+    transitionLeadership(...args)
   }
   public tick(event: SuccessionEvent) {
     const { type, time, death, start } = event
     const nation = window.world.regions[event.nation]
     const { ruler } = nation
     const { succession } = nation.government
-    const government_change = !death && succession !== 'hereditary'
+    const governmentChange = !death && succession !== 'hereditary'
     // the event is invalid and will not process in the following circumstances:
     const invalid =
       // the region was conquered
-      !region__is_active(nation) ||
+      !region__isActive(nation) ||
       // the ruler no longer rules the region (rebels took over)
-      ruler.succession_date !== start ||
+      ruler.successionDate !== start ||
       // the ruler died prematurely
-      ruler.expiration_date < time ||
+      ruler.expirationDate < time ||
       // the government was reformed to a non-electoral government
-      government_change
+      governmentChange
     // create a new event with the updated ruler expiration time
     // if the event is not valid and death driven, but the ruler has not yet expired
-    const stay_of_execution = !invalid && death && ruler.expiration_date > time
-    if (stay_of_execution) {
-      spawn({ nation, time: ruler.expiration_date, death: true })
+    const stayOfExecution = !invalid && death && ruler.expirationDate > time
+    if (stayOfExecution) {
+      spawn({ nation, time: ruler.expirationDate, death: true })
     } else if (!invalid) {
       // otherwise process the event normally
       // find the next ruler
-      transition_leadership({ nation })
+      transitionLeadership({ nation })
       const passing = death
-      log_event({
-        event_type: type,
+      logEvent({
+        eventType: type,
         title: 'Succession Event',
-        text: `The current ruler ${passing ? 'has passed away' : 'steps down'} at age ${get_age({
-          birth: ruler.birth_date,
+        text: `The current ruler ${passing ? 'has passed away' : 'steps down'} at age ${getAge({
+          birth: ruler.birthDate,
           ref: window.world.date
-        })}. ${succession_text(nation)}`,
+        })}. ${successionText(nation)}`,
         actors: [nation]
       })
     }

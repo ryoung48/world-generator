@@ -2,7 +2,7 @@ import { Delaunay } from 'd3-delaunay'
 import { polygonCentroid } from 'd3-polygon'
 
 import { degrees, distance } from '.'
-import { day_ms } from './time'
+import { dayMS } from './time'
 
 export type directions = 'N' | 'S' | 'E' | 'W'
 
@@ -22,20 +22,20 @@ export interface Point {
 
 type Vertex = [number, number]
 
-export const point_on_edge = (params: { points: [Point, Point]; distance: number }) => {
+export const point__isOnEdge = (params: { points: [Point, Point]; distance: number }) => {
   const { points, distance } = params
   const [p1, p2] = points
   const remainder = 1 - distance
   return { x: p1.x * distance + p2.x * remainder, y: p1.y * distance + p2.y * remainder }
 }
 
-export const point_degrees = (p1: Point, p2: Point) => {
+export const point__degrees = (p1: Point, p2: Point) => {
   const rads = Math.atan2(p2.y - p1.y, p2.x - p1.x)
   return degrees(rads < 0 ? Math.abs(rads) : 2 * Math.PI - rads)
 }
 
-export const point_direction = (p1: Point, p2: Point): directions => {
-  const deg = point_degrees(p1, p2)
+export const point__direction = (p1: Point, p2: Point): directions => {
+  const deg = point__degrees(p1, p2)
   if (deg > 45 && deg <= 135) return 'N'
   else if (deg > 135 && deg <= 225) return 'W'
   else if (deg > 225 && deg <= 315) return 'S'
@@ -59,7 +59,7 @@ export const point__travel = (params: {
   const { sw, sh } = window.world.dim
   const { src, dst, scale = [sw, sh], mpd = 24 } = params
   const miles = point__distance({ points: [src, dst], scale })
-  return { miles, duration: (miles / mpd) * day_ms }
+  return { miles, duration: (miles / mpd) * dayMS }
 }
 
 interface VoronoiParams {
@@ -91,27 +91,35 @@ export const voronoi__relaxed = ({ points, relaxation = 1, w, h }: RelaxedVorono
   return vor
 }
 
-export const voronoi__common_edge = (i: Vertex[], j: Vertex[]): Vertex[] => {
-  const cell_i = new Set(i.map(String))
+export const voronoi__commonEdge = (i: Vertex[], j: Vertex[]): Vertex[] => {
+  const cellI = new Set(i.map(String))
   const edge = Array.from(new Set(j.map(String)))
-    .filter(p => cell_i.has(p))
+    .filter(p => cellI.has(p))
     .map(p => JSON.parse(`[${p}]`) as [number, number])
   return edge
 }
 
-export const same_edge = (e1: number[], e2: number[]) => {
+export const edge__sameEdge = (e1: number[], e2: number[]) => {
   return e1[0] === e2[0] && e1[1] === e2[1]
 }
 
-export const voronoi__vertex_line = () => (edges: Vertex[][]) => {
+export const voronoi__vertexLine = () => (edges: Vertex[][]) => {
   const line = edges.shift()
   while (edges.length > 0) {
     const s1 = line[0]
     const e2 = line[line.length - 1]
     let placed = false
     edges.forEach((edge, i) => {
-      const start = same_edge(s1, edge[1]) ? edge[0] : same_edge(s1, edge[0]) ? edge[1] : undefined
-      const end = same_edge(e2, edge[1]) ? edge[0] : same_edge(e2, edge[0]) ? edge[1] : undefined
+      const start = edge__sameEdge(s1, edge[1])
+        ? edge[0]
+        : edge__sameEdge(s1, edge[0])
+        ? edge[1]
+        : undefined
+      const end = edge__sameEdge(e2, edge[1])
+        ? edge[0]
+        : edge__sameEdge(e2, edge[0])
+        ? edge[1]
+        : undefined
       if (start) {
         edges.splice(i, 1)
         line.unshift(start)

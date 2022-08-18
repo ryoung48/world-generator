@@ -1,13 +1,13 @@
 import { Grid } from '@mui/material'
 
-import { view__context } from '../../../context'
 import { actor__location } from '../../../models/npcs/actors'
-import { location__is_settlement } from '../../../models/regions/locations'
+import { location__isSettlement } from '../../../models/regions/locations'
 import { location__terrain } from '../../../models/regions/locations/environment'
 import { location__threads } from '../../../models/regions/locations/spawn/threads'
 import { thread__collect } from '../../../models/threads'
-import { decorate_text } from '../../../models/utilities/text/decoration'
-import { css_colors } from '../../theme/colors'
+import { decorateText } from '../../../models/utilities/text/decoration'
+import { view__context } from '../../context'
+import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
 import { StyledTabs } from '../common/navigation/StyledTabs'
 import { SectionList } from '../common/text/SectionList'
@@ -25,7 +25,7 @@ export function LocationView() {
   const climate = window.world.regions[province.region].climate
   const type = location.subtype ?? location.type
   const tabs = [{ label: 'weather', content: <WeatherView></WeatherView> }]
-  const settlement = location__is_settlement(location)
+  const settlement = location__isSettlement(location)
   if (settlement) {
     tabs.push({ label: 'society', content: <SocietyView></SocietyView> })
     const avatar = window.world.actors[state.avatar]
@@ -38,9 +38,9 @@ export function LocationView() {
           <ThreadList
             available={available}
             active={active.sort((a, b) => {
-              const a_loc = a.location === avatar.location.curr ? 1 : 0
-              const b_loc = b.location === avatar.location.curr ? 1 : 0
-              return b_loc - a_loc
+              const aLoc = a.location === avatar.location.curr ? 1 : 0
+              const bLoc = b.location === avatar.location.curr ? 1 : 0
+              return bLoc - aLoc
             })}
             closed={closed}
           ></ThreadList>
@@ -54,9 +54,9 @@ export function LocationView() {
       title={location.name}
       subtitle={
         <StyledText
-          color={css_colors.subtitle}
-          text={`(${location.idx}) ${type}, ${decorate_text({
-            link: window.world.regions[province.curr_nation]
+          color={cssColors.subtitle}
+          text={`(${location.idx}) ${type}, ${decorateText({
+            link: window.world.regions[province.currNation]
           })}`}
         ></StyledText>
       }
@@ -69,7 +69,7 @@ export function LocationView() {
                   label: 'Terrain',
                   content: (
                     <StyledText
-                      text={decorate_text({
+                      text={decorateText({
                         label: key,
                         tooltip: climate
                       })}

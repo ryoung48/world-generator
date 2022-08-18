@@ -1,4 +1,4 @@
-export type underworld_professions =
+export type UnderworldProfessions =
   | 'thief (minor)'
   | 'assassin (minor)'
   | 'courtesan (minor)'

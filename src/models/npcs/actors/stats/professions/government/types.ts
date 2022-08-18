@@ -1,4 +1,4 @@
-export type government_professions =
+export type GovernmentProfessions =
   | 'advisor (noble)'
   | 'advisor (state)'
   | 'advocate'

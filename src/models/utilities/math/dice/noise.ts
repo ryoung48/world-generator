@@ -18,12 +18,13 @@ class Simplex {
     this.n = new SimplexNoise(seed)
   }
   public billow() {
+    const warpSize = 1
     const size = this.res
     const data = Array.from(Array(size + 1), () => Array(size + 1).fill(0))
     let [high, low] = [-Infinity, Infinity]
     for (let i = 0; i <= size; i++) {
       for (let j = 0; j <= size; j++) {
-        data[i][j] = this.noise(i, j)
+        data[i][j] = this.noise(i * warpSize, j * warpSize)
         high = data[i][j] > high ? data[i][j] : high
         low = data[i][j] < low ? data[i][j] : low
       }
@@ -31,7 +32,7 @@ class Simplex {
     for (let i = 0; i <= size; i++) {
       for (let j = 0; j <= size; j++) {
         const d = scale([low, high], [-1, 1], data[i][j])
-        data[i][j] = scale([0, 0.5], [0.6, 0.8], Math.abs(d))
+        data[i][j] = Math.abs(d)
       }
     }
     return data
@@ -49,64 +50,7 @@ class Simplex {
   }
 }
 
-class AdvSimplex extends Simplex {
-  private persist: number[][]
-  constructor(res: number, params: NoiseParameters, seed: string, persist: number[][]) {
-    super(res, params, seed)
-    this.persist = persist
-  }
-
-  public billow() {
-    const size = this.res
-    const data = Array.from(Array(size + 1), () => Array(size + 1).fill(0))
-    let [high, low] = [-Infinity, Infinity]
-    for (let i = 0; i <= size; i++) {
-      for (let j = 0; j <= size; j++) {
-        this.params.persistence = this.persist[i][j]
-        data[i][j] = this.noise(i, j)
-        data[i][j] = this.noise(i + data[i][j], j + data[i][j])
-        high = data[i][j] > high ? data[i][j] : high
-        low = data[i][j] < low ? data[i][j] : low
-      }
-    }
-    for (let i = 0; i <= size; i++) {
-      for (let j = 0; j <= size; j++) {
-        const d = scale([low, high], [-1, 1], data[i][j])
-        data[i][j] = Math.abs(d)
-      }
-    }
-    return data
-  }
-}
-
-class OldStyle extends Simplex {
-  public billow() {
-    const warp_size = 1
-    const size = this.res
-    const data = Array.from(Array(size + 1), () => Array(size + 1).fill(0))
-    let [high, low] = [-Infinity, Infinity]
-    for (let i = 0; i <= size; i++) {
-      for (let j = 0; j <= size; j++) {
-        data[i][j] = this.noise(i * warp_size, j * warp_size)
-        high = data[i][j] > high ? data[i][j] : high
-        low = data[i][j] < low ? data[i][j] : low
-      }
-    }
-    for (let i = 0; i <= size; i++) {
-      for (let j = 0; j <= size; j++) {
-        const d = scale([low, high], [-1, 1], data[i][j])
-        data[i][j] = Math.abs(d)
-      }
-    }
-    return data
-  }
-}
-
 export default {
   simplex: (res: number, params: NoiseParameters, seed: string) =>
-    new Simplex(res, params, seed).billow(),
-  adv: (res: number, params: NoiseParameters, seed: string, persist: number[][]) =>
-    new AdvSimplex(res, params, seed, persist).billow(),
-  old: (res: number, params: NoiseParameters, seed: string) =>
-    new OldStyle(res, params, seed).billow()
+    new Simplex(res, params, seed).billow()
 }

@@ -1,90 +1,90 @@
-import { log_event } from '../../history'
+import { logEvent } from '../../history'
 import { event__succession } from '../../history/events/succession'
-import { title_case } from '../../utilities/text'
-import { decorate_text } from '../../utilities/text/decoration'
-import { region__is_active } from '..'
+import { titleCase } from '../../utilities/text'
+import { decorateText } from '../../utilities/text/decoration'
+import { region__isActive } from '..'
 import {
-  province__find_closest,
-  province__is_capital,
-  province__local_neighbors,
-  province__sort_closest
+  province__findClosest,
+  province__isCapital,
+  province__localNeighbors,
+  province__sortClosest
 } from '../provinces'
 import { province__attach, province__connected, province__sever } from '../provinces/arteries'
 import { Province } from '../provinces/types'
 import { Region } from '../types'
-import { region__allies, region__set_relation } from './relations'
-import { region__formatted_wealth } from './status'
+import { region__allies, region__setRelation } from './relations'
+import { region__formattedWealth } from './status'
 
-export const region__claim_subject = (params: { nation: Region; subject: Region }) => {
+export const region__claimSubject = (params: { nation: Region; subject: Region }) => {
   const { nation, subject } = params
-  const free = region__release_subjects(subject)
+  const free = region__releaseSubjects(subject)
   subject.overlord.idx = nation.idx
-  subject.overlord.join_date = window.world.date
+  subject.overlord.joinDate = window.world.date
   nation.subjects.push(subject.idx)
-  region__set_relation({ relation: 'ally', n1: nation, n2: subject })
-  const text = `${decorate_text({ link: subject })} (${region__formatted_wealth(
+  region__setRelation({ relation: 'ally', n1: nation, n2: subject })
+  const text = `${decorateText({ link: subject })} (${region__formattedWealth(
     subject
-  )}) becomes a vassal of ${decorate_text({
+  )}) becomes a vassal of ${decorateText({
     link: nation
-  })} (${region__formatted_wealth(nation)}) ${free.text}.`
-  log_event({
-    event_type: 'diplomacy',
-    title: `New Vassal: ${decorate_text({ link: subject })}`,
+  })} (${region__formattedWealth(nation)}) ${free.text}.`
+  logEvent({
+    eventType: 'diplomacy',
+    title: `New Vassal: ${decorateText({ link: subject })}`,
     text,
     actors: [nation, subject]
   })
   return {
-    text: `${decorate_text({ link: subject })} (${region__formatted_wealth(
+    text: `${decorateText({ link: subject })} (${region__formattedWealth(
       subject
-    )}) becomes a vassal of ${decorate_text({
+    )}) becomes a vassal of ${decorateText({
       link: nation
-    })} (${region__formatted_wealth(nation)}) ${free.text}.`,
+    })} (${region__formattedWealth(nation)}) ${free.text}.`,
     actors: Array.from(new Set([nation, subject].map(({ idx }) => idx).concat(free.actors)))
   }
 }
 
-const region__release_subjects = (nation: Region) => {
+const region__releaseSubjects = (nation: Region) => {
   const outcome = { text: '', actors: [nation.idx] }
   if (nation.subjects.length > 0) {
-    outcome.text = `The subjects of ${decorate_text({
+    outcome.text = `The subjects of ${decorateText({
       link: nation
     })} have been released: ${nation.subjects
-      .map(s => decorate_text({ link: window.world.regions[s] }))
+      .map(s => decorateText({ link: window.world.regions[s] }))
       .join(', ')}.`
     outcome.actors.push(...nation.subjects)
     nation.subjects.forEach(s => {
       const subject = window.world.regions[s]
       subject.overlord.idx = -1
-      region__set_relation({ relation: 'suspicious', n1: nation, n2: subject })
+      region__setRelation({ relation: 'suspicious', n1: nation, n2: subject })
     })
     nation.subjects = []
-    log_event({
-      event_type: 'diplomacy',
-      title: `Lost Subjects: ${decorate_text({ link: nation })}`,
+    logEvent({
+      eventType: 'diplomacy',
+      title: `Lost Subjects: ${decorateText({ link: nation })}`,
       text: outcome.text,
       actors: outcome.actors.map(r => window.world.regions[r])
     })
   }
   return outcome
 }
-export const region__release_overlord = (nation: Region) => {
+export const region__releaseOverlord = (nation: Region) => {
   const outcome = { text: '', actors: [nation.idx] }
   const suzerain = window.world.regions[nation.overlord.idx]
   if (suzerain) {
     nation.overlord.idx = -1
-    region__set_relation({ relation: 'suspicious', n1: nation, n2: suzerain })
+    region__setRelation({ relation: 'suspicious', n1: nation, n2: suzerain })
     const capital = window.world.provinces[nation.capital]
-    const verbiage = suzerain.idx === capital.curr_nation ? 'annexed' : 'lost'
-    outcome.text = `${decorate_text({
+    const verbiage = suzerain.idx === capital.currNation ? 'annexed' : 'lost'
+    outcome.text = `${decorateText({
       link: suzerain
-    })} has ${verbiage} it's vassal ${decorate_text({
+    })} has ${verbiage} it's vassal ${decorateText({
       link: nation
     })}.`
     outcome.actors.push(suzerain.idx)
     suzerain.subjects = suzerain.subjects.filter(subject => subject !== nation.idx)
-    log_event({
-      event_type: 'diplomacy',
-      title: `${title_case(verbiage)} Vassal: ${decorate_text({ link: nation })}`,
+    logEvent({
+      eventType: 'diplomacy',
+      title: `${titleCase(verbiage)} Vassal: ${decorateText({ link: nation })}`,
       text: outcome.text,
       actors: outcome.actors.map(r => window.world.regions[r])
     })
@@ -92,22 +92,22 @@ export const region__release_overlord = (nation: Region) => {
   return outcome
 }
 
-const release_contracts = (nation: Region) => {
+const releaseContracts = (nation: Region) => {
   // subjects
-  const subjects_released = region__release_subjects(nation)
+  const subjectsReleased = region__releaseSubjects(nation)
   // overlord
-  const freedom = region__release_overlord(nation)
+  const freedom = region__releaseOverlord(nation)
   // allies
   const allies = region__allies(nation)
-  allies.forEach(ally => region__set_relation({ relation: 'neutral', n1: nation, n2: ally }))
-  return [subjects_released, freedom].filter(({ text }) => text)
+  allies.forEach(ally => region__setRelation({ relation: 'neutral', n1: nation, n2: ally }))
+  return [subjectsReleased, freedom].filter(({ text }) => text)
 }
 
-export const region__claim_province = (params: { nation: Region; province: Province }) => {
+export const region__claimProvince = (params: { nation: Region; province: Province }) => {
   const { nation, province } = params
-  const old = window.world.regions[province.curr_nation]
+  const old = window.world.regions[province.currNation]
   const severed = province__sever(province)
-  const capitals = severed.filter(t => t.regional_capital).map(({ idx }) => idx)
+  const capitals = severed.filter(t => t.regionalCapital).map(({ idx }) => idx)
   // remove capital cities from old owner
   old.regions = old.regions.filter(r => !capitals.includes(r))
   // add regions to new owner
@@ -121,77 +121,77 @@ export const region__claim_province = (params: { nation: Region; province: Provi
     .map(({ idx }) => idx)
   // add it to the new region
   severed.forEach(province => {
-    province.curr_nation = nation.idx
-    province.prev_nation = old.idx
+    province.currNation = nation.idx
+    province.prevNation = old.idx
     nation.provinces.push(province.idx)
-    if (province__is_capital(province) && province.artery.length === 0) {
+    if (province__isCapital(province) && province.artery.length === 0) {
       province.artery.push(province.idx)
     }
   })
   severed.forEach(province => {
-    old.max_wealth -= province.wealth
-    nation.max_wealth += province.wealth
+    old.maxWealth -= province.wealth
+    nation.maxWealth += province.wealth
   })
   // connect to the new capital artery
   const partials = severed.filter(city =>
-    province__local_neighbors(city).some(c => province__connected(c))
+    province__localNeighbors(city).some(c => province__connected(c))
   )
-  const nation_capital = window.world.provinces[nation.capital]
-  province__sort_closest(partials, nation_capital).forEach(city => {
+  const nationCapital = window.world.provinces[nation.capital]
+  province__sortClosest(partials, nationCapital).forEach(city => {
     if (!province__connected(city)) {
-      const connections = province__local_neighbors(city).filter(c => province__connected(c))
-      const closest = province__find_closest(connections, city)
+      const connections = province__localNeighbors(city).filter(c => province__connected(c))
+      const closest = province__findClosest(connections, city)
       province__attach(city, closest.idx)
     }
   })
-  const active = region__is_active(old)
-  const war_ended = !active ? release_contracts(old) : []
+  const active = region__isActive(old)
+  const warEnded = !active ? releaseContracts(old) : []
   if (!active) {
     old.wealth = 0
-    war_ended.unshift({
-      text: `${decorate_text({ link: old })} (${old.wealth.toFixed(
+    warEnded.unshift({
+      text: `${decorateText({ link: old })} (${old.wealth.toFixed(
         2
-      )}) has been taken by ${decorate_text({
+      )}) has been taken by ${decorateText({
         link: nation
-      })} (${region__formatted_wealth(nation)}).`,
+      })} (${region__formattedWealth(nation)}).`,
       actors: [nation.idx, old.idx]
     })
   }
-  nation.borders_changed = true
-  old.borders_changed = true
-  return { conquered: severed, war_ended }
+  nation.bordersChanged = true
+  old.bordersChanged = true
+  return { conquered: severed, warEnded }
 }
 
-export const nation__annex_region = (params: { nation: Region; subject: Region }) => {
+export const nation__annexRegion = (params: { nation: Region; subject: Region }) => {
   const { nation, subject } = params
-  const nation_capital = window.world.provinces[nation.capital]
-  const cities = province__sort_closest(
+  const nationCapital = window.world.provinces[nation.capital]
+  const cities = province__sortClosest(
     subject.provinces.map(t => window.world.provinces[t]),
-    nation_capital
+    nationCapital
   )
   for (const claim of cities) {
-    if (claim.curr_nation !== nation.idx) {
-      region__claim_province({ nation, province: claim })
+    if (claim.currNation !== nation.idx) {
+      region__claimProvince({ nation, province: claim })
     }
   }
   subject.wealth = Math.max(0, subject.wealth)
-  nation.wealth = Math.min(nation.max_wealth * 1.5, nation.wealth + subject.wealth)
+  nation.wealth = Math.min(nation.maxWealth * 1.5, nation.wealth + subject.wealth)
 }
-export const nation__release_region = (params: { nation: Region; subject: Region }) => {
+export const nation__releaseRegion = (params: { nation: Region; subject: Region }) => {
   const { nation, subject } = params
   const capital = window.world.provinces[subject.capital]
-  const cities = province__sort_closest(
+  const cities = province__sortClosest(
     nation.provinces
       .map(t => window.world.provinces[t])
       .filter(city => city.region === subject.idx && city.idx !== capital.idx),
     capital
-  ).filter(province => province.memory.next_invasion.time < window.world.date)
-  region__claim_province({ nation: subject, province: capital })
+  ).filter(province => province.memory.nextInvasion.time < window.world.date)
+  region__claimProvince({ nation: subject, province: capital })
   for (const claim of cities) {
-    if (claim.curr_nation !== subject.idx) {
-      region__claim_province({ nation: subject, province: claim })
+    if (claim.currNation !== subject.idx) {
+      region__claimProvince({ nation: subject, province: claim })
     }
   }
   event__succession.spawn({ nation: subject, init: true })
-  subject.memory.last_update = window.world.date
+  subject.memory.lastUpdate = window.world.date
 }

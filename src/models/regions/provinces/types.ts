@@ -1,32 +1,32 @@
-import { trade_good } from '../../items/economy'
-import { route_types } from '../../world/travel/types'
+import { TradeGood } from '../../items/economy'
+import { RouteTypes } from '../../world/travel/types'
 
 export interface Province {
   idx: number
   cell: number
   region: number
-  regional_capital: boolean
+  regionalCapital: boolean
   finalized: boolean
   memory: {
-    trade_goods: number
-    trade_demand: number
+    tradeGoods: number
+    tradeDemand: number
     refugees: number
-    last_invasion: { type: 'wars' | 'rebellions'; time: number; idx: number }
-    next_invasion: { type: 'wars' | 'rebellions'; time: number; idx: number }
+    lastInvasion: { type: 'wars' | 'rebellions'; time: number; idx: number }
+    nextInvasion: { type: 'wars' | 'rebellions'; time: number; idx: number }
   }
   // travel
   hub: number
   locations: number[]
   // networking
   // sea|land -> { province -> route table (world) }
-  trade: Record<route_types, Record<string, number>>
+  trade: Record<RouteTypes, Record<string, number>>
   neighbors: number[]
   artery: number[]
   // economy
   wealth: number
   resources: {
-    supply: Partial<Record<trade_good, number>>
-    demand: Partial<Record<trade_good, number>>
+    supply: Partial<Record<TradeGood, number>>
+    demand: Partial<Record<TradeGood, number>>
   }
   // geography
   lands: Record<number, number>
@@ -37,6 +37,6 @@ export interface Province {
   // demographics
   population: number // urban + rural
   // ownership
-  curr_nation: number // current owner
-  prev_nation: number // previous owner
+  currNation: number // current owner
+  prevNation: number // previous owner
 }

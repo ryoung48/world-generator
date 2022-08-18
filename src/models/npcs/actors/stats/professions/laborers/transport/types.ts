@@ -1,4 +1,4 @@
-export type transport_professions =
+export type TransportProfessions =
   | 'sailor (merchant, novice)'
   | 'sailor (navy, novice)'
   | 'sailor (pirate, novice)'
@@ -14,4 +14,4 @@ export type transport_professions =
   | 'ship captain (navy)'
   | 'ship captain (pirate)'
 
-export type sailor_specs = 'cannoneer' | 'navigator' | 'boatswain' | 'helmsman' | 'deckhand'
+export type SailorSpecs = 'cannoneer' | 'navigator' | 'boatswain' | 'helmsman' | 'deckhand'

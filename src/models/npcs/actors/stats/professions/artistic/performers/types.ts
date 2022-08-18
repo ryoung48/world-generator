@@ -1,4 +1,4 @@
-export type performer_professions =
+export type PerformerProfessions =
   | 'actor'
   | 'musician'
   | 'singer'

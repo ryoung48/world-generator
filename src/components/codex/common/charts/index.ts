@@ -3,7 +3,7 @@ import { ChartData, TooltipItem } from 'chart.js'
 import { formatters } from '../../../../models/utilities/text/formatters'
 import { PieData } from './types'
 
-export const pie_chart__construct = (chart: PieData[]): ChartData<'pie', number[], string> => {
+export const pieChart__construct = (chart: PieData[]): ChartData<'pie', number[], string> => {
   const labels: string[] = []
   const data: number[] = []
   const colors: string[] = []
@@ -24,7 +24,7 @@ export const pie_chart__construct = (chart: PieData[]): ChartData<'pie', number[
   }
 }
 
-export const pie_chart__percent_tooltips = (item: TooltipItem<'pie'>) => {
+export const pieChart__percentTooltips = (item: TooltipItem<'pie'>) => {
   const label = item.label
   const value = item.dataset.data[item.dataIndex]
   return `${label}: ${formatters.percent({ value, precision: 2 })}`

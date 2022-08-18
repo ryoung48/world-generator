@@ -1,10 +1,10 @@
-import { world__water_features } from '../../..'
+import { world__waterFeatures } from '../../..'
 import { cell__neighbors, ocean } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'
-import { sea_level_cutoff } from '../../../types'
+import { seaLevelCutoff } from '../../../types'
 import { Shaper } from '..'
 
-const find_water = () => {
+const findWater = () => {
   const { h, w } = window.world.dim
   const corners = [
     [0, 0],
@@ -18,10 +18,10 @@ const find_water = () => {
     let height = 0
     while (queue.length > 0) {
       const { cell, dist } = queue.shift()
-      const world_cell = window.world.cells[cell]
-      height += world_cell.n.length === 0 ? Infinity : world_cell.h
+      const worldCell = window.world.cells[cell]
+      height += worldCell.n.length === 0 ? Infinity : worldCell.h
       if (dist < 10) {
-        cell__neighbors(world_cell)
+        cell__neighbors(worldCell)
           .filter(n => !visited[n.idx])
           .forEach(n => {
             visited[n.idx] = true
@@ -39,12 +39,12 @@ const find_water = () => {
 export const landmarks__water = (idx: number) => {
   // mark water cells
   // make sure to that index #1 points to the ocean
-  const [x, y] = find_water()
+  const [x, y] = findWater()
   const start = window.world.diagram.delaunay.find(x, y)
   // get all water cells
   let water = [window.world.cells[start]]
   water = water.concat(Shaper.water.filter(p => p.idx !== start))
-  const water_bodies: Record<number, ExteriorCell[]> = {}
+  const waterBodies: Record<number, ExteriorCell[]> = {}
   // iterate through all bodies of water
   while (water.length > 0) {
     let queue = [water[0].idx]
@@ -60,14 +60,14 @@ export const landmarks__water = (idx: number) => {
       const current = window.world.cells[queue.shift()]
       // mark it with the current water feature index
       current.landmark = idx
-      current.is_water = true
+      current.isWater = true
       current.ocean = idx === 1
-      current.h = sea_level_cutoff - 0.001
+      current.h = seaLevelCutoff - 0.001
       // add neighboring water cells to the queue
       queue = queue.concat(
         current.n.filter(
           p =>
-            window.world.cells[p].h < sea_level_cutoff &&
+            window.world.cells[p].h < seaLevelCutoff &&
             !window.world.cells[p].landmark &&
             !queue.includes(p)
         )
@@ -75,7 +75,7 @@ export const landmarks__water = (idx: number) => {
     }
     // mark bodies of water
     const curr = water.filter(poly => poly.landmark === idx)
-    water_bodies[idx] = curr
+    waterBodies[idx] = curr
     const landmark = window.world.landmarks[idx]
     landmark.size = curr.length
     // only consider cells that haven't been marked
@@ -85,7 +85,7 @@ export const landmarks__water = (idx: number) => {
   }
   // remove excess lakes
   const total = window.world.cells.length
-  world__water_features()
+  world__waterFeatures()
     .filter(i => {
       const lake = window.world.landmarks[i]
       const large = lake.size / total > 0.0001
@@ -93,8 +93,8 @@ export const landmarks__water = (idx: number) => {
     })
     .forEach(i => {
       delete window.world.landmarks[i]
-      water_bodies[i].forEach(cell => {
-        cell.h = sea_level_cutoff
+      waterBodies[i].forEach(cell => {
+        cell.h = seaLevelCutoff
         cell.landmark = 0
       })
     })
@@ -122,9 +122,9 @@ export const landmarks__islands = (idx: number) => {
       const current = window.world.cells[queue.shift()]
       // mark it with the current land feature index
       current.landmark = idx
-      current.is_water = false
-      const water = current.n.filter(p => window.world.cells[p].h < sea_level_cutoff)
-      current.is_coast = water.length > 0
+      current.isWater = false
+      const water = current.n.filter(p => window.world.cells[p].h < seaLevelCutoff)
+      current.isCoast = water.length > 0
       const ocean = water.filter(cell => window.world.cells[cell].ocean)
       current.beach = ocean.length > 0
       // mark neighboring water cells as shallow
@@ -132,14 +132,14 @@ export const landmarks__islands = (idx: number) => {
       // identify lake isles
       if (current.beach) lake.isle = false
       if (lake.isle && !lake.idx && water.length > 0) {
-        const lake_cell = water.find(cell => !window.world.cells[cell].ocean)
-        lake.idx = window.world.cells[lake_cell]?.landmark
+        const lakeCell = water.find(cell => !window.world.cells[cell].ocean)
+        lake.idx = window.world.cells[lakeCell]?.landmark
       }
       // add neighboring land cells to the queue
       queue = queue.concat(
         current.n.filter(
           p =>
-            window.world.cells[p].h >= sea_level_cutoff &&
+            window.world.cells[p].h >= seaLevelCutoff &&
             !window.world.cells[p].landmark &&
             !queue.includes(p)
         )
@@ -151,14 +151,14 @@ export const landmarks__islands = (idx: number) => {
       delete window.world.landmarks[idx]
       island.forEach(p => {
         p.landmark = lake.idx
-        p.is_water = true
-        p.is_coast = false
+        p.isWater = true
+        p.isCoast = false
         p.ocean = false
-        p.h = sea_level_cutoff - 0.01
+        p.h = seaLevelCutoff - 0.01
         cell__neighbors(p)
-          .filter(n => n.is_water)
+          .filter(n => n.isWater)
           .forEach(n => {
-            const coast = n.n.filter(p => !window.world.cells[p].is_water)
+            const coast = n.n.filter(p => !window.world.cells[p].isWater)
             n.shallow = coast.length > 0
           })
       })

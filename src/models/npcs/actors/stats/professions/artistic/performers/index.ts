@@ -1,29 +1,29 @@
 import { LocationContext } from '../../../../../../regions/locations/context/types'
-import { artisan_skills } from '../../../skills/categories'
-import { gender_based_title } from '../../titles'
+import { artisanSkills } from '../../../skills/categories'
+import { genderBasedTitle } from '../../titles'
 import { Profession } from '../../types'
-import { performer_professions } from './types'
+import { PerformerProfessions } from './types'
 
-const performer_occurrence = (rural: number) => (params: { context: LocationContext }) => {
+const performerOccurrence = (rural: number) => (params: { context: LocationContext }) => {
   let weight = 0.5
   if (!params.context.urban) weight *= rural
   if (params.context.art) weight *= 2
   return weight
 }
 
-export const performers: Record<performer_professions, Profession> = {
+export const performers: Record<PerformerProfessions, Profession> = {
   actor: {
     category: 'artistic',
     key: 'actor',
     lifestyle: 'poor',
-    occurrence: params => performer_occurrence(0)(params),
+    occurrence: params => performerOccurrence(0)(params),
     skills: {
       primary: ['acting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     subcategory: 'performers',
     title: ({ actor }) =>
-      gender_based_title({
+      genderBasedTitle({
         male: 'Actor',
         female: 'Actress',
         actor
@@ -33,11 +33,11 @@ export const performers: Record<performer_professions, Profession> = {
     category: 'artistic',
     key: 'composer',
     lifestyle: 'modest',
-    occurrence: params => performer_occurrence(0)(params),
+    occurrence: params => performerOccurrence(0)(params),
     skills: {
       primary: ['composition'],
       secondary: ['instrumental'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     subcategory: 'performers',
     title: 'Composer (music)'
@@ -46,11 +46,11 @@ export const performers: Record<performer_professions, Profession> = {
     category: 'artistic',
     key: 'dancer',
     lifestyle: 'poor',
-    occurrence: params => performer_occurrence(0.1)(params),
+    occurrence: params => performerOccurrence(0.1)(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['dancing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     subcategory: 'performers'
   },
@@ -58,10 +58,10 @@ export const performers: Record<performer_professions, Profession> = {
     category: 'artistic',
     key: 'musician',
     lifestyle: 'poor',
-    occurrence: params => performer_occurrence(0.1)(params),
+    occurrence: params => performerOccurrence(0.1)(params),
     skills: {
       primary: ['instrumental'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     subcategory: 'performers'
   },
@@ -69,10 +69,10 @@ export const performers: Record<performer_professions, Profession> = {
     category: 'artistic',
     key: 'singer',
     lifestyle: 'poor',
-    occurrence: params => performer_occurrence(0.1)(params),
+    occurrence: params => performerOccurrence(0.1)(params),
     skills: {
       primary: ['singing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     subcategory: 'performers'
   },
@@ -80,11 +80,11 @@ export const performers: Record<performer_professions, Profession> = {
     category: 'artistic',
     key: 'stagehand',
     lifestyle: 'poor',
-    occurrence: params => performer_occurrence(0)(params),
+    occurrence: params => performerOccurrence(0)(params),
     prevalence: 'uncommon',
     skills: {
       primary: ['athletics', 'acting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     },
     subcategory: 'performers'
   }

@@ -1,9 +1,9 @@
-import { color__random_preset } from '../../../../utilities/colors'
-import { year_ms } from '../../../../utilities/math/time'
-import { title_case } from '../../../../utilities/text'
+import { colors__randomPreset } from '../../../../utilities/colors'
+import { yearMS } from '../../../../utilities/math/time'
+import { titleCase } from '../../../../utilities/text'
 import { Actor } from '../../types'
-import { actor__base_age, actor__child_title, actor__is_child } from '../age'
-import { age_ranges } from '../age/life_phases'
+import { actor__baseAge, actor__childTitle, actor__isChild } from '../age'
+import { ageRanges } from '../age/life_phases'
 import { artists } from './artistic/artists'
 import { performers } from './artistic/performers'
 import { craftsman } from './craftsman'
@@ -18,15 +18,15 @@ import { religious } from './scholars/religious'
 import { wizards } from './scholars/wizards'
 import { soldiers } from './soldiers'
 import {
-  actor_professions,
+  ActorProfessions,
   Profession,
-  profession_categories,
-  profession_subcategories,
-  social_class
+  professionCategories,
+  professionSubcategories,
+  SocialClass
 } from './types'
 import { underworld } from './underworld'
 
-export const profession__map: Record<actor_professions, Profession> = {
+export const profession__map: Record<ActorProfessions, Profession> = {
   ...transport,
   ...servants,
   ...religious,
@@ -48,9 +48,9 @@ export const profession__map: Record<actor_professions, Profession> = {
  * @param npc - actor
  */
 
-export const profession__after_spawn = (npc: Actor) => {
+export const profession__afterSpawn = (npc: Actor) => {
   const profession = profession__map[npc.occupation.key]
-  profession?.after_spawn?.(npc) // shops, inventory, etc
+  profession?.afterSpawn?.(npc) // shops, inventory, etc
 }
 
 /**
@@ -60,7 +60,7 @@ export const profession__after_spawn = (npc: Actor) => {
  */
 const profession__duration = (params: {
   actor: Actor
-  profession: actor_professions
+  profession: ActorProfessions
   time: number
 }) => {
   const { actor, profession, time } = params
@@ -70,7 +70,7 @@ const profession__duration = (params: {
       .reduce((sum, background) => {
         const end = background?.end ?? time
         return sum + (end - background.start)
-      }, 0) / year_ms
+      }, 0) / yearMS
   )
 }
 
@@ -81,15 +81,15 @@ export const profession__progression = (params: {
 }) => {
   const { actor, profession, time } = params
   const curr = { profession, next: Infinity, total: 0, transition: true }
-  const curr_age = actor__base_age({ actor, ref_date: time })
-  const ceiling = actor__base_age({ actor, ref_date: actor.spawn_date }) - 1
+  const currAge = actor__baseAge({ actor, refDate: time })
+  const ceiling = actor__baseAge({ actor, refDate: actor.spawnDate }) - 1
   while (profession__map[curr.profession.key].progression) {
     const current = profession__map[curr.profession.key]
     if (!actor.progression[curr.profession.key]) {
-      const chosen = window.dice.weighted_choice(
+      const chosen = window.dice.weightedChoice(
         Object.entries(current.progression).map(([key, option]) => ({
           w: option.weight,
-          v: key as actor_professions
+          v: key as ActorProfessions
         }))
       )
       const duration = current.progression[chosen].years
@@ -106,11 +106,11 @@ export const profession__progression = (params: {
       }
     }
     const { profession: previous, spec } = actor.progression[curr.profession.key]
-    const age_diff = actor.progression[curr.profession.key].age - curr_age
-    const exp_diff =
+    const ageDiff = actor.progression[curr.profession.key].age - currAge
+    const expDiff =
       actor.progression[curr.profession.key].duration -
       profession__duration({ actor, profession: previous, time })
-    const debt = exp_diff <= 0 ? age_diff : exp_diff
+    const debt = expDiff <= 0 ? ageDiff : expDiff
     if (debt <= 0) break
     curr.profession = { key: previous, spec }
     curr.next = debt
@@ -119,7 +119,7 @@ export const profession__progression = (params: {
   }
   return curr
 }
-const lifestyle__class: Record<Profession['lifestyle'], social_class> = {
+const lifestyle__class: Record<Profession['lifestyle'], SocialClass> = {
   impoverished: 'lower',
   poor: 'lower',
   modest: 'lower',
@@ -130,9 +130,9 @@ const lifestyle__class: Record<Profession['lifestyle'], social_class> = {
 /**
  * returns the social class for a given profession
  * @param profession
- * @returns {social_class}
+ * @returns {SocialClass}
  */
-export const profession__social_class = (profession: actor_professions) => {
+export const profession__socialClass = (profession: ActorProfessions) => {
   const { lifestyle } = profession__map[profession]
   return lifestyle__class[lifestyle]
 }
@@ -140,10 +140,10 @@ export const profession__social_class = (profession: actor_professions) => {
 /**
  * returns the suggested age range for a given profession
  * @param profession
- * @returns {social_class}
+ * @returns {SocialClass}
  */
-export const profession__ages = (profession: actor_professions) => {
-  return profession__map[profession].ages ?? age_ranges.full
+export const profession__ages = (profession: ActorProfessions) => {
+  return profession__map[profession].ages ?? ageRanges.full
 }
 
 export const actor__profession = (params: { actor: Actor; time: number }) => {
@@ -158,16 +158,16 @@ export const actor__profession = (params: { actor: Actor; time: number }) => {
 /**
  * returns the social class for a given profession
  * @param profession
- * @returns {social_class}
+ * @returns {SocialClass}
  */
-export const actor__social_class = (params: { actor: Actor; time: number }) => {
+export const actor__socialClass = (params: { actor: Actor; time: number }) => {
   return lifestyle__class[actor__lifestyle(params)]
 }
 
 /**
  * returns the lifestyle for a given profession
  * @param profession
- * @returns {social_class}
+ * @returns {SocialClass}
  */
 export const actor__lifestyle = (params: { actor: Actor; time: number }) => {
   const { actor, time } = params
@@ -176,15 +176,15 @@ export const actor__lifestyle = (params: { actor: Actor; time: number }) => {
 }
 
 export const profession__colors = {
-  category: color__random_preset({
-    tags: [...profession_categories],
+  category: colors__randomPreset({
+    tags: [...professionCategories],
     seed: 'profession categories'
   }),
-  subcategory: color__random_preset({
-    tags: [...profession_subcategories],
+  subcategory: colors__randomPreset({
+    tags: [...professionSubcategories],
     seed: 'profession subcategories'
   }),
-  job: color__random_preset({
+  job: colors__randomPreset({
     tags: Object.keys(profession__map),
     seed: 'npc professions'
   })
@@ -200,20 +200,20 @@ export const profession__colors = {
 export const profession__title = (params: {
   actor: Actor
   time?: number
-  ignore_child?: boolean
+  ignoreChild?: boolean
 }) => {
-  const { actor, time = window.world.date, ignore_child } = params
+  const { actor, time = window.world.date, ignoreChild } = params
   const { key, spec } =
     time === window.world.date ? actor.occupation : actor__profession({ actor, time })
   const { title } = profession__map[key]
   //the default occupational title
   const name = typeof title === 'string' ? title : title?.({ actor, spec }) ?? key
   // return the default occupation for adults
-  if (!ignore_child && actor__is_child({ actor, ref_date: time }))
-    return actor__child_title({ actor, ref_date: time })
+  if (!ignoreChild && actor__isChild({ actor, refDate: time }))
+    return actor__childTitle({ actor, refDate: time })
   // otherwise the child age-specific title
   const split = name.split(' (')
-  return `${title_case(split[0])}${split[1] ? ` (${split[1]}` : ''}`
+  return `${titleCase(split[0])}${split[1] ? ` (${split[1]}` : ''}`
 }
 
 export const profession__set = (params: { actor: Actor; profession: Actor['occupation'] }) => {
@@ -226,12 +226,12 @@ export const profession__set = (params: { actor: Actor; profession: Actor['occup
   }
 }
 
-const social_ranks: social_class[] = ['lower', 'middle', 'upper']
+const socialRanks: SocialClass[] = ['lower', 'middle', 'upper']
 
-export const social_class__random_drift = (social: social_class) => {
-  const rank = social_ranks.findIndex(cls => social === cls)
-  return social_ranks[
-    window.dice.weighted_choice([
+export const socialClass__randomDrift = (social: SocialClass) => {
+  const rank = socialRanks.findIndex(cls => social === cls)
+  return socialRanks[
+    window.dice.weightedChoice([
       { w: 0.1, v: Math.max(0, rank - 1) },
       { w: 0.85, v: rank },
       { w: 0.05, v: Math.min(2, rank + 1) }

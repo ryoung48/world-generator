@@ -1,56 +1,56 @@
 import { Grid } from '@mui/material'
 
-import { view__context } from '../../../../context'
-import { actor__is_child } from '../../../../models/npcs/actors/stats/age'
-import { actor__describe_appearance } from '../../../../models/npcs/actors/stats/appearance/physique'
+import { actor__isChild } from '../../../../models/npcs/actors/stats/age'
+import { actor__describeAppearance } from '../../../../models/npcs/actors/stats/appearance/physique'
 import { profession__title } from '../../../../models/npcs/actors/stats/professions'
-import { actor__skill_rank, actor_skill__lookup } from '../../../../models/npcs/actors/stats/skills'
+import { actorSkill__lookup, actorSkill__rank } from '../../../../models/npcs/actors/stats/skills'
 import { fluency__rank } from '../../../../models/npcs/actors/stats/skills/fluency'
 import { ActorSkill } from '../../../../models/npcs/actors/stats/skills/types'
 import { describe__voice } from '../../../../models/npcs/actors/stats/speech'
 import { Actor } from '../../../../models/npcs/actors/types'
-import { npc__lvl_to_cr, xp_mod } from '../../../../models/npcs/stats'
-import { decorate_text } from '../../../../models/utilities/text/decoration'
+import { npc__lvlToCR, xpMod } from '../../../../models/npcs/stats'
+import { decorateText } from '../../../../models/utilities/text/decoration'
 import { formatters } from '../../../../models/utilities/text/formatters'
+import { view__context } from '../../../context'
 import { SectionList } from '../../common/text/SectionList'
 import { StyledText } from '../../common/text/StyledText'
 import { AttributesView } from './Attributes'
 import { ActorBackgroundView } from './Background'
 import { NPCHealthView } from './Health'
 
-const persona_metric = (params: { value: number; high: string; low: string }) => {
+const personaMetric = (params: { value: number; high: string; low: string }) => {
   const { value, high, low } = params
   return { key: value > 0.5 ? high : low, value: Math.abs(value - 0.5) * 2 }
 }
 
-const decorate_skill = (params: { skill: ActorSkill['key']; actor: Actor; tooltip?: string }) => {
+const decorateSkill = (params: { skill: ActorSkill['key']; actor: Actor; tooltip?: string }) => {
   const { skill, actor, tooltip } = params
-  return decorate_text({
+  return decorateText({
     label: skill,
-    tooltip: tooltip ?? actor__skill_rank({ actor, skill })
+    tooltip: tooltip ?? actorSkill__rank({ actor, skill })
   })
 }
 
 const persona = (actor: Actor) => {
   const { altruism, lawful, change, social, conflict, neuroticism } = actor.persona
   return [
-    persona_metric({ value: altruism, high: 'altruistic', low: 'greedy' }),
-    persona_metric({ value: lawful, high: 'honest', low: 'deceptive' }),
-    persona_metric({ value: change, high: 'progressive', low: 'traditional' }),
-    persona_metric({ value: social, high: 'social', low: 'enigmatic' }),
-    persona_metric({ value: conflict, high: 'aggressive', low: 'diplomatic' }),
-    persona_metric({ value: neuroticism, high: 'passionate', low: 'stoic' })
+    personaMetric({ value: altruism, high: 'altruistic', low: 'greedy' }),
+    personaMetric({ value: lawful, high: 'honest', low: 'deceptive' }),
+    personaMetric({ value: change, high: 'progressive', low: 'traditional' }),
+    personaMetric({ value: social, high: 'social', low: 'enigmatic' }),
+    personaMetric({ value: conflict, high: 'aggressive', low: 'diplomatic' }),
+    personaMetric({ value: neuroticism, high: 'passionate', low: 'stoic' })
   ].sort((a, b) => b.value - a.value)
 }
 
 export function ActorStatistics() {
   const { state } = view__context()
   const actor = window.world.actors[state.codex.actor]
-  const adult = !actor__is_child({ actor })
+  const adult = !actor__isChild({ actor })
   const stats = [
     {
       label: 'Appearance',
-      content: <StyledText key='appearance' text={actor__describe_appearance(actor)}></StyledText>
+      content: <StyledText key='appearance' text={actor__describeAppearance(actor)}></StyledText>
     }
   ]
   if (adult)
@@ -62,21 +62,21 @@ export function ActorStatistics() {
         key='persona'
         text={persona(actor)
           .map(({ key, value }) =>
-            decorate_text({ label: key.toLowerCase(), tooltip: formatters.percent({ value }) })
+            decorateText({ label: key.toLowerCase(), tooltip: formatters.percent({ value }) })
           )
           .join(', ')}
       ></StyledText>
     )
   })
   if (adult && Object.entries(actor.skills).length > 0) {
-    const all_skills = Object.entries(actor.skills)
-    const standalone = all_skills.filter(
-      ([skill]) => !actor_skill__lookup[skill as ActorSkill['key']].parent
+    const allSkills = Object.entries(actor.skills)
+    const standalone = allSkills.filter(
+      ([skill]) => !actorSkill__lookup[skill as ActorSkill['key']].parent
     )
-    const grouped = all_skills
-      .filter(([skill]) => actor_skill__lookup[skill as ActorSkill['key']].parent)
+    const grouped = allSkills
+      .filter(([skill]) => actorSkill__lookup[skill as ActorSkill['key']].parent)
       .reduce((groups: Record<string, [string, number][]>, [skill, exp]) => {
-        const { parent } = actor_skill__lookup[skill as ActorSkill['key']]
+        const { parent } = actorSkill__lookup[skill as ActorSkill['key']]
         if (!groups[parent]) groups[parent] = []
         groups[parent].push([skill, exp])
         return groups
@@ -96,10 +96,10 @@ export function ActorStatistics() {
               if (grouped[skill]) {
                 const children = grouped[skill].sort((a, b) => b[1] - a[1])
                 return `${skill} (${children
-                  .map(([child]) => decorate_skill({ skill: child as ActorSkill['key'], actor }))
+                  .map(([child]) => decorateSkill({ skill: child as ActorSkill['key'], actor }))
                   .join(', ')})`
               }
-              return decorate_skill({ skill: skill as ActorSkill['key'], actor })
+              return decorateSkill({ skill: skill as ActorSkill['key'], actor })
             })
             .join(', ')}
         ></StyledText>
@@ -117,7 +117,7 @@ export function ActorStatistics() {
             .map(([cidx]) => {
               const idx = parseInt(cidx)
               const culture = window.world.cultures[idx]
-              return decorate_text({
+              return decorateText({
                 label: culture.name.toLowerCase(),
                 link: culture,
                 tooltip: fluency__rank({ actor, culture: idx })
@@ -147,9 +147,9 @@ export function ActorStatistics() {
               label: 'Level',
               content: (
                 <StyledText
-                  text={decorate_text({
+                  text={decorateText({
                     label: actor.level.toFixed(2),
-                    tooltip: `${(npc__lvl_to_cr(actor.level) * xp_mod).toFixed(0)} xp`
+                    tooltip: `${(npc__lvlToCR(actor.level) * xpMod).toFixed(0)} xp`
                   })}
                 ></StyledText>
               )

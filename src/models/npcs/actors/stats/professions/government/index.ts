@@ -1,17 +1,12 @@
-import { age_ranges } from '../../age/life_phases'
-import {
-  artisan_skills,
-  laborer_skills,
-  scholar_skills,
-  social_skills
-} from '../../skills/categories'
-import { scholar_attributes } from '../scholars/academics'
+import { ageRanges } from '../../age/life_phases'
+import { artisanSkills, laborerSkills, scholarSkills, socialSkills } from '../../skills/categories'
+import { scholarAttributes } from '../scholars/academics'
 import { Profession } from '../types'
-import { government_professions } from './types'
+import { GovernmentProfessions } from './types'
 
-export const government: Record<government_professions, Profession> = {
+export const government: Record<GovernmentProfessions, Profession> = {
   advocate: {
-    attributes: scholar_attributes,
+    attributes: scholarAttributes,
     category: 'bureaucrats',
     key: 'advocate',
     lifestyle: 'comfortable',
@@ -19,7 +14,7 @@ export const government: Record<government_professions, Profession> = {
     skills: {
       primary: ['law'],
       secondary: ['teaching'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   constable: {
@@ -30,7 +25,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['investigation'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   courier: {
@@ -41,17 +36,17 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['athletics'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   diplomat: {
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     category: 'bureaucrats',
     key: 'diplomat',
     lifestyle: 'prosperous',
     skills: {
       primary: ['living language', 'negotiate'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   executioner: {
@@ -62,7 +57,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['medicine'],
-      tertiary: [...laborer_skills, ...social_skills]
+      tertiary: [...laborerSkills, ...socialSkills]
     }
   },
   herald: {
@@ -73,28 +68,28 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['oratory'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   interpreter: {
-    attributes: scholar_attributes,
+    attributes: scholarAttributes,
     category: 'bureaucrats',
     key: 'interpreter',
     lifestyle: 'modest',
     occurrence: ({ context }) => (context.urban ? 0.5 : 0),
     skills: {
       primary: ['etiquette', 'negotiate', 'living language'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   magistrate: {
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     category: 'bureaucrats',
     key: 'magistrate',
     lifestyle: 'prosperous',
     skills: {
       primary: ['law'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   scribe: {
@@ -104,7 +99,7 @@ export const government: Record<government_professions, Profession> = {
     occurrence: ({ context }) => (context.remote ? 0 : !context.urban ? 0.1 : 1),
     skills: {
       primary: ['scribing'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   spy: {
@@ -115,7 +110,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['streetwise', 'intrigue'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'tax collector': {
@@ -126,7 +121,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['accounting'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'bureaucrat (village)': {
@@ -137,7 +132,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'bureaucrat (town)': {
@@ -148,7 +143,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'bureaucrat (city)': {
@@ -159,7 +154,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'advisor (noble)': {
@@ -170,7 +165,7 @@ export const government: Record<government_professions, Profession> = {
     prevalence: 'rare',
     skills: {
       primary: ['logistics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   },
   'advisor (state)': {
@@ -179,7 +174,7 @@ export const government: Record<government_professions, Profession> = {
     lifestyle: 'rich',
     skills: {
       primary: ['logistics'],
-      tertiary: artisan_skills
+      tertiary: artisanSkills
     }
   }
 }

@@ -39,7 +39,7 @@ export const memoize = <T, K extends unknown[], Cache>(
   }
 }
 
-export const memoize__clear_cache = () => {
+export const memoize__clearCache = () => {
   const { registry, cache } = window.memcache
   Object.entries(registry).forEach(([key, store]) => {
     cache[key] = store()

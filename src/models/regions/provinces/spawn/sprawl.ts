@@ -8,7 +8,7 @@ import { Province } from '../types'
  * spawn satellite locations for a given province
  * @param province - province to spawn locations at
  */
-const _province_sprawl = (province: Province) => {
+const _provinceSprawl = (province: Province) => {
   if (!province.finalized) {
     province.finalized = true
     range(Math.min(province.land, 5)).forEach(() => {
@@ -22,4 +22,4 @@ const _province_sprawl = (province: Province) => {
  * @param province - starting province
  */
 export const province__sprawl = (province: Province) =>
-  province__neighbors(province).concat([province]).forEach(_province_sprawl)
+  province__neighbors(province).concat([province]).forEach(_provinceSprawl)

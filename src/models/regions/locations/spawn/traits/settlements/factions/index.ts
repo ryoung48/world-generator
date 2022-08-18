@@ -1,34 +1,34 @@
-import { decorate_text } from '../../../../../../utilities/text/decoration'
+import { decorateText } from '../../../../../../utilities/text/decoration'
 import { region__nation } from '../../../../..'
 import { region__colonists } from '../../../../../diplomacy/colonies'
-import { location__is_remote, location__missionaries, location__prospect_colony } from '../../../..'
-import { location__is_city, location__is_village } from '../../../taxonomy/settlements'
+import { location__isRemote, location__missionaries, location__prospectColony } from '../../../..'
+import { location__isCity, location__isVillage } from '../../../taxonomy/settlements'
 import { LocationTrait } from '../../types'
 import { settlement__faction } from './types'
 
-export const settlement__faction_traits: Record<settlement__faction, LocationTrait> = {
+export const settlement__factionTraits: Record<settlement__faction, LocationTrait> = {
   'artisan guilds': {
     tag: 'artisan guilds',
     text: () =>
       `Local artisan guilds exert great influence in this site seeking to protect trade secrets and their group members.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'criminal bosses': {
     tag: 'criminal bosses',
     text: () => `One or more criminal networks exert great influence in this site.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'colonial outpost': {
     tag: 'colonial outpost',
     conflicts: ['colonial embassies'],
     text: ({ entity: loc }) => {
       const region = window.world.regions[loc.region]
-      const colony = window.dice.choice(region.colonial_presence.colonies)
-      return `A foreign power (${decorate_text({
+      const colony = window.dice.choice(region.colonialPresence.colonies)
+      return `A foreign power (${decorateText({
         link: region__nation(window.world.regions[colony.nation])
       })}) has established a colony (${colony.tag}) on this site.`
     },
-    spawn: ({ entity: loc }) => location__prospect_colony({ loc })
+    spawn: ({ entity: loc }) => location__prospectColony({ loc })
   },
   'colonial embassies': {
     tag: 'colonial embassies',
@@ -38,11 +38,11 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
       const colonists = region__colonists(region)
       return `This sites hosts embassies for each colonial authority present in the region: ${colonists
         .map(colonist => {
-          return decorate_text({
+          return decorateText({
             link: colonist,
             tooltip: Array.from(
               new Set(
-                region.colonial_presence.colonies
+                region.colonialPresence.colonies
                   .filter(
                     ({ nation }) =>
                       region__nation(window.world.regions[nation]).idx === colonist.idx
@@ -89,7 +89,7 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
         'They were originally founded as the royal guard for high-ranking government officials long ago',
         'They emphasize honesty and diplomacy over cruelty and aggression'
       ])}.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'legendary figure': {
     tag: 'legendary figure',
@@ -110,7 +110,7 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
     tag: 'major temple',
     text: () =>
       `This site is home to a prominent temple. Locals are obliged to respect the wishes of its high clergy.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'mercenary company': {
     tag: 'mercenary company',
@@ -119,13 +119,13 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
         'These soldiers are dedicated to conducting warfare mercilessly and with extreme brutality in order to bring a swift end to conflicts',
         'They are warriors with a solemn reverence for the sanctity of contracts, they fulfill their obligations with unemotional, unswerving commitment and without moral judgment'
       ])}.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'merchants guild': {
     tag: 'merchants guild',
     text: () =>
       `A powerful merchants guild exists in this site seeking to regulate the economy and ensure fair prices.`,
-    spawn: ({ entity: loc }) => (!location__is_village(loc) && !location__is_remote(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (!location__isVillage(loc) && !location__isRemote(loc) ? 1 : 0)
   },
   'military outpost': {
     tag: 'military outpost',
@@ -137,11 +137,10 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
     text: ({ entity: loc }) => {
       const missionary = window.dice.choice(location__missionaries(loc))
       const religion = window.world.religions[missionary.religion.state]
-      return `Missionaries from ${decorate_text({
+      return `Missionaries from ${decorateText({
         link: missionary
-      })} work to spread their ${decorate_text({
+      })} work to spread their ${decorateText({
         label: 'faith',
-        link: religion,
         tooltip: religion.name
       })} in this site.`
     },
@@ -153,7 +152,7 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
   'nomadic populace': {
     tag: 'nomadic populace',
     text: ({ entity: loc }) => {
-      return `Traditionalist, ${window.dice.weighted_choice([
+      return `Traditionalist, ${window.dice.weightedChoice([
         { v: 'rural', w: 1 },
         { v: 'seafaring', w: loc.coastal ? 1 : 0 }
       ])}, nominally migratory ${window.dice.choice(['native', 'diaspora'])} ${window.dice.choice([
@@ -179,7 +178,7 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
         'rising',
         'waning'
       ])} institution of higher learning is located within this site.`,
-    spawn: ({ entity: loc }) => (!location__is_remote(loc) && !location__is_village(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (!location__isRemote(loc) && !location__isVillage(loc) ? 1 : 0)
   },
   'prominent monastery': {
     tag: 'prominent monastery',
@@ -194,7 +193,7 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
           `safeguarding religious artifacts`
         ]
       )}.`,
-    spawn: ({ entity: loc }) => (!location__is_remote(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (!location__isRemote(loc) ? 0 : 1)
   },
   'sorcerous cabal': {
     tag: 'sorcerous cabal',
@@ -203,13 +202,13 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
         'guild',
         'cabal'
       ])} of mages exert great influence in this site. They study approved schools of magic and safeguard arcane artifacts.`,
-    spawn: ({ entity: loc }) => (!location__is_village(loc) && !location__is_remote(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (!location__isVillage(loc) && !location__isRemote(loc) ? 1 : 0)
   },
   'secret police': {
     tag: 'secret police',
     text: () =>
       `A faction of fervent patriots employed by the central government to suppress political dissidents.`,
-    spawn: ({ entity: loc }) => (location__is_city(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (location__isCity(loc) ? 1 : 0)
   },
   'templar order': {
     tag: 'templar order',
@@ -221,12 +220,12 @@ export const settlement__faction_traits: Record<settlement__faction, LocationTra
         'This feared order works with powerful individuals and business interests to hunt down those who violate contracts, especially if said contracts were endorsed by a local priest',
         'They emphasize honesty and diplomacy over cruelty and aggression'
       ])}.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'volunteer militia': {
     tag: 'volunteer militia',
     text: () =>
       `A volunteer fighting force was created to fend off invaders where the central government is either unwilling or unable to assist.`,
-    spawn: ({ entity: loc }) => (location__is_city(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isCity(loc) ? 0 : 1)
   }
 }

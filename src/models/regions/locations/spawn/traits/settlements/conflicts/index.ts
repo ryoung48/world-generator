@@ -1,22 +1,22 @@
-import { recent_battle_window } from '../../../../../../history/events/war/battles'
-import { decorate_text } from '../../../../../../utilities/text/decoration'
-import { terrain__is_wet } from '../../../../../../world/climate/terrain'
-import { region__neighbors, region__non_allied_neighbors } from '../../../../..'
-import { relation__is_hostile } from '../../../../../diplomacy/relations'
-import { province__find_closest } from '../../../../../provinces'
-import { location__pending_invasion, location__raiders, location__recent_battle } from '../../../..'
+import { recentBattleWindow } from '../../../../../../history/events/war/battles'
+import { decorateText } from '../../../../../../utilities/text/decoration'
+import { terrain__isWet } from '../../../../../../world/climate/terrain'
+import { region__neighbors, region__nonAlliedNeighbors } from '../../../../..'
+import { relation__isHostile } from '../../../../../diplomacy/relations'
+import { province__findClosest } from '../../../../../provinces'
+import { location__pendingInvasion, location__raiders, location__recentBattle } from '../../../..'
 import { location__terrain } from '../../../../environment'
-import { location__is_city, location__is_village } from '../../../taxonomy/settlements'
+import { location__isCity, location__isVillage } from '../../../taxonomy/settlements'
 import { LocationTrait } from '../../types'
 import { settlement__conflict } from './types'
 
-export const settlement__conflict_traits: Record<settlement__conflict, LocationTrait> = {
+export const settlement__conflictTraits: Record<settlement__conflict, LocationTrait> = {
   'blood feud': {
     tag: 'blood feud',
     text: ({ entity: loc }) => {
       const { civilized, development } = window.world.regions[loc.region]
       const remote = development === 'remote'
-      return `Two rival groups (${window.dice.weighted_choice([
+      return `Two rival groups (${window.dice.weightedChoice([
         { v: 'nobles', w: 1 },
         { v: 'ethnic', w: 1 },
         { v: 'criminal', w: remote ? 0 : 1 },
@@ -60,20 +60,19 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
   devastation: {
     tag: 'devastation',
     text: ({ entity: loc }) => {
-      const { last_invasion } = window.world.provinces[loc.province].memory
-      const event =
-        location__recent_battle(loc) && window.world[last_invasion.type][last_invasion.idx]
+      const { lastInvasion } = window.world.provinces[loc.province].memory
+      const event = location__recentBattle(loc) && window.world[lastInvasion.type][lastInvasion.idx]
       return `This site was recently the victim of a violent conflict and has sustained great damage (${
         event
-          ? decorate_text({ link: event })
+          ? event.name
           : location__raiders(loc).length > 0
           ? 'raiders'
           : window.dice.choice(['bandits', 'titanic beast'])
       }).`
     },
     spawn: ({ entity: loc }) => {
-      const plundered = location__is_village(loc)
-      return location__recent_battle(loc) ? 5 : plundered ? 0.5 : 0
+      const plundered = location__isVillage(loc)
+      return location__recentBattle(loc) ? 5 : plundered ? 0.5 : 0
     }
   },
   'enslaved workers': {
@@ -82,7 +81,7 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
       return `The economy of this site is heavily dependent on slave labor. A large proportion of the population is enslaved.`
     },
     spawn: ({ entity: loc }) => {
-      return location__is_village(loc) ? 1 : 0.5
+      return location__isVillage(loc) ? 1 : 0.5
     }
   },
   'food shortage': {
@@ -97,11 +96,11 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
       `A network of foreign spies is rumored to be active in this site. They gather information and sow chaos in the interest of some foreign power.`,
     spawn: ({ entity: loc }) => {
       const province = window.world.provinces[loc.province]
-      const region = window.world.regions[province.curr_nation]
+      const region = window.world.regions[province.currNation]
       return region__neighbors(region).some(n => {
         const neighbor = window.world.regions[n]
         const relation = region.relations[n]
-        const hostile = relation__is_hostile(relation)
+        const hostile = relation__isHostile(relation)
         return neighbor.development !== 'remote' && hostile
       })
         ? 1
@@ -114,13 +113,13 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
       `This site has recently been conquered and is occupied by enemy forces. Treatment of natives is harsh to deter insurgencies.`,
     spawn: ({ entity: loc }) => {
       const province = window.world.provinces[loc.province]
-      const { last_invasion } = province.memory
-      const event = window.world[last_invasion.type]?.[last_invasion.idx]
+      const { lastInvasion } = province.memory
+      const event = window.world[lastInvasion.type]?.[lastInvasion.idx]
       return loc.hub &&
         event?.type === 'war' &&
-        last_invasion.time > window.world.date - recent_battle_window &&
+        lastInvasion.time > window.world.date - recentBattleWindow &&
         !event.result &&
-        event.defender.idx !== province.curr_nation
+        event.defender.idx !== province.currNation
         ? 1000
         : 0
     }
@@ -151,26 +150,22 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
   'imminent invasion': {
     tag: 'imminent invasion',
     text: ({ entity: loc }) => {
-      const { next_invasion } = window.world.provinces[loc.province].memory
-      const event = window.world[next_invasion.type][next_invasion.idx]
+      const { nextInvasion } = window.world.provinces[loc.province].memory
+      const event = window.world[nextInvasion.type][nextInvasion.idx]
       if (event.type === 'war') {
-        const { next_battle, defender } = event
-        return `The forces of ${decorate_text({
-          link: window.world.regions[next_battle.aggressor]
+        const { nextBattle, defender } = event
+        return `The forces of ${decorateText({
+          link: window.world.regions[nextBattle.aggressor]
         })} prepare to ${
-          next_battle.aggressor === defender.idx ? 'retake' : 'assault'
-        } this site. (${decorate_text({
-          link: event
-        })})`
+          nextBattle.aggressor === defender.idx ? 'retake' : 'assault'
+        } this site. (${event.name})`
       } else {
-        const { next_battle } = event
-        return `The ${next_battle.attacker} prepare to capture this site. (${decorate_text({
-          link: event
-        })})`
+        const { nextBattle: nextBattle } = event
+        return `The ${nextBattle.attacker} prepare to capture this site. (${event.name})`
       }
     },
     spawn: ({ entity: loc }) => {
-      return location__pending_invasion(loc) ? 1000 : 0
+      return location__pendingInvasion(loc) ? 1000 : 0
     }
   },
   'natural disaster': {
@@ -178,13 +173,13 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
     text: ({ entity: loc }) => {
       const { coastal } = loc
       const { terrain } = location__terrain(loc)
-      return `A recent ${window.dice.weighted_choice([
-        { v: 'flood', w: terrain__is_wet(terrain) || coastal ? 1 : 0 },
+      return `A recent ${window.dice.weightedChoice([
+        { v: 'flood', w: terrain__isWet(terrain) || coastal ? 1 : 0 },
         { v: 'earthquake', w: 1 },
         { v: 'volcanic eruption', w: 0.5 },
         { v: 'tsunami', w: coastal ? 1 : 0 },
         { v: 'drought', w: coastal ? 0 : 1 },
-        { v: 'tornado', w: location__is_city(loc) ? 0 : 0.5 },
+        { v: 'tornado', w: location__isCity(loc) ? 0 : 0.5 },
         { v: 'wildfire', w: 1 },
         { v: 'hurricane', w: coastal ? 1 : 0 }
       ])} has ravaged this site.`
@@ -232,13 +227,13 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
         'slavery',
         'bureaucracy'
       ])}) has been proposed. It is a controversial subject that has sparked great debate.`,
-    spawn: ({ entity: loc }) => (location__is_city(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (location__isCity(loc) ? 1 : 0)
   },
   'stolen tribute': {
     tag: 'stolen tribute',
     text: () =>
       `The taxes owed by this site have been stolen and need to be reacquired before officials begin an inquiry.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 1 : 0)
   },
   'succession dispute': {
     tag: 'succession dispute',
@@ -250,19 +245,19 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
     tag: 'tenuous diplomacy',
     text: ({ entity: loc }) => {
       const province = window.world.provinces[loc.province]
-      const nation = window.world.regions[province.curr_nation]
+      const nation = window.world.regions[province.currNation]
       const envoy =
         window.world.regions[
-          province__find_closest(
-            region__non_allied_neighbors(nation).map(
+          province__findClosest(
+            region__nonAlliedNeighbors(nation).map(
               n => window.world.provinces[window.world.regions[n].capital]
             ),
             province
-          ).curr_nation
+          ).currNation
         ]
       const relation = nation.relations[envoy.idx] ?? 'neutral'
       const friendly = relation === 'friendly' || relation === 'neutral'
-      return `An envoy from ${decorate_text({
+      return `An envoy from ${decorateText({
         link: envoy
       })} has arrived to negotiate a possible ${
         friendly ? 'alliance' : 'end to hostilities'
@@ -270,8 +265,8 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
     },
     spawn: ({ entity: loc }) => {
       const province = window.world.provinces[loc.province]
-      const nation = window.world.regions[province.curr_nation]
-      return region__non_allied_neighbors(nation).length > 0 ? (location__is_city(loc) ? 1 : 0) : 0
+      const nation = window.world.regions[province.currNation]
+      return region__nonAlliedNeighbors(nation).length > 0 ? (location__isCity(loc) ? 1 : 0) : 0
     }
   },
   'toxic economy': {
@@ -300,7 +295,7 @@ export const settlement__conflict_traits: Record<settlement__conflict, LocationT
         'taken control over this site and rules with an iron fist',
         'made an agreement with the local authorities to create a safe haven from which raids on neighboring settlements can be staged'
       ])}.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0.5 : 0)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0.5 : 0)
   },
   'witch hunts': {
     tag: 'witch hunts',

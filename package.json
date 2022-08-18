@@ -8,6 +8,8 @@
     "lint:eslint": " npx eslint ./src --ext .jsx,.js,.ts,.tsx --ignore-path ./.gitignore",
     "lint:cycles": "npx madge --extensions ts,tsx --ts-config ./tsconfig.json -c ./src",
     "lint": "npm run lint:cspell && npm run lint:eslint && npm run lint:cycles",
+    "test": "jest --collectCoverage",
+    "docs": "npx jsdoc -r ./src -c jsdoc.json",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
@@ -27,6 +29,7 @@
   },
   "devDependencies": {
     "@types/d3": "^7.4.0",
+    "@types/jest": "^28.1.6",
     "@types/js-priority-queue": "^0.0.6",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
@@ -40,7 +43,10 @@
     "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.30.1",
     "eslint-plugin-simple-import-sort": "^7.0.0",
+    "jest": "^28.1.3",
+    "jest-environment-jsdom": "^28.1.3",
     "prettier": "^2.7.1",
+    "ts-jest": "^28.0.7",
     "typescript": "^4.6.4",
     "vite": "^3.0.0"
   },
@@ -50,5 +56,32 @@
         "skipTypeImports": true
       }
     }
+  },
+  "jest": {
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "./src/models/utilities/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 90
+      }
+    },
+    "globals": {
+      "ts-jest": {
+        "isolatedModules": true
+      }
+    },
+    "moduleNameMapper": {
+      "d3": "<rootDir>/node_modules/d3/dist/d3.min.js"
+    },
+    "clearMocks": true,
+    "transform": {
+      "^.+\\.(ts|tsx|js|jsx)$": "ts-jest"
+    },
+    "testEnvironment": "jsdom"
   }
 }

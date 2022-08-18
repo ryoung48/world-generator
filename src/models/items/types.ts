@@ -1,26 +1,26 @@
 import { accessory__tag } from './accessories/types'
 import { armor__tag } from './armor/types'
 import { consumable__tag } from './consumables/types'
-import { trade_good } from './economy'
+import { TradeGood } from './economy'
 import { material__tag } from './materials/types'
-import { misc_item__tag } from './misc/types'
+import { miscItem__tag } from './misc/types'
 import { weapon__tag } from './weapons/types'
 
 export interface Item {
-  tag: armor__tag | weapon__tag | consumable__tag | material__tag | accessory__tag | misc_item__tag
+  tag: armor__tag | weapon__tag | consumable__tag | material__tag | accessory__tag | miscItem__tag
   quantity: number
   tier: number
 }
 
-export const item__tier_scale = 3.5
+export const item__tierScale = 3.5
 
-export const item__basic_details = {
+export const item__basicDetails = {
   _description: '',
-  base_price: 1,
+  basePrice: 1,
   key: (item: Item) => `${item.tag}:${item.tier}`,
   spawn: (item: Item) => item,
   value: function (item: Item) {
-    return this.base_price * item__tier_scale ** item.tier
+    return this.basePrice * item__tierScale ** item.tier
   },
   description: function (_item: Item) {
     return this._description
@@ -46,9 +46,9 @@ export abstract class ItemDetails {
   public abstract spawn(_item: Item): Item
   public abstract description(_item: Item): string
   public weight: number
-  public base_price: number
+  public basePrice: number
   public category: item__category
-  public markets: trade_good[]
+  public markets: TradeGood[]
 }
 
 const _quality = ['poor', 'fair', 'fine', 'exquisite', 'masterwork'] as const

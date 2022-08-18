@@ -26,7 +26,7 @@ export const commodities = [
   'vegetables',
   'wax'
 ] as const
-export type commodity = typeof commodities[number]
+export type Commodity = typeof commodities[number]
 
 export const products = [
   'artwork',
@@ -48,13 +48,13 @@ export const products = [
   'texts',
   'woodwork'
 ] as const
-export type product = typeof products[number]
+export type Product = typeof products[number]
 
-export type trade_good = commodity | product
-export const markets: trade_good[] = [...commodities, ...products]
+export type TradeGood = Commodity | Product
+export const markets: TradeGood[] = [...commodities, ...products]
 
-type market_group = 'metal' | 'alchemical' | 'leather' | 'textiles' | 'jewelry' | 'texts'
-export const market_groups: Record<market_group, trade_good[]> = {
+type MarketGroup = 'metal' | 'alchemical' | 'leather' | 'textiles' | 'jewelry' | 'texts'
+export const marketGroups: Record<MarketGroup, TradeGood[]> = {
   metal: ['metalwork', 'metals (common)'],
   jewelry: ['metals (gemstones)', 'metals (precious)'],
   alchemical: ['products (alchemical)', 'reagents (alchemical)'],

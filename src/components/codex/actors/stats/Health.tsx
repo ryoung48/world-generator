@@ -2,7 +2,7 @@ import { scaleLinear } from 'd3'
 
 import { npc__health } from '../../../../models/npcs/stats'
 import { NPC } from '../../../../models/npcs/types'
-import { decorate_text } from '../../../../models/utilities/text/decoration'
+import { decorateText } from '../../../../models/utilities/text/decoration'
 import { formatters } from '../../../../models/utilities/text/formatters'
 import { StyledText } from '../../common/text/StyledText'
 
@@ -15,7 +15,7 @@ export function NPCHealthView(props: { npc: NPC }) {
   const { max, current, percent } = npc__health(npc)
   return (
     <StyledText
-      text={`${decorate_text({
+      text={`${decorateText({
         label: `${current.toFixed(0)}/${max.toFixed(0)}`,
         color: percent === 0 ? 'gray' : undefined,
         tooltip:
@@ -26,7 +26,7 @@ export function NPCHealthView(props: { npc: NPC }) {
             : percent < 0.6
             ? 'bloodied'
             : 'healthy'
-      })} (${decorate_text({
+      })} (${decorateText({
         label: formatters.percent({ value: percent, precision: 0 }),
         color: percent === 0 ? 'gray' : hpColorScale(percent).toString()
       })})`}

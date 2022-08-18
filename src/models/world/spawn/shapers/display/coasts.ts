@@ -1,15 +1,15 @@
 import { curveCatmullRom, line, scaleLinear } from 'd3'
 
-import { same_edge } from '../../../../utilities/math/points'
+import { edge__sameEdge } from '../../../../utilities/math/points'
 import { profile } from '../../../../utilities/performance'
-import { world__land_features, world__water_features } from '../../..'
-import { cell__is_nation_border, ocean } from '../../../cells'
+import { world__landFeatures, world__waterFeatures } from '../../..'
+import { cell__isNationBorder, ocean } from '../../../cells'
 import { CoastalEdge } from '../../../types'
 import { Shaper } from '..'
 import { Display } from './types'
 
 // line function used for coastlines and region borders
-export const display__coast_curve = () => {
+export const display__coastCurve = () => {
   const x = scaleLinear().domain([0, window.world.dim.w]).range([0, window.world.dim.w])
   const y = scaleLinear().domain([0, window.world.dim.h]).range([0, window.world.dim.h])
   const curve = line()
@@ -19,16 +19,16 @@ export const display__coast_curve = () => {
   return curve
 }
 
-const draw_coasts = (params: {
+const drawCoasts = (params: {
   landmarks: number[]
-  coast_filter: (_landmark: number) => (_edge: CoastalEdge) => boolean
+  coastFilter: (_landmark: number) => (_edge: CoastalEdge) => boolean
 }) => {
-  const { landmarks, coast_filter } = params
+  const { landmarks, coastFilter } = params
   const coast = Object.values(window.world.coasts)
   const boundaries: { path: [number, number][]; idx: number }[] = []
   landmarks.forEach(i => {
     // get ocean coastline edges
-    const group = coast.filter(coast_filter(i)).map(e => e.edge)
+    const group = coast.filter(coastFilter(i)).map(e => e.edge)
     const start = group.shift()
     let [current] = start
     const [, end] = start
@@ -44,8 +44,8 @@ const draw_coasts = (params: {
           for (let j = 0; j < group.length; j++) {
             const edge = group[j]
             // the next segment shares a vertex with the current segment
-            if (same_edge(edge[0], current) || same_edge(edge[1], current)) {
-              current = same_edge(edge[0], current) ? edge[1] : edge[0]
+            if (edge__sameEdge(edge[0], current) || edge__sameEdge(edge[1], current)) {
+              current = edge__sameEdge(edge[0], current) ? edge[1] : edge[0]
               idx = j
               break
             }
@@ -65,9 +65,9 @@ const draw_coasts = (params: {
 
 export const display__coasts = () => {
   // land (ocean)
-  const islands = draw_coasts({
-    landmarks: world__land_features(),
-    coast_filter: i => e => e.land === i && window.world.landmarks[e.water].name === ocean
+  const islands = drawCoasts({
+    landmarks: world__landFeatures(),
+    coastFilter: i => e => e.land === i && window.world.landmarks[e.water].name === ocean
   })
   profile({
     label: 'curve',
@@ -75,7 +75,7 @@ export const display__coasts = () => {
       // create ocean curve
       window.world.display.islands = islands.reduce((dict: Display['islands'], { path, idx }) => {
         dict[idx] = {
-          d: display__coast_curve()(path),
+          d: display__coastCurve()(path),
           idx
         }
         return dict
@@ -86,20 +86,20 @@ export const display__coasts = () => {
 
 export const display__lakes = () => {
   // land (ocean)
-  const lakes = draw_coasts({
-    landmarks: world__water_features().filter(i => window.world.landmarks[i].type !== 'ocean'),
-    coast_filter: i => e => e.water === i
+  const lakes = drawCoasts({
+    landmarks: world__waterFeatures().filter(i => window.world.landmarks[i].type !== 'ocean'),
+    coastFilter: i => e => e.water === i
   })
   profile({
     label: 'curve',
     f: () => {
       // create ocean curve
-      const lake_edges = Shaper.water.filter(cell => cell.is_water && cell.shallow && !cell.ocean)
+      const lakeEdges = Shaper.water.filter(cell => cell.isWater && cell.shallow && !cell.ocean)
       window.world.display.lakes = lakes.reduce((dict: Display['lakes'], { path, idx }) => {
         dict[idx] = {
-          d: display__coast_curve()(path),
+          d: display__coastCurve()(path),
           idx,
-          border: lake_edges.some(cell => cell.landmark === idx && cell__is_nation_border(cell))
+          border: lakeEdges.some(cell => cell.landmark === idx && cell__isNationBorder(cell))
         }
         return dict
       }, {})

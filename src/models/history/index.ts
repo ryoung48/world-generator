@@ -1,5 +1,5 @@
 import { Region } from '../regions/types'
-import { event_type, WorldEvent } from './types'
+import { EventType, WorldEvent } from './types'
 
 /**
  * logs past events
@@ -9,9 +9,9 @@ import { event_type, WorldEvent } from './types'
  * @param params.text - log entry text
  * @param params.actors - actors (regions) involved in the event
  */
-export const log_event = (params: {
-  event_idx?: number
-  event_type: event_type
+export const logEvent = (params: {
+  eventIdx?: number
+  eventType: EventType
   title: string
   text: string
   actors: Region[]
@@ -19,12 +19,12 @@ export const log_event = (params: {
   const idx = window.world.past.length
   window.world.past.push({
     idx,
-    event_idx: params.event_idx,
-    type: params.event_type,
+    eventIdx: params.eventIdx,
+    type: params.eventType,
     text: params.text,
     title: params.title,
     time: window.world.date,
-    actors: params.actors.map(({ idx, wealth, max_wealth }) => ({ idx, wealth, max_wealth }))
+    actors: params.actors.map(({ idx, wealth, maxWealth }) => ({ idx, wealth, maxWealth }))
   })
   params.actors.forEach(actor => actor.past.push(idx))
 }
@@ -33,6 +33,6 @@ export const log_event = (params: {
  * Adds a future event to the queue
  * @param event - a future world event
  */
-export const add_event = (event: WorldEvent) => {
+export const addEvent = (event: WorldEvent) => {
   window.world.future.queue(event)
 }

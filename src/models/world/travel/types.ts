@@ -1,1 +1,1 @@
-export type route_types = 'land' | 'sea'
+export type RouteTypes = 'land' | 'sea'

@@ -2,31 +2,31 @@ import { Grid } from '@mui/material'
 import { pointer, select, zoom, ZoomTransform } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
-import { view__context } from '../../context'
 import { region__neighbors } from '../../models/regions'
 import { Loc } from '../../models/regions/locations/types'
 import { province__hub, province__neighbors } from '../../models/regions/provinces'
 import { point__distance } from '../../models/utilities/math/points'
 import { delay } from '../../models/utilities/math/time'
 import { cell__nation } from '../../models/world/cells'
-import { css_colors } from '../theme/colors'
+import { view__context } from '../context'
+import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
-import { draw_regions } from './canvas/borders'
-import { draw_lakes, draw_oceans } from './canvas/coasts'
-import { canvas__breakpoints } from './canvas/draw_styles'
+import { map__drawRegions } from './canvas/borders'
+import { map__drawLakes, map__drawOceans } from './canvas/coasts'
+import { map__breakpoints } from './canvas/draw_styles'
 import {
-  draw_avatar_location,
-  draw_locations,
-  draw_locations_regional,
-  draw_roads
+  map__drawAvatarLocation,
+  map__drawLocations,
+  map__drawLocationsRegional,
+  map__drawRoads
 } from './canvas/infrastructure'
-import { icon_path } from './icons'
+import { iconPath } from './icons'
 import { location__icons } from './icons/locations'
-import { draw_terrain_icons, terrain__icons } from './icons/terrain'
+import { map__drawTerrainIcons, terrain__icons } from './icons/terrain'
 
 type CachedImages = Record<string, HTMLImageElement>
 
-const load_image = (path: string): Promise<HTMLImageElement> => {
+const loadImage = (path: string): Promise<HTMLImageElement> => {
   return new Promise(resolve => {
     const img = new Image()
     img.onload = () => resolve(img)
@@ -35,15 +35,15 @@ const load_image = (path: string): Promise<HTMLImageElement> => {
   })
 }
 
-const load_images = async () =>
+const loadImages = async () =>
   (
     await Promise.all([
       ...Object.entries(terrain__icons).map(async ([k, v]) => ({
-        img: await load_image(icon_path + v.path),
+        img: await loadImage(iconPath + v.path),
         index: k
       })),
       ...Object.entries(location__icons).map(async ([k, v]) => ({
-        img: await load_image(icon_path + v.path),
+        img: await loadImage(iconPath + v.path),
         index: k
       }))
     ])
@@ -54,16 +54,16 @@ const load_images = async () =>
 
 const paint = (params: {
   scale: number
-  cached_images: CachedImages
+  cachedImages: CachedImages
   loc: Loc
   ctx: CanvasRenderingContext2D
 }) => {
-  const { scale, cached_images, loc, ctx } = params
+  const { scale, cachedImages, loc, ctx } = params
   const province = window.world.provinces[loc.province]
-  const nation = window.world.regions[province.curr_nation]
+  const nation = window.world.regions[province.currNation]
   const borders = region__neighbors(nation).map(r => window.world.regions[r])
   const nations = [nation].concat(borders)
-  const nation_set = new Set(nations.map(n => n.idx))
+  const nationSet = new Set(nations.map(n => n.idx))
   const expanded = new Set(
     nations
       .map(r =>
@@ -77,36 +77,36 @@ const paint = (params: {
       )
       .flat()
   )
-  const lands = draw_oceans({ ctx, scale, nations })
-  draw_regions({ ctx, style: 'Nations', scale, nations })
-  draw_lakes({ ctx, scale, nations })
-  draw_roads({ ctx, scale, nation_set })
-  draw_terrain_icons({ ctx, cached_images, scale, regions: expanded, lands })
-  draw_avatar_location({ ctx, loc, scale })
-  draw_locations_regional({ ctx, scale, nation_set, cached_images })
-  draw_locations({ ctx, scale, province, cached_images })
+  const lands = map__drawOceans({ ctx, scale, nations })
+  map__drawRegions({ ctx, style: 'Nations', scale, nations })
+  map__drawLakes({ ctx, scale, nations })
+  map__drawRoads({ ctx, scale, nationSet })
+  map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
+  map__drawAvatarLocation({ ctx, loc, scale })
+  map__drawLocationsRegional({ ctx, scale, nationSet, cachedImages })
+  map__drawLocations({ ctx, scale, province, cachedImages })
 }
 
 export function WorldMap() {
   const { state, dispatch } = view__context()
-  const [cached_images, set_cached_images] = useState<CachedImages>({})
-  const [transform, set_transform] = useState({
+  const [cachedImages, setCachedImages] = useState<CachedImages>({})
+  const [transform, setTransform] = useState({
     dx: 0,
     dy: 0,
     scale: 1
   })
-  const [zoom_controller, set_zoom] = useState({ zoom: zoom() })
-  const [cursor, set_cursor] = useState({ x: 0, y: 0 })
-  const [init, set_init] = useState(false)
-  const canvas_ref = useRef<HTMLCanvasElement>(null)
-  const container_ref = useRef<HTMLDivElement>(null)
+  const [zoomController, setZoom] = useState({ zoom: zoom() })
+  const [cursor, setCursor] = useState({ x: 0, y: 0 })
+  const [init, setInit] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const init = async () => {
-      const canvas = canvas_ref.current
+      const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
       // images
-      const loaded_images = await load_images()
-      set_cached_images(loaded_images)
+      const loadedImages = await loadImages()
+      setCachedImages(loadedImages)
       // font
       ctx.font = `4px ${fonts.maps}`
       ctx.fillText('text', 0, 8)
@@ -120,7 +120,7 @@ export function WorldMap() {
         ])
         .on('zoom', (event: { transform: ZoomTransform }) => {
           const { x, y, k } = event.transform
-          set_transform({
+          setTransform({
             scale: k,
             dx: x,
             dy: y
@@ -128,7 +128,7 @@ export function WorldMap() {
         })
       const node = select(canvas) as any
       node.call(controller)
-      set_zoom({ zoom: controller })
+      setZoom({ zoom: controller })
       // initial zoom
       const nation = window.world.regions[state.codex.nation]
       const capital = window.world.provinces[nation.capital]
@@ -148,19 +148,19 @@ export function WorldMap() {
   }, [])
   useEffect(() => {
     const { x, y, zoom } = state.gps
-    if (zoom_controller && zoom > 0) {
-      const canvas = canvas_ref.current
+    if (zoomController && zoom > 0) {
+      const canvas = canvasRef.current
       const node = select(canvas) as any
-      zoom_controller.zoom.scaleTo(node, zoom)
-      zoom_controller.zoom.translateTo(node, x, y)
-      set_init(true)
+      zoomController.zoom.scaleTo(node, zoom)
+      zoomController.zoom.translateTo(node, x, y)
+      setInit(true)
     }
-  }, [state.gps, zoom_controller])
+  }, [state.gps, zoomController])
   useEffect(() => {
-    if (Object.keys(cached_images).length > 0 && init) {
-      const canvas = canvas_ref.current
-      canvas.width = container_ref.current.clientWidth
-      canvas.height = container_ref.current.clientHeight
+    if (Object.keys(cachedImages).length > 0 && init) {
+      const canvas = canvasRef.current
+      canvas.width = containerRef.current.clientWidth
+      canvas.height = containerRef.current.clientHeight
       const ctx = canvas.getContext('2d')
       ctx.save()
       ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -169,22 +169,22 @@ export function WorldMap() {
       const loc = window.world.locations[state.codex.location]
       paint({
         scale: transform.scale,
-        cached_images,
+        cachedImages,
         loc,
         ctx
       })
       ctx.restore()
     }
-  }, [cached_images, transform, state, init])
+  }, [cachedImages, transform, state, init])
   return (
     <Grid container>
       {/* <Grid.Col span={3} py={0}></Grid.Col> */}
-      <Grid item xs={12} ref={container_ref} pb={0}>
+      <Grid item xs={12} ref={containerRef} pb={0}>
         <canvas
-          ref={canvas_ref}
+          ref={canvasRef}
           style={{
-            backgroundColor: css_colors.background.map,
-            border: `thick double ${css_colors.primary}`,
+            backgroundColor: cssColors.background.map,
+            border: `thick double ${cssColors.primary}`,
             filter: 'contrast(0.9) sepia(0.3) url(#noiseFilter)',
             height: `${window.world.dim.h}px`,
             width: `100%`
@@ -193,7 +193,7 @@ export function WorldMap() {
             const [clientX, clientY] = pointer(event)
             const nx = (clientX - transform.dx) / transform.scale
             const ny = (clientY - transform.dy) / transform.scale
-            set_cursor({ x: nx, y: ny })
+            setCursor({ x: nx, y: ny })
           }}
           onClick={() => {
             const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
@@ -205,11 +205,11 @@ export function WorldMap() {
               .flat()
             const hub = province__hub(province)
             const nation = cell__nation(poly)
-            const local_scale = transform.scale > canvas__breakpoints.regional
-            const global_scale = transform.scale <= canvas__breakpoints.global
-            const local = (state.codex.current === 'location' && !global_scale) || local_scale
+            const localScale = transform.scale > map__breakpoints.regional
+            const globalScale = transform.scale <= map__breakpoints.global
+            const local = (state.codex.current === 'location' && !globalScale) || localScale
             const { loc } =
-              state.codex.current === 'location' && local_scale
+              state.codex.current === 'location' && localScale
                 ? prospects.reduce(
                     (closest, curr) => {
                       const dist = point__distance({ points: [curr, { x: cursor.x, y: cursor.y }] })
@@ -224,7 +224,7 @@ export function WorldMap() {
               type: 'update codex',
               payload: {
                 target: current === 'location' ? loc : window.world.regions[nation],
-                disable_zoom: true
+                disableZoom: true
               }
             })
           }}

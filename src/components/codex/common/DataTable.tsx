@@ -67,14 +67,14 @@ function ExpandableRow<T extends Object>(props: {
   idx: number
   headers: table_headers<T>
   expand: table_row_expansion<T>
-  row_styles?: (_item: T) => string | undefined
+  rowStyles?: (_item: T) => string | undefined
 }) {
-  const { row, expand, headers, idx, row_styles } = props
-  const [expanded, set_expanded] = expand.expanded
+  const { row, expand, headers, idx, rowStyles } = props
+  const [expanded, setExpanded] = expand.expanded
   const open = expanded === idx
   return (
     <Fragment>
-      <TableRow className={row_styles?.(row)}>
+      <TableRow className={rowStyles?.(row)}>
         {headers.map(({ align, value }, j) => (
           <TableCell key={j} align={align} className={classes.cell}>
             {typeof value === 'function' ? value(row) : row[value].toString()}
@@ -84,7 +84,7 @@ function ExpandableRow<T extends Object>(props: {
           <TableCell key='expand' align={expand.align}>
             <IconButton
               size='small'
-              onClick={() => set_expanded(open ? -1 : idx)}
+              onClick={() => setExpanded(open ? -1 : idx)}
               disabled={expand.disabled?.(row)}
               color='primary'
             >
@@ -107,15 +107,15 @@ function ExpandableRow<T extends Object>(props: {
 export function DataTable<T extends Object>(props: {
   headers: table_headers<T>
   data: T[]
-  rows_per_page?: number
+  rowsPerPage?: number
   expand?: table_row_expansion<T>
   paging?: [number, Dispatch<SetStateAction<number>>]
-  row_styles?: (_item: T) => string | undefined
+  rowStyles?: (_item: T) => string | undefined
 }) {
-  const { data, rows_per_page = 5, row_styles } = props
+  const { data, rowsPerPage = 5, rowStyles } = props
   const headers = props.headers.filter(header => !header.hidden)
-  const [page, set_page] = props.paging ?? useState(0)
-  const rows = data.slice(page * rows_per_page, page * rows_per_page + rows_per_page)
+  const [page, setPage] = props.paging ?? useState(0)
+  const rows = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
   const expand = { expanded: useState(-1), ...props.expand }
   return (
     <TableContainer component='div' className={classes.root}>
@@ -138,20 +138,20 @@ export function DataTable<T extends Object>(props: {
               row={row}
               headers={headers}
               expand={expand}
-              row_styles={row_styles}
+              rowStyles={rowStyles}
             ></ExpandableRow>
           ))}
         </TableBody>
-        {data.length > rows_per_page && (
+        {data.length > rowsPerPage && (
           <TableFooter>
             <TableRow>
               <TablePagination
                 className={classes.footer}
                 rowsPerPageOptions={[]}
                 count={data.length}
-                rowsPerPage={rows_per_page}
+                rowsPerPage={rowsPerPage}
                 page={page}
-                onPageChange={(_, new_page) => set_page(new_page)}
+                onPageChange={(_, newPage) => setPage(newPage)}
               />
             </TableRow>
           </TableFooter>

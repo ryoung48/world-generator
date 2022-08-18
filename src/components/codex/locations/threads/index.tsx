@@ -2,31 +2,31 @@ import { Grid, IconButton, Tooltip } from '@mui/material'
 import { CheckCircleOutline, CloseCircleOutline } from 'mdi-material-ui'
 import { useState } from 'react'
 
-import { view__context } from '../../../../context'
 import { actor__location } from '../../../../models/npcs/actors'
 import { profession__title } from '../../../../models/npcs/actors/stats/professions'
 import { difficulties } from '../../../../models/npcs/stats/difficulty'
 import {
-  thread__describe_complexity,
+  thread__describeComplexity,
   thread__progress,
   thread__status,
-  thread__task_odds
+  thread__taskOdds
 } from '../../../../models/threads'
 import { thread__close } from '../../../../models/threads/actions'
-import { thread__spawn_children } from '../../../../models/threads/spawn'
+import { thread__spawnChildren } from '../../../../models/threads/spawn'
 import { Thread } from '../../../../models/threads/types'
-import { title_case } from '../../../../models/utilities/text'
-import { decorate_text } from '../../../../models/utilities/text/decoration'
+import { titleCase } from '../../../../models/utilities/text'
+import { decorateText } from '../../../../models/utilities/text/decoration'
 import { formatters } from '../../../../models/utilities/text/formatters'
+import { view__context } from '../../../context'
 import { style__clickable } from '../../../theme'
-import { css_colors } from '../../../theme/colors'
+import { cssColors } from '../../../theme/colors'
 import { DataTable, DetailedTableRow } from '../../common/DataTable'
 import { ToggleButtons } from '../../common/navigation/ToggleButtons'
 import { StyledText } from '../../common/text/StyledText'
-import { style__disabled_thread, style__thread_failures, thread__icons } from './styles'
+import { style__disabledThread, style__threadFailures, thread__icons } from './styles'
 import { ThreadView } from './Thread'
 
-const items_per_page = 5
+const itemsPerPage = 5
 
 type selections = 'available' | 'active' | 'closed'
 
@@ -35,40 +35,40 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
   const { codex } = state
   const avatar = window.world.actors[state.avatar]
   const { active, closed, available } = props
-  const [page, set_page] = useState(0)
-  const [expanded, set_expanded] = useState(-1)
-  const [selected, set_selected] = useState<selections>('available')
-  const update_state = () => {
+  const [page, setPage] = useState(0)
+  const [expanded, setExpanded] = useState(-1)
+  const [selected, setSelected] = useState<selections>('available')
+  const updateState = () => {
     dispatch({ type: 'set avatar', payload: { avatar } })
     dispatch({
       type: 'update codex',
       payload: {
         target: window.world.locations[codex.location],
-        disable_zoom: true
+        disableZoom: true
       }
     })
   }
-  const go_to_thread = (thread: Thread) => {
-    const thread_type = thread.closed ? 'closed' : 'active'
-    if (selected !== thread_type) set_selected(thread_type)
+  const goToThread = (thread: Thread) => {
+    const threadType = thread.closed ? 'closed' : 'active'
+    if (selected !== threadType) setSelected(threadType)
     const threads = thread.closed ? closed : active
     const idx = threads.findIndex(({ idx }) => thread.idx === idx)
-    set_page(Math.floor(idx / items_per_page))
-    set_expanded(idx)
+    setPage(Math.floor(idx / itemsPerPage))
+    setExpanded(idx)
   }
   return (
     <ToggleButtons
       selection={['available', 'active', 'closed']}
-      selected={[selected, set_selected]}
+      selected={[selected, setSelected]}
       content={selected => {
         const threads = selected === 'active' ? active : selected === 'closed' ? closed : available
-        const available_selected = selected === 'available'
+        const availableSelected = selected === 'available'
         return (
           <DataTable
             data={threads}
-            row_styles={item =>
+            rowStyles={item =>
               selected === 'active' && item.location !== actor__location(avatar).idx
-                ? style__disabled_thread
+                ? style__disabledThread
                 : undefined
             }
             headers={[
@@ -88,7 +88,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                     <DetailedTableRow
                       title={
                         <span>
-                          {title_case(item.goal)} (#{item.idx})
+                          {titleCase(item.goal)} (#{item.idx})
                         </span>
                       }
                       subtitle={
@@ -99,9 +99,9 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                               {' '}
                               (
                               <span
-                                className={style__clickable(css_colors.subtitle)}
-                                onClick={() => go_to_thread(parent)}
-                                onKeyPress={() => go_to_thread(parent)}
+                                className={style__clickable(cssColors.subtitle)}
+                                onClick={() => goToThread(parent)}
+                                onKeyPress={() => goToThread(parent)}
                                 role='link'
                                 tabIndex={0}
                               >
@@ -126,14 +126,14 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                     <DetailedTableRow
                       title={
                         <StyledText
-                          text={decorate_text({
+                          text={decorateText({
                             link: patron
                           })}
                         ></StyledText>
                       }
                       subtitle={
                         <StyledText
-                          color={css_colors.subtitle}
+                          color={cssColors.subtitle}
                           text={profession__title({
                             actor: patron
                           }).toLocaleLowerCase()}
@@ -146,14 +146,14 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               },
               {
                 text: 'Location',
-                hidden: available_selected,
+                hidden: availableSelected,
                 value: item => {
                   const loc = window.world.locations[item.location]
                   return (
                     <DetailedTableRow
                       title={
                         <StyledText
-                          text={decorate_text({
+                          text={decorateText({
                             link: loc
                           })}
                         ></StyledText>
@@ -166,7 +166,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               },
               {
                 text: 'Progress',
-                hidden: available_selected,
+                hidden: availableSelected,
                 value: item => {
                   const desc =
                     selected === 'closed'
@@ -177,7 +177,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                       title={`${item.progress}/${item.complexity}`}
                       subtitle={
                         <span>
-                          {desc} <span className={style__thread_failures}>({item.failures})</span>
+                          {desc} <span className={style__threadFailures}>({item.failures})</span>
                         </span>
                       }
                     ></DetailedTableRow>
@@ -187,8 +187,8 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               {
                 text: 'Difficulty',
                 value: item => {
-                  const desc = thread__describe_complexity(item)
-                  const { odds, tier } = thread__task_odds({
+                  const desc = thread__describeComplexity(item)
+                  const { odds, tier } = thread__taskOdds({
                     difficulty: item.difficulty,
                     actor: avatar
                   })
@@ -196,8 +196,8 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                     <DetailedTableRow
                       title={
                         <StyledText
-                          text={decorate_text({
-                            label: title_case(tier),
+                          text={decorateText({
+                            label: titleCase(tier),
                             color: difficulties[tier].color,
                             tooltip: `${formatters.percent({ value: odds, precision: 2 })}`
                           })}
@@ -210,7 +210,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               },
               {
                 text: 'Actions',
-                hidden: !available_selected,
+                hidden: !availableSelected,
                 value: item => {
                   return (
                     <Grid container>
@@ -218,7 +218,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                         <Tooltip title='Accept'>
                           <IconButton
                             size='small'
-                            style={{ color: css_colors.difficulty.easy }}
+                            style={{ color: cssColors.difficulty.easy }}
                             onClick={() => {
                               window.world.actors[avatar.idx].threads = [
                                 ...avatar.threads,
@@ -226,7 +226,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                               ]
                               const loc = window.world.locations[codex.location]
                               loc.threads = loc.threads.filter(idx => idx !== item.idx)
-                              update_state()
+                              updateState()
                             }}
                           >
                             <CheckCircleOutline></CheckCircleOutline>
@@ -244,7 +244,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                                 ref: window.world.locations[codex.location],
                                 avatar: window.world.actors[avatar.idx]
                               })
-                              update_state()
+                              updateState()
                             }}
                           >
                             <CloseCircleOutline></CloseCircleOutline>
@@ -256,24 +256,24 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                 }
               }
             ]}
-            paging={[page, set_page]}
-            rows_per_page={items_per_page}
+            paging={[page, setPage]}
+            rowsPerPage={itemsPerPage}
             expand={
-              available_selected
+              availableSelected
                 ? undefined
                 : {
                     content: item => {
-                      const children = thread__spawn_children({ thread: item, avatar })
+                      const children = thread__spawnChildren({ thread: item, avatar })
                       if (children) dispatch({ type: 'set avatar', payload: { avatar } })
                       return (
                         <ThreadView
                           thread={item}
-                          go_to_thread={go_to_thread}
-                          clear_expand={() => set_expanded(-1)}
+                          goToThread={goToThread}
+                          clearExpand={() => setExpanded(-1)}
                         ></ThreadView>
                       )
                     },
-                    expanded: [expanded, set_expanded]
+                    expanded: [expanded, setExpanded]
                   }
             }
           ></DataTable>

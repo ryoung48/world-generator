@@ -1,4 +1,4 @@
-export type religious_professions =
+export type ReligiousProfessions =
   | 'acolyte'
   | 'monk'
   | 'abbot'

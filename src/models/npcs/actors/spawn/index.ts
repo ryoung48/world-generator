@@ -1,22 +1,22 @@
 import { location__hub } from '../../../regions/locations'
+import { location__randomProfession } from '../../../regions/locations/actors'
 import { location__demographics } from '../../../regions/locations/actors/demographics'
-import { location__random_origin } from '../../../regions/locations/actors/demographics/origins'
-import { location__random_profession } from '../../../regions/locations/actors/professions'
+import { location__randomOrigin } from '../../../regions/locations/actors/demographics/origins'
 import { Loc } from '../../../regions/locations/types'
 import { npc__spawn } from '../..'
-import { Culture } from '../../species/humanoids/cultures/types'
+import { Culture } from '../../species/cultures/types'
 import {
-  lang__derived_surnames,
+  lang__derivedSurnames,
   lang__first,
   lang__last,
   lang__surname
-} from '../../species/humanoids/languages/words/actors'
+} from '../../species/languages/words/actors'
 import { equipment__spawn } from '../equipment'
-import { actor__plan_history } from '../history/events/planning'
-import { actor__birth_date, actor__expiration_date, actor__expired } from '../stats/age'
-import { npc__random_gender } from '../stats/appearance/gender'
-import { profession__ages, profession__set, profession__social_class } from '../stats/professions'
-import { social_class } from '../stats/professions/types'
+import { actor__planHistory } from '../history/events/planning'
+import { actor__birthDate, actor__expirationDate, actor__expired } from '../stats/age'
+import { npc__randomGender } from '../stats/appearance/gender'
+import { profession__ages, profession__set, profession__socialClass } from '../stats/professions'
+import { SocialClass } from '../stats/professions/types'
 import { Actor } from '../types'
 import { ActorParams } from './types'
 
@@ -28,19 +28,15 @@ import { ActorParams } from './types'
  * @param params.social_class - nobles will only take from ruling cultures
  * @returns {Culture} selected culture
  */
-const actor__culture = (params: {
-  culture?: Culture
-  location: Loc
-  social_class: social_class
-}) => {
-  const { culture, location, social_class } = params
+const actor__culture = (params: { culture?: Culture; location: Loc; socialClass: SocialClass }) => {
+  const { culture, location, socialClass } = params
   const region = window.world.regions[location.region]
   if (culture) return culture
-  if (window.world.history_recording) return window.world.cultures[region.culture.ruling]
-  const { common_cultures, ruling_cultures } = location__demographics(location)
-  const cultures = social_class === 'upper' ? ruling_cultures : common_cultures
+  if (window.world.historyRecording) return window.world.cultures[region.culture.ruling]
+  const { commonCultures, rulingCultures } = location__demographics(location)
+  const cultures = socialClass === 'upper' ? rulingCultures : commonCultures
   return window.world.cultures[
-    parseInt(window.dice.weighted_choice(Object.entries(cultures).map(([v, w]) => ({ v, w }))))
+    parseInt(window.dice.weightedChoice(Object.entries(cultures).map(([v, w]) => ({ v, w }))))
   ]
 }
 /**
@@ -52,10 +48,10 @@ const actor__culture = (params: {
  * @param params.culture - culture to target specific locations
  * @returns {Culture} selected culture
  */
-const actor__birth_loc = (params: { birth_loc?: Loc; location: Loc; culture: Culture }) => {
-  if (params.birth_loc) return params.birth_loc.idx
-  if (window.world.history_recording) return params.location.idx
-  return location__random_origin({
+const actor__birthLoc = (params: { birthLoc?: Loc; location: Loc; culture: Culture }) => {
+  if (params.birthLoc) return params.birthLoc.idx
+  if (window.world.historyRecording) return params.location.idx
+  return location__randomOrigin({
     loc: params.location,
     culture: params.culture
   }).idx
@@ -65,17 +61,17 @@ const actor__birth_loc = (params: { birth_loc?: Loc; location: Loc; culture: Cul
  * will randomly generate based on location and (optionally) social class if not provided
  * @param params - actor parameters
  */
-const actor_fill_occupation = (params: ActorParams) => {
+const actorFillOccupation = (params: ActorParams) => {
   if (params.occupation === undefined) {
     params.occupation = {
-      key: location__random_profession({
+      key: location__randomProfession({
         loc: params.location,
-        social: params.social_class,
-        time: params.relative_time ?? window.world.date
+        social: params.socialClass,
+        time: params.relativeTime ?? window.world.date
       })
     }
   }
-  params.social_class = profession__social_class(params.occupation.key)
+  params.socialClass = profession__socialClass(params.occupation.key)
 }
 /**
  * creates an actor at a given location
@@ -84,33 +80,33 @@ const actor_fill_occupation = (params: ActorParams) => {
  */
 
 export const actor__spawn = (params: ActorParams): Actor => {
-  if (params.relation) params.relation.before_spawn(params)
-  actor_fill_occupation(params)
+  if (params.relation) params.relation.beforeSpawn(params)
+  actorFillOccupation(params)
   const {
     relation,
     location,
-    birth_loc,
-    birth_time,
-    relative_time,
+    birthLoc,
+    birthTime,
+    relativeTime,
     ages = profession__ages(params.occupation.key),
     living,
-    social_class,
+    socialClass,
     venerable,
     unbound,
     planned,
-    unknown_loc,
+    unknownLoc,
     level,
     tier,
     alias
   } = params
-  const culture = actor__culture({ culture: params.culture, location, social_class })
-  const origin = actor__birth_loc({ birth_loc, location, culture })
+  const culture = actor__culture({ culture: params.culture, location, socialClass })
+  const origin = actor__birthLoc({ birthLoc, location, culture })
   const { language } = culture
-  const gender = params.gender ?? npc__random_gender()
+  const gender = params.gender ?? npc__randomGender()
   // get the current unique id & increment unique id for next npc
   const idx = window.world.actors.length
   // get a random age from the predefined range and compute true age by culture
-  const birth_date = birth_time ?? actor__birth_date({ culture, ages, relative_time })
+  const birthDate = birthTime ?? actor__birthDate({ culture, ages, relativeTime: relativeTime })
   // create the new npc
   const npc = npc__spawn({
     name: params.first ?? lang__first(language, gender),
@@ -124,8 +120,8 @@ export const actor__spawn = (params: ActorParams): Actor => {
     tag: 'actor',
     location: {
       birth: origin,
-      residence: unknown_loc ? -1 : location__hub(location).idx,
-      curr: unknown_loc ? -1 : location.idx
+      residence: unknownLoc ? -1 : location__hub(location).idx,
+      curr: unknownLoc ? -1 : location.idx
     },
     occupation: params.occupation,
     progression: {},
@@ -136,12 +132,12 @@ export const actor__spawn = (params: ActorParams): Actor => {
     surname: params.last,
     lineage: params.lineage,
     alias,
-    spawn_date: params.relative_time ?? window.world.date,
-    birth_date,
-    expires: actor__expiration_date({
+    spawnDate: params.relativeTime ?? window.world.date,
+    birthDate: birthDate,
+    expires: actor__expirationDate({
       culture: culture,
-      birth_date,
-      relative_time,
+      birthDate: birthDate,
+      relativeTime: relativeTime,
       living,
       venerable
     }),
@@ -150,8 +146,8 @@ export const actor__spawn = (params: ActorParams): Actor => {
       unbound,
       events: [],
       backgrounds: [],
-      next_background: Infinity,
-      childhood_end: Infinity
+      nextBackground: Infinity,
+      childhoodEnd: Infinity
     },
     attributes: {
       strength: 0,
@@ -161,20 +157,20 @@ export const actor__spawn = (params: ActorParams): Actor => {
       wisdom: 0,
       charisma: 0
     },
-    parent_name: params.parent_name ?? lang__first(language, culture.lineage),
+    parentName: params.parentName ?? lang__first(language, culture.lineage),
     relations: [],
     equipment: equipment__spawn(),
-    carry_capacity: 120,
+    carryCapacity: 120,
     threads: []
   }
   profession__set({ actor, profession: actor.occupation })
-  const derived_last = lang__derived_surnames(language)
+  const derivedLast = lang__derivedSurnames(language)
   if (!actor.surname && actor.lineage) actor.surname = actor.lineage
-  if (!actor.surname || derived_last) actor.surname = lang__surname({ lang: language, npc: actor })
-  if (!actor.lineage) actor.lineage = derived_last ? lang__last(language) : actor.surname
+  if (!actor.surname || derivedLast) actor.surname = lang__surname({ lang: language, npc: actor })
+  if (!actor.lineage) actor.lineage = derivedLast ? lang__last(language) : actor.surname
   window.world.actors.push(actor)
-  if (relation) relation.after_spawn(actor)
-  if (!unknown_loc) actor__plan_history(actor)
-  if (!unbound && !unknown_loc && !actor__expired(actor)) location.actors.push(idx)
+  if (relation) relation.afterSpawn(actor)
+  if (!unknownLoc) actor__planHistory(actor)
+  if (!unbound && !unknownLoc && !actor__expired(actor)) location.actors.push(idx)
   return actor
 }

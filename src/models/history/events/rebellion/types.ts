@@ -20,7 +20,6 @@ interface RebellionActor {
 }
 
 export interface Rebellion extends MajorEvent {
-  tag: 'rebellion'
   type: 'rebellion'
   // the cause of the rebellion
   background: {
@@ -46,8 +45,8 @@ export interface Rebellion extends MajorEvent {
   loyalists: RebellionActor
   // battles
   events: RebellionRecord[]
-  next_battle: { province: number; attacker: rebel__actors; odds: number }
-  rebel_provinces: number[]
+  nextBattle: { province: number; attacker: rebel__actors; odds: number }
+  rebelProvinces: number[]
 }
 
 export type rebel__actors = 'rebels' | 'loyalists'
@@ -58,5 +57,5 @@ export interface RebellionEvent extends WorldEvent {
   title: string
   odds: number // victory odds of the rebels
   battles: WarEvent['battles']
-  last_battle: number
+  lastBattle: number
 }

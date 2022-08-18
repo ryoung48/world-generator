@@ -1,6 +1,6 @@
-export type draw_styles = 'Nations' | 'Climate' | 'Tech' | 'Cultures' | 'Religions'
+export type DrawStyles = 'Nations' | 'Climate' | 'Tech' | 'Cultures' | 'Religions'
 
-export const canvas__map_styles = {
+export const map__styles = {
   oceans: {
     color: '#e6edef',
     waves: '88, 103, 117'
@@ -14,7 +14,7 @@ export const canvas__map_styles = {
   }
 }
 
-export const canvas__breakpoints = {
+export const map__breakpoints = {
   regional: 40,
   global: 10
 }

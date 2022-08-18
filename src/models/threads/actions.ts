@@ -1,15 +1,15 @@
-import { actor__cr, actor__difficulty_stats, actor__relation } from '../npcs/actors'
+import { actor__cr, actor__difficultyStats, actor__relation } from '../npcs/actors'
 import { Actor } from '../npcs/actors/types'
-import { npc__cr_to_lvl, npc__lvl_to_cr } from '../npcs/stats'
+import { npc__CRToLvl, npc__lvlToCR } from '../npcs/stats'
 import {
-  task__in_progress,
-  thread__in_progress,
+  task__inProgress,
+  thread__inProgress,
   thread__progress,
   thread__status,
-  thread__task_odds,
+  thread__taskOdds,
   thread__tasks
 } from '.'
-import { thread__add_task } from './spawn'
+import { thread__addTask } from './spawn'
 import { Task, Thread, ThreadedEntity } from './types'
 
 interface ThreadXPParams {
@@ -20,13 +20,13 @@ interface ThreadXPParams {
 }
 
 export const thread__exp = ({ avatar, difficulty, status, complexity = 1 }: ThreadXPParams) => {
-  const status_mod =
+  const statusMod =
     status === 'perfection' ? 1.5 : status === 'success' ? 1 : status === 'pyrrhic' ? 0.5 : 0
-  const { tier } = actor__difficulty_stats({
+  const { tier } = actor__difficultyStats({
     actor: avatar,
     cr: difficulty
   })
-  const difficulty_mod =
+  const difficultyMod =
     tier === 'trivial'
       ? 0.1
       : tier === 'easy'
@@ -36,7 +36,7 @@ export const thread__exp = ({ avatar, difficulty, status, complexity = 1 }: Thre
       : tier === 'hard'
       ? 1.2
       : 1.5
-  const exp = difficulty * 0.01 * status_mod * difficulty_mod * complexity
+  const exp = difficulty * 0.01 * statusMod * difficultyMod * complexity
   return exp
 }
 
@@ -44,16 +44,16 @@ const reward = (params: ThreadXPParams) => {
   const { avatar } = params
   const party = actor__relation({ actor: avatar, type: 'party' })
   const exp = thread__exp(params)
-  const weights = window.dice.uniform_dist(party.length)
+  const weights = window.dice.uniformDist(party.length)
   party.forEach((npc, i) => {
-    npc.level = npc__cr_to_lvl(npc__lvl_to_cr(npc.level) + exp * weights[i])
+    npc.level = npc__CRToLvl(npc__lvlToCR(npc.level) + exp * weights[i])
   })
   return exp
 }
 
-const thread__task_resolve = (params: { task: Task; avatar: Actor }) => {
+const thread__taskResolve = (params: { task: Task; avatar: Actor }) => {
   const { task, avatar } = params
-  const { odds } = thread__task_odds({ difficulty: task.difficulty, actor: avatar })
+  const { odds } = thread__taskOdds({ difficulty: task.difficulty, actor: avatar })
   const roll = window.dice.random
   const diff = roll - odds
   task.status =
@@ -68,19 +68,19 @@ export const thread__advance = (params: {
   thread: Thread
   task?: Task
 }) => {
-  const { avatar, thread, task = thread__in_progress({ thread, avatar }), ref } = params
-  if (task.thread !== undefined && task__in_progress(task)) return
-  if (task.thread === undefined) thread__task_resolve({ task, avatar })
+  const { avatar, thread, task = thread__inProgress({ thread, avatar }), ref } = params
+  if (task.thread !== undefined && task__inProgress(task)) return
+  if (task.thread === undefined) thread__taskResolve({ task, avatar })
   if (task.status === 'perfection') thread.progress += 2
   else if (task.status === 'success') thread.progress += 1
   else if (task.status === 'pyrrhic') thread.failures += 1
   else if (task.status === 'failure' || task.status === 'abandoned') thread.failures += 2
   // if (task.status !== 'abandoned' && task.thread === undefined) view_module.tick(task.duration)
-  const in_progress = thread__in_progress({ thread, avatar })
-  if (!in_progress) {
+  const inProgress = thread__inProgress({ thread, avatar })
+  if (!inProgress) {
     const { completed, failed } = thread__progress({ thread, avatar })
     if (!completed && !failed && !thread.closed) {
-      thread__add_task({ thread })
+      thread__addTask({ thread })
       ref.threads = [...ref.threads]
     }
   }

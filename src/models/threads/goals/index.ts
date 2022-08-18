@@ -13,11 +13,11 @@ export const goal__spawn = (thread?: Thread) => {
       ].slice(-3)
     : []
   const empty = goals.length <= 1
-  return window.dice.weighted_choice(
+  return window.dice.weightedChoice(
     templates.map(template => {
-      const cannot_start = empty && template.non_empty
+      const cannotStart = empty && template.nonEmpty
       const repetitive = goals.includes(template.tag)
-      const invalid = repetitive || cannot_start
+      const invalid = repetitive || cannotStart
       return { w: invalid ? 0 : template.weight, v: template }
     })
   )

@@ -1,14 +1,15 @@
-import { location_icon__size } from '../common'
-import { LocationIcon } from '../types'
+/* eslint-disable camelcase */
+import { locationIcon__size } from '../common'
+import { LocationIconDetails } from '../types'
 import { battlefield__icon } from './types'
 
-const generic = location_icon__size
+const generic = locationIcon__size
 
-export const battlefield__icons: Record<battlefield__icon, LocationIcon> = {
+export const battlefield__icons: Record<battlefield__icon, LocationIconDetails> = {
   battlefield_1: {
     height: generic.height,
     path: 'locations/battlefield/1.png',
     opacity: 1,
-    font_scale: generic.font
+    fontScale: generic.font
   }
 }

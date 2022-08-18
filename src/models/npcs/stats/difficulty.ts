@@ -1,4 +1,4 @@
-import { css_colors } from '../../../components/theme/colors'
+import { cssColors } from '../../../components/theme/colors'
 import { scale } from '../../utilities/math'
 import { Difficulty, difficulty } from './types'
 
@@ -7,37 +7,37 @@ export const difficulties: Record<difficulty, Difficulty> = {
   trivial: {
     tier: 'trivial',
     bounds: [-Infinity, 0.55],
-    color: css_colors.difficulty.easy,
+    color: cssColors.difficulty.easy,
     cost: 0
   },
   easy: {
     tier: 'easy',
     bounds: [0.55, 0.85],
-    color: css_colors.difficulty.easy,
+    color: cssColors.difficulty.easy,
     cost: 0.1
   },
   medium: {
     tier: 'medium',
     bounds: [0.85, 1.15],
-    color: css_colors.difficulty.medium,
+    color: cssColors.difficulty.medium,
     cost: 0.2
   },
   hard: {
     tier: 'hard',
     bounds: [1.15, 1.45],
-    color: css_colors.difficulty.hard,
+    color: cssColors.difficulty.hard,
     cost: 0.3
   },
   deadly: {
     tier: 'deadly',
     bounds: [1.45, 1.75],
-    color: css_colors.difficulty.deadly,
+    color: cssColors.difficulty.deadly,
     cost: 0.4
   },
   insanity: {
     tier: 'insanity',
     bounds: [1.75, 5],
-    color: css_colors.difficulty.deadly,
+    color: cssColors.difficulty.deadly,
     cost: 1
   }
 }
@@ -48,8 +48,8 @@ export const difficulties: Record<difficulty, Difficulty> = {
  * Trivial and deadly difficulties will never be returned by this function.
  * @returns a random difficulty
  */
-const random_difficulty = () =>
-  window.dice.weighted_choice<difficulty>([
+const randomDifficulty = () =>
+  window.dice.weightedChoice<difficulty>([
     { w: 0.2, v: 'easy' },
     { w: 0.5, v: 'medium' },
     { w: 0.2, v: 'hard' },
@@ -66,7 +66,7 @@ const random_difficulty = () =>
  * @returns the new value with the applied difficulty
  */
 export const difficulty__cr = (params: { ref: number; tier?: difficulty }) => {
-  const { tier = random_difficulty(), ref } = params
+  const { tier = randomDifficulty(), ref } = params
   return ref * window.dice.uniform(...difficulties[tier].bounds)
 }
 

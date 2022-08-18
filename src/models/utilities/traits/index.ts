@@ -1,4 +1,4 @@
-import { color__random_preset } from '../colors'
+import { colors__randomPreset } from '../colors'
 import { Trait, TraitEnriched } from './types'
 
 export const entity__traits = <tags extends string, args extends { entity: TraitEnriched<tags> }>({
@@ -8,11 +8,11 @@ export const entity__traits = <tags extends string, args extends { entity: Trait
   traits: Record<tags, Trait<tags, args>>
   tag: string
 }) => {
-  const trait_list = Object.values<Trait<tags, args>>(traits)
+  const traitList = Object.values<Trait<tags, args>>(traits)
 
   return {
-    colors: color__random_preset({
-      tags: trait_list.map(trait => trait.tag),
+    colors: colors__randomPreset({
+      tags: traitList.map(trait => trait.tag),
       seed: `${tag} traits`,
       dark: true
     }),
@@ -22,11 +22,11 @@ export const entity__traits = <tags extends string, args extends { entity: Trait
         filter?: (_trait: Trait<tags, args>) => boolean
       } & args
     ) => {
-      const valid_traits = trait_list.filter(params.filter ?? (() => true))
+      const validTraits = traitList.filter(params.filter ?? (() => true))
       const {
         entity,
-        trait = window.dice.weighted_choice(
-          valid_traits.map(trait => {
+        trait = window.dice.weightedChoice(
+          validTraits.map(trait => {
             const { conflicts } = traits[trait.tag]
             const used = entity.traits.some(
               ({ tag }) => trait.tag === tag || conflicts?.includes(tag)

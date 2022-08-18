@@ -1,22 +1,22 @@
-import { lang__unique_name } from '../npcs/species/humanoids/languages/words'
+import { lang__uniqueName } from '../npcs/species/languages/words'
 import {
   lang__continent,
   lang__island,
   lang__mountain
-} from '../npcs/species/humanoids/languages/words/places'
+} from '../npcs/species/languages/words/places'
 import { degrees, radians, scale } from '../utilities/math'
 import { Point } from '../utilities/math/points'
-import { days_per_year, hour_ms } from '../utilities/math/time'
+import { daysPerYear, hourMS } from '../utilities/math/time'
 import { ExteriorCell } from './cells/types'
 import { Shaper } from './spawn/shapers'
-import { sea_level_cutoff } from './types'
+import { seaLevelCutoff } from './types'
 
-export const world__land_features = () => {
+export const world__landFeatures = () => {
   return Object.entries(window.world.landmarks)
     .filter(([, v]) => !v.water)
     .map(([k]) => parseInt(k))
 }
-export const world__water_features = () => {
+export const world__waterFeatures = () => {
   return Object.entries(window.world.landmarks)
     .filter(([, v]) => v.water)
     .map(([k]) => parseInt(k))
@@ -24,42 +24,42 @@ export const world__water_features = () => {
 
 export const world__gps = ({ x, y }: Point) => {
   return {
-    latitude: scale([window.world.dim.h, 0], window.world.geo_bounds.lat, y),
-    longitude: scale([0, window.world.dim.w], window.world.geo_bounds.long, x)
+    latitude: scale([window.world.dim.h, 0], window.world.geoBounds.lat, y),
+    longitude: scale([0, window.world.dim.w], window.world.geoBounds.long, x)
   }
 }
 // day of the year 1-365 (not 100% accurate)
-const day_of_year = (date: number) => {
+const dayOfYear = (date: number) => {
   const today = new Date(date)
   const start = new Date(today.getFullYear(), 0).getTime()
   return (date - start) / (1000 * 60 * 60 * window.world.rotation)
 }
 // sun declination (degrees)
-const sun_declination = (days = day_of_year(window.world.date)) => {
-  const position = (days / days_per_year) * 360
+const sunDeclination = (days = dayOfYear(window.world.date)) => {
+  const position = (days / daysPerYear) * 360
   return Math.asin(Math.sin(radians(-window.world.tilt)) * Math.cos(radians(position)))
 }
 // https://en.wikipedia.org/wiki/Hour_angle
-const hour_angle = (latitude: number, day?: number) => {
-  const pre = -Math.tan(radians(latitude)) * Math.tan(sun_declination(day))
+const hourAngle = (latitude: number, day?: number) => {
+  const pre = -Math.tan(radians(latitude)) * Math.tan(sunDeclination(day))
   return degrees(Math.acos(pre > 1 ? 1 : pre < -1 ? -1 : pre))
 }
 // length of day (hours) at a given latitude
-export const world__day_length = (latitude: number, day?: number) => {
-  const angular_velocity = 360 / window.world.rotation
-  return (hour_angle(latitude, day) * 2) / angular_velocity
+export const world__dayLength = (latitude: number, day?: number) => {
+  const angularVelocity = 360 / window.world.rotation
+  return (hourAngle(latitude, day) * 2) / angularVelocity
 }
 
-export const world__timezone_offset = ({ x, y }: Point) => {
+export const world__timezoneOffset = ({ x, y }: Point) => {
   const { longitude } = world__gps({ x, y })
   // approx 1 hour diff per 15 degrees
-  return Math.round(longitude / 15) * hour_ms
+  return Math.round(longitude / 15) * hourMS
 }
 
-export const world__h_to_km = (h: number) => scale([sea_level_cutoff, 1.5], [0, 6], h)
-export const world__h_to_mi = (h: number) => world__h_to_km(h) / 1.609
+export const world__heightToKM = (h: number) => scale([seaLevelCutoff, 1.5], [0, 6], h)
+export const world__heightToMI = (h: number) => world__heightToKM(h) / 1.609
 
-const world__find_influence = (land: ExteriorCell[]) => {
+const world__findInfluence = (land: ExteriorCell[]) => {
   // determine the greatest cultural influence on a group of cells
   const cultures = window.world.regions.map(() => 0)
   // count the number of cells under the influence of each nation
@@ -85,21 +85,21 @@ const world__find_influence = (land: ExteriorCell[]) => {
   return window.world.cultures[region.culture.native]
 }
 
-export const world__get_feature = (cell: ExteriorCell) => {
+export const world__getFeature = (cell: ExteriorCell) => {
   const idx = cell.landmark
   const { type, name } = window.world.landmarks[idx]
-  const is_land = type === 'continent' || type === 'island'
-  if (is_land && name === 'none') {
+  const isLand = type === 'continent' || type === 'island'
+  if (isLand && name === 'none') {
     const cells = Shaper.land
     const island = cells.filter(poly => poly.landmark === idx)
-    const lang = world__find_influence(island).language
+    const lang = world__findInfluence(island).language
     window.world.landmarks[idx].name =
       type === 'island' ? lang__island(lang) : lang__continent(lang)
   } else if (type === 'lake' && name === 'none') {
     const cells = Shaper.water
     const lake = cells.filter(poly => poly.landmark === idx)
-    const lang = world__find_influence(lake).language
-    window.world.landmarks[idx].name = `${lang__unique_name({ lang, key: 'lake' })} Lake`
+    const lang = world__findInfluence(lake).language
+    window.world.landmarks[idx].name = `${lang__uniqueName({ lang, key: 'lake' })} Lake`
   }
   const landmark = window.world.landmarks[idx]
   return {
@@ -108,17 +108,17 @@ export const world__get_feature = (cell: ExteriorCell) => {
   }
 }
 
-export const world__get_mountains = (idx: number) => {
+export const world__getMountains = (idx: number) => {
   if (idx >= 0 && window.world.mountains[idx] === 'none') {
     const mountains = Shaper.mountains
     const mountain = mountains.filter(poly => poly.mountain === idx)
-    const lang = world__find_influence(mountain).language
+    const lang = world__findInfluence(mountain).language
     window.world.mountains[idx] = lang__mountain(lang, mountain.length)
   }
   return window.world.mountains[idx]
 }
 
-export const world__get_lands = () => {
+export const world__getLands = () => {
   return {
     land: Shaper.land.length,
     water: Shaper.water.length

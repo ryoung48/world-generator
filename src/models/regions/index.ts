@@ -1,24 +1,24 @@
 import { markets } from '../items/economy'
-import { day_ms, year_ms } from '../utilities/math/time'
+import { dayMS, yearMS } from '../utilities/math/time'
 import { BasicCache, memoize } from '../utilities/performance/memoization'
 import { world__gps } from '../world'
 import { ExteriorCell } from '../world/cells/types'
-import { province__foreign_neighbors, province__foreign_states } from './provinces'
+import { province__foreignNeighbors, province__foreignStates } from './provinces'
 import { Region } from './types'
 
 export const region__nation = (region: Region) => {
   const capital = window.world.provinces[region.capital]
-  const nation = window.world.regions[capital.curr_nation]
+  const nation = window.world.regions[capital.currNation]
   return nation
 }
 
-export const region__is_ruler = (region: Region) => region__nation(region) === region
+export const region__isRuler = (region: Region) => region__nation(region) === region
 
-export const region__rebellion_in_progress = (nation: Region) => {
+export const region__rebellionInProgress = (nation: Region) => {
   const { regions } = nation
   return regions
     .map(p => {
-      const n = window.world.provinces[p].curr_nation
+      const n = window.world.provinces[p].currNation
       return window.world.regions[n]
     })
     .some(region => region.rebellions.current !== -1)
@@ -34,8 +34,8 @@ export const region__population = memoize(_region__population, {
   store: (): BasicCache<ReturnType<typeof _region__population>> => ({}),
   get: (cache, region) => {
     // recompute every day
-    if (region.memory.population_check < window.world.date) {
-      region.memory.population_check = window.world.date + day_ms
+    if (region.memory.populationCheck < window.world.date) {
+      region.memory.populationCheck = window.world.date + dayMS
     } else {
       return cache[region.idx]
     }
@@ -45,40 +45,40 @@ export const region__population = memoize(_region__population, {
   }
 })
 
-export const region__foreign_provinces = (params: { host: Region; guest: Region }) => {
+export const region__foreignProvinces = (params: { host: Region; guest: Region }) => {
   const { host, guest } = params
   return Array.from(
     new Set(
       host.provinces
         .map(t => window.world.provinces[t])
         .map(province =>
-          province__foreign_neighbors(province).filter(n => n.curr_nation === guest.idx)
+          province__foreignNeighbors(province).filter(n => n.currNation === guest.idx)
         )
         .flat()
     )
   )
 }
 export const region__neighbors = (nation: Region) => {
-  return province__foreign_states(nation.provinces.map(t => window.world.provinces[t]))
+  return province__foreignStates(nation.provinces.map(t => window.world.provinces[t]))
 }
-export const region__non_allied_neighbors = (nation: Region) => {
+export const region__nonAlliedNeighbors = (nation: Region) => {
   return region__neighbors(nation).filter(n => {
     const relation = nation.relations[n]
     return relation !== 'ally'
   })
 }
-export const region__is_active = (nation: Region) => {
+export const region__isActive = (nation: Region) => {
   return nation.provinces.length > 0
 }
 
-export const region__demand = (nation_idx: number) => {
-  const nation = window.world.regions[nation_idx]
-  const diff = (window.world.date - nation.memory.trade_demand) / year_ms
+export const region__demand = (nationIdx: number) => {
+  const nation = window.world.regions[nationIdx]
+  const diff = (window.world.date - nation.memory.tradeDemand) / yearMS
   if (diff > 1) {
     markets.forEach(market => {
-      nation.trade_demand[market] = window.dice.norm(0.1, 0.15)
+      nation.tradeDemand[market] = window.dice.norm(0.1, 0.15)
     })
-    nation.memory.trade_demand = window.world.date
+    nation.memory.tradeDemand = window.world.date
   }
 }
 
@@ -88,7 +88,7 @@ export const region__demand = (nation_idx: number) => {
  * @param params.region - the region to search for
  * @returns a list of provinces that belong to the specified region
  */
-export const nation__regional_territories = (params: { nation: Region; region: Region }) => {
+export const nation__regionalTerritories = (params: { nation: Region; region: Region }) => {
   const { nation, region } = params
   return nation.provinces
     .map(t => window.world.provinces[t])
@@ -107,11 +107,11 @@ export const region__spawn = (cell: ExteriorCell) => {
     name: '',
     colors: window.dice.color(),
     regional: {},
-    borders_changed: true,
+    bordersChanged: true,
     coastal: false,
     borders: [],
-    land_borders: [],
-    colonial_presence: {
+    landBorders: [],
+    colonialPresence: {
       colonies: [],
       embassy: -1
     },
@@ -120,31 +120,25 @@ export const region__spawn = (cell: ExteriorCell) => {
     subjects: [],
     overlord: {
       idx: -1,
-      join_date: 0
+      joinDate: 0
     },
     past: [],
     wealth: 0,
-    max_wealth: 0,
+    maxWealth: 0,
     wars: { current: [], past: [] },
     rebellions: { current: -1, past: [] },
     memory: {
-      rebel_fatigue: -Infinity,
-      plague_fatigue: -Infinity,
-      last_update: window.world.date,
-      trade_demand: window.world.date,
-      faction_spawns: -Infinity,
-      finalize_check: -Infinity,
-      population_check: -Infinity
+      rebelFatigue: -Infinity,
+      plagueFatigue: -Infinity,
+      lastUpdate: window.world.date,
+      tradeDemand: window.world.date,
+      populationCheck: -Infinity
     },
     provinces: [],
     regions: [],
     side,
     edge,
-    trade_demand: {},
-    beasts: {},
-    primordials: {},
-    immigration: {},
-    emigration: {},
+    tradeDemand: {},
     culture: { ruling: -1, native: -1 }
   }
   window.world.regions.push(nation)
@@ -154,5 +148,5 @@ export const region__spawn = (cell: ExteriorCell) => {
 export const region__borders = (region: Region) => region.borders.map(b => window.world.regions[b])
 
 export const world__nations = () => {
-  return Object.values(window.world.regions).filter(r => region__is_active(r))
+  return Object.values(window.world.regions).filter(r => region__isActive(r))
 }

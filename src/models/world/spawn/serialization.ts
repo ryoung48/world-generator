@@ -2,7 +2,7 @@ import PriorityQueue from 'js-priority-queue'
 
 import { WorldEvent } from '../../history/types'
 import { profile, profile__switch, Profiles } from '../../utilities/performance'
-import { route_types } from '../travel/types'
+import { RouteTypes } from '../travel/types'
 import { World } from '../types'
 import { world__spawn } from '.'
 import { CivilizationShaper } from './shapers/civilization'
@@ -10,16 +10,16 @@ import { ContinentShaper } from './shapers/continents'
 import { RegionalShaper } from './shapers/regions'
 
 const infinity = '_INF_'
-const neg_infinity = '_-INF_'
+const negInfinity = '_-INF_'
 
-const custom_replacer = (_key: string, value: unknown) => {
+const customReplacer = (_key: string, value: unknown) => {
   if (value === Infinity) return infinity
-  if (value === -Infinity) return neg_infinity
+  if (value === -Infinity) return negInfinity
   return value
 }
-const custom_retriever = (_key: string, value: unknown) => {
+const customRetriever = (_key: string, value: unknown) => {
   if (value === infinity) return Infinity
-  if (value === neg_infinity) return -Infinity
+  if (value === negInfinity) return -Infinity
   return value
 }
 
@@ -39,7 +39,7 @@ export const world__save = () => {
       future: queue,
       profiles: window.profiles
     },
-    custom_replacer
+    customReplacer
   )
   console.timeEnd('Save')
   // re-add diagram
@@ -71,7 +71,7 @@ export const world__load = (saved: string) => {
   const label = 'Load'
   console.time(label)
   // delete the elements that wont save properly
-  const { world, future, profiles } = JSON.parse(saved, custom_retriever) as {
+  const { world, future, profiles } = JSON.parse(saved, customRetriever) as {
     world: World
     future: WorldEvent[]
     profiles: Profiles
@@ -91,9 +91,9 @@ export const world__load = (saved: string) => {
   world.cells = window.world.cells
   world.diagram = window.world.diagram
   world.coasts = window.world.coasts
-  Object.entries(world.routes).forEach(([route_type, routes]) =>
+  Object.entries(world.routes).forEach(([routeType, routes]) =>
     routes.forEach((road, i) =>
-      road.path.forEach(cell => world.cells[cell].roads[route_type as route_types].push(i))
+      road.path.forEach(cell => world.cells[cell].roads[routeType as RouteTypes].push(i))
     )
   )
   window.world = world

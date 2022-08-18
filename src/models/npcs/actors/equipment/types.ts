@@ -1,7 +1,7 @@
 import { Armor } from '../../../items/armor/types'
 import { Weapon } from '../../../items/weapons/types'
 
-export type equipable_slot = 'armor' | 'mainhand' | 'offhand'
+export type EquipableSlot = 'armor' | 'mainhand' | 'offhand'
 
 export type Equipable = Armor | Weapon
 

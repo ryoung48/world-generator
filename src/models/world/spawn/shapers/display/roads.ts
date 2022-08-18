@@ -2,7 +2,7 @@ import { curveCatmullRom, line, scaleLinear } from 'd3'
 
 import { province__hub } from '../../../../regions/provinces'
 import { cell__province } from '../../../cells'
-import { route_types } from '../../../travel/types'
+import { RouteTypes } from '../../../travel/types'
 
 // line function used for rivers and roads
 const d3Line = () => {
@@ -14,11 +14,7 @@ const d3Line = () => {
     .curve(curveCatmullRom.alpha(0.1))
 }
 
-const display__road_segment = (params: {
-  route: route_types
-  path: number[]
-  imperial: boolean
-}) => {
+const display__roadSegment = (params: { route: RouteTypes; path: number[]; imperial: boolean }) => {
   const { route, path, imperial } = params
   if (path.length > 1) {
     const start = window.world.cells[path[0]]
@@ -41,7 +37,7 @@ const display__road = (params: {
   used: Record<string, boolean>
   path: number[]
   imperial?: boolean
-  route: route_types
+  route: RouteTypes
 }) => {
   const { used, path, route, imperial } = params
   let [i, k] = [0, 1]
@@ -49,14 +45,14 @@ const display__road = (params: {
     const [src, dst] = [path[j], path[k]]
     // make sure each segment is only drawn once
     if (used[[src, dst].toString()]) {
-      display__road_segment({ route, path: path.slice(i, k), imperial })
+      display__roadSegment({ route, path: path.slice(i, k), imperial })
       i = k
     } else {
       used[[src, dst].toString()] = true
       used[[dst, src].toString()] = true
     }
   }
-  display__road_segment({ route, path: path.slice(i, k), imperial })
+  display__roadSegment({ route, path: path.slice(i, k), imperial })
 }
 
 export const display__roads = () => {
@@ -67,7 +63,7 @@ export const display__roads = () => {
     // draw each road segment
     const sorted = [...roads].sort((a, b) => (b.imperial ? 1 : 0) - (a.imperial ? 1 : 0))
     sorted.forEach(({ path, imperial }) => {
-      display__road({ used, path, route: route as route_types, imperial })
+      display__road({ used, path, route: route as RouteTypes, imperial })
     })
   })
 }

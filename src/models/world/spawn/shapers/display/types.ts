@@ -1,5 +1,5 @@
-import { terrain_icon } from '../../../../../components/maps/icons/terrain/types'
-import { route_types } from '../../../travel/types'
+import { TerrainIcon } from '../../../../../components/maps/icons/terrain/types'
+import { RouteTypes } from '../../../travel/types'
 
 interface PathSegment {
   d: string
@@ -26,12 +26,12 @@ export interface RegionSegment extends PathSegment {
 interface Icon {
   x: number
   y: number
-  type: terrain_icon
+  type: TerrainIcon
   cell: number
 }
 
 export interface Display {
-  routes: Record<route_types, RoadSegment[]>
+  routes: Record<RouteTypes, RoadSegment[]>
   islands: Record<number, CoastSegment>
   lakes: Record<number, LakeSegment>
   borders: Record<string, RegionSegment[]>

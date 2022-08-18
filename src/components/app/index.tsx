@@ -2,9 +2,8 @@ import { Grid, ThemeProvider } from '@mui/material'
 import { Container } from '@mui/system'
 import { useReducer, useState } from 'react'
 
-import { ViewContext } from '../../context'
-import { view__init, view__reducer } from '../../context/state'
 import { Codex } from '../codex'
+import { view__init, view__reducer, ViewContext } from '../context'
 import { WorldMap } from '../maps'
 import { theme } from '../theme'
 import { Footer } from './Footer'
@@ -14,11 +13,11 @@ import { PerformanceView } from './Performance'
 
 function App() {
   const [state, dispatch] = useReducer(view__reducer, view__init)
-  const [stats, toggle_stats] = useState(false)
+  const [stats, toggleStats] = useState(false)
   return (
     <ThemeProvider theme={theme}>
       <ViewContext.Provider value={{ state, dispatch }}>
-        <Header stats={stats} toggle_stats={toggle_stats}></Header>
+        <Header stats={stats} toggleStats={toggleStats}></Header>
         <Container className='paper' maxWidth={false} sx={{ height: '100vh', padding: 0 }}>
           {!state?.id && <Landing></Landing>}
           {state?.id && !stats && (

@@ -3,17 +3,16 @@ import { ThreadedEntity } from '../../threads/types'
 import { TaggedEntity } from '../../utilities/codex/entities'
 import { Point } from '../../utilities/math/points'
 import { TraitEnriched } from '../../utilities/traits/types'
-import { terrain_types } from '../../world/climate/terrain'
-import { basic_climates } from '../../world/climate/types'
-import { weather_icons } from '../../world/climate/weather/types'
-import { District } from './spawn/blueprints/districts/types'
+import { Terrain } from '../../world/climate/terrain'
+import { BasicClimate } from '../../world/climate/types'
+import { WeatherIcons } from '../../world/climate/weather/types'
 import { location__tag } from './spawn/traits/types'
 
 type Weather = {
   conditions: string
   heat: { degrees: number; desc: string }
   clouds: string
-  icon: weather_icons
+  icon: WeatherIcons
   wind: {
     speed: number
     desc: string
@@ -22,7 +21,7 @@ type Weather = {
 
 type Conditions = {
   season: string
-  rain_chance: number
+  rainChance: number
   day: Weather
   night: Weather
   sun: {
@@ -35,7 +34,7 @@ type Conditions = {
     rise: number
     set: number
     hours: number
-    next_day: boolean
+    nextDay: boolean
     icon:
       | 'new'
       | 'waxing-crescent'
@@ -91,9 +90,8 @@ export interface Loc extends Point, TaggedEntity, ThreadedEntity, TraitEnriched<
   hub?: boolean
   coastal: boolean
   _weather?: Conditions
-  _terrain?: terrain_types
-  _climate?: basic_climates
+  _terrain?: Terrain
+  _climate?: BasicClimate
   // map (settlements only for the moment)
   _icon?: keyof typeof location__icons
-  map?: { seed?: string; density: number; districts: Record<number, District> }
 }

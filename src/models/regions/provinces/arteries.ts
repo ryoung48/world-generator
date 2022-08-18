@@ -1,8 +1,8 @@
-import { province__is_capital, province__local_neighbors, province__sort_closest } from '.'
+import { province__isCapital, province__localNeighbors, province__sortClosest } from '.'
 import { Province } from './types'
 
 export const province__connected = (city: Province) => {
-  return city.artery.length > 0 || province__is_capital(city)
+  return city.artery.length > 0 || province__isCapital(city)
 }
 
 // All roads lead to Rome: attach to an arterial network
@@ -16,7 +16,7 @@ export const province__attach = (city: Province, idx: number) => {
     const curr = queue.shift()
     if (!visited[curr.idx]) {
       visited[curr.idx] = true
-      const neighbors = province__sort_closest(province__local_neighbors(curr), curr).filter(
+      const neighbors = province__sortClosest(province__localNeighbors(curr), curr).filter(
         n => !province__connected(n)
       )
       neighbors.forEach(n => {
@@ -39,7 +39,7 @@ export const province__sever = (city: Province) => {
     const curr = queue.shift()
     if (!visited[curr.idx]) {
       visited[curr.idx] = true
-      const neighbors = province__local_neighbors(curr).filter(n => !visited[n.idx])
+      const neighbors = province__localNeighbors(curr).filter(n => !visited[n.idx])
       neighbors.forEach(n => {
         n.artery = n.artery.filter(idx => idx !== curr.idx)
       })

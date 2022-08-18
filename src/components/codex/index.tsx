@@ -1,8 +1,8 @@
 import { Box } from '@mui/material'
 
-import { view__context } from '../../context'
 import { LocationView } from '../codex/locations'
 import { NationView } from '../codex/nations'
+import { view__context } from '../context'
 import { ActorView } from './actors'
 
 export function Codex() {

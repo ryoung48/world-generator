@@ -1,4 +1,4 @@
-export const academic_skills = [
+export const academicSkills = [
   'accounting',
   'alchemy',
   'arcana',
@@ -14,9 +14,9 @@ export const academic_skills = [
   'theology'
 ] as const
 
-export type academic_skill = typeof academic_skills[number]
+export type AcademicSkill = typeof academicSkills[number]
 
-export const artistic_skills = [
+export const artisticSkills = [
   'acrobatics',
   'acting',
   'basketry',
@@ -47,9 +47,9 @@ export const artistic_skills = [
   'whitesmithing'
 ] as const
 
-export type artistic_skill = typeof artistic_skills[number]
+export type ArtisticSkill = typeof artisticSkills[number]
 
-export const social_skills = [
+export const socialSkills = [
   'bluff',
   'carouse',
   'charm',
@@ -63,9 +63,9 @@ export const social_skills = [
   'teaching'
 ] as const
 
-export type social_skill = typeof social_skills[number]
+export type SocialSkill = typeof socialSkills[number]
 
-export const survival_specializations = [
+export const survivalSpecializations = [
   'forest',
   'plains',
   'mountains',
@@ -74,7 +74,7 @@ export const survival_specializations = [
   'arctic'
 ] as const
 
-export const worldly_skills = [
+export const worldlySkills = [
   'animal handling',
   'architecture',
   'athletics',
@@ -104,19 +104,19 @@ export const worldly_skills = [
   'vintner',
   'wagoneering',
   'woodcutting',
-  ...survival_specializations
+  ...survivalSpecializations
 ] as const
 
-export type worldly_skill = typeof worldly_skills[number]
+export type WorldlySkill = typeof worldlySkills[number]
 
-export const all_skills = [
-  ...social_skills,
-  ...artistic_skills,
-  ...worldly_skills,
-  ...academic_skills
+export const allSkills = [
+  ...socialSkills,
+  ...artisticSkills,
+  ...worldlySkills,
+  ...academicSkills
 ] as const
-export const artisan_skills = [...social_skills, ...artistic_skills, ...worldly_skills]
-export const scholar_skills = [...social_skills, ...academic_skills]
-export const laborer_skills = [...worldly_skills]
+export const artisanSkills = [...socialSkills, ...artisticSkills, ...worldlySkills]
+export const scholarSkills = [...socialSkills, ...academicSkills]
+export const laborerSkills = [...worldlySkills]
 
-export type actor_skills = typeof all_skills[number]
+export type ActorSkills = typeof allSkills[number]

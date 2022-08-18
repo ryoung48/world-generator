@@ -1,28 +1,26 @@
 import { location__context } from '../../../../../regions/locations/context'
 import { LocationContext } from '../../../../../regions/locations/context/types'
-import { weighted_distribution } from '../../../../../utilities/math'
-import { age_ranges } from '../../age/life_phases'
-import { actor_skills, all_skills } from '../../skills/categories'
-import { Profession, profession__skill_kits, profession__specialization } from '../types'
-import { merchant_professions } from './types'
+import { WeightedDistribution } from '../../../../../utilities/math'
+import { ageRanges } from '../../age/life_phases'
+import { ActorSkills, allSkills } from '../../skills/categories'
+import { Profession, ProfessionSkillKits, ProfessionSpecialization } from '../types'
+import { MerchantProfessions } from './types'
 
-const merchant_title = (spec: string) => `Merchant (${spec})`
+const merchantTitle = (spec: string) => `Merchant (${spec})`
 
-const merchant_attributes = [9, 9, 9, 11, 10, 12]
+const merchantAttributes = [9, 9, 9, 11, 10, 12]
 
-const merchant_skills = [...all_skills]
+const merchantSkills = [...allSkills]
 
-const merchant_skill_kit = (
-  secondary: profession__skill_kits['secondary']
-): profession__skill_kits => ({
+const merchantSkillKit = (secondary: ProfessionSkillKits['secondary']): ProfessionSkillKits => ({
   primary: ['accounting'],
   secondary: [...secondary],
-  tertiary: merchant_skills
+  tertiary: merchantSkills
 })
 
-const merchant_occurrence = (
+const merchantOccurrence = (
   context: LocationContext
-): weighted_distribution<profession__specialization> => [
+): WeightedDistribution<ProfessionSpecialization> => [
   { w: context.alchemy ? 0.5 : context.urban ? 0.1 : 0, v: 'alchemical' },
   { w: context.arcane ? 0.5 : context.urban ? 0.1 : 0, v: 'arcane' },
   { w: context.smiths ? 0.5 : context.urban ? 0.1 : 0, v: 'armor' },
@@ -47,7 +45,7 @@ const merchant_occurrence = (
   { w: context.smiths ? 0.5 : context.urban ? 0.1 : 0, v: 'weapons' }
 ]
 
-const merchant_template = (params: {
+const merchantTemplate = (params: {
   key: Profession['key']
   lifestyle: Profession['lifestyle']
   occurrence: Profession['occurrence']
@@ -60,9 +58,9 @@ const merchant_template = (params: {
     category: 'merchants',
     lifestyle,
     occurrence,
-    attributes: merchant_attributes,
+    attributes: merchantAttributes,
     skills: ({ actor: { occupation: profession } }) => {
-      const skills: actor_skills[] = []
+      const skills: ActorSkills[] = []
       const { spec } = profession
       if (spec === 'alchemical') skills.push('alchemy')
       else if (spec === 'arcane') skills.push('arcana')
@@ -76,54 +74,54 @@ const merchant_template = (params: {
       else if (spec === 'religious') skills.push('theology')
       else if (spec === 'ships') skills.push('seafaring')
       else if (spec === 'weapons') skills.push('blacksmithing')
-      return merchant_skill_kit(skills)
+      return merchantSkillKit(skills)
     },
     specialization: ({ actor }) => {
       const loc = window.world.locations[actor.location.residence]
       const context = location__context(loc)
-      return window.dice.weighted_choice(merchant_occurrence(context))
+      return window.dice.weightedChoice(merchantOccurrence(context))
     }
   }
 }
 
-export const merchants: Record<merchant_professions, Profession> = {
+export const merchants: Record<MerchantProfessions, Profession> = {
   'merchant (prince)': {
     key: 'merchant (prince)',
     lifestyle: 'prosperous',
     category: 'merchants',
     occurrence: ({ context }) => (context.city ? 1 : 0),
     prevalence: 'uncommon',
-    attributes: merchant_attributes,
+    attributes: merchantAttributes,
     skills: {
       primary: ['logistics'],
       secondary: ['accounting'],
-      tertiary: merchant_skills
+      tertiary: merchantSkills
     }
   },
-  merchant: merchant_template({
+  merchant: merchantTemplate({
     key: 'merchant',
     title: ({ spec }) => `Merchant (${spec})`,
     lifestyle: 'comfortable',
-    occurrence: ({ context }) => merchant_occurrence(context).reduce((sum, { w }) => sum + w, 0)
+    occurrence: ({ context }) => merchantOccurrence(context).reduce((sum, { w }) => sum + w, 0)
   }),
   'caravan (trader)': {
     key: 'caravan (trader)',
     lifestyle: 'comfortable',
     category: 'merchants',
-    title: merchant_title('Exotic Goods'),
+    title: merchantTitle('Exotic Goods'),
     prevalence: 'uncommon',
-    attributes: merchant_attributes,
-    skills: merchant_skill_kit([])
+    attributes: merchantAttributes,
+    skills: merchantSkillKit([])
   },
   'caravan (master)': {
     key: 'caravan (master)',
     lifestyle: 'comfortable',
     category: 'merchants',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'rare',
     skills: {
       primary: ['logistics'],
-      ...merchant_skill_kit([])
+      ...merchantSkillKit([])
     }
   },
   innkeeper: {
@@ -131,8 +129,8 @@ export const merchants: Record<merchant_professions, Profession> = {
     lifestyle: 'comfortable',
     category: 'merchants',
     occurrence: 1,
-    attributes: merchant_attributes,
-    skills: merchant_skill_kit(['cooking', 'logistics'])
+    attributes: merchantAttributes,
+    skills: merchantSkillKit(['cooking', 'logistics'])
   },
   'tavern keeper': {
     key: 'tavern keeper',
@@ -140,17 +138,17 @@ export const merchants: Record<merchant_professions, Profession> = {
     category: 'merchants',
     occurrence: 1,
     prevalence: 'uncommon',
-    attributes: merchant_attributes,
-    skills: merchant_skill_kit(['cooking', 'logistics'])
+    attributes: merchantAttributes,
+    skills: merchantSkillKit(['cooking', 'logistics'])
   },
   banker: {
     key: 'banker',
     lifestyle: 'prosperous',
     category: 'merchants',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'uncommon',
     occurrence: ({ context }) => (context.city && context.tribal ? 1 : 0),
-    attributes: merchant_attributes,
-    skills: merchant_skill_kit([])
+    attributes: merchantAttributes,
+    skills: merchantSkillKit([])
   }
 }

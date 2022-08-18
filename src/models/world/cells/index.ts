@@ -1,6 +1,6 @@
 import { Delaunay, Voronoi } from 'd3'
 
-import { point_on_edge, same_edge, voronoi__common_edge } from '../../utilities/math/points'
+import { edge__sameEdge, point__isOnEdge, voronoi__commonEdge } from '../../utilities/math/points'
 import { profile } from '../../utilities/performance'
 import { memoize } from '../../utilities/performance/memoization'
 import { Cell, ExteriorCell } from './types'
@@ -8,10 +8,10 @@ import { Cell, ExteriorCell } from './types'
 export const ocean = 'Great Sea'
 
 type Edge = [number, number][]
-const _cell__common_edge = (i: number, j: number): Edge => {
-  return voronoi__common_edge(window.world.cells[i].data, window.world.cells[j].data)
+const _cell__commonEdge = (i: number, j: number): Edge => {
+  return voronoi__commonEdge(window.world.cells[i].data, window.world.cells[j].data)
 }
-export const cell__common_edge = memoize(_cell__common_edge, {
+export const cell__commonEdge = memoize(_cell__commonEdge, {
   store: (): Record<number, Record<number, Edge>> => ({}),
   get: (cache, i, j) => cache[i]?.[j],
   set: (cache, edge, i, j) => {
@@ -22,7 +22,7 @@ export const cell__common_edge = memoize(_cell__common_edge, {
   }
 })
 
-export const cell__map_edge = (cell: Cell) => {
+export const cell__mapEdge = (cell: Cell) => {
   return cell.data.some(
     ([x, y]) => x <= 0 || y <= 0 || x >= window.world.dim.h || y >= window.world.dim.h
   )
@@ -36,54 +36,54 @@ interface CellParams {
 
 export const cell__spawn = ({ idx, point, diagram }: CellParams) => {
   const [x, y] = point
-  const base_cell: Cell = {
+  const baseCell: Cell = {
     idx,
     data: diagram.cellPolygon(idx) as [number, number][],
     x,
     y,
     n: Array.from(diagram.neighbors(idx))
   }
-  return base_cell
+  return baseCell
 }
 
-export const cell__spawn_exterior = (params: CellParams) => {
-  const base_cell = cell__spawn(params)
-  const exterior_cell: ExteriorCell = {
+export const cell__spawnExterior = (params: CellParams) => {
+  const baseCell = cell__spawn(params)
+  const exteriorCell: ExteriorCell = {
     idx: params.idx,
-    data: base_cell.data,
-    x: base_cell.x,
-    y: base_cell.y,
-    n: base_cell.n,
+    data: baseCell.data,
+    x: baseCell.x,
+    y: baseCell.y,
+    n: baseCell.n,
     score: 0,
     region: -1,
     province: -1,
     h: 0,
     landmark: 0,
-    ocean_dist: 0,
-    mountain_dist: -1,
+    oceanDist: 0,
+    mountainDist: -1,
     roads: { land: [], sea: [] }
   }
-  return exterior_cell
+  return exteriorCell
 }
 
 export const cell__neighbors = (cell: ExteriorCell) => {
   return cell.n.map(n => window.world.cells[n])
 }
 export const cell__province = (cell: ExteriorCell) => window.world.provinces[cell.province]
-export const cell__nation = (cell: ExteriorCell) => cell__province(cell).curr_nation
-export const cell__is_nation_border = (cell: ExteriorCell) => {
+export const cell__nation = (cell: ExteriorCell) => cell__province(cell).currNation
+export const cell__isNationBorder = (cell: ExteriorCell) => {
   const nation = cell__nation(cell)
   return cell__neighbors(cell).some(n => {
     return cell__nation(n) !== nation
   })
 }
-export const cell__is_region_border = (cell: ExteriorCell) => {
+export const cell__isRegionBorder = (cell: ExteriorCell) => {
   return cell__neighbors(cell).some(n => {
     return cell.region !== n.region
   })
 }
 
-export const cell__bfs_neighborhood = (params: {
+export const cell__bfsNeighborhood = (params: {
   start: ExteriorCell
   spread: (_cell: ExteriorCell) => boolean
 }) => {
@@ -100,23 +100,23 @@ export const cell__bfs_neighborhood = (params: {
   return Array.from(visited).map(i => window.world.cells[i])
 }
 
-export const cell__is_hub = (cell: ExteriorCell) => {
+export const cell__isHub = (cell: ExteriorCell) => {
   const provinces = window.world.provinces[cell.province]
   const hub = window.world.locations[provinces?.hub]
   return hub?.cell === cell.idx
 }
 
-export const cell__move_to_coast = (params: { cell: ExteriorCell; distance: number }) => {
+export const cell__moveToCoast = (params: { cell: ExteriorCell; distance: number }) => {
   const { cell, distance } = params
-  if (cell.coastal_edges?.length > 0) {
+  if (cell.coastalEdges?.length > 0) {
     // move location to the coast
-    const points = window.dice.choice(cell.coastal_edges)
-    return point_on_edge({ points, distance })
+    const points = window.dice.choice(cell.coastalEdges)
+    return point__isOnEdge({ points, distance })
   }
   return false
 }
 
-export const cell__has_roads = ({ roads }: ExteriorCell) => {
+export const cell__hasRoads = ({ roads }: ExteriorCell) => {
   return roads.land.length > 0 || roads.sea.length > 0
 }
 
@@ -134,7 +134,7 @@ export const cells__boundary = (params: {
         const prospects = cell__neighbors(b)
           .filter(boundary)
           .map(n => {
-            const edge = cell__common_edge(b.idx, n.idx)
+            const edge = cell__commonEdge(b.idx, n.idx)
             return { v: edge, i: b.idx }
           })
         if (prospects.length > 0) dict[b.idx] = prospects
@@ -157,7 +157,7 @@ export const cells__boundary = (params: {
         // pick a random edge to start
         const ordered = [end, current]
         // loop until we arrive at the end
-        while (cell && !same_edge(end, current)) {
+        while (cell && !edge__sameEdge(end, current)) {
           const prospects = cell__neighbors(cell)
             .concat([cell])
             .map(p => edges[p.idx])
@@ -169,8 +169,8 @@ export const cells__boundary = (params: {
               const { v, i: idx } = prospect[i]
               const [e1, e2] = v
               // the next segment shares a vertex with the current segment
-              if (same_edge(e1, current) || same_edge(e2, current)) {
-                current = same_edge(e1, current) ? e2 : e1
+              if (edge__sameEdge(e1, current) || edge__sameEdge(e2, current)) {
+                current = edge__sameEdge(e1, current) ? e2 : e1
                 cell = window.world.cells[idx]
                 // don't consider already visited points
                 prospect.splice(i, 1)

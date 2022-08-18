@@ -1,12 +1,12 @@
-import { view__context } from '../../../context'
 import { actor__location } from '../../../models/npcs/actors'
 import { actor__expired } from '../../../models/npcs/actors/stats/age'
-import { species__by_culture } from '../../../models/npcs/species/humanoids/taxonomy'
-import { species__size_rank } from '../../../models/npcs/species/size'
+import { species__sizeRank } from '../../../models/npcs/species/size'
+import { species__byCulture } from '../../../models/npcs/species/taxonomy'
 import { province__hub } from '../../../models/regions/provinces'
-import { decorate_text } from '../../../models/utilities/text/decoration'
+import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { css_colors } from '../../theme/colors'
+import { view__context } from '../../context'
+import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
 import { StyledTabs } from '../common/navigation/StyledTabs'
 import { StyledText } from '../common/text/StyledText'
@@ -22,25 +22,25 @@ export function ActorView() {
   const ethnicity = window.world.provinces[birth]
   const birthplace = province__hub(ethnicity)
   const expired = actor__expired(actor)
-  const species = species__by_culture(culture)
+  const species = species__byCulture(culture)
   return (
     <CodexPage
       title={`${actor.name} ${actor.surname}`}
       subtitle={
         <StyledText
-          color={css_colors.subtitle}
-          text={`(${actor.idx}) ${species__size_rank(
+          color={cssColors.subtitle}
+          text={`(${actor.idx}) ${species__sizeRank(
             species.size
-          )} humanoid (${culture.species.toLowerCase()}), ${decorate_text({
-            label: formatters.date(actor.birth_date),
+          )} humanoid (${culture.species.toLowerCase()}), ${decorateText({
+            label: formatters.date(actor.birthDate),
             link: birthplace,
             tooltip: birthplace.name,
-            color: css_colors.subtitle
-          })} - ${decorate_text({
+            color: cssColors.subtitle
+          })} - ${decorateText({
             label: expired ? formatters.date(actor.expires) : 'Present',
             link: loc,
             tooltip: loc?.name ?? 'unknown',
-            color: css_colors.subtitle
+            color: cssColors.subtitle
           })}`}
         ></StyledText>
       }

@@ -1,10 +1,10 @@
-import { age_ranges } from '../../age/life_phases'
-import { laborer_skills } from '../../skills/categories'
-import { gender_based_title } from '../titles'
+import { ageRanges } from '../../age/life_phases'
+import { laborerSkills } from '../../skills/categories'
+import { genderBasedTitle } from '../titles'
 import { Profession } from '../types'
-import { laborer_professions } from './types'
+import { LaborerProfessions } from './types'
 
-const farmer_occurrence: Profession['occurrence'] = ({ context }) => {
+const farmerOccurrence: Profession['occurrence'] = ({ context }) => {
   let mod = 1
   if (context.grain || context.vegetables) mod *= 2
   if (context.remote) mod = 0
@@ -13,27 +13,27 @@ const farmer_occurrence: Profession['occurrence'] = ({ context }) => {
   return mod
 }
 
-const miller_occurrence: Profession['occurrence'] = ({ context }) =>
+const millerOccurrence: Profession['occurrence'] = ({ context }) =>
   context.remote ? 0 : context.grain ? 1 : 0.5
 
-const carpenter_skills: Profession['skills'] = {
+const carpenterSkills: Profession['skills'] = {
   primary: ['carpentry'],
-  tertiary: laborer_skills
+  tertiary: laborerSkills
 }
 
-const animal_trainer_skills: Profession['skills'] = {
+const animalTrainerSkills: Profession['skills'] = {
   primary: ['animal handling'],
-  tertiary: laborer_skills
+  tertiary: laborerSkills
 }
 
-export const laborers: Record<laborer_professions, Profession> = {
+export const laborers: Record<LaborerProfessions, Profession> = {
   beekeeper: {
     category: 'laborers',
     key: 'beekeeper',
     lifestyle: 'modest',
     occurrence: ({ context }) => (context.urban ? 1 : 0.2),
     prevalence: 'uncommon',
-    skills: animal_trainer_skills,
+    skills: animalTrainerSkills,
     subcategory: 'animal handling'
   },
   carpenter: {
@@ -41,7 +41,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     key: 'carpenter',
     lifestyle: 'modest',
     occurrence: ({ context }) => (context.remote ? 0 : context.lumber ? 1 : 0.5),
-    skills: carpenter_skills,
+    skills: carpenterSkills,
     subcategory: 'construction'
   },
   embalmer: {
@@ -53,7 +53,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     skills: {
       primary: ['embalming'],
       secondary: ['alchemy'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   falconer: {
@@ -62,30 +62,30 @@ export const laborers: Record<laborer_professions, Profession> = {
     lifestyle: 'modest',
     occurrence: ({ context }) => (context.urban ? 1 : 0.2),
     prevalence: 'uncommon',
-    skills: animal_trainer_skills,
+    skills: animalTrainerSkills,
     subcategory: 'animal handling'
   },
   'farmer (tenant)': {
     category: 'laborers',
     key: 'farmer (tenant)',
     lifestyle: 'poor',
-    occurrence: param => farmer_occurrence(param) * 4,
+    occurrence: param => farmerOccurrence(param) * 4,
     prevalence: 'abundant',
     skills: {
       primary: ['cultivation'],
       secondary: ['animal handling'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   'farmer (yeoman)': {
     category: 'laborers',
     key: 'farmer (yeoman)',
     lifestyle: 'modest',
-    occurrence: param => farmer_occurrence(param) * 2,
+    occurrence: param => farmerOccurrence(param) * 2,
     skills: {
       primary: ['cultivation'],
       secondary: ['animal handling'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   fisherman: {
@@ -96,10 +96,10 @@ export const laborers: Record<laborer_professions, Profession> = {
     prevalence: 'abundant',
     skills: {
       primary: ['seafaring'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     title: ({ actor }) =>
-      gender_based_title({
+      genderBasedTitle({
         male: 'Fisherman',
         female: 'Fisherwoman',
         actor
@@ -113,10 +113,10 @@ export const laborers: Record<laborer_professions, Profession> = {
     prevalence: 'abundant',
     skills: {
       primary: ['animal handling'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     title: ({ actor }) =>
-      gender_based_title({
+      genderBasedTitle({
         male: 'Herdsman',
         female: 'Herdswoman',
         actor
@@ -128,7 +128,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     lifestyle: 'modest',
     occurrence: ({ context }) => (context.urban ? 1 : 0.2),
     prevalence: 'uncommon',
-    skills: animal_trainer_skills,
+    skills: animalTrainerSkills,
     subcategory: 'animal handling'
   },
   hunter: {
@@ -139,11 +139,11 @@ export const laborers: Record<laborer_professions, Profession> = {
     skills: {
       primary: ['survival', 'marksman'],
       secondary: ['animal handling', 'perception'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     subcategory: 'hunting',
     title: ({ actor }) =>
-      gender_based_title({
+      genderBasedTitle({
         male: 'Hunter',
         female: 'Huntress',
         actor
@@ -156,7 +156,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     occurrence: ({ context }) => (context.remote ? 0 : context.urban ? 1 : 0.1),
     skills: {
       primary: ['masonry', 'carpentry', 'athletics'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     subcategory: 'construction'
   },
@@ -168,7 +168,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     prevalence: 'abundant',
     skills: {
       primary: ['woodcutting'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   'lumberjack (foreman)': {
@@ -179,7 +179,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     prevalence: 'uncommon',
     skills: {
       primary: ['woodcutting'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   mason: {
@@ -189,7 +189,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     occurrence: ({ context }) => (context.remote ? 0 : context.urban || context.stone ? 1 : 0.1),
     skills: {
       primary: ['masonry'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     subcategory: 'construction'
   },
@@ -197,11 +197,11 @@ export const laborers: Record<laborer_professions, Profession> = {
     category: 'laborers',
     key: 'miller',
     lifestyle: 'poor',
-    occurrence: param => miller_occurrence(param) * 2,
+    occurrence: param => millerOccurrence(param) * 2,
     skills: {
       primary: ['milling'],
       secondary: ['cultivation'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   'miller (owner)': {
@@ -209,11 +209,11 @@ export const laborers: Record<laborer_professions, Profession> = {
     key: 'miller (owner)',
     lifestyle: 'modest',
     prevalence: 'uncommon',
-    occurrence: param => miller_occurrence(param) * 2,
+    occurrence: param => millerOccurrence(param) * 2,
     skills: {
       primary: ['logistics'],
       secondary: ['cultivation', 'milling'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     }
   },
   miner: {
@@ -224,7 +224,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     prevalence: 'abundant',
     skills: {
       primary: ['mining'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     subcategory: 'mining'
   },
@@ -234,14 +234,14 @@ export const laborers: Record<laborer_professions, Profession> = {
     lifestyle: 'modest',
     occurrence: ({ context }) => (context.remote ? 0 : context.mining ? 1 : 0),
     prevalence: 'uncommon',
-    ages: age_ranges.seasoned,
+    ages: ageRanges.seasoned,
     progression: {
       miner: { weight: 1, years: 10, transition: true }
     },
     skills: {
       primary: ['logistics'],
       secondary: ['mining'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     subcategory: 'mining'
   },
@@ -249,12 +249,12 @@ export const laborers: Record<laborer_professions, Profession> = {
     category: 'laborers',
     key: 'stable master',
     lifestyle: 'modest',
-    ages: age_ranges.seasoned,
+    ages: ageRanges.seasoned,
     occurrence: ({ context }) => (context.urban ? 1 : 0.2),
     progression: {
       'stable hand': { weight: 1, years: 10, transition: true }
     },
-    skills: animal_trainer_skills,
+    skills: animalTrainerSkills,
     subcategory: 'animal handling'
   },
   'stable hand': {
@@ -262,7 +262,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     key: 'stable hand',
     lifestyle: 'poor',
     occurrence: ({ context }) => (context.urban ? 1 : 0.2),
-    skills: animal_trainer_skills,
+    skills: animalTrainerSkills,
     subcategory: 'animal handling'
   },
   thatcher: {
@@ -270,7 +270,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     key: 'thatcher',
     lifestyle: 'poor',
     occurrence: ({ context }) => (context.urban ? 0.2 : 1),
-    skills: carpenter_skills,
+    skills: carpenterSkills,
     subcategory: 'construction'
   },
   trapper: {
@@ -281,7 +281,7 @@ export const laborers: Record<laborer_professions, Profession> = {
     prevalence: 'common',
     skills: {
       primary: ['survival'],
-      tertiary: laborer_skills
+      tertiary: laborerSkills
     },
     subcategory: 'hunting'
   }

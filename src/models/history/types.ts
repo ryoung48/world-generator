@@ -1,8 +1,6 @@
-import { TaggedEntity } from '../utilities/codex/entities'
+export const eventTypes = ['war', 'rebellion', 'diplomacy', 'healthCheck', 'succession'] as const
 
-export const event_types = ['war', 'rebellion', 'diplomacy', 'health_check', 'succession'] as const
-
-export type event_type = typeof event_types[number]
+export type EventType = typeof eventTypes[number]
 
 // generic events that trigger in the history sim
 export interface EventRecord {
@@ -12,22 +10,24 @@ export interface EventRecord {
 }
 
 // major events have a well-defined duration
-export interface MajorEvent extends TaggedEntity {
+export interface MajorEvent {
+  name: string
+  idx: number
   start: number // ms
   end: number // ms
-  type: event_type
+  type: EventType
 }
 
 export interface LogRecord extends EventRecord {
   idx: number
-  event_idx?: number
-  actors: { idx: number; wealth: number; max_wealth: number }[]
-  type: event_type
+  eventIdx?: number
+  actors: { idx: number; wealth: number; maxWealth: number }[]
+  type: EventType
 }
 
 export interface WorldEvent {
   time: number // ms
-  type: event_type
+  type: EventType
 }
 
 export abstract class EventController {

@@ -1,10 +1,10 @@
-import { actor__difficulty_stats } from '../npcs/actors'
+import { actor__difficultyStats } from '../npcs/actors'
 import { Actor } from '../npcs/actors/types'
 import { difficulty__stats } from '../npcs/stats/difficulty'
 import { thread__placeholder } from './spawn'
 import { ChildTask, Task, Thread, ThreadedEntity } from './types'
 
-export const thread__describe_complexity = (thread: Thread) => {
+export const thread__describeComplexity = (thread: Thread) => {
   const { complexity } = thread
   let desc = 'epic'
   if (complexity <= 5) desc = 'simple'
@@ -16,14 +16,14 @@ export const thread__describe_complexity = (thread: Thread) => {
   return desc
 }
 
-export const thread__task_odds = (params: { difficulty: Thread['difficulty']; actor: Actor }) => {
+export const thread__taskOdds = (params: { difficulty: Thread['difficulty']; actor: Actor }) => {
   const { difficulty, actor } = params
   const { success, tier } = difficulty.pc
     ? difficulty__stats({
         ref: difficulty.pc,
         adversary: difficulty.cr
       })
-    : actor__difficulty_stats({
+    : actor__difficultyStats({
         actor,
         cr: difficulty.cr
       })
@@ -32,14 +32,14 @@ export const thread__task_odds = (params: { difficulty: Thread['difficulty']; ac
 
 export const thread__status = ({ failures, complexity }: Thread) => {
   let desc: Task['status'] = 'failure'
-  const failed_ratio = failures / complexity
-  if (failed_ratio < 0.1) desc = 'perfection'
-  else if (failed_ratio < 0.6) desc = 'success'
-  else if (failed_ratio < 1) desc = 'pyrrhic'
+  const failedRatio = failures / complexity
+  if (failedRatio < 0.1) desc = 'perfection'
+  else if (failedRatio < 0.6) desc = 'success'
+  else if (failedRatio < 1) desc = 'pyrrhic'
   return desc
 }
 
-export const task__in_progress = (task: Task) =>
+export const task__inProgress = (task: Task) =>
   task.status === 'in progress' ||
   task.status === 'paused' ||
   task.status === 'fresh' ||
@@ -51,12 +51,12 @@ export const thread__progress = (params: { thread: Thread; avatar: Actor }) => {
   const failed = status === 'failure'
   const completed = thread.progress >= thread.complexity
   const tasks = thread__tasks({ tasks: thread.tasks, avatar })
-  const paused = tasks.some(task => task.thread !== undefined && task__in_progress(task))
+  const paused = tasks.some(task => task.thread !== undefined && task__inProgress(task))
   const blocked = tasks.some(
     task =>
       task.thread === undefined &&
-      task__in_progress(task) &&
-      thread__task_odds({ difficulty: task.difficulty, actor: avatar }).tier === 'insanity'
+      task__inProgress(task) &&
+      thread__taskOdds({ difficulty: task.difficulty, actor: avatar }).tier === 'insanity'
   )
   const fresh = !thread.opened
   if (!failed && !completed)
@@ -72,7 +72,7 @@ export const thread__progress = (params: { thread: Thread; avatar: Actor }) => {
   return { failed, completed, status }
 }
 
-const thread__expand_task =
+const thread__expandTask =
   (avatar: Actor) =>
   (task: ChildTask): Task => {
     if (typeof task === 'number') {
@@ -96,12 +96,12 @@ const thread__expand_task =
 
 export const thread__tasks = (params: { tasks: ChildTask[]; avatar: Actor }) => {
   const { tasks, avatar } = params
-  return tasks.filter(task => task !== thread__placeholder).map(thread__expand_task(avatar))
+  return tasks.filter(task => task !== thread__placeholder).map(thread__expandTask(avatar))
 }
 
-export const thread__in_progress = (params: { thread: Thread; avatar: Actor }) => {
+export const thread__inProgress = (params: { thread: Thread; avatar: Actor }) => {
   const { thread, avatar } = params
-  return thread__tasks({ tasks: thread.tasks, avatar }).find(task__in_progress)
+  return thread__tasks({ tasks: thread.tasks, avatar }).find(task__inProgress)
 }
 
 export const thread__collect = (ref: ThreadedEntity) => {

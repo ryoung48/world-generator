@@ -1,9 +1,9 @@
-import { location__is_remote } from '../../../..'
-import { location__is_city, location__is_village } from '../../../taxonomy/settlements'
+import { location__isRemote } from '../../../..'
+import { location__isCity, location__isVillage } from '../../../taxonomy/settlements'
 import { LocationTrait } from '../../types'
 import { settlement__environment } from './types'
 
-export const settlement__environment_traits: Record<settlement__environment, LocationTrait> = {
+export const settlement__environmentTraits: Record<settlement__environment, LocationTrait> = {
   'artistic patronage': {
     tag: 'artistic patronage',
     text: () =>
@@ -52,14 +52,14 @@ export const settlement__environment_traits: Record<settlement__environment, Loc
     conflicts: ['fallen prosperity'],
     text: () =>
       `This site used to be much larger and more prosperous, but something happened relatively long ago that left it a shrunken shadow of it's former self. Much of its former architecture is crumbling and abandoned.`,
-    spawn: ({ entity: loc }) => (location__is_city(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isCity(loc) ? 0 : 1)
   },
   'fallen prosperity': {
     tag: 'fallen prosperity',
     conflicts: ['faded remnant'],
     text: () =>
       `This site used to be much richer, but something happened recently to crush its source of prosperity. Different factions of the community might be trying to grasp at the remaining dregs of wealth, others might try to restart the failed industry, and some might look for a new livelihood.`,
-    spawn: ({ entity: loc }) => (location__is_city(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isCity(loc) ? 0 : 1)
   },
   'hazardous district': {
     tag: 'hazardous district',
@@ -113,7 +113,7 @@ export const settlement__environment_traits: Record<settlement__environment, Loc
   'infamous prison': {
     tag: 'infamous prison',
     text: () => `This site is home to a renowned prison, hosting many infamous criminals.`,
-    spawn: ({ entity: loc }) => (location__is_city(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (location__isCity(loc) ? 1 : 0)
   },
   'local festival': {
     tag: 'local festival',
@@ -159,7 +159,7 @@ export const settlement__environment_traits: Record<settlement__environment, Loc
     tag: 'punishment post',
     text: () =>
       `The leader of this site once held a much higher station, but was demoted to this post due to some past transgression. They burn with resentment and will do whatever they must to restore their former glory.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 1 : 0)
   },
   'ritual combat': {
     tag: 'ritual combat',
@@ -174,12 +174,12 @@ export const settlement__environment_traits: Record<settlement__environment, Loc
       `A council of powerful regents rule this site due to the incapacity of the legitimate ruler (${window.dice.choice(
         ['sickness', 'youth', 'poor intellect']
       )}). Some of these regents may actually have the ruler's interests in mind, but others are exploiting the site's resources for their own benefit.`,
-    spawn: ({ entity: loc }) => (!location__is_remote(loc) && !location__is_village(loc) ? 1 : 0)
+    spawn: ({ entity: loc }) => (!location__isRemote(loc) && !location__isVillage(loc) ? 1 : 0)
   },
   'ruins beneath': {
     tag: 'ruins beneath',
     text: () => `This site was built on top of the ruins of a much older site.`,
-    spawn: ({ entity: loc }) => (location__is_village(loc) ? 0 : 1)
+    spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0 : 1)
   },
   'trade hub': {
     tag: 'trade hub',

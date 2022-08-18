@@ -1,40 +1,40 @@
 import { location__culture } from '../../../../regions/locations/actors/demographics'
 import {
-  color,
-  color__adjacent,
-  color__neutral_hues,
-  color__permutations
+  ColorHue,
+  colors__adjacent,
+  colors__neutralHues,
+  colors__permutations
 } from '../../../../utilities/colors'
 import { BasicCache, memoize } from '../../../../utilities/performance/memoization'
-import { proper_list } from '../../../../utilities/text'
-import { decorate_text } from '../../../../utilities/text/decoration'
-import { entity_placeholder } from '../../../../utilities/text/placeholders'
-import { Culture } from '../../../species/humanoids/cultures/types'
+import { properList } from '../../../../utilities/text'
+import { decorateText } from '../../../../utilities/text/decoration'
+import { entityPlaceholder } from '../../../../utilities/text/placeholders'
+import { Culture } from '../../../species/cultures/types'
 import { Actor } from '../../types'
-import { actor__is_child } from '../age'
-import { actor__social_class } from '../professions'
-import { social_class } from '../professions/types'
+import { actor__isChild } from '../age'
+import { actor__socialClass } from '../professions'
+import { SocialClass } from '../professions/types'
 
 const modest = ['rustic', 'practical', 'rugged']
 const comfortable = ['stylish', 'professional', 'fine']
 const prosperous = ['lavish', 'exquisite', 'elegant']
 
-const qualities: Record<social_class, string[]> = {
+const qualities: Record<SocialClass, string[]> = {
   lower: modest,
   middle: comfortable,
   upper: prosperous
 }
 
-const accents: Record<social_class, number> = {
+const accents: Record<SocialClass, number> = {
   lower: 0.5,
   middle: 1,
   upper: 1
 }
 
 const _culture__fashion = ({ fashion }: Culture) => {
-  const hues = color__adjacent({ color: fashion.color })
-  const neutral_hues = color__neutral_hues(hues)
-  return { hues, neutral_hues }
+  const hues = colors__adjacent({ color: fashion.color })
+  const neutralHues = colors__neutralHues(hues)
+  return { hues, neutralHues }
 }
 
 const culture__fashion = memoize(_culture__fashion, {
@@ -45,26 +45,26 @@ const culture__fashion = memoize(_culture__fashion, {
   }
 })
 
-export const actor__gen_outfit = (actor: Actor) => {
-  const actor_culture = window.world.cultures[actor.culture]
+export const actor__genOutfit = (actor: Actor) => {
+  const actorCulture = window.world.cultures[actor.culture]
   const location = window.world.locations[actor.location.residence]
   const { local, ruling } = location__culture(location)
-  const local_culture = window.world.cultures[local.culture.native]
-  const ruling_culture = window.world.cultures[ruling.culture.ruling]
+  const localCulture = window.world.cultures[local.culture.native]
+  const rulingCulture = window.world.cultures[ruling.culture.ruling]
   const cultures = window.dice.choice([
-    [actor_culture],
-    [ruling_culture],
-    [local_culture],
-    [actor_culture, ruling_culture],
-    [actor_culture, local_culture],
-    [ruling_culture, local_culture]
+    [actorCulture],
+    [rulingCulture],
+    [localCulture],
+    [actorCulture, rulingCulture],
+    [actorCulture, localCulture],
+    [rulingCulture, localCulture]
   ])
-  const social = actor__social_class({ actor, time: window.world.date })
+  const social = actor__socialClass({ actor, time: window.world.date })
   const quality = qualities[social]
-  const { hues, neutral_hues } = culture__fashion(window.dice.choice(cultures))
-  const neutrals: color[] = [...neutral_hues, 'grey', 'brown']
+  const { hues, neutralHues } = culture__fashion(window.dice.choice(cultures))
+  const neutrals: ColorHue[] = [...neutralHues, 'grey', 'brown']
   const lower = modest === quality
-  let primaries = color__permutations(['light', 'dark'], lower ? neutrals : [...hues, ...neutrals])
+  let primaries = colors__permutations(['light', 'dark'], lower ? neutrals : [...hues, ...neutrals])
   if (lower) primaries = primaries.filter(color => !color.includes('purple'))
   if (!lower) primaries.push('black')
   const primary = window.dice.choice(primaries)
@@ -74,8 +74,8 @@ export const actor__gen_outfit = (actor: Actor) => {
     color: { primary }
   }
   if (window.dice.random < accents[social]) {
-    const accent_colors = [...hues, 'white', 'black'].filter(color => !primary.includes(color))
-    actor.appearance.outfit.color.accents = window.dice.choice(accent_colors)
+    const accentColors = [...hues, 'white', 'black'].filter(color => !primary.includes(color))
+    actor.appearance.outfit.color.accents = window.dice.choice(accentColors)
   }
 }
 
@@ -92,9 +92,9 @@ export const actor__outfit = (actor: Actor) => {
   const { primary, accents } = color
   const outfit = [
     `${quality.includes('ious') ? 'an' : 'a'} ${
-      accents ? decorate_text({ label: primary, tooltip: `${accents} accents` }) : primary
+      accents ? decorateText({ label: primary, tooltip: `${accents} accents` }) : primary
     } outfit (${quality})`
   ]
-  if (!actor__is_child({ actor })) outfit.push(...actor__piercings(actor))
-  return ` ${entity_placeholder} is wearing ${proper_list(outfit, 'and')}.`
+  if (!actor__isChild({ actor })) outfit.push(...actor__piercings(actor))
+  return ` ${entityPlaceholder} is wearing ${properList(outfit, 'and')}.`
 }

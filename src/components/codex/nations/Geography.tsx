@@ -1,13 +1,13 @@
-import { view__context } from '../../../context'
-import { diplomatic_relation } from '../../../models/history/events/diplomacy/types'
+import { DiplomaticRelation } from '../../../models/history/events/diplomacy/types'
 import { region__neighbors } from '../../../models/regions'
-import { random_relation, region__set_relation } from '../../../models/regions/diplomacy/relations'
-import { decorated_provinces } from '../../../models/regions/provinces'
+import { randomRelation, region__setRelation } from '../../../models/regions/diplomacy/relations'
+import { province__decoration } from '../../../models/regions/provinces'
 import { Region } from '../../../models/regions/types'
-import { decorate_text } from '../../../models/utilities/text/decoration'
+import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { world__get_lands } from '../../../models/world'
-import { css_colors } from '../../theme/colors'
+import { world__getLands } from '../../../models/world'
+import { view__context } from '../../context'
+import { cssColors } from '../../theme/colors'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
 
@@ -23,7 +23,7 @@ export const region__ocean = (nation: Region) => {
     .reduce((sum, city) => city.ocean + sum, 0)
 }
 
-const diplomatic_score: Record<diplomatic_relation, number> = {
+const diplomaticScore: Record<DiplomaticRelation, number> = {
   'at war': 1,
   suspicious: 2,
   neutral: 3,
@@ -31,12 +31,12 @@ const diplomatic_score: Record<diplomatic_relation, number> = {
   ally: 5
 }
 
-const diplomatic_color: Record<diplomatic_relation, string> = {
-  'at war': css_colors.primary,
+const diplomaticColor: Record<DiplomaticRelation, string> = {
+  'at war': cssColors.primary,
   suspicious: 'black',
   neutral: 'black',
   friendly: 'black',
-  ally: css_colors.blue
+  ally: cssColors.blue
 }
 
 export function Geography() {
@@ -48,9 +48,9 @@ export function Geography() {
   const regions = Array.from(new Set(provinces.map(city => city.region))).map(
     r => window.world.regions[r]
   )
-  const { land: world_land, water } = world__get_lands()
-  const nation_land = region__land(nation)
-  const nation_ocean = region__ocean(nation)
+  const { land: worldLand, water } = world__getLands()
+  const nationLand = region__land(nation)
+  const nationOcean = region__ocean(nation)
   const rebellions = conquered
     .map(p => {
       const province = window.world.provinces[p]
@@ -69,14 +69,14 @@ export function Geography() {
       const contract =
         n.overlord.idx === nation.idx ? 'vassal' : nation.overlord.idx === n.idx ? 'suzerain' : ''
       if (!nation.relations[n.idx]) {
-        const relation = random_relation()
-        region__set_relation({ relation, n1: n, n2: nation })
+        const relation = randomRelation()
+        region__setRelation({ relation, n1: n, n2: nation })
       }
       const opinion = contract || nation.relations[n.idx]
       return {
         n,
         opinion,
-        score: diplomatic_score[opinion as diplomatic_relation] ?? 6
+        score: diplomaticScore[opinion as DiplomaticRelation] ?? 6
       }
     })
     .sort((a, b) => a.score - b.score)
@@ -86,16 +86,16 @@ export function Geography() {
         {
           label: `Landmass`,
           content: `${formatters.compact(
-            nation_land * window.world.dim.cell_area
+            nationLand * window.world.dim.cellArea
           )} square miles (${formatters.percent({
-            value: nation_land / world_land
-          })}) [${nation_land}]`
+            value: nationLand / worldLand
+          })}) [${nationLand}]`
         },
         {
           label: `Ocean`,
           content: `${formatters.compact(
-            nation_ocean * window.world.dim.cell_area
-          )} square miles (${formatters.percent({ value: nation_ocean / water })})`
+            nationOcean * window.world.dim.cellArea
+          )} square miles (${formatters.percent({ value: nationOcean / water })})`
         },
         {
           label: `Borders (${neighbors.length})`,
@@ -103,8 +103,8 @@ export function Geography() {
             <StyledText
               text={relations
                 .map(({ n, opinion }) => {
-                  const color = diplomatic_color[opinion as diplomatic_relation] ?? 'gray'
-                  return decorate_text({
+                  const color = diplomaticColor[opinion as DiplomaticRelation] ?? 'gray'
+                  return decorateText({
                     link: n,
                     tooltip: opinion,
                     color: color === 'black' ? undefined : color
@@ -123,9 +123,9 @@ export function Geography() {
                   const owned = provinces.filter(city => city.region === n.idx).length
                   const total = n.regional.provinces.length
                   const rebel = rebellions.includes(n)
-                  return `${decorate_text({
+                  return `${decorateText({
                     link: n,
-                    color: rebel ? css_colors.primary : undefined,
+                    color: rebel ? cssColors.primary : undefined,
                     tooltip: rebel ? 'rebellion' : undefined
                   })} (${formatters.percent({
                     value: owned / total
@@ -137,7 +137,7 @@ export function Geography() {
         },
         {
           label: `Settlements (${provinces.length})`,
-          content: <StyledText text={decorated_provinces(provinces)}></StyledText>
+          content: <StyledText text={province__decoration(provinces)}></StyledText>
         }
       ]}
     ></SectionList>

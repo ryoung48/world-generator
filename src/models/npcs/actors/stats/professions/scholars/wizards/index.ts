@@ -1,64 +1,64 @@
-import { age_ranges } from '../../../age/life_phases'
-import { scholar_skills } from '../../../skills/categories'
-import { wizard_kits } from '../../soldiers/specs/wizards'
+import { ageRanges } from '../../../age/life_phases'
+import { scholarSkills } from '../../../skills/categories'
+import { wizardKits } from '../../soldiers/specs/wizards'
 import { Profession } from '../../types'
-import { scholar_attributes } from '../academics'
-import { wizard_professions } from './types'
+import { scholarAttributes } from '../academics'
+import { WizardProfessions } from './types'
 
-const wizard_occurrence: Profession['occurrence'] = ({ context }) =>
+const wizardOccurrence: Profession['occurrence'] = ({ context }) =>
   context.tribal ? 0 : context.arcane ? 0.5 : context.urban ? 0.2 : 0
 
-const diviner_occurrence: Profession['occurrence'] = ({ context }) =>
+const divinerOccurrence: Profession['occurrence'] = ({ context }) =>
   context.arcane ? 0.5 : context.urban ? 0.2 : 0
 
-export const wizards: Record<wizard_professions, Profession> = {
+export const wizards: Record<WizardProfessions, Profession> = {
   'wizard (petty)': {
     key: 'wizard (petty)',
     lifestyle: 'modest',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.seasoned,
+    ages: ageRanges.seasoned,
     prevalence: 'uncommon',
-    occurrence: params => wizard_occurrence(params),
-    ...wizard_kits.wizard
+    occurrence: params => wizardOccurrence(params),
+    ...wizardKits.wizard
   },
   'wizard (minor)': {
     key: 'wizard (minor)',
     lifestyle: 'comfortable',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.seasoned,
+    ages: ageRanges.seasoned,
     prevalence: 'uncommon',
-    occurrence: params => wizard_occurrence(params),
-    ...wizard_kits.wizard
+    occurrence: params => wizardOccurrence(params),
+    ...wizardKits.wizard
   },
   'wizard (major)': {
     key: 'wizard (minor)',
     lifestyle: 'prosperous',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'uncommon',
-    occurrence: params => wizard_occurrence(params),
+    occurrence: params => wizardOccurrence(params),
     progression: {
       'wizard (minor)': { weight: 1, years: 10, transition: true }
     },
-    ...wizard_kits.wizard
+    ...wizardKits.wizard
   },
   'wizard (great)': {
     key: 'wizard (great)',
     lifestyle: 'rich',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.master,
+    ages: ageRanges.master,
     prevalence: 'rare',
-    occurrence: params => wizard_occurrence(params),
+    occurrence: params => wizardOccurrence(params),
     progression: {
       'wizard (major)': { weight: 1, years: 10, transition: true }
     },
-    ...wizard_kits.wizard,
+    ...wizardKits.wizard,
     skills: {
-      ...wizard_kits.wizard.skills,
+      ...wizardKits.wizard.skills,
       secondary: ['logistics']
     }
   },
@@ -67,48 +67,48 @@ export const wizards: Record<wizard_professions, Profession> = {
     lifestyle: 'modest',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.seasoned,
+    ages: ageRanges.seasoned,
     prevalence: 'uncommon',
-    occurrence: params => wizard_occurrence(params),
-    ...wizard_kits.druid
+    occurrence: params => wizardOccurrence(params),
+    ...wizardKits.druid
   },
   'druid (minor)': {
     key: 'druid (minor)',
     lifestyle: 'comfortable',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.seasoned,
+    ages: ageRanges.seasoned,
     prevalence: 'uncommon',
-    occurrence: params => wizard_occurrence(params),
-    ...wizard_kits.druid
+    occurrence: params => wizardOccurrence(params),
+    ...wizardKits.druid
   },
   'druid (major)': {
     key: 'druid (major)',
     lifestyle: 'prosperous',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'uncommon',
-    occurrence: params => wizard_occurrence(params),
+    occurrence: params => wizardOccurrence(params),
     progression: {
       'druid (minor)': { weight: 1, years: 10, transition: true }
     },
-    ...wizard_kits.druid
+    ...wizardKits.druid
   },
   'druid (great)': {
     key: 'druid (great)',
     lifestyle: 'rich',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.veteran,
+    ages: ageRanges.veteran,
     prevalence: 'rare',
-    occurrence: params => wizard_occurrence(params),
+    occurrence: params => wizardOccurrence(params),
     progression: {
       'druid (major)': { weight: 1, years: 10, transition: true }
     },
-    ...wizard_kits.druid,
+    ...wizardKits.druid,
     skills: {
-      ...wizard_kits.druid.skills,
+      ...wizardKits.druid.skills,
       secondary: ['logistics']
     }
   },
@@ -117,13 +117,13 @@ export const wizards: Record<wizard_professions, Profession> = {
     lifestyle: 'comfortable',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'uncommon',
-    occurrence: params => diviner_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => divinerOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['divination'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   },
   'fortune teller': {
@@ -131,13 +131,13 @@ export const wizards: Record<wizard_professions, Profession> = {
     lifestyle: 'modest',
     category: 'scholars',
     subcategory: 'wizards',
-    ages: age_ranges.expert,
+    ages: ageRanges.expert,
     prevalence: 'uncommon',
-    occurrence: params => diviner_occurrence(params),
-    attributes: scholar_attributes,
+    occurrence: params => divinerOccurrence(params),
+    attributes: scholarAttributes,
     skills: {
       primary: ['divination'],
-      tertiary: scholar_skills
+      tertiary: scholarSkills
     }
   }
 }

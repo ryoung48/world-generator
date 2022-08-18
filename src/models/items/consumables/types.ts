@@ -2,7 +2,7 @@ import { attribute } from '../../npcs/actors/stats/attributes/types'
 import { resistance } from '../../npcs/stats/types'
 import type { Item } from '../types'
 
-const base_consumables = [
+const baseConsumables = [
   'poison (latent)',
   'poison (corrosive)',
   'poison (paralytic)',
@@ -15,27 +15,27 @@ const base_consumables = [
   'ink'
 ] as const
 
-const resistance_consumables = ['poison (resistance)', 'potion (resistance)'] as const
-const attribute_consumables = ['poison (attribute)', 'potion (attribute)'] as const
+const resistanceConsumables = ['poison (resistance)', 'potion (resistance)'] as const
+const attributeConsumables = ['poison (attribute)', 'potion (attribute)'] as const
 
 export const consumable__types = [
-  ...base_consumables,
-  ...resistance_consumables,
-  ...attribute_consumables
+  ...baseConsumables,
+  ...resistanceConsumables,
+  ...attributeConsumables
 ]
 
 export type consumable__tag = typeof consumable__types[number]
 
 export interface Consumable extends Item {
-  tag: typeof base_consumables[number]
+  tag: typeof baseConsumables[number]
 }
 
 export interface ResistanceConsumable extends Item {
-  tag: typeof resistance_consumables[number]
+  tag: typeof resistanceConsumables[number]
   resistance?: resistance
 }
 export interface AttributeConsumable extends Item {
-  tag: typeof attribute_consumables[number]
+  tag: typeof attributeConsumables[number]
   attribute?: attribute
 }
 

@@ -2,7 +2,7 @@ import { Grid } from '@mui/material'
 
 import { ProfileNode, Profiles } from '../../models/utilities/performance'
 import { NestedPieChart } from '../codex/common/charts/NestedPirChart'
-import { NestedPieData, pie__tooltip } from '../codex/common/charts/types'
+import { NestedPieData, PieTooltip } from '../codex/common/charts/types'
 import { ToggleButtons } from '../codex/common/navigation/ToggleButtons'
 
 /**
@@ -10,12 +10,12 @@ import { ToggleButtons } from '../codex/common/navigation/ToggleButtons'
  * @param param - profile node
  * @returns - tree structure
  */
-const profile__get_nodes = ({ value, label, color, children }: ProfileNode): NestedPieData => {
+const profile__getNodes = ({ value, label, color, children }: ProfileNode): NestedPieData => {
   const node: NestedPieData = {
     label,
     value: value,
     color,
-    children: Object.values(children).map(child => profile__get_nodes(child))
+    children: Object.values(children).map(child => profile__getNodes(child))
   }
   const total = node.children.reduce((sum, child) => sum + child.value, 0)
   const diff = node.value - total
@@ -32,7 +32,7 @@ const profile__get_nodes = ({ value, label, color, children }: ProfileNode): Nes
   return node
 }
 
-const pie_chart__tooltips: pie__tooltip = item => {
+const pieChart__tooltips: PieTooltip = item => {
   const label = item.label
   const value = item.dataset.data[item.dataIndex]
   return `${label}: ${value.toFixed(2)} ms`
@@ -46,11 +46,11 @@ export function PerformanceView() {
         selection={modes}
         content={mode => {
           const data = window.profiles[mode]
-          const parsed = profile__get_nodes(data)
+          const parsed = profile__getNodes(data)
           return (
             <NestedPieChart
               data={parsed}
-              tooltips={pie_chart__tooltips}
+              tooltips={pieChart__tooltips}
               title={node => `${node.label}: ${node.value.toFixed(2)} ms`}
             ></NestedPieChart>
           )

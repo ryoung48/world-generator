@@ -1,4 +1,4 @@
-export type laborer_professions =
+export type LaborerProfessions =
   | 'beekeeper'
   | 'carpenter'
   | 'embalmer'

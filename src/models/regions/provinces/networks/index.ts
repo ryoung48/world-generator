@@ -1,42 +1,42 @@
-import PriorityQueue from 'js-priority-queue'
+import * as PriorityQueue from 'js-priority-queue'
 
-import { decorated_profile } from '../../../utilities/performance'
+import { decoratedProfile } from '../../../utilities/performance'
 import { BasicCache, memoize } from '../../../utilities/performance/memoization'
 import { Province } from '../types'
 
-type province_distances = Record<string, number>
+type ProvinceDistances = Record<string, number>
+type QueueDistance = { n: Province; dist: number }
 
 const _traverse__network = (province: Province) => {
   const { land, sea } = window.world.routes
-  const distance_by_road: province_distances = {}
-  const queue = new PriorityQueue({
-    comparator: (a: { n: Province; dist: number }, b: { n: Province; dist: number }) =>
-      a.dist - b.dist
+  const distanceByRoad: ProvinceDistances = {}
+  const queue = new PriorityQueue<QueueDistance>({
+    comparator: (a: QueueDistance, b: QueueDistance) => a.dist - b.dist
   })
   queue.queue({ n: province, dist: 1 })
   while (queue.length > 0) {
     const { n: curr, dist } = queue.dequeue()
-    if (distance_by_road[curr.idx] === undefined) {
-      distance_by_road[curr.idx] = dist
+    if (distanceByRoad[curr.idx] === undefined) {
+      distanceByRoad[curr.idx] = dist
       curr.neighbors
-        .filter(n => distance_by_road[n] === undefined)
+        .filter(n => distanceByRoad[n] === undefined)
         .forEach(n => {
-          const land_route = land[curr.trade.land[n]]?.length ?? Infinity
-          const sea_route = sea[curr.trade.sea[n]]?.length ?? Infinity
-          const n_dist = dist + Math.min(land_route, sea_route)
-          queue.queue({ n: window.world.provinces[n], dist: n_dist })
+          const landRoute = land[curr.trade.land[n]]?.length ?? Infinity
+          const seaRoute = sea[curr.trade.sea[n]]?.length ?? Infinity
+          const nDist = dist + Math.min(landRoute, seaRoute)
+          queue.queue({ n: window.world.provinces[n], dist: nDist })
         })
     }
   }
-  return distance_by_road
+  return distanceByRoad
 }
 
 const traverse__network = memoize(_traverse__network, {
-  store: (): BasicCache<province_distances> => ({}),
+  store: (): BasicCache<ProvinceDistances> => ({}),
   get: (cache, province) => cache[province.idx],
   set: (cache, res, province) => {
     cache[province.idx] = res
   }
 })
 
-export const province__network = decorated_profile(traverse__network)
+export const province__network = decoratedProfile(traverse__network)

@@ -3,7 +3,7 @@ import PriorityQueue from 'js-priority-queue'
 import { Province } from '../../regions/provinces/types'
 import { distance } from '../../utilities/math'
 import { ExteriorCell } from '../cells/types'
-import { route_types } from './types'
+import { RouteTypes } from './types'
 
 interface PathArgs {
   start: number
@@ -12,7 +12,7 @@ interface PathArgs {
 
 export interface ShortestPathArgs extends PathArgs {
   limit?: number
-  type: route_types
+  type: RouteTypes
   roads?: number
 }
 
@@ -22,8 +22,8 @@ interface PathElement {
   d: number
 }
 
-const valid_path: Record<route_types, (_cell: ExteriorCell) => boolean> = {
-  land: (cell: ExteriorCell) => !cell.is_water,
+const validPath: Record<RouteTypes, (_cell: ExteriorCell) => boolean> = {
+  land: (cell: ExteriorCell) => !cell.isWater,
   sea: (cell: ExteriorCell) => cell.ocean
 }
 
@@ -31,7 +31,7 @@ interface RestorePathArgs extends PathArgs {
   visited: Record<string, number>
 }
 
-export const restore_path = ({ start, end, visited }: RestorePathArgs) => {
+export const restorePath = ({ start, end, visited }: RestorePathArgs) => {
   const path: number[] = []
   let current = end
   let prev = window.world.cells[current]
@@ -51,16 +51,16 @@ export const restore_path = ({ start, end, visited }: RestorePathArgs) => {
   return path
 }
 
-export const shortest_path = ({
+export const shortestPath = ({
   start,
   end,
   type,
   roads = 0.5,
   limit = Infinity
 }: ShortestPathArgs) => {
-  const pathing = valid_path[type]
+  const pathing = validPath[type]
   const cells = window.world.dim.cells
-  const cell_limit = limit * cells
+  const cellLimit = limit * cells
   // initialize the priority queue to compare cell priorities
   const queue = new PriorityQueue({
     comparator: (a: PathElement, b: PathElement) => a.p - b.p
@@ -78,7 +78,7 @@ export const shortest_path = ({
   const visited: { [index: string]: number | undefined } = {}
   let prev = start
   let len = 0
-  while (queue.length > 0 && prev !== end && len < cell_limit) {
+  while (queue.length > 0 && prev !== end && len < cellLimit) {
     // get the next item in the queue
     const { idx, d } = queue.dequeue()
     len = d + 1
@@ -96,13 +96,13 @@ export const shortest_path = ({
           // start the cost at the distance between cells
           const cost = distance([nx, cx], [ny, cy])
           let penalty = 1
-          const foreign_path = ![destination.region, origin.region].includes(neighbor.region)
+          const foreignPath = ![destination.region, origin.region].includes(neighbor.region)
           // mountains are difficult to traverse
-          if (neighbor.is_mountains) penalty += 1.5
+          if (neighbor.isMountains) penalty += 1.5
           // prioritize coastal roads
-          if (!neighbor.is_coast) penalty += 0.3
+          if (!neighbor.isCoast) penalty += 0.3
           // build inside of your own region if possible
-          if (foreign_path) penalty += 3
+          if (foreignPath) penalty += 3
           // prioritize already built roads
           if (neighbor.roads[type].length > 0) penalty *= roads
           // finalize the cost by adding it to the total cost to get to the previous cell
@@ -121,10 +121,10 @@ export const shortest_path = ({
     })
   }
   const success = prev === end
-  return success ? restore_path({ start, end, visited }) : []
+  return success ? restorePath({ start, end, visited }) : []
 }
 
-export const route_blacklist = () => {
+export const routeBlacklist = () => {
   const locs = window.world.locations.map(city => window.world.cells[city.cell])
   return {
     blacklist: locs.reduce((org: Record<string, number[]>, town) => {
@@ -135,12 +135,12 @@ export const route_blacklist = () => {
   }
 }
 
-export const add_path = (params: {
+export const addPath = (params: {
   src: Province
   dst: Province
   path: number[]
   blacklist: Record<string, number[]>
-  type: route_types
+  type: RouteTypes
   imperial?: boolean
 }) => {
   const { src, dst, path, blacklist, type, imperial } = params
@@ -159,14 +159,14 @@ export const add_path = (params: {
   }
 }
 
-export const add_trade_path = (
+export const addTradePath = (
   src: Province,
   dst: Province,
   path: number[],
   blacklist: Record<string, number[]>,
-  type: route_types
+  type: RouteTypes
 ) => {
-  const idx = add_path({ src, dst, path, blacklist, type })
+  const idx = addPath({ src, dst, path, blacklist, type })
   if (idx !== false) {
     src.trade[type][dst.idx] = idx
     if (!src.neighbors.includes(dst.idx)) src.neighbors.push(dst.idx)

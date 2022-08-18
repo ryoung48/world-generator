@@ -1,18 +1,16 @@
 import { scaleLinear, scalePow } from 'd3'
 
 export const scale = (domain: number[], range: number[], v: number) => {
-  const scale_fn = scaleLinear().domain(domain).range(range)
-  return scale_fn(v)
+  const scaleFn = scaleLinear().domain(domain).range(range)
+  return scaleFn(v)
 }
 
 export const scaleExp = (domain: number[], range: number[], v: number, exp: number) => {
-  const scale_fn = scalePow().exponent(exp).domain(domain).range(range)
-  return scale_fn(v)
+  const scaleFn = scalePow().exponent(exp).domain(domain).range(range)
+  return scaleFn(v)
 }
 export const radians = (d: number) => (d * Math.PI) / 180
 export const degrees = (r: number) => (r * 180) / Math.PI
-
-export const range = (n: number, start = 0) => Array.from({ length: n }, (_, i) => start + i)
 
 export const average = (n: number[]) => n.reduce((sum, i) => sum + i, 0) / n.length
 
@@ -27,24 +25,22 @@ export const permutations = <T>(a: T[], b: T[]) => {
   }, [])
 }
 
-export const percentage_scale = (a: number[]) => {
+export const percentageScale = (a: number[]) => {
   const total = a.reduce((sum, i) => sum + i, 0)
   return a.map(i => i / total)
 }
-export type weighted_distribution<T> = { v: T; w: number }[]
-export const build_distribution = <T>(
-  map: weighted_distribution<T>,
+export type WeightedDistribution<T> = { v: T; w: number }[]
+export const buildDistribution = <T>(
+  map: WeightedDistribution<T>,
   qty: number
-): weighted_distribution<T> => {
+): WeightedDistribution<T> => {
   const total = map.reduce((sum, { w }) => sum + w, 0)
   return map.map(({ w, v }) => ({ v, w: (w / total) * qty }))
 }
 type nested_distribution<T> = (T | nested_distribution<T>)[]
-export const build_nested_distribution = <T>(
-  dist: nested_distribution<T>
-): weighted_distribution<T> =>
-  dist.reduce((list: weighted_distribution<T>, elm) => {
-    if (Array.isArray(elm)) list.concat(build_distribution(build_nested_distribution(elm), 1))
+export const buildNestedDistribution = <T>(dist: nested_distribution<T>): WeightedDistribution<T> =>
+  dist.reduce((list: WeightedDistribution<T>, elm) => {
+    if (Array.isArray(elm)) list.concat(buildDistribution(buildNestedDistribution(elm), 1))
     else list.push({ v: elm, w: 1 })
     return list
   }, [])
@@ -55,7 +51,7 @@ export const build_nested_distribution = <T>(
  * @param n base number increment to round to
  * @returns rounded number
  */
-export const round_to_nearest_n = (x: number, n: number) => Math.round(x / n) * n
+export const roundToNearestN = (x: number, n: number) => Math.round(x / n) * n
 
 /**
  * round number to nearest decimal precision
@@ -63,38 +59,38 @@ export const round_to_nearest_n = (x: number, n: number) => Math.round(x / n) * 
  * @param precision decimal precision
  * @returns rounded number
  */
-export const decimal_precision = (x: number, precision: number) => {
+export const decimalPrecision = (x: number, precision: number) => {
   const p = 10 ** precision
   return Math.round((x + Number.EPSILON) * p) / p
 }
 
 // https://en.wikipedia.org/wiki/Triangular_number
-export const triangular_number = (n: number) => (n * (n + 1)) / 2
-export const triangular_root = (n: number) => Math.floor((Math.sqrt(8 * n + 1) - 1) / 2)
+export const triangularNumber = (n: number) => (n * (n + 1)) / 2
+export const triangularRoot = (n: number) => Math.floor((Math.sqrt(8 * n + 1) - 1) / 2)
 
-export const imperial_height = (height: number) =>
+export const imperialHeight = (height: number) =>
   `${Math.floor(height / 12)}.${Math.floor(height % 12)}`
-export const compute_weight = (height: number, bmi: number) => (bmi * height ** 2) / 703 // pounds
+export const computeWeight = (height: number, bmi: number) => (bmi * height ** 2) / 703 // pounds
 
-export const find_ranges = (params: {
+export const findRanges = (params: {
   domain: [number, number]
   voids: [number, number][]
 }): [number, number][] => {
   const { domain, voids } = params
   return voids.reduce(
     (ranges, empty) => {
-      const [empty_min, empty_max] = empty // [0, 10] [4-6] >> [0, 4], [6, 10]
+      const [emptyMin, emptyMax] = empty // [0, 10] [4-6] >> [0, 4], [6, 10]
       return ranges
         .map(([min, max]) => {
-          const min_in_range = empty_min > min && empty_min < max
-          const max_in_range = empty_max > min && empty_max < max
-          if (empty_min < min && empty_max > max) return []
-          if (!min_in_range && !max_in_range) return [[min, max]]
-          if (min_in_range && !max_in_range) return [[min, empty_min]]
-          if (!min_in_range && max_in_range) return [[empty_max, max]]
+          const minInRange = emptyMin > min && emptyMin < max
+          const maxInRange = emptyMax > min && emptyMax < max
+          if (emptyMin < min && emptyMax > max) return []
+          if (!minInRange && !maxInRange) return [[min, max]]
+          if (minInRange && !maxInRange) return [[min, emptyMin]]
+          if (!minInRange && maxInRange) return [[emptyMax, max]]
           return [
-            [min, empty_min],
-            [empty_max, max]
+            [min, emptyMin],
+            [emptyMax, max]
           ]
         })
         .flat() as [number, number][]

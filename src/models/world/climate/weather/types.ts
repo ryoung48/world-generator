@@ -1,6 +1,6 @@
 import { climates } from '../types'
 
-export type weather_conditions =
+export type WeatherConditions =
   | 'clear'
   | 'cloudy'
   | 'fog'
@@ -9,7 +9,7 @@ export type weather_conditions =
   | 'overcast'
   | 'windy'
 
-export type cloud_types =
+export type CloudTypes =
   | 'clear skies'
   | 'haze'
   | 'cirrus clouds'
@@ -19,7 +19,7 @@ export type cloud_types =
   | 'cumulus clouds'
   | 'nimbus clouds'
 
-export type weather_icons =
+export type WeatherIcons =
   | 'cloudy'
   | 'fog'
   | 'lightning'
@@ -35,12 +35,12 @@ export type weather_icons =
 export interface WeatherParams {
   rain: number
   temp: number
-  clouds: cloud_types
+  clouds: CloudTypes
   climate: climates
 }
 
 export interface WeatherPhenomena {
   wind: number
-  icon: weather_icons
+  icon: WeatherIcons
   weather: string
 }

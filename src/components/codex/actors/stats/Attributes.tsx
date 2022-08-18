@@ -1,10 +1,10 @@
 import { css } from '@emotion/css'
 import { Grid } from '@mui/material'
 
-import { npc__describe_attributes } from '../../../../models/npcs/actors/stats/attributes'
+import { npc__describeAttributes } from '../../../../models/npcs/actors/stats/attributes'
 import { Actor } from '../../../../models/npcs/actors/types'
-import { decorate_text } from '../../../../models/utilities/text/decoration'
-import { css_colors } from '../../../theme/colors'
+import { decorateText } from '../../../../models/utilities/text/decoration'
+import { cssColors } from '../../../theme/colors'
 import { StyledText } from '../../common/text/StyledText'
 
 const border = '2px solid #9C2B1B'
@@ -14,14 +14,14 @@ const classes = {
     font-size: 14px;
     font-weight: bold;
     text-align: center;
-    color: ${css_colors.primary};
+    color: ${cssColors.primary};
     border-top: ${border};
     margin-top: 10px;
   `,
   value: css`
     font-size: 14px;
     text-align: center;
-    color: ${css_colors.primary};
+    color: ${cssColors.primary};
     border-bottom: ${border};
     margin-bottom: 10px;
     margin-top: 3px;
@@ -30,7 +30,7 @@ const classes = {
 
 export function AttributesView(props: { attributes: Actor['attributes'] }) {
   const { attributes } = props
-  const described = npc__describe_attributes(attributes)
+  const described = npc__describeAttributes(attributes)
   return (
     <Grid container>
       <Grid item xs={12}>
@@ -50,10 +50,10 @@ export function AttributesView(props: { attributes: Actor['attributes'] }) {
             return (
               <Grid item key={i} xs={2} mb={1}>
                 <StyledText
-                  text={`${decorate_text({
+                  text={`${decorateText({
                     label: value.toString(),
                     tooltip: desc,
-                    color: css_colors.primary
+                    color: cssColors.primary
                   })} (${negative ? '-' : '+'}${round(Math.abs(value - 10) / 2)})`}
                 ></StyledText>
               </Grid>

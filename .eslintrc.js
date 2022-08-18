@@ -22,7 +22,8 @@ module.exports = {
   env: {
     browser: true,
     amd: true,
-    node: true
+    node: true,
+    jest: true
   },
   extends: [
     'eslint:recommended',
@@ -50,6 +51,7 @@ module.exports = {
         aspects: ['invalidHref', 'preferButton']
       }
     ],
-    'import/namespace': 'off'
+    'import/namespace': 'off',
+    camelcase: ['error', { allow: ['^(_)*[A-Za-z]+__[A-Za-z]+$'] }]
   }
 }

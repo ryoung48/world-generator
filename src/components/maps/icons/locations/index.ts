@@ -14,10 +14,10 @@ import { ruins__icons } from './ruins'
 import { settlement__icons } from './settlements'
 import { shrine__icons } from './shrines'
 import { temple__icons } from './temples'
-import { location_icon, LocationIcon } from './types'
+import { LocationIcon, LocationIconDetails } from './types'
 import { watchtower__icons } from './watchtower'
 
-export const location__icons: Record<location_icon, LocationIcon> = {
+export const location__icons: Record<LocationIcon, LocationIconDetails> = {
   ...battlefield__icons,
   ...camp__icons,
   ...cave__icons,

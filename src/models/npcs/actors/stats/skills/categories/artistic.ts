@@ -1,11 +1,11 @@
-import { skill_gate__dexterity } from '../common/checks'
+import { skillGate__dexterity } from '../common/checks'
 import { ActorSkill } from '../types'
-import { artistic_skill } from '.'
+import { ArtisticSkill } from '.'
 
-export const actor_skills__artistic: Record<artistic_skill, ActorSkill> = {
+export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
   acrobatics: {
     key: 'acrobatics',
-    valid: skill_gate__dexterity
+    valid: skillGate__dexterity
   },
   acting: {
     key: 'acting'

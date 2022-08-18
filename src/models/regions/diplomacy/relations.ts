@@ -1,15 +1,15 @@
-import { diplomatic_relation, diplomatic_relations } from '../../history/events/diplomacy/types'
-import { region__is_active } from '..'
+import { DiplomaticRelation, diplomaticRelations } from '../../history/events/diplomacy/types'
+import { region__isActive } from '..'
 import { Region } from '../types'
-import { region__at_peace, region__formatted_wealth } from './status'
+import { region__atPeace, region__formattedWealth } from './status'
 
-const relations = [...diplomatic_relations].filter(rel => rel !== 'at war')
+const relations = [...diplomaticRelations].filter(rel => rel !== 'at war')
 
 /**
  * get a random relation (used in the diplomacy event tick)
  * @returns - ally|friendly|neutral|suspicious
  */
-export const random_relation = () => window.dice.choice(relations)
+export const randomRelation = () => window.dice.choice(relations)
 
 /**
  * finalizes an alliance between two nations
@@ -17,7 +17,7 @@ export const random_relation = () => window.dice.choice(relations)
  * @param n1 - 1st nation
  * @param n2 - 2nd nation
  */
-const forge_alliance = (n1: Region, n2: Region) => {
+const forgeAlliance = (n1: Region, n2: Region) => {
   n1.allies[n2.idx] = 0
   n2.allies[n1.idx] = 0
 }
@@ -28,7 +28,7 @@ const forge_alliance = (n1: Region, n2: Region) => {
  * @param n1 - 1st nation
  * @param n2 - 2nd nation
  */
-const end_alliance = (n1: Region, n2: Region) => {
+const endAlliance = (n1: Region, n2: Region) => {
   delete n1.allies[n2.idx]
   delete n2.allies[n1.idx]
 }
@@ -39,8 +39,8 @@ const end_alliance = (n1: Region, n2: Region) => {
  * @param params.n1 - 1st nation
  * @param params.n2 - 2nd nation
  */
-export const region__set_relation = (params: {
-  relation: diplomatic_relation
+export const region__setRelation = (params: {
+  relation: DiplomaticRelation
   n1: Region
   n2: Region
 }) => {
@@ -48,8 +48,8 @@ export const region__set_relation = (params: {
   n1.relations[n2.idx] = relation
   n2.relations[n1.idx] = relation
   // finalize the alliance if applicable
-  if (relation === 'ally') forge_alliance(n1, n2)
-  else end_alliance(n1, n2)
+  if (relation === 'ally') forgeAlliance(n1, n2)
+  else endAlliance(n1, n2)
 }
 
 /**
@@ -58,7 +58,7 @@ export const region__set_relation = (params: {
  * @param n2 - 2nd nation
  * @returns {boolean}
  */
-export const region__is_at_war_with = (n1: Region, n2: Region) => {
+export const region__IsAtWarWith = (n1: Region, n2: Region) => {
   return n1.wars.current.some(n => {
     const { invader, defender } = window.world.wars[n]
     return invader.idx === n2.idx || defender.idx === n2.idx
@@ -70,7 +70,7 @@ export const region__is_at_war_with = (n1: Region, n2: Region) => {
  * @param region - reference nation to examine
  * @returns {Region[]} a list of nations
  */
-export const region__war_rivals = (region: Region) => {
+export const region__warRivals = (region: Region) => {
   return region.wars.current.map(w => {
     const { invader, defender } = window.world.wars[w]
     const adversary = invader.idx === region.idx ? defender : invader
@@ -92,7 +92,7 @@ export const region__allies = (nation: Region) =>
  * @param prospect - possible subject partner
  * @returns {boolean}
  */
-export const region__has_subject_relation = (ref: Region, prospect: Region) => {
+export const region__hasSubjectRelation = (ref: Region, prospect: Region) => {
   const subject = prospect.overlord.idx === ref.idx && window.world.regions[prospect.overlord.idx]
   const overlord = ref.overlord.idx === prospect.idx && window.world.regions[ref.overlord.idx]
   return Boolean(subject || overlord)
@@ -104,7 +104,7 @@ export const region__has_subject_relation = (ref: Region, prospect: Region) => {
  * @param n2 - 2nd nation
  * @returns {boolean} true or false
  */
-export const region__has_same_religion = (n1: Region, n2: Region) =>
+export const region__hasSameReligion = (n1: Region, n2: Region) =>
   n1.religion.state === n2.religion.state
 
 /**
@@ -114,12 +114,8 @@ export const region__has_same_religion = (n1: Region, n2: Region) =>
  * @param params.no_funds - include debts in the returned string?
  * @returns {string} a textual description of the relation
  */
-export const region__ally_relation = (params: {
-  ref: Region
-  ally: Region
-  no_funds?: boolean
-}) => {
-  const { ref, ally, no_funds } = params
+export const region__allyRelation = (params: { ref: Region; ally: Region; noFunds?: boolean }) => {
+  const { ref, ally, noFunds } = params
   let relation = 'Ally'
   if (ally.overlord.idx === ref.idx) {
     relation = 'Vassal'
@@ -128,7 +124,7 @@ export const region__ally_relation = (params: {
   }
   const funds = ref.allies[ally.idx]
   return `${relation}${
-    !no_funds && funds > 0 ? ` (${region__formatted_wealth(ref, ref.allies[ally.idx])})` : ''
+    !noFunds && funds > 0 ? ` (${region__formattedWealth(ref, ref.allies[ally.idx])})` : ''
   }`
 }
 
@@ -137,14 +133,14 @@ export const region__ally_relation = (params: {
  * @param region - region to be examined
  * @returns {string} why the region is neutral
  */
-export const region__neutral_reason = (region: Region) => {
-  if (!region__is_active(region)) {
+export const region__neutralReason = (region: Region) => {
+  if (!region__isActive(region)) {
     return 'Fallen'
-  } else if (!region__at_peace(region)) {
+  } else if (!region__atPeace(region)) {
     return 'At War'
   }
   return 'Neutral'
 }
 
-export const relation__is_hostile = (relation: diplomatic_relation) =>
+export const relation__isHostile = (relation: DiplomaticRelation) =>
   relation === 'suspicious' || relation === 'at war'

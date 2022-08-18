@@ -1,15 +1,15 @@
 import { css } from '@emotion/css'
 import { createTheme, Zoom } from '@mui/material'
 
-import { css_colors } from './colors'
+import { cssColors } from './colors'
 
 export const theme = createTheme({
   palette: {
     primary: {
-      main: css_colors.primary
+      main: cssColors.primary
     },
     secondary: {
-      main: css_colors.secondary
+      main: cssColors.secondary
     }
   },
   typography: {
@@ -67,8 +67,8 @@ export const theme = createTheme({
     MuiDialog: {
       styleOverrides: {
         paper: {
-          backgroundColor: css_colors.background.cards,
-          border: `thick double ${css_colors.primary}`,
+          backgroundColor: cssColors.background.cards,
+          border: `thick double ${cssColors.primary}`,
           borderRadius: 0,
           padding: 10
         }
@@ -86,7 +86,7 @@ export const theme = createTheme({
 
 export const style__subtitle = css`
   font-size: 12px;
-  color: ${css_colors.subtitle};
+  color: ${cssColors.subtitle};
 `
 
 export const style__clickable = (color?: string) => css`

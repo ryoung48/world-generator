@@ -1,15 +1,15 @@
-import { lang__unique_name } from '../../../npcs/species/humanoids/languages/words'
-import { nation__regional_territories, region__neighbors } from '../../../regions'
-import { development_map } from '../../../regions/development'
-import { region__formatted_wealth } from '../../../regions/diplomacy/status'
+import { lang__uniqueName } from '../../../npcs/species/languages/words'
+import { nation__regionalTerritories, region__neighbors } from '../../../regions'
+import { developmentMap } from '../../../regions/development'
+import { region__formattedWealth } from '../../../regions/diplomacy/status'
 import { Region } from '../../../regions/types'
-import { year_ms } from '../../../utilities/math/time'
-import { decorate_text } from '../../../utilities/text/decoration'
-import { log_event } from '../..'
+import { yearMS } from '../../../utilities/math/time'
+import { decorateText } from '../../../utilities/text/decoration'
+import { logEvent } from '../..'
 import { EventController } from '../../types'
-import { loyalist_allies, rebel_allies } from './allies'
+import { loyalistAllies, rebelAllies } from './allies'
 import { rebellion__background } from './background'
-import { rebellion__battle, rebellion__plan, rebellion__resolve_battle } from './battles'
+import { rebellion__battle, rebellion__plan, rebellion__resolveBattle } from './battles'
 import { RebellionEvent } from './types'
 
 class RebellionController extends EventController {
@@ -17,7 +17,7 @@ class RebellionController extends EventController {
   public spawn(region: Region) {
     // increment the number of global rebellions
     window.world.statistics.current.rebellions += 1
-    const nation = window.world.regions[window.world.provinces[region.capital].curr_nation]
+    const nation = window.world.regions[window.world.provinces[region.capital].currNation]
     const culture = window.world.cultures[region.culture.ruling]
     const { development } = region
     // determine the rebel type
@@ -29,9 +29,8 @@ class RebellionController extends EventController {
     // create the event
     window.world.rebellions.push({
       idx,
-      tag: 'rebellion',
       type: 'rebellion',
-      name: `${lang__unique_name({ lang: culture.language, key: 'rebellion' })} ${
+      name: `${lang__uniqueName({ lang: culture.language, key: 'rebellion' })} ${
         background.type === 'ideology'
           ? 'Revolution'
           : background.type === 'peasants'
@@ -45,32 +44,32 @@ class RebellionController extends EventController {
       background,
       rebels: {
         idx: region.idx,
-        allies: rebel_allies(region, nation, neighbors, background.type)
+        allies: rebelAllies(region, nation, neighbors, background.type)
       },
       loyalists: {
         idx: nation.idx,
-        allies: loyalist_allies(nation, neighbors)
+        allies: loyalistAllies(nation, neighbors)
       },
-      rebel_provinces: [],
-      next_battle: { province: -1, attacker: 'rebels', odds: 0 },
+      rebelProvinces: [],
+      nextBattle: { province: -1, attacker: 'rebels', odds: 0 },
       events: []
     })
     const rebellion = window.world.rebellions[idx]
     // determine starting odds of victory
     // less developed region's rebelling against more advanced overlords are penalized
-    const region_dev = development_map[development]
-    const nation_dev = development_map[nation.development]
-    const tech_penalty = region_dev < nation_dev ? 0.1 : 0
+    const regionDev = developmentMap[development]
+    const nationDev = developmentMap[nation.development]
+    const techPenalty = regionDev < nationDev ? 0.1 : 0
     const odds =
       0.4 +
       window.dice.uniform(0, 0.1) +
       rebellion.rebels.allies.filter(({ neutral }) => !neutral).length * 0.04 -
       rebellion.loyalists.allies.filter(({ neutral }) => !neutral).length * 0.04 -
-      tech_penalty
+      techPenalty
     // determine rebellion duration
     const years = Math.max(1, Math.round(window.dice.norm(3, 1.5)))
     // create a major event to record all battles
-    const rebel_stronghold = window.dice.choice(nation__regional_territories({ nation, region }))
+    const rebelStronghold = window.dice.choice(nation__regionalTerritories({ nation, region }))
     const event: RebellionEvent = {
       idx,
       time: window.world.date,
@@ -78,23 +77,23 @@ class RebellionController extends EventController {
       title: `Start: ${rebellion.name}`,
       odds,
       battles: {},
-      last_battle: -1
+      lastBattle: -1
     }
-    rebellion__battle({ event, battleground: rebel_stronghold, victor: 'rebels' })
+    rebellion__battle({ event, battleground: rebelStronghold, victor: 'rebels' })
     // the region will not experience another rebellion until 6 years after the current rebellion ends
-    region.memory.rebel_fatigue = window.world.date + years * year_ms * 6
-    log_event({
-      event_type: event.type,
-      title: `Start: ${decorate_text({ link: window.world.rebellions[idx] })}`,
-      text: `Rebellion (${background.type}) erupts in ${decorate_text({
+    region.memory.rebelFatigue = window.world.date + years * yearMS * 6
+    logEvent({
+      eventType: event.type,
+      title: `Start: ${window.world.rebellions[idx].name}`,
+      text: `Rebellion (${background.type}) erupts in ${decorateText({
         link: nation
-      })} (${region__formatted_wealth(nation)}).`,
+      })} (${region__formattedWealth(nation)}).`,
       actors: nation !== region ? [nation, region] : [nation]
     })
     rebellion__plan(event)
   }
   public tick(event: RebellionEvent) {
-    rebellion__resolve_battle(event)
+    rebellion__resolveBattle(event)
   }
 }
 

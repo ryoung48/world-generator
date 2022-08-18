@@ -1,4 +1,4 @@
-export type merchant_professions =
+export type MerchantProfessions =
   | 'caravan (trader)'
   | 'caravan (master)'
   | 'innkeeper'
@@ -7,7 +7,7 @@ export type merchant_professions =
   | 'merchant'
   | 'banker'
 
-export type merchant_specializations =
+export type MerchantSpecializations =
   | 'alchemical'
   | 'arcane'
   | 'armor'

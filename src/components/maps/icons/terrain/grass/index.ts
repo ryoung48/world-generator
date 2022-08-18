@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { IconDef } from '../../types'
 import { grass_icon } from './types'
 

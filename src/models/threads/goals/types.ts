@@ -30,5 +30,5 @@ export interface Goal {
   tag: typeof goals[number]
   text: () => string
   weight: number
-  non_empty?: boolean
+  nonEmpty?: boolean
 }

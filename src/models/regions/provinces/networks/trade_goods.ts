@@ -1,38 +1,38 @@
-import { markets, trade_good } from '../../../items/economy'
+import { markets, TradeGood } from '../../../items/economy'
 import { scale } from '../../../utilities/math'
-import { day_ms } from '../../../utilities/math/time'
-import { decorated_profile } from '../../../utilities/performance'
+import { dayMS } from '../../../utilities/math/time'
+import { decoratedProfile } from '../../../utilities/performance'
 import { BasicCache, memoize } from '../../../utilities/performance/memoization'
-import { climate_lookup } from '../../../world/climate/types'
+import { climateLookup } from '../../../world/climate/types'
 import { region__demand } from '../..'
-import { region__at_peace } from '../../diplomacy/status'
+import { region__atPeace } from '../../diplomacy/status'
 import { province__cell } from '..'
 import { Province } from '../types'
 import { province__network } from '.'
 
-interface TradeGood {
+interface TradeGoodInstance {
   flow: number
   supply: number
   rarity: number
   demand: number
 }
 
-type TradeGoods = Partial<Record<trade_good, TradeGood>>
+type TradeGoods = Partial<Record<TradeGood, TradeGoodInstance>>
 
 // assumes 3 mph travel speed
-const _travel_debt = (city: Province, loc: Province) => {
+const _travelDebt = (city: Province, loc: Province) => {
   const distances = province__network(city)
-  const cell_distance = (distances[loc.idx] || Infinity) - 1
-  const actual_distance = cell_distance * window.world.dim.cell_length
-  return actual_distance / 3 / 24 + 1
+  const cellDistance = (distances[loc.idx] || Infinity) - 1
+  const actualDistance = cellDistance * window.world.dim.cellLength
+  return actualDistance / 3 / 24 + 1
 }
-type travel_debt_cache = Record<number, Record<number, number>>
-const travel_debt = memoize(_travel_debt, {
-  store: (): travel_debt_cache => ({}),
-  get: (cache: travel_debt_cache, city: Province, loc: Province) => {
+type TravelDebtCache = Record<number, Record<number, number>>
+const travelDebt = memoize(_travelDebt, {
+  store: (): TravelDebtCache => ({}),
+  get: (cache: TravelDebtCache, city: Province, loc: Province) => {
     if (cache[city.idx]?.[loc.idx]) return cache[city.idx][loc.idx]
   },
-  set: (cache: travel_debt_cache, cost: number, city: Province, loc: Province) => {
+  set: (cache: TravelDebtCache, cost: number, city: Province, loc: Province) => {
     if (!cache[city.idx]) cache[city.idx] = {}
     cache[city.idx][loc.idx] = cost
     if (!cache[loc.idx]) cache[loc.idx] = {}
@@ -40,34 +40,34 @@ const travel_debt = memoize(_travel_debt, {
   }
 })
 
-const transport_costs = (city: Province, loc: Province) => {
-  const tariffs = city.curr_nation !== loc.curr_nation
-  const curr_nation = window.world.regions[loc.curr_nation]
-  const war = !region__at_peace(curr_nation)
-  return travel_debt(city, loc) ** (war ? 2 : tariffs ? 1.8 : 1.6)
+const transportCosts = (city: Province, loc: Province) => {
+  const tariffs = city.currNation !== loc.currNation
+  const currNation = window.world.regions[loc.currNation]
+  const war = !region__atPeace(currNation)
+  return travelDebt(city, loc) ** (war ? 2 : tariffs ? 1.8 : 1.6)
 }
-const province_demand = (province: Province) => {
+const provinceDemand = (province: Province) => {
   // compute regional demand (resets yearly)
   region__demand(province.region)
   const region = window.world.regions[province.region]
-  if (province.memory.trade_demand < region.memory.trade_demand) {
-    province.memory.trade_demand = region.memory.trade_demand
+  if (province.memory.tradeDemand < region.memory.tradeDemand) {
+    province.memory.tradeDemand = region.memory.tradeDemand
     markets.forEach(market => {
-      province.resources.demand[market] = region.trade_demand[market] + window.dice.norm(0, 0.05)
+      province.resources.demand[market] = region.tradeDemand[market] + window.dice.norm(0, 0.05)
     })
   }
 }
-const _trade_sim = (city: Province): TradeGoods => {
+const _tradeSim = (city: Province): TradeGoods => {
   // set base demand
-  province_demand(city)
+  provinceDemand(city)
   // compute supply
-  const trade_goods: TradeGoods = {}
+  const tradeGoods: TradeGoods = {}
   markets.forEach(market => {
     const flow = window.world.provinces.reduce((sum, province) => {
       const supply = province.resources.supply[market] ?? 0
-      return sum + supply / transport_costs(city, province)
+      return sum + supply / transportCosts(city, province)
     }, 0)
-    trade_goods[market] = {
+    tradeGoods[market] = {
       flow,
       supply: city.resources.supply[market] ?? 0,
       demand: city.resources.demand[market] ?? 0,
@@ -75,33 +75,33 @@ const _trade_sim = (city: Province): TradeGoods => {
     }
   })
   // adjust demand based on events
-  const curr_nation = window.world.regions[city.curr_nation]
+  const currNation = window.world.regions[city.currNation]
   // regions at war will need weapons, armor, medicine, and arcane wares
-  if (!region__at_peace(curr_nation)) {
-    const war_effort: trade_good[] = [
+  if (!region__atPeace(currNation)) {
+    const warEffort: TradeGood[] = [
       'metals (common)',
       'metalwork',
       'products (alchemical)',
       'products (arcane)'
     ]
-    war_effort.forEach(market => (trade_goods[market].demand += 0.3))
+    warEffort.forEach(market => (tradeGoods[market].demand += 0.3))
   }
   // tropical regions don't need furs
-  if (climate_lookup[curr_nation.climate].zone === 'Tropical') {
-    trade_goods.furs.demand -= 0.5
+  if (climateLookup[currNation.climate].zone === 'Tropical') {
+    tradeGoods.furs.demand -= 0.5
   }
   // inland provinces don't need skilled shipwrights
   if (!province__cell(city).beach) {
-    trade_goods.shipwrights.demand -= 0.3
+    tradeGoods.shipwrights.demand -= 0.3
   }
-  return trade_goods
+  return tradeGoods
 }
-const trade_sim = memoize(_trade_sim, {
+const tradeSim = memoize(_tradeSim, {
   store: (): BasicCache<TradeGoods> => ({}),
   get: (cache, province) => {
     // recompute very 30 days
-    if (province.memory.trade_goods < window.world.date) {
-      province.memory.trade_goods = window.world.date + 30 * day_ms
+    if (province.memory.tradeGoods < window.world.date) {
+      province.memory.tradeGoods = window.world.date + 30 * dayMS
     } else {
       return cache[province.idx]
     }
@@ -110,4 +110,4 @@ const trade_sim = memoize(_trade_sim, {
     cache[province.idx] = res
   }
 })
-export const province__markets = decorated_profile(trade_sim, 'province__markets')
+export const province__markets = decoratedProfile(tradeSim, 'province__markets')

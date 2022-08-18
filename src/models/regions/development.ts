@@ -1,6 +1,6 @@
-export type development_rank = 'civilized' | 'frontier' | 'tribal' | 'remote'
+export type DevelopmentRank = 'civilized' | 'frontier' | 'tribal' | 'remote'
 
-export const development_map: Record<development_rank, number> = {
+export const developmentMap: Record<DevelopmentRank, number> = {
   civilized: 4,
   frontier: 3,
   tribal: 2,

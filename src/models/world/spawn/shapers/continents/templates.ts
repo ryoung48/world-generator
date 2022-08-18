@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { canvas__circle } from '../../../../../components/maps/canvas'
 import { Point } from '../../../../utilities/math/points'
 
@@ -11,10 +12,10 @@ export interface ContinentTemplate {
   selected: number
 }
 
-const mirror_orientations = ['vertical', 'horizontal'] as const
-export const isle_heights = { low: 0.6, high: 1 }
+const mirrorOrientations = ['vertical', 'horizontal'] as const
+export const isleHeights = { low: 0.6, high: 1 }
 
-const circle_color = (opacity: number) => `rgb(88, 24, 13, ${opacity})`
+const circleColor = (opacity: number) => `rgb(88, 24, 13, ${opacity})`
 
 /**
  * draws a circle of a template mold
@@ -34,18 +35,18 @@ export const circle__draw = (params: {
   const y = circle.y * canvas.height
   const r = circle.r * Math.hypot(canvas.width * 0.5, canvas.height * 0.5)
   // low circles are less opaque
-  const low = circle.w === isle_heights.low
+  const low = circle.w === isleHeights.low
   let opacity = low ? 0.3 : 1
   // selected circles are more opaque
   if (selected) opacity = 1.5
   // draw the less opaque, but bigger outer circle
   // representing outer areas that can form land when outer circles overlap
   const outer = r * (low ? 0.6 : 1)
-  canvas__circle({ point: { x, y }, radius: outer, ctx, fill: circle_color(0.1 * opacity) })
+  canvas__circle({ point: { x, y }, radius: outer, ctx, fill: circleColor(0.1 * opacity) })
   // draw the more opaque, but smaller inner circle
   // representing where land is most likely to occur
   const inner = r * (low ? 0.2 : 0.4)
-  canvas__circle({ point: { x, y }, radius: inner, ctx, fill: circle_color(0.4 * opacity) })
+  canvas__circle({ point: { x, y }, radius: inner, ctx, fill: circleColor(0.4 * opacity) })
 }
 
 /**
@@ -56,7 +57,7 @@ export const circle__draw = (params: {
  */
 export const circle__mirror = (params: {
   isles: ContinentTemplate['isles']
-  axis: typeof mirror_orientations[number]
+  axis: typeof mirrorOrientations[number]
 }) => {
   const { isles, axis: orient } = params
   return isles.map(isle => {

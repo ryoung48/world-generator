@@ -1,26 +1,26 @@
 import { location__terrain } from '../../../../../regions/locations/environment'
 import { Loc } from '../../../../../regions/locations/types'
 import { province__hub } from '../../../../../regions/provinces'
-import { terrain_types } from '../../../../../world/climate/terrain'
+import { Terrain } from '../../../../../world/climate/terrain'
 import { Actor } from '../../../types'
-import { actor_skill__not_master, actor_skills__apply } from '../common/apply'
+import { actorSkill__notMaster, actorSkills__apply } from '../common/apply'
 import {
-  skill_gate__coastal,
-  skill_gate__constitution,
-  skill_gate__dexterity,
-  skill_gate__nobility,
-  skill_gate__strength
+  skillGate__coastal,
+  skillGate__constitution,
+  skillGate__dexterity,
+  skillGate__nobility,
+  skillGate__strength
 } from '../common/checks'
-import { fluency__apply_skill, fluency__languages_exist } from '../fluency'
+import { fluency__applySkill, fluency__languagesExist } from '../fluency'
 import { ActorSkill } from '../types'
-import { actor_skills, worldly_skill } from '.'
+import { ActorSkills, WorldlySkill } from '.'
 
-export const language_skill_checks: Omit<ActorSkill, 'key'> = {
-  valid: ({ actor, context }) => (fluency__languages_exist({ actor, context }) ? 1 : 0),
-  apply: ({ actor, exp, loc }) => fluency__apply_skill({ actor, exp, loc })
+export const languageSkillChecks: Omit<ActorSkill, 'key'> = {
+  valid: ({ actor, context }) => (fluency__languagesExist({ actor, context }) ? 1 : 0),
+  apply: ({ actor, exp, loc }) => fluency__applySkill({ actor, exp, loc })
 }
 
-const translate_terrain = (terrain: terrain_types): actor_skills => {
+const translateTerrain = (terrain: Terrain): ActorSkills => {
   if (terrain === 'Arctic') return 'arctic'
   else if (terrain === 'Marsh') return 'marsh'
   else if (terrain === 'Forest') return 'forest'
@@ -30,19 +30,19 @@ const translate_terrain = (terrain: terrain_types): actor_skills => {
   else throw new Error(`bad survival application: ${terrain}`)
 }
 
-const valid_terrain = (params: { actor: Actor; loc: Loc }) => {
+const validTerrain = (params: { actor: Actor; loc: Loc }) => {
   const { actor, loc } = params
   const region = window.world.regions[loc.region]
   return region.regional.provinces
     .map(p => {
       const province = window.world.provinces[p]
       const { terrain } = location__terrain(province__hub(province))
-      return { w: loc.idx === province.hub ? 10 : 1, v: translate_terrain(terrain) }
+      return { w: loc.idx === province.hub ? 10 : 1, v: translateTerrain(terrain) }
     })
-    .filter(skill => actor_skill__not_master({ actor, key: skill.v }))
+    .filter(skill => actorSkill__notMaster({ actor, key: skill.v }))
 }
 
-export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
+export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
   'animal handling': {
     key: 'animal handling'
   },
@@ -52,7 +52,7 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
   },
   athletics: {
     key: 'athletics',
-    valid: params => skill_gate__strength(params) * skill_gate__constitution(params)
+    valid: params => skillGate__strength(params) * skillGate__constitution(params)
   },
   baking: {
     key: 'baking',
@@ -63,7 +63,7 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
   },
   brewing: {
     key: 'brewing',
-    valid: skill_gate__nobility
+    valid: skillGate__nobility
   },
   carpentry: {
     key: 'carpentry',
@@ -77,7 +77,7 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
   },
   distillation: {
     key: 'distillation',
-    valid: skill_gate__nobility
+    valid: skillGate__nobility
   },
   embalming: {
     key: 'embalming',
@@ -96,7 +96,7 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
   },
   'living language': {
     key: 'living language',
-    ...language_skill_checks
+    ...languageSkillChecks
   },
   logistics: {
     key: 'logistics',
@@ -104,11 +104,11 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
   },
   marksman: {
     key: 'marksman',
-    valid: skill_gate__dexterity
+    valid: skillGate__dexterity
   },
   martial: {
     key: 'martial',
-    valid: skill_gate__constitution
+    valid: skillGate__constitution
   },
   masonry: {
     key: 'masonry',
@@ -130,7 +130,7 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
   },
   seafaring: {
     key: 'seafaring',
-    valid: skill_gate__coastal
+    valid: skillGate__coastal
   },
   streetwise: {
     key: 'streetwise',
@@ -140,18 +140,18 @@ export const actor_skills__worldly: Record<worldly_skill, ActorSkill> = {
     key: 'survival',
     valid: ({ context, actor }) => {
       const loc = window.world.locations[context.idx]
-      const terrain = valid_terrain({ actor, loc })
-      return terrain.length > 0 ? skill_gate__constitution({ context, actor }) : 0
+      const terrain = validTerrain({ actor, loc })
+      return terrain.length > 0 ? skillGate__constitution({ context, actor }) : 0
     },
     apply: ({ loc, actor, exp }) => {
       const location = window.world.locations[loc]
-      const terrain = window.dice.weighted_choice(valid_terrain({ actor, loc: location }))
-      actor_skills__apply({ actor, exp, key: terrain, loc })
+      const terrain = window.dice.weightedChoice(validTerrain({ actor, loc: location }))
+      actorSkills__apply({ actor, exp, key: terrain, loc })
     }
   },
   vintner: {
     key: 'vintner',
-    valid: skill_gate__nobility
+    valid: skillGate__nobility
   },
   wagoneering: {
     key: 'wagoneering',

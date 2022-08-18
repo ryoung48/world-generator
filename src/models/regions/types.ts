@@ -1,27 +1,24 @@
-import { diplomatic_relation } from '../history/events/diplomacy/types'
-import { trade_good } from '../items/economy'
+import { DiplomaticRelation } from '../history/events/diplomacy/types'
+import { TradeGood } from '../items/economy'
 import { TaggedEntity } from '../utilities/codex/entities'
 import { directions } from '../utilities/math/points'
 import { climates } from '../world/climate/types'
-import { development_rank } from './development'
+import { DevelopmentRank } from './development'
 
 export interface Region extends TaggedEntity {
   tag: 'nation'
   colors: string
   capital?: number
-  ruler?: { birth_date: number; succession_date: number; expiration_date: number; culture: number }
+  ruler?: { birthDate: number; successionDate: number; expirationDate: number; culture: number }
   side: directions
   edge: directions
-  borders_changed: boolean
+  bordersChanged: boolean
   regional: {
     provinces?: number[]
     land?: number
     mountains?: number
     coastal?: boolean
   }
-  // ecology
-  beasts: Record<string, number[]>
-  primordials: Record<string, number[]>
   // cultural traits
   culture: { ruling: number; native: number }
   // weather
@@ -29,9 +26,9 @@ export interface Region extends TaggedEntity {
   coastal: boolean
   // geographic borders (regions)
   borders: number[]
-  land_borders: number[]
+  landBorders: number[]
   // relational contacts
-  colonial_presence: {
+  colonialPresence: {
     colonies: {
       nation: number
       tag: 'trading company' | 'colonial settlers'
@@ -39,19 +36,17 @@ export interface Region extends TaggedEntity {
     }[]
     embassy: number
   }
-  relations: Record<number, diplomatic_relation>
+  relations: Record<number, DiplomaticRelation>
   allies: Record<number, number>
   subjects: number[]
   overlord: {
     idx: number
-    join_date: number
+    joinDate: number
   }
   // society
-  immigration: Record<number, number>
-  emigration: Record<number, number>
-  development?: development_rank
+  development?: DevelopmentRank
   civilized?: boolean
-  imperial_title?: string
+  imperialTitle?: string
   economy?: {
     status: 'struggling' | 'healthy' | 'prosperous'
     management: 'market' | 'mixed' | 'planned' | 'barter'
@@ -63,7 +58,7 @@ export interface Region extends TaggedEntity {
     entry: 'merit' | 'hereditary' | 'wealth' | 'eunuchs' | 'assigned'
   }
   law?: {
-    rule_of_law: 'ubiquitous' | 'selective' | 'none'
+    ruleOfLaw: 'ubiquitous' | 'selective' | 'none'
     accountability: 'judicial' | 'top-down' | 'informal'
     magic: 'banned' | 'restricted' | 'unrestricted'
   }
@@ -84,22 +79,20 @@ export interface Region extends TaggedEntity {
   // history
   past: number[]
   wealth: number
-  max_wealth: number
+  maxWealth: number
   wars: { current: number[]; past: number[] } // national
   rebellions: { current: number; past: number[] } // regional
   memory: {
-    rebel_fatigue: number // cooldown until next rebellion can happen
-    plague_fatigue: number // cooldown until next plague can happen
-    last_update: number // time in ms
-    trade_demand: number // economic demand (price flux)
-    faction_spawns: number // time until next faction spawns
-    finalize_check: number
-    population_check: number
+    rebelFatigue: number // cooldown until next rebellion can happen
+    plagueFatigue: number // cooldown until next plague can happen
+    lastUpdate: number // time in ms
+    tradeDemand: number // economic demand (price flux)
+    populationCheck: number
   }
   // owned provinces
   provinces: number[]
   regions: number[] // regional capitals
 
   // economy
-  trade_demand: Partial<Record<trade_good, number>>
+  tradeDemand: Partial<Record<TradeGood, number>>
 }

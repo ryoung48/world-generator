@@ -2,13 +2,13 @@ import { quadtree } from 'd3'
 
 import { profile } from '../../../utilities/performance'
 import { Cell, ExteriorCell } from '../../cells/types'
-import { sea_level_cutoff } from '../../types'
+import { seaLevelCutoff } from '../../types'
 
 export class Shaper {
   private static _land: ExteriorCell[] = []
   private static _mountains: ExteriorCell[] = []
   private static _water: ExteriorCell[] = []
-  public static region_land: Record<number, ExteriorCell[]> = {}
+  public static regionLand: Record<number, ExteriorCell[]> = {}
   // pipeline for shaper actions
   get pipeline(): Array<{ name: string; action: () => void }> {
     return []
@@ -22,7 +22,7 @@ export class Shaper {
   public static get land() {
     if (Shaper._land.length <= 0) {
       Shaper._land = window.world.cells.filter(e => {
-        return e.h >= sea_level_cutoff && e.n.length > 0
+        return e.h >= seaLevelCutoff && e.n.length > 0
       })
     }
     return Shaper._land
@@ -40,19 +40,19 @@ export class Shaper {
   public static get water() {
     if (Shaper._water.length <= 0) {
       Shaper._water = window.world.cells.filter(e => {
-        return e.h < sea_level_cutoff
+        return e.h < seaLevelCutoff
       })
     }
     return Shaper._water
   }
-  public static core_cells<T extends Cell>(cells: T[], spacing: number) {
+  public static coreCells<T extends Cell>(cells: T[], spacing: number) {
     const { w, h } = window.world.dim
     return cells.filter(
       ({ x, y }) => x > spacing && x < w - spacing && y > spacing && y < h - spacing
     )
   }
   // place cities on the map given spacing constraints
-  public static place_locs<T extends Cell>(params: {
+  public static placeLocs<T extends Cell>(params: {
     count: number
     spacing: number
     whitelist: T[]

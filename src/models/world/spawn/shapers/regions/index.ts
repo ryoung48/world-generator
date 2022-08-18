@@ -3,15 +3,15 @@ import { province__cell } from '../../../../regions/provinces'
 import { province__spawn } from '../../../../regions/provinces/spawn'
 import { Region } from '../../../../regions/types'
 import { cell__neighbors } from '../../../cells'
-import { mountains_cutoff } from '../../../types'
+import { mountainsCutoff } from '../../../types'
 import { Shaper } from '..'
 import { regional__climates } from './climate'
-import { regional__coastal_edges } from './coasts'
-import { regional__mountainous_borders } from './mountains'
+import { regional__coastalEdges } from './coasts'
+import { regional__mountainousBorders } from './mountains'
 
-type region_borders = Record<number, Record<number, Set<number>>>
-const add_border = (params: {
-  borders: region_borders
+type RegionBorders = Record<number, Record<number, Set<number>>>
+const addBorder = (params: {
+  borders: RegionBorders
   r1: Region
   r2: Region
   c1: number
@@ -26,52 +26,52 @@ const add_border = (params: {
 
 export class RegionalShaper extends Shaper {
   // minimum space between capital cities
-  private capital_spacing = 0.018
-  private mountain_prospects: Record<number, Record<number, Set<number>>> = {}
-  private region_borders: Record<number, Record<number, Set<number>>> = {}
+  private capitalSpacing = 0.018
+  private mountainProspects: Record<number, Record<number, Set<number>>> = {}
+  private regionBorders: Record<number, Record<number, Set<number>>> = {}
   get pipeline() {
     return [
-      { name: 'Capital City Placement', action: this.place_capitals },
-      { name: 'Regional Spheres', action: this.regional_spheres },
+      { name: 'Capital City Placement', action: this.placeCapitals },
+      { name: 'Regional Spheres', action: this.regionalSpheres },
       {
         name: 'Mountainous Borders',
-        action: () => regional__mountainous_borders(this.mountain_prospects)
+        action: () => regional__mountainousBorders(this.mountainProspects)
       },
       { name: 'Regional Climates', action: () => regional__climates() },
-      { name: 'Regional Coastlines', action: () => regional__coastal_edges() },
-      { name: 'Regional Borders', action: this.finalize_borders }
+      { name: 'Regional Coastlines', action: () => regional__coastalEdges() },
+      { name: 'Regional Borders', action: this.finalizeBorders }
     ]
   }
-  private place_capitals() {
+  private placeCapitals() {
     // base land scores for city placement
     Shaper.land.forEach(poly => {
       // prefer lower elevations
       poly.score = (1 - poly.h) * 5 + (poly.beach ? 1 : 0)
     })
-    const spacing = (window.world.dim.w + window.world.dim.h) * this.capital_spacing
+    const spacing = (window.world.dim.w + window.world.dim.h) * this.capitalSpacing
     // place the regional capitals
-    const capitals = Shaper.place_locs({
+    const capitals = Shaper.placeLocs({
       count: 250,
       spacing,
-      whitelist: Shaper.core_cells(Shaper.land, spacing)
-        .filter(poly => poly.h < mountains_cutoff)
+      whitelist: Shaper.coreCells(Shaper.land, spacing)
+        .filter(poly => poly.h < mountainsCutoff)
         .sort((a, b) => b.score - a.score)
     })
     capitals
       .filter(poly => window.world.landmarks[poly.landmark])
       .forEach(poly => {
         region__spawn(poly)
-        Shaper.region_land[poly.region] = []
+        Shaper.regionLand[poly.region] = []
         province__spawn({ cell: poly, capital: true })
       })
   }
-  private regional_spheres() {
+  private regionalSpheres() {
     window.world.regions.forEach(region => {
-      this.mountain_prospects[region.idx] = {}
-      this.region_borders[region.idx] = {}
+      this.mountainProspects[region.idx] = {}
+      this.regionBorders[region.idx] = {}
     })
     const queue = window.world.provinces
-      .filter(province => province.regional_capital)
+      .filter(province => province.regionalCapital)
       .map(province => province__cell(province))
     // use capital cities to start the regional floodfill
     while (queue.length > 0) {
@@ -81,7 +81,7 @@ export class RegionalShaper extends Shaper {
       if (!region) continue
       // get the regional power
       let power = 0.75
-      if (poly.is_mountains) {
+      if (poly.isMountains) {
         power /= 15 // penalty for crossing mountains
       }
       if (poly.shallow) {
@@ -96,22 +96,22 @@ export class RegionalShaper extends Shaper {
             // claim neighbor if not claimed
             if (n.region === -1) {
               n.region = region.idx
-              if (!n.is_water) Shaper.region_land[region.idx].push(n)
+              if (!n.isWater) Shaper.regionLand[region.idx].push(n)
               queue.push(n)
             } else if (n.region !== poly.region) {
-              n.region_border = true
-              poly.region_border = true
+              n.regionBorder = true
+              poly.regionBorder = true
               const guest = window.world.regions[n.region]
-              add_border({
-                borders: this.region_borders,
+              addBorder({
+                borders: this.regionBorders,
                 r1: region,
                 r2: guest,
                 c1: poly.idx,
                 c2: n.idx
               })
               if (!n.ocean && !n.beach) {
-                add_border({
-                  borders: this.mountain_prospects,
+                addBorder({
+                  borders: this.mountainProspects,
                   r1: region,
                   r2: guest,
                   c1: poly.idx,
@@ -125,28 +125,26 @@ export class RegionalShaper extends Shaper {
       }
     }
   }
-  private finalize_borders() {
+  private finalizeBorders() {
     window.world.regions.forEach(region => {
-      const land_borders = new Set<number>()
+      const landBorders = new Set<number>()
       const borders = new Set<number>()
-      Object.entries(this.region_borders[region.idx]).forEach(([n, cells]) => {
+      Object.entries(this.regionBorders[region.idx]).forEach(([n, cells]) => {
         const guest = window.world.regions[parseInt(n)]
         Array.from(cells).forEach(i => {
           const cell = window.world.cells[i]
           borders.add(guest.idx)
           if (
-            !cell.is_water &&
-            !cell.is_mountains &&
-            cell__neighbors(cell).some(
-              n => n.region === region.idx && !n.is_mountains && !n.is_water
-            )
+            !cell.isWater &&
+            !cell.isMountains &&
+            cell__neighbors(cell).some(n => n.region === region.idx && !n.isMountains && !n.isWater)
           ) {
-            land_borders.add(guest.idx)
+            landBorders.add(guest.idx)
           }
         })
       })
       region.borders = Array.from(borders)
-      region.land_borders = Array.from(land_borders)
+      region.landBorders = Array.from(landBorders)
     })
   }
 }

@@ -1,9 +1,9 @@
-import { all_skills } from '../../../skills/categories'
+import { allSkills } from '../../../skills/categories'
 import { ProfessionKit } from '../../types'
 
-const tertiary = [...all_skills]
+const tertiary = [...allSkills]
 
-export const ranger_kits: Record<'marksman' | 'arcane archer' | 'witch hunter', ProfessionKit> = {
+export const rangerKits: Record<'marksman' | 'arcane archer' | 'witch hunter', ProfessionKit> = {
   marksman: {
     attributes: [10, 12, 11, 11, 12, 10],
     skills: {

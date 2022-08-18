@@ -1,44 +1,44 @@
 import { LocationContext } from '../../../../regions/locations/context/types'
 import type { Actor } from '../../types'
-import { actor_skills } from '../skills/categories'
-import { artist_professions } from './artistic/artists/types'
-import { performer_professions } from './artistic/performers/types'
-import { craftsman_professions } from './craftsman/types'
-import { government_professions } from './government/types'
-import { servant_professions } from './laborers/servants/types'
-import { sailor_specs, transport_professions } from './laborers/transport/types'
-import { laborer_professions } from './laborers/types'
-import { aristocrat_professions } from './landowners/types'
-import { merchant_professions, merchant_specializations } from './merchants/types'
-import { scholar_professions } from './scholars/academics/types'
-import { religious_professions } from './scholars/religious/types'
-import { wizard_professions } from './scholars/wizards/types'
-import { martial_professions, mercenary_specs, soldier_specs } from './soldiers/types'
-import { underworld_professions } from './underworld/types'
+import { ActorSkills } from '../skills/categories'
+import { ArtistProfessions } from './artistic/artists/types'
+import { PerformerProfessions } from './artistic/performers/types'
+import { CraftsmanProfessions } from './craftsman/types'
+import { GovernmentProfessions } from './government/types'
+import { ServantProfessions } from './laborers/servants/types'
+import { SailorSpecs, TransportProfessions } from './laborers/transport/types'
+import { LaborerProfessions } from './laborers/types'
+import { AristocratProfessions } from './landowners/types'
+import { MerchantProfessions, MerchantSpecializations } from './merchants/types'
+import { ScholarProfessions } from './scholars/academics/types'
+import { ReligiousProfessions } from './scholars/religious/types'
+import { WizardProfessions } from './scholars/wizards/types'
+import { MartialProfessions, MercenarySpecs, SoldierSpecs } from './soldiers/types'
+import { UnderworldProfessions } from './underworld/types'
 
-export type actor_professions =
-  | transport_professions
-  | servant_professions
-  | religious_professions
-  | merchant_professions
-  | government_professions
-  | underworld_professions
-  | martial_professions
-  | artist_professions
-  | craftsman_professions
-  | laborer_professions
-  | performer_professions
-  | wizard_professions
-  | scholar_professions
-  | aristocrat_professions
+export type ActorProfessions =
+  | TransportProfessions
+  | ServantProfessions
+  | ReligiousProfessions
+  | MerchantProfessions
+  | GovernmentProfessions
+  | UnderworldProfessions
+  | MartialProfessions
+  | ArtistProfessions
+  | CraftsmanProfessions
+  | LaborerProfessions
+  | PerformerProfessions
+  | WizardProfessions
+  | ScholarProfessions
+  | AristocratProfessions
 
-export type profession__specialization =
-  | mercenary_specs
-  | merchant_specializations
-  | soldier_specs
-  | sailor_specs
+export type ProfessionSpecialization =
+  | MercenarySpecs
+  | MerchantSpecializations
+  | SoldierSpecs
+  | SailorSpecs
 
-export const profession_categories = [
+export const professionCategories = [
   'laborers',
   'soldiers',
   'artisans',
@@ -49,9 +49,9 @@ export const profession_categories = [
   'underclass',
   'merchants'
 ] as const
-type profession_category = typeof profession_categories[number]
+type ProfessionCategory = typeof professionCategories[number]
 
-export const profession_subcategories = [
+export const professionSubcategories = [
   'farmers',
   'animal handling',
   'millers',
@@ -83,37 +83,37 @@ export const profession_subcategories = [
   'artists',
   'performers'
 ] as const
-type profession_subcategory = typeof profession_subcategories[number]
+type profession_subcategory = typeof professionSubcategories[number]
 
-export type profession__skill_kits = {
-  primary: actor_skills[]
-  secondary?: actor_skills[]
-  tertiary: actor_skills[]
+export type ProfessionSkillKits = {
+  primary: ActorSkills[]
+  secondary?: ActorSkills[]
+  tertiary: ActorSkills[]
 }
 
-export type social_class = 'upper' | 'middle' | 'lower'
+export type SocialClass = 'upper' | 'middle' | 'lower'
 
 export interface Profession {
-  key: actor_professions // key used to lookup profession details
-  title?: string | ((_params: { actor: Actor; spec: profession__specialization }) => string) // occupational title
-  specialization?: (_params: { actor: Actor }) => profession__specialization
+  key: ActorProfessions // key used to lookup profession details
+  title?: string | ((_params: { actor: Actor; spec: ProfessionSpecialization }) => string) // occupational title
+  specialization?: (_params: { actor: Actor }) => ProfessionSpecialization
   lifestyle: 'impoverished' | 'poor' | 'modest' | 'comfortable' | 'prosperous' | 'rich'
   progression?: Partial<
-    Record<actor_professions, { years: number; weight: number; transition: boolean }>
+    Record<ActorProfessions, { years: number; weight: number; transition: boolean }>
   >
-  category: profession_category
+  category: ProfessionCategory
   subcategory?: profession_subcategory
   ages?: number[] // specific age range allowed for a profession
   prevalence?: 'abundant' | 'common' | 'uncommon' | 'rare'
   occurrence?: number | ((_params: { context: LocationContext; time: number }) => number) // how likely a profession will spawn at a location (default = 0)
-  after_spawn?: (_npc: Actor) => void // ran on actor at actor__finalize
+  afterSpawn?: (_npc: Actor) => void // ran on actor at actor__finalize
   attributes?: number[] | ((_params: { actor: Actor }) => number[])
-  skills: profession__skill_kits | ((_params: { actor: Actor }) => profession__skill_kits)
+  skills: ProfessionSkillKits | ((_params: { actor: Actor }) => ProfessionSkillKits)
 }
 
 export type ProfessionKit = {
   attributes?: number[]
-  skills: profession__skill_kits
+  skills: ProfessionSkillKits
 }
 
-export type occupation = { key: actor_professions; spec?: profession__specialization }
+export type occupation = { key: ActorProfessions; spec?: ProfessionSpecialization }

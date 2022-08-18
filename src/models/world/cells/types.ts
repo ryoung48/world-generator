@@ -9,27 +9,27 @@ export interface Cell extends Point {
 export interface ExteriorCell extends Cell {
   score: number
   // coastal attributes
-  coastal_edges?: [Point, Point][]
-  is_coast?: boolean
-  water_sources?: Set<number>
-  ocean_current?: directions
+  coastalEdges?: [Point, Point][]
+  isCoast?: boolean
+  waterSources?: Set<number>
+  oceanCurrent?: directions
   // mountains
-  is_mountains?: boolean
+  isMountains?: boolean
   mountain?: number
   // location
   region: number
   province: number
-  region_border?: boolean
+  regionBorder?: boolean
   // features
   h: number
   landmark: number
-  is_water?: boolean
+  isWater?: boolean
   beach?: boolean
   ocean?: boolean
   shallow?: boolean
   // distances
-  ocean_dist: number
-  mountain_dist: number
+  oceanDist: number
+  mountainDist: number
   coastal?: boolean
   // roads & cities
   roads: { land: number[]; sea: number[] }

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { IconDef } from '../../types'
 import { mountain_icon } from './types'
 

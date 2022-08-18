@@ -1,8 +1,7 @@
 import { Button, Grid, Step, StepLabel, Stepper, TextField } from '@mui/material'
 import { Dispatch, SetStateAction, useState } from 'react'
 
-import { view__context } from '../../context'
-import { Dice, generate_id } from '../../models/utilities/math/dice'
+import { Dice, generateId } from '../../models/utilities/math/dice'
 import { delay } from '../../models/utilities/math/time'
 import { profile, profile__switch } from '../../models/utilities/performance'
 import { world__spawn } from '../../models/world/spawn'
@@ -13,6 +12,7 @@ import { DisplayShaper } from '../../models/world/spawn/shapers/display'
 import { InfrastructureShaper } from '../../models/world/spawn/shapers/infrastructure'
 import { LoreShaper } from '../../models/world/spawn/shapers/lore'
 import { RegionalShaper } from '../../models/world/spawn/shapers/regions'
+import { view__context } from '../context'
 
 const catchup = 500
 
@@ -46,8 +46,8 @@ const generator = async (params: {
 }
 
 export function Landing() {
-  const [seed, set_seed] = useState(generate_id())
-  const [years, set_years] = useState(100)
+  const [seed, setSeed] = useState(generateId())
+  const [years, setYears] = useState(100)
   const [active, setActive] = useState(-1)
   const { dispatch } = view__context()
   const generating = active >= 0
@@ -60,7 +60,7 @@ export function Landing() {
             <TextField
               label='seed'
               disabled={generating}
-              onChange={event => set_seed(event.currentTarget.value)}
+              onChange={event => setSeed(event.currentTarget.value)}
               value={seed}
             />
           </Grid>
@@ -68,7 +68,7 @@ export function Landing() {
             <TextField
               value={years}
               disabled={generating}
-              onChange={event => set_years(parseInt(event.currentTarget.value))}
+              onChange={event => setYears(parseInt(event.currentTarget.value))}
               label='years'
             ></TextField>
           </Grid>

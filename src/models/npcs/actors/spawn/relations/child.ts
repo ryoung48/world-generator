@@ -1,88 +1,88 @@
-import { location__random_origin } from '../../../../regions/locations/actors/demographics/origins'
-import { year_ms } from '../../../../utilities/math/time'
-import { lang__derived_surnames } from '../../../species/humanoids/languages/words/actors'
-import { species__by_culture } from '../../../species/humanoids/taxonomy'
-import { actor__past_location } from '../..'
-import { actor__add_child_relation, find_birth_date } from '../../history/events'
+import { location__randomOrigin } from '../../../../regions/locations/actors/demographics/origins'
+import { yearMS } from '../../../../utilities/math/time'
+import { lang__derivedSurnames } from '../../../species/languages/words/actors'
+import { species__byCulture } from '../../../species/taxonomy'
+import { actor__pastLocation } from '../..'
+import { actor__addChildRelation, actor__findBirthDate } from '../../history/events'
 import { ActorEventSpawn } from '../../history/events/types'
-import { get_age } from '../../stats/age'
-import { convert_age, life_phase_boundaries } from '../../stats/age/life_phases'
-import { npc__random_gender } from '../../stats/appearance/gender'
-import { actor__social_class, social_class__random_drift } from '../../stats/professions'
+import { getAge } from '../../stats/age'
+import { convertAge, lifePhaseBoundaries } from '../../stats/age/life_phases'
+import { npc__randomGender } from '../../stats/appearance/gender'
+import { actor__socialClass, socialClass__randomDrift } from '../../stats/professions'
 import { Actor } from '../../types'
 import { ActorParams, Relation } from '../types'
-import { actor_event__relation } from '.'
-import { actor__spawn_spouse } from './spouse'
+import { actorEvent__relation } from '.'
+import { actor__spawnSpouse } from './spouse'
 
 export class Child implements Relation {
   private parent: Actor
   private event: boolean
-  private location_locked: boolean
-  constructor(params: { ref: Actor; event?: boolean; location_locked: boolean }) {
+  private locationLocked: boolean
+  constructor(params: { ref: Actor; event?: boolean; locationLocked: boolean }) {
     this.parent = params.ref
     this.event = params.event
-    this.location_locked = params.location_locked
+    this.locationLocked = params.locationLocked
   }
-  public before_spawn(params: ActorParams) {
+  public beforeSpawn(params: ActorParams) {
     const {
       occupation = this.parent.occupation,
-      birth_loc,
+      birthLoc,
       ages,
-      relative_time = window.world.date
+      relativeTime: relativeTime = window.world.date
     } = params
     const culture = window.world.cultures[this.parent.culture]
-    const species = species__by_culture(culture)
-    params.birth_time =
-      params.birth_time ??
-      find_birth_date({
+    const species = species__byCulture(culture)
+    params.birthTime =
+      params.birthTime ??
+      actor__findBirthDate({
         actor: this.parent,
         ages: ages?.map(
-          age => relative_time - convert_age(life_phase_boundaries, species.ages, age) * year_ms
+          age => relativeTime - convertAge(lifePhaseBoundaries, species.ages, age) * yearMS
         )
       })
-    if (params.birth_time === undefined) {
+    if (params.birthTime === undefined) {
       delete params.relation
       console.log(`child relation failure: ${this.parent.name}`)
       return
     }
-    const spouse = actor__spawn_spouse(this.parent)
+    const spouse = actor__spawnSpouse(this.parent)
     const parent = [this.parent, spouse].find(p => p.gender === culture.lineage)
-    params.parent_name = parent.name
-    params.gender = params.gender ?? npc__random_gender()
+    params.parentName = parent.name
+    params.gender = params.gender ?? npc__randomGender()
     params.culture = culture
-    const non_standard_last = lang__derived_surnames(culture.language)
-    if (!non_standard_last) params.last = parent.surname
+    const nonStandardLast = lang__derivedSurnames(culture.language)
+    if (!nonStandardLast) params.last = parent.surname
     params.lineage = parent.lineage
-    if (window.world.history_recording) params.occupation = occupation
-    params.social_class = actor__social_class({ actor: parent, time: relative_time })
-    if (!window.world.history_recording) {
-      params.social_class = social_class__random_drift(params.social_class)
+    if (window.world.historyRecording) params.occupation = occupation
+    params.socialClass = actor__socialClass({ actor: parent, time: relativeTime })
+    if (!window.world.historyRecording) {
+      params.socialClass = socialClass__randomDrift(params.socialClass)
     }
-    params.birth_loc = birth_loc ?? actor__past_location({ actor: parent, time: params.birth_time })
-    const age = get_age({ birth: params.birth_time, ref: window.world.date })
+    params.birthLoc = birthLoc ?? actor__pastLocation({ actor: parent, time: params.birthTime })
+    const age = getAge({ birth: params.birthTime, ref: window.world.date })
     // determine if the child is still living with parents
     const child = age <= species.ages['adolescence']
     if (child) params.location = window.world.locations[parent.location.residence]
-    if (!window.world.history_recording && !child && !this.location_locked) {
+    if (!window.world.historyRecording && !child && !this.locationLocked) {
       params.location =
         window.world.locations[
-          location__random_origin({
+          location__randomOrigin({
             culture: params.culture,
-            loc: params.birth_loc
+            loc: params.birthLoc
           }).idx
         ]
     }
   }
-  public after_spawn(child: Actor) {
-    actor__add_child_relation({ child, parent: this.parent, event: this.event })
+  public afterSpawn(child: Actor) {
+    actor__addChildRelation({ child, parent: this.parent, event: this.event })
   }
 }
 
-export const actor_event__child = (params: ActorEventSpawn) => {
+export const actorEvent__child = (params: ActorEventSpawn) => {
   const { actor, event, override } = params
-  return actor_event__relation({
+  return actorEvent__relation({
     ...params,
-    relation: () => new Child({ ref: actor, event: true, location_locked: false }),
-    override: { birth_time: event.time, ...override }
+    relation: () => new Child({ ref: actor, event: true, locationLocked: false }),
+    override: { birthTime: event.time, ...override }
   })
 }

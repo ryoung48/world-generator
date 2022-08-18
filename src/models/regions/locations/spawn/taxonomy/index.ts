@@ -1,19 +1,19 @@
-import { recent_battle_window } from '../../../../history/events/war/battles'
-import { nation__has_refugees } from '../../../diplomacy/migrations'
+import { recentBattleWindow } from '../../../../history/events/war/battles'
+import { nation__hasRefugees } from '../../../diplomacy/refugees'
 import { province__hub } from '../../../provinces'
-import { location__pending_invasion, location__raiders, location__recent_battle } from '../..'
+import { location__pendingInvasion, location__raiders, location__recentBattle } from '../..'
 import { Loc } from '../../types'
 import { LocationTrait } from '../traits/types'
 import { LocationTemplate } from './types'
 
-const coastal_settlements = 0.5
+const coastalSettlements = 0.5
 
 /**
  * Assign location inhabitants (hostile) based on subtype
  * @param loc
  * @returns a list of inhabitant traits
  */
-const assign_inhabitants: LocationTemplate['traits'] = (loc: Loc) => {
+const assignInhabitants: LocationTemplate['traits'] = (loc: Loc) => {
   const traits: LocationTrait['tag'][] = []
   if (loc.hostile) {
     if (loc.subtype.includes('beast')) traits.push('beasts')
@@ -51,49 +51,49 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   metropolis: {
     type: 'metropolis',
     population: [100000, 500000],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: 'city',
     group: 'settlement'
   },
   'huge city': {
     type: 'huge city',
     population: [50000, 99500],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: 'city',
     group: 'settlement'
   },
   'large city': {
     type: 'large city',
     population: [25000, 49500],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: 'city',
     group: 'settlement'
   },
   'small city': {
     type: 'small city',
     population: [10000, 24500],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: 'city',
     group: 'settlement'
   },
   'large town': {
     type: 'large town',
     population: [5000, 9500],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: 'town',
     group: 'settlement'
   },
   'small town': {
     type: 'small town',
     population: [1000, 4500],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: 'town',
     group: 'settlement'
   },
   'large village': {
     type: 'large village',
     population: [500, 950],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: loc => (!loc.hub && loc.coastal ? 'fishing_village' : 'village'),
     group: 'settlement',
     spawn: province => {
@@ -104,7 +104,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   'small village': {
     type: 'small village',
     population: [100, 450],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: loc => (!loc.hub && loc.coastal ? 'fishing_village' : 'village'),
     group: 'settlement',
     spawn: province => {
@@ -115,7 +115,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   'tiny village': {
     type: 'tiny village',
     population: [30, 95],
-    coastal: coastal_settlements,
+    coastal: coastalSettlements,
     icon: loc => (!loc.hub && loc.coastal ? 'fishing_village' : 'hamlet'),
     group: 'settlement',
     spawn: province => {
@@ -132,12 +132,12 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     finalize: loc => {
       loc.hostile = true
       const province = window.world.provinces[loc.province]
-      const { last_invasion } = province.memory
+      const { lastInvasion } = province.memory
       loc.subtype = `${window.dice.choice([
         'battleground',
         'battlefield'
-      ])} (${window.dice.weighted_choice([
-        { v: 'recent', w: last_invasion.time > window.world.date - recent_battle_window ? 5 : 0 },
+      ])} (${window.dice.weightedChoice([
+        { v: 'recent', w: lastInvasion.time > window.world.date - recentBattleWindow ? 5 : 0 },
         { v: 'old', w: 1 },
         { v: 'ancient', w: 1 }
       ])})`
@@ -148,10 +148,10 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['cave_1', 'cave_2']),
     group: 'wilderness',
     spawn: 1,
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     finalize: loc => {
       const raiders = location__raiders(loc)
-      loc.subtype = `${window.dice.choice(['cave', 'lair'])} (${window.dice.weighted_choice([
+      loc.subtype = `${window.dice.choice(['cave', 'lair'])} (${window.dice.weightedChoice([
         { v: 'beast', w: 1 },
         { v: 'primordial', w: 1 },
         { v: 'aberration', w: 1 },
@@ -168,28 +168,28 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['camp_1', 'camp_2', 'camp_3']),
     group: 'wilderness',
     spawn: 1,
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
-      const recent_battle = location__recent_battle(loc)
-      const invasion = location__pending_invasion(loc)
+      const recentBattle = location__recentBattle(loc)
+      const invasion = location__pendingInvasion(loc)
       const province = window.world.provinces[loc.province]
-      const refugees = nation__has_refugees(window.world.regions[province.curr_nation])
+      const refugees = nation__hasRefugees(window.world.regions[province.currNation])
       const raiders = location__raiders(loc)
       const { civilized, development } = window.world.regions[loc.region]
       const remote = development === 'remote'
-      loc.subtype = `camp (${window.dice.weighted_choice(
+      loc.subtype = `camp (${window.dice.weightedChoice(
         loc.hostile
           ? [
               { v: 'bandits', w: 1 },
               { v: 'raiders', w: raiders.length > 0 ? 3 : 0 },
               { v: 'cultists', w: 1 },
               { v: 'occultists', w: 1 },
-              { v: 'deserters', w: recent_battle ? 3 : 0 },
+              { v: 'deserters', w: recentBattle ? 3 : 0 },
               { v: 'ruined', w: 1 }
             ]
           : [
-              { v: 'military', w: invasion || recent_battle ? 3 : 0 },
+              { v: 'military', w: invasion || recentBattle ? 3 : 0 },
               { v: 'criminal', w: 1 },
               { v: 'refugees', w: refugees ? 3 : 0 },
               { v: 'rebels', w: 1 },
@@ -245,7 +245,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       const { development } = window.world.regions[province.region]
       return development === 'remote' ? 0 : 1
     },
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
       const raiders = location__raiders(loc)
@@ -254,7 +254,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
         'fortress',
         'castle',
         'stronghold'
-      ])} (${window.dice.weighted_choice(
+      ])} (${window.dice.weightedChoice(
         loc.hostile
           ? [
               { v: 'nobles, exiled', w: 1 },
@@ -286,10 +286,10 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       const { civilized } = window.world.regions[province.region]
       return civilized ? 0.5 : 0
     },
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
-      loc.subtype = `${window.dice.weighted_choice([
+      loc.subtype = `${window.dice.weightedChoice([
         { w: 3, v: 'laboratory' },
         { w: 1, v: 'observatory' },
         { w: 1, v: 'academy' }
@@ -347,7 +347,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       const { development } = window.world.regions[province.region]
       return development === 'remote' ? 0 : 0.5
     },
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
       loc.subtype = `${window.dice.choice(['temple', 'monastery'])} (${window.dice.choice(
@@ -375,7 +375,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   farm: {
     type: 'farm',
     icon: () => window.dice.choice(['farm_1', 'farm_2', 'farm_3']),
-    restrictions: cell => !cell.is_mountains,
+    restrictions: cell => !cell.isMountains,
     group: 'wilderness',
     spawn: province => {
       const { development } = window.world.regions[province.region]
@@ -394,7 +394,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'mine',
     icon: () => window.dice.choice(['mines_1', 'mines_2']),
     group: 'wilderness',
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     spawn: province => {
       const { development } = window.world.regions[province.region]
       return development === 'remote' ? 0 : 0.5
@@ -426,7 +426,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['lighthouse_1', 'lighthouse_2']),
     group: 'wilderness',
     coastal: 0.5,
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     spawn: province => {
       const { civilized } = window.world.regions[province.region]
       return province.ocean > 0 && civilized ? 0.5 : 0
@@ -443,7 +443,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'inn',
     icon: () => window.dice.choice(['inn_1', 'inn_2', 'inn_3']),
     group: 'wilderness',
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     spawn: province => {
       const { civilized } = window.world.regions[province.region]
       return Object.keys(province.trade.land).length > 0 && civilized ? 0.5 : 0
@@ -459,7 +459,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () =>
       window.dice.choice(['watchtower_1', 'watchtower_2', 'watchtower_3', 'watchtower_4']),
     group: 'wilderness',
-    traits: assign_inhabitants,
+    traits: assignInhabitants,
     spawn: province => {
       const { civilized } = window.world.regions[province.region]
       return Object.keys(province.trade.land).length > 0 && civilized ? 0.5 : 0

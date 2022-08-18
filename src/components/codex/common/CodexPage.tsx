@@ -3,17 +3,17 @@ import { Button, Grid, IconButton } from '@mui/material'
 import { CrosshairsGps } from 'mdi-material-ui'
 import { ReactNode } from 'react'
 
-import { view__context } from '../../../context'
-import { location__zoom } from '../../../models/utilities/codex'
-import { css_colors } from '../../theme/colors'
+import { codex__locationZoom } from '../../../models/utilities/codex'
+import { view__context } from '../../context'
+import { cssColors } from '../../theme/colors'
 import { CharGen } from '../actors/CharGen'
 import { CodexTitle } from './text/title'
 import { CodexTitleProps } from './text/title/types'
 
 const classes = {
   panel: css`
-    background-color: ${css_colors.background.cards};
-    border: thick double ${css_colors.primary};
+    background-color: ${cssColors.background.cards};
+    border: thick double ${cssColors.primary};
     overflow-y: auto;
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
@@ -27,11 +27,11 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
   const { current } = state.codex
   const location = window.world.locations[state.codex.location]
   const nation = window.world.regions[state.codex.nation]
-  const loc_zoom = current === 'location'
-  const zoom = loc_zoom ? location__zoom(location) : 10
-  const settlement_idx = loc_zoom ? location.idx : nation.capital
-  const { x, y } = window.world.locations[settlement_idx]
-  const enabled_gps = ['location', 'nation'].includes(current)
+  const locZoom = current === 'location'
+  const zoom = locZoom ? codex__locationZoom(location) : 10
+  const settlementIdx = locZoom ? location.idx : nation.capital
+  const { x, y } = window.world.locations[settlementIdx]
+  const enabledGPS = ['location', 'nation'].includes(current)
   return (
     <Grid container className={classes.panel} p={3} justifyContent='space-between'>
       <Grid item xs={7}>
@@ -54,7 +54,7 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
             <IconButton
               size='small'
               color='primary'
-              disabled={!enabled_gps}
+              disabled={!enabledGPS}
               onClick={() => {
                 dispatch({ type: 'update gps', payload: { gps: { x, y, zoom } } })
               }}

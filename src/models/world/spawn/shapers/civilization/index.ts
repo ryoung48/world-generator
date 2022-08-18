@@ -1,25 +1,25 @@
 import { province__hub } from '../../../../regions/provinces'
-import { add_path, route_blacklist, shortest_path } from '../../../travel/navigation'
+import { addPath, routeBlacklist, shortestPath } from '../../../travel/navigation'
 import { Shaper } from '..'
-import { cultural_spheres } from './cultures'
-import { regional_society } from './society'
+import { culturalSpheres } from './cultures'
+import { regionalSociety } from './society'
 import { urbanization } from './urbanization'
 
 export class CivilizationShaper extends Shaper {
   get pipeline() {
     return [
-      { name: 'Cultural Spheres', action: cultural_spheres },
-      { name: 'Old Imperial Roads', action: this.imperial_roads },
+      { name: 'Cultural Spheres', action: culturalSpheres },
+      { name: 'Old Imperial Roads', action: this.imperialRoads },
       { name: 'Urbanization', action: urbanization },
-      { name: 'Government & Society', action: regional_society }
+      { name: 'Government & Society', action: regionalSociety }
     ]
   }
-  private imperial_roads() {
+  private imperialRoads() {
     const cache: Record<number, Record<number, boolean>> = {}
-    const { blacklist } = route_blacklist()
+    const { blacklist } = routeBlacklist()
     window.world.regions.forEach(region => {
       const src = window.world.provinces[region.capital]
-      const targets = region.land_borders
+      const targets = region.landBorders
         .map(i => {
           const border = window.world.regions[i]
           return window.world.provinces[border.capital]
@@ -30,12 +30,12 @@ export class CivilizationShaper extends Shaper {
         cache[src.idx][dst.idx] = true
         if (!cache[dst.idx]) cache[dst.idx] = {}
         cache[dst.idx][src.idx] = true
-        const path = shortest_path({
+        const path = shortestPath({
           type: 'land',
           start: province__hub(src).cell,
           end: province__hub(dst).cell
         })
-        add_path({ src, dst, path, blacklist, type: 'land', imperial: true })
+        addPath({ src, dst, path, blacklist, type: 'land', imperial: true })
       })
     })
   }

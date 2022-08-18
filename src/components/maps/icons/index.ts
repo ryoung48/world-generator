@@ -1,9 +1,9 @@
 import { Point } from '../../../models/utilities/math/points'
 import { IconDef } from './types'
 
-export const icon_path = `${window.location.href}assets/`
+export const iconPath = `${window.location.href}assets/`
 
-export const draw_icon = (params: {
+export const canvas__drawIcon = (params: {
   ctx: CanvasRenderingContext2D
   img: HTMLImageElement
   icon: IconDef

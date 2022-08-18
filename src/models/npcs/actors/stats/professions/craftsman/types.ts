@@ -1,4 +1,4 @@
-export type craftsman_professions =
+export type CraftsmanProfessions =
   | 'architect'
   | 'alchemist'
   | 'armorer'

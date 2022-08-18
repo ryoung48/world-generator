@@ -1,22 +1,22 @@
-import { skill_gate__chaotic, skill_gate__charisma, skill_gate__social } from '../common/checks'
+import { skillGate__chaotic, skillGate__charisma, skillGate__social } from '../common/checks'
 import { ActorSkill } from '../types'
-import { social_skill } from '.'
+import { SocialSkill } from '.'
 
-export const actor_skills__social: Record<social_skill, ActorSkill> = {
+export const actorSkills__social: Record<SocialSkill, ActorSkill> = {
   bluff: {
     key: 'bluff',
-    valid: skill_gate__chaotic
+    valid: skillGate__chaotic
   },
   carouse: {
     key: 'carouse',
-    valid: params => skill_gate__charisma(params) * skill_gate__social(params)
+    valid: params => skillGate__charisma(params) * skillGate__social(params)
   },
   charm: {
     key: 'charm'
   },
   etiquette: {
     key: 'etiquette',
-    valid: skill_gate__charisma
+    valid: skillGate__charisma
   },
   insight: {
     key: 'insight'
@@ -26,14 +26,14 @@ export const actor_skills__social: Record<social_skill, ActorSkill> = {
   },
   intrigue: {
     key: 'intrigue',
-    valid: skill_gate__charisma
+    valid: skillGate__charisma
   },
   negotiate: {
     key: 'negotiate'
   },
   oratory: {
     key: 'oratory',
-    valid: params => skill_gate__charisma(params) * skill_gate__social(params)
+    valid: params => skillGate__charisma(params) * skillGate__social(params)
   },
   teaching: {
     key: 'teaching'

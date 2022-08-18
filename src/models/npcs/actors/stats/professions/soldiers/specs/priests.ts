@@ -1,15 +1,15 @@
-import { all_skills } from '../../../skills/categories'
-import { scholar_attributes } from '../../scholars/academics'
+import { allSkills } from '../../../skills/categories'
+import { scholarAttributes } from '../../scholars/academics'
 import { ProfessionKit } from '../../types'
 
-const tertiary = [...all_skills]
+const tertiary = [...allSkills]
 
-export const priest_kits: Record<
+export const priestKits: Record<
   'priest' | 'monk' | 'templar' | 'inquisitor' | 'zealot',
   ProfessionKit
 > = {
   priest: {
-    attributes: scholar_attributes,
+    attributes: scholarAttributes,
     skills: {
       primary: ['theology'],
       secondary: ['arcana'],

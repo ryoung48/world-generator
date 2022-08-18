@@ -1,4 +1,4 @@
-export const title_case = (str: string) => {
+export const titleCase = (str: string) => {
   return str.replace(/[^\s-()]+/g, txt => {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   })
@@ -14,11 +14,11 @@ export const singular = (str: string) => {
   return end === 's' ? str.slice(0, -1) : str
 }
 
-export const proper_sentences = (str: string) => {
+export const properSentences = (str: string) => {
   const matches = str.match(/.+?[.!?]( |$)/g)
   return matches?.map(txt => txt.charAt(0).toUpperCase() + txt.substr(1))?.join('') ?? str
 }
-export const proper_list = (list: string[], ending: string) =>
+export const properList = (list: string[], ending: string) =>
   list.join(', ').replace(/, ([^,]*)$/, `${list.length > 2 ? ',' : ''} ${ending} $1`)
 
 const numberText: Record<number, string> = {
@@ -57,9 +57,9 @@ const numberValues = Object.keys(numberText)
   .map(val => Number(val))
   .sort((a, b) => b - a)
 
-export const numbers_to_words = (n: number): string => {
+export const numbersToWords = (n: number): string => {
   if (n === 0) return 'zero'
-  if (n < 0) return 'negative ' + numbers_to_words(-n)
+  if (n < 0) return 'negative ' + numbersToWords(-n)
   let num = n
   let text = ''
   for (const numberValue of numberValues) {
@@ -67,7 +67,7 @@ export const numbers_to_words = (n: number): string => {
 
     if (count < 1) continue
 
-    if (numberValue >= 100) text += numbers_to_words(count) + ' '
+    if (numberValue >= 100) text += numbersToWords(count) + ' '
 
     text += numberText[numberValue] + ' '
     num -= count * numberValue
