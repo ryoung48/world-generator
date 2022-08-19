@@ -5,11 +5,11 @@ import { Pie } from 'react-chartjs-2'
 import { pieChart__construct } from '../../common/charts'
 import { NestedPieData, PieTooltip } from './types'
 
-type custom_title = (_node: NestedPieData) => string
+type CustomTitle = (_node: NestedPieData) => string
 
 export function NestedPieChart(props: {
   data: NestedPieData
-  title: custom_title
+  title: CustomTitle
   tooltips: PieTooltip
 }) {
   const { data, title, tooltips } = props

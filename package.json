@@ -8,7 +8,7 @@
     "lint:eslint": " npx eslint ./src --ext .jsx,.js,.ts,.tsx --ignore-path ./.gitignore",
     "lint:cycles": "npx madge --extensions ts,tsx --ts-config ./tsconfig.json -c ./src",
     "lint": "npm run lint:cspell && npm run lint:eslint && npm run lint:cycles",
-    "test": "jest --collectCoverage",
+    "test": "jest",
     "docs": "npx jsdoc -r ./src -c jsdoc.json",
     "build": "tsc && vite build",
     "preview": "vite preview"

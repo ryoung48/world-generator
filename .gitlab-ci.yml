@@ -4,6 +4,7 @@ pages: # the job must be named pages
   script:
     - npm ci --force # install node modules
     - npm run lint # run linter
+    - npm run test # unit tests
     - npm run build # make a production build
     - mv public public-vue # GitLab Pages hooks on the public folder
     - mv dist public # rename the dist folder (result of npm run build)
