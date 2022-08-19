@@ -36,9 +36,9 @@ export const colors__adjacent = (params: { color: Hue; dist?: number }): Hue[] =
   const { color, dist = 2 } = params
   const idx = colors__hues.findIndex(hue => hue === color)
   const max = colors__hues.length
-  return range(dist * 2 + 1, idx - dist).map(
-    i => colors__hues[i >= max ? i - max : i < 0 ? max + i : i]
-  )
+  const start = idx - dist
+  const stop = start + dist * 2 + 1
+  return range(start, stop).map(i => colors__hues[i >= max ? i - max : i < 0 ? max + i : i])
 }
 
 const neutralHueLookup: Record<Hue, ColorHue> = {

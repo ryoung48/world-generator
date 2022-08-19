@@ -12,8 +12,6 @@ export const scaleExp = (domain: number[], range: number[], v: number, exp: numb
 export const radians = (d: number) => (d * Math.PI) / 180
 export const degrees = (r: number) => (r * 180) / Math.PI
 
-export const average = (n: number[]) => n.reduce((sum, i) => sum + i, 0) / n.length
-
 export const distance = ([x1, y1]: number[], [x2, y2]: number[], scale = [1, 1]) => {
   const [sx, sy] = scale
   return Math.hypot((x1 - x2) * sx, (y1 - y2) * sy)
@@ -37,8 +35,8 @@ export const buildDistribution = <T>(
   const total = map.reduce((sum, { w }) => sum + w, 0)
   return map.map(({ w, v }) => ({ v, w: (w / total) * qty }))
 }
-type nested_distribution<T> = (T | nested_distribution<T>)[]
-export const buildNestedDistribution = <T>(dist: nested_distribution<T>): WeightedDistribution<T> =>
+type NestedDistribution<T> = (T | NestedDistribution<T>)[]
+export const buildNestedDistribution = <T>(dist: NestedDistribution<T>): WeightedDistribution<T> =>
   dist.reduce((list: WeightedDistribution<T>, elm) => {
     if (Array.isArray(elm)) list.concat(buildDistribution(buildNestedDistribution(elm), 1))
     else list.push({ v: elm, w: 1 })
