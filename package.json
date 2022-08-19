@@ -58,7 +58,6 @@
     }
   },
   "jest": {
-    "collectCoverage": true,
     "collectCoverageFrom": [
       "./src/models/utilities/**"
     ],

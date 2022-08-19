@@ -95,11 +95,45 @@ export function WorldMap() {
     dy: 0,
     scale: 1
   })
+  const prevTransformRef = useRef<typeof transform>()
   const [zoomController, setZoom] = useState({ zoom: zoom() })
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [init, setInit] = useState(false)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const transition = () => {
+    const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
+    const poly = window.world.cells[cell]
+    const province = window.world.provinces[poly.province]
+    const provinces = [province].concat(province__neighbors(province))
+    const prospects = provinces
+      .map(prov => prov.locations.map(l => window.world.locations[l]))
+      .flat()
+    const hub = province__hub(province)
+    const nation = cell__nation(poly)
+    const localScale = transform.scale > map__breakpoints.regional
+    const globalScale = transform.scale <= map__breakpoints.global
+    const local = (state.codex.current === 'location' && !globalScale) || localScale
+    const { loc } =
+      state.codex.current === 'location' && localScale
+        ? prospects.reduce(
+            (closest, curr) => {
+              const dist = point__distance({ points: [curr, { x: cursor.x, y: cursor.y }] })
+              return dist < closest.dist ? { loc: curr, dist } : closest
+            },
+            { loc: undefined, dist: Infinity }
+          )
+        : { loc: hub }
+
+    const current = local ? 'location' : 'nation'
+    dispatch({
+      type: 'update codex',
+      payload: {
+        target: current === 'location' ? loc : window.world.regions[nation],
+        disableZoom: true
+      }
+    })
+  }
   useEffect(() => {
     const init = async () => {
       const canvas = canvasRef.current
@@ -176,6 +210,18 @@ export function WorldMap() {
       ctx.restore()
     }
   }, [cachedImages, transform, state, init])
+  useEffect(() => {
+    const oldScale = prevTransformRef.current?.scale
+    const newScale = transform.scale
+    const regionalTransition =
+      newScale <= map__breakpoints.global && oldScale > map__breakpoints.global
+    const globalTransition =
+      oldScale <= map__breakpoints.global && newScale > map__breakpoints.global
+    const localTransition =
+      newScale <= map__breakpoints.regional && oldScale > map__breakpoints.regional
+    if (regionalTransition || localTransition || globalTransition) transition()
+    prevTransformRef.current = transform
+  }, [transform])
   return (
     <Grid container>
       {/* <Grid.Col span={3} py={0}></Grid.Col> */}
@@ -195,39 +241,7 @@ export function WorldMap() {
             const ny = (clientY - transform.dy) / transform.scale
             setCursor({ x: nx, y: ny })
           }}
-          onClick={() => {
-            const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
-            const poly = window.world.cells[cell]
-            const province = window.world.provinces[poly.province]
-            const provinces = [province].concat(province__neighbors(province))
-            const prospects = provinces
-              .map(prov => prov.locations.map(l => window.world.locations[l]))
-              .flat()
-            const hub = province__hub(province)
-            const nation = cell__nation(poly)
-            const localScale = transform.scale > map__breakpoints.regional
-            const globalScale = transform.scale <= map__breakpoints.global
-            const local = (state.codex.current === 'location' && !globalScale) || localScale
-            const { loc } =
-              state.codex.current === 'location' && localScale
-                ? prospects.reduce(
-                    (closest, curr) => {
-                      const dist = point__distance({ points: [curr, { x: cursor.x, y: cursor.y }] })
-                      return dist < closest.dist ? { loc: curr, dist } : closest
-                    },
-                    { loc: undefined, dist: Infinity }
-                  )
-                : { loc: hub }
-
-            const current = local ? 'location' : 'nation'
-            dispatch({
-              type: 'update codex',
-              payload: {
-                target: current === 'location' ? loc : window.world.regions[nation],
-                disableZoom: true
-              }
-            })
-          }}
+          onClick={transition}
         ></canvas>
         {/* https://tympanus.net/codrops/2019/02/19/svg-filter-effects-creating-texture-with-feturbulence/ */}
         <svg height='0'>
