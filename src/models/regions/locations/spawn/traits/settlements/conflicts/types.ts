@@ -5,7 +5,6 @@ export type settlement__conflict =
   | 'dark secret'
   | 'deadly plague'
   | 'devastation'
-  | 'enslaved workers'
   | 'food shortage'
   | 'foreign spies'
   | 'foreign occupation'

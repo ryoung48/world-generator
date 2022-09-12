@@ -1,4 +1,4 @@
-import { entity__partitionBFS, TaggedEntity } from '../../../src/models/utilities/codex/entities'
+import { entity__partitionBFS, TaggedEntity } from '../../../../src/models/utilities/codex/entities'
 
 const items: TaggedEntity[] = [
   {

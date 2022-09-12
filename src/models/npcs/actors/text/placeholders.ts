@@ -1,4 +1,4 @@
-export const entityPlaceholder = '__entity__'
+export const entityPlaceholder = '<entity>'
 
 const placeholderRegex = new RegExp(entityPlaceholder, 'g')
 

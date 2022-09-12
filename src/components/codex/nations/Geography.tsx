@@ -5,22 +5,33 @@ import { province__decoration } from '../../../models/regions/provinces'
 import { Region } from '../../../models/regions/types'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { world__getLands } from '../../../models/world'
+import { climateLookup, climates } from '../../../models/world/climate/types'
 import { view__context } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
 
-export const region__land = (nation: Region) => {
-  return nation.provinces
-    .map(t => window.world.provinces[t])
-    .reduce((sum, city) => city.land + sum, 0)
-}
-
-export const region__ocean = (nation: Region) => {
-  return nation.provinces
-    .map(t => window.world.provinces[t])
-    .reduce((sum, city) => city.ocean + sum, 0)
+const region__biomes = (nation: Region) => {
+  const biomes = Object.entries(
+    nation.provinces
+      .map(t => window.world.provinces[t])
+      .reduce((dict: Record<string, number>, province) => {
+        const { climate } = window.world.regions[province.region]
+        if (!dict[climate]) dict[climate] = 0
+        dict[climate] += province.land
+        return dict
+      }, {})
+  ).sort((a, b) => b[1] - a[1])
+  const total = biomes.reduce((sum, [_, v]) => sum + v, 0)
+  return biomes
+    .map(
+      ([k, v]) =>
+        `${decorateText({
+          label: k,
+          tooltip: climateLookup[k as climates].code
+        })} (${formatters.percent({ value: v / total })})`
+    )
+    .join(', ')
 }
 
 const diplomaticScore: Record<DiplomaticRelation, number> = {
@@ -48,9 +59,6 @@ export function Geography() {
   const regions = Array.from(new Set(provinces.map(city => city.region))).map(
     r => window.world.regions[r]
   )
-  const { land: worldLand, water } = world__getLands()
-  const nationLand = region__land(nation)
-  const nationOcean = region__ocean(nation)
   const rebellions = conquered
     .map(p => {
       const province = window.world.provinces[p]
@@ -84,18 +92,8 @@ export function Geography() {
     <SectionList
       list={[
         {
-          label: `Landmass`,
-          content: `${formatters.compact(
-            nationLand * window.world.dim.cellArea
-          )} square miles (${formatters.percent({
-            value: nationLand / worldLand
-          })}) [${nationLand}]`
-        },
-        {
-          label: `Ocean`,
-          content: `${formatters.compact(
-            nationOcean * window.world.dim.cellArea
-          )} square miles (${formatters.percent({ value: nationOcean / water })})`
+          label: `Climate`,
+          content: <StyledText text={region__biomes(nation)}></StyledText>
         },
         {
           label: `Borders (${neighbors.length})`,

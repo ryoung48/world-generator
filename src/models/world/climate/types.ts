@@ -6,22 +6,22 @@ type zones = 'Arctic' | 'Temperate' | 'Tropical'
 export type BasicClimate = 'Warm' | 'Temperate' | 'Cold'
 
 export const enum climates {
-  EQUATORIAL = 'Tropical Rainforest (Af)',
-  TROPICAL_MONSOON = 'Tropical Monsoon (Am)',
-  SAVANNA = 'Savanna (Aw)',
-  HOT_STEPPE = 'Hot Steppe (BSh)',
-  HOT_DESERT = 'Hot Desert (BWh)',
-  COLD_DESERT = 'Cold Desert (BWk)',
-  COLD_STEPPE = 'Cold Steppe (BSk)',
-  SUBTROPICAL = 'Subtropical (Cfa)',
-  TEMPERATE_MONSOON = 'Temperate Monsoon (Cwa)',
-  MEDITERRANEAN = 'Mediterranean (Csa)',
-  OCEANIC = 'Oceanic (Cfb)',
-  CONTINENTAL = 'Laurentian (Dfa)',
-  MANCHURIAN = 'Manchurian (Dwa)',
-  SUBARCTIC = 'Subarctic (Dfc)',
-  SIBERIAN = 'Siberian (Dwc)',
-  POLAR = 'Polar (ET)'
+  EQUATORIAL = 'Tropical Rainforest',
+  TROPICAL_MONSOON = 'Tropical Monsoon',
+  SAVANNA = 'Savanna',
+  HOT_STEPPE = 'Hot Steppe',
+  HOT_DESERT = 'Hot Desert',
+  COLD_DESERT = 'Cold Desert',
+  COLD_STEPPE = 'Cold Steppe',
+  SUBTROPICAL = 'Subtropical',
+  TEMPERATE_MONSOON = 'Temperate Monsoon',
+  MEDITERRANEAN = 'Mediterranean',
+  OCEANIC = 'Oceanic',
+  CONTINENTAL = 'Laurentian',
+  MANCHURIAN = 'Manchurian',
+  SUBARCTIC = 'Subarctic',
+  SIBERIAN = 'Siberian',
+  POLAR = 'Polar'
 }
 
 export const rain = {
@@ -37,6 +37,7 @@ const baseBiodiversity = 30
 export interface Climate {
   type: climates
   zone: zones
+  code: string
   display: string
   population: number
   scorePenalty: number
@@ -57,6 +58,7 @@ const diurnalVariation: Record<'low' | 'standard' | 'extreme', [number, number]>
 export const climateLookup: Record<climates, Climate> = {
   [climates.EQUATORIAL]: {
     type: climates.EQUATORIAL,
+    code: 'Af',
     zone: 'Tropical',
     display: '#0000FE',
     population: 1,
@@ -69,6 +71,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.TROPICAL_MONSOON]: {
     type: climates.TROPICAL_MONSOON,
+    code: 'Am',
     zone: 'Tropical',
     population: 1.5,
     scorePenalty: 1,
@@ -81,6 +84,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.SAVANNA]: {
     type: climates.SAVANNA,
+    code: 'Aw',
     zone: 'Tropical',
     display: '#46A9FA',
     population: 1.5,
@@ -93,6 +97,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.HOT_STEPPE]: {
     type: climates.HOT_STEPPE,
+    code: 'BSh',
     zone: 'Temperate',
     display: '#F5A301',
     population: 1,
@@ -105,6 +110,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.COLD_STEPPE]: {
     type: climates.COLD_STEPPE,
+    code: 'BWh',
     zone: 'Temperate',
     display: '#FFDB63',
     population: 1,
@@ -117,6 +123,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.HOT_DESERT]: {
     type: climates.HOT_DESERT,
+    code: 'BWk',
     zone: 'Tropical',
     display: '#FE0000',
     population: 0.5,
@@ -130,6 +137,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.COLD_DESERT]: {
     type: climates.COLD_DESERT,
+    code: 'BSk',
     zone: 'Temperate',
     display: '#FE9695',
     population: 0.5,
@@ -143,6 +151,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.MEDITERRANEAN]: {
     type: climates.MEDITERRANEAN,
+    code: 'Cfa',
     zone: 'Temperate',
     display: '#FFFF00',
     population: 3,
@@ -155,6 +164,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.OCEANIC]: {
     type: climates.OCEANIC,
+    code: 'Cwa',
     zone: 'Temperate',
     display: '#66FF33',
     population: 3,
@@ -167,6 +177,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.SUBTROPICAL]: {
     type: climates.SUBTROPICAL,
+    code: 'Csa',
     zone: 'Temperate',
     display: '#C6FF4E',
     population: 2.5,
@@ -179,6 +190,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.TEMPERATE_MONSOON]: {
     type: climates.TEMPERATE_MONSOON,
+    code: 'Cfb',
     zone: 'Temperate',
     display: '#96FF96',
     population: 2.5,
@@ -192,6 +204,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.CONTINENTAL]: {
     type: climates.CONTINENTAL,
+    code: 'Dfa',
     zone: 'Temperate',
     display: '#38C7FF',
     population: 3,
@@ -204,6 +217,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.MANCHURIAN]: {
     type: climates.MANCHURIAN,
+    code: 'Dwa',
     zone: 'Temperate',
     display: '#ABB1FF',
     population: 2,
@@ -217,6 +231,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.SUBARCTIC]: {
     type: climates.SUBARCTIC,
+    code: 'Dfc',
     zone: 'Arctic',
     display: '#007E7D',
     population: 1,
@@ -229,6 +244,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.SIBERIAN]: {
     type: climates.SIBERIAN,
+    code: 'Dwc',
     zone: 'Arctic',
     display: '#4C51B5',
     population: 1,
@@ -242,6 +258,7 @@ export const climateLookup: Record<climates, Climate> = {
   },
   [climates.POLAR]: {
     type: climates.POLAR,
+    code: 'ET',
     zone: 'Arctic',
     display: '#B2B2B2',
     population: 0.3,

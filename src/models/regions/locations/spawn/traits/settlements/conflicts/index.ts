@@ -6,6 +6,7 @@ import { relation__isHostile } from '../../../../../diplomacy/relations'
 import { province__findClosest } from '../../../../../provinces'
 import { location__pendingInvasion, location__raiders, location__recentBattle } from '../../../..'
 import { location__terrain } from '../../../../environment'
+import { locationPlaceholder } from '../../../placeholders'
 import { location__isCity, location__isVillage } from '../../../taxonomy/settlements'
 import { LocationTrait } from '../../types'
 import { settlement__conflict } from './types'
@@ -16,13 +17,16 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
     text: ({ entity: loc }) => {
       const { civilized, development } = window.world.regions[loc.region]
       const remote = development === 'remote'
-      return `Two rival groups (${window.dice.weightedChoice([
-        { v: 'nobles', w: 1 },
+      return `There is great animosity between two rival groups (${window.dice.weightedChoice([
+        { v: 'nobles', w: remote ? 0 : 1 },
         { v: 'ethnic', w: 1 },
         { v: 'criminal', w: remote ? 0 : 1 },
         { v: 'religious', w: remote ? 0 : 1 },
         { v: 'tribal', w: civilized ? 0 : 1 }
-      ])}) are openly fighting over ${window.dice.choice(['past crimes', 'resources'])}.`
+      ])}). ${window.dice.choice([
+        'Their neighbors',
+        'The local law'
+      ])} have kept things from too-overt violence, but members of the groups will constantly interfere with their rivals and cause whatever misery they can get away with.`
     },
     spawn: () => 1
   },
@@ -54,7 +58,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
   'deadly plague': {
     tag: 'deadly plague',
     text: () =>
-      `A virulent disease afflicts this site. Many pray for a cure. Others try to sell false hope.`,
+      `A virulent disease afflicts this ${locationPlaceholder}. Many pray for a cure. Others try to sell false hope.`,
     spawn: () => 1
   },
   devastation: {
@@ -62,7 +66,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
     text: ({ entity: loc }) => {
       const { lastInvasion } = window.world.provinces[loc.province].memory
       const event = location__recentBattle(loc) && window.world[lastInvasion.type][lastInvasion.idx]
-      return `This site was recently the victim of a violent conflict and has sustained great damage (${
+      return `This ${locationPlaceholder} was recently the victim of a violent conflict and has sustained great damage (${
         event
           ? event.name
           : location__raiders(loc).length > 0
@@ -75,25 +79,16 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
       return location__recentBattle(loc) ? 5 : plundered ? 0.5 : 0
     }
   },
-  'enslaved workers': {
-    tag: 'enslaved workers',
-    text: () => {
-      return `The economy of this site is heavily dependent on slave labor. A large proportion of the population is enslaved.`
-    },
-    spawn: ({ entity: loc }) => {
-      return location__isVillage(loc) ? 1 : 0.5
-    }
-  },
   'food shortage': {
     tag: 'food shortage',
     text: () =>
-      `Repeated bad harvests have made food very scarce in this site. The majority of the populace is clearly malnourished.`,
+      `Repeated bad harvests have made food very scarce in this ${locationPlaceholder}. The majority of the populace is clearly malnourished.`,
     spawn: () => 1
   },
   'foreign spies': {
     tag: 'foreign spies',
     text: () =>
-      `A network of foreign spies is rumored to be active in this site. They gather information and sow chaos in the interest of some foreign power.`,
+      `A network of foreign spies is rumored to be active in this ${locationPlaceholder}. They gather information and sow chaos in the interest of some foreign power.`,
     spawn: ({ entity: loc }) => {
       const province = window.world.provinces[loc.province]
       const region = window.world.regions[province.currNation]
@@ -110,7 +105,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
   'foreign occupation': {
     tag: 'foreign occupation',
     text: () =>
-      `This site has recently been conquered and is occupied by enemy forces. Treatment of natives is harsh to deter insurgencies.`,
+      `This ${locationPlaceholder} has recently been conquered and is occupied by enemy forces. Treatment of natives is harsh to deter insurgencies.`,
     spawn: ({ entity: loc }) => {
       const province = window.world.provinces[loc.province]
       const { lastInvasion } = province.memory
@@ -131,7 +126,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
         'witches',
         'necromancers',
         'warlocks'
-      ])} operates within this site. They study forbidden magic and conduct dark experiments in search of great power.`,
+      ])} operates within this ${locationPlaceholder}. They study forbidden magic and conduct dark experiments in search of great power.`,
     spawn: () => 1
   },
   'heretical faith': {
@@ -158,10 +153,10 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
           link: window.world.regions[nextBattle.aggressor]
         })} prepare to ${
           nextBattle.aggressor === defender.idx ? 'retake' : 'assault'
-        } this site. (${event.name})`
+        } this ${locationPlaceholder} (${event.name}).`
       } else {
         const { nextBattle: nextBattle } = event
-        return `The ${nextBattle.attacker} prepare to capture this site. (${event.name})`
+        return `The ${nextBattle.attacker} prepare to capture this ${locationPlaceholder} (${event.name}).`
       }
     },
     spawn: ({ entity: loc }) => {
@@ -182,7 +177,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
         { v: 'tornado', w: location__isCity(loc) ? 0 : 0.5 },
         { v: 'wildfire', w: 1 },
         { v: 'hurricane', w: coastal ? 1 : 0 }
-      ])} has ravaged this site.`
+      ])} has ravaged this ${locationPlaceholder}.`
     },
     spawn: () => 1
   },
@@ -204,13 +199,13 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
         'aristocrat',
         'high priest',
         'rebel leader'
-      ])} has been granted asylum and resides within this site.`,
+      ])} has been granted asylum and resides within this ${locationPlaceholder}.`,
     spawn: () => 0.5
   },
   'rebel stronghold': {
     tag: 'rebel stronghold',
     text: () =>
-      `A major group of rebels are actively working against the established authority operate within this site.`,
+      `A major group of rebels are actively working against the established authority operate within this ${locationPlaceholder}.`,
     spawn: () => 0.5
   },
   'reformation edict': {
@@ -232,13 +227,13 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
   'stolen tribute': {
     tag: 'stolen tribute',
     text: () =>
-      `The taxes owed by this site have been stolen and need to be reacquired before officials begin an inquiry.`,
+      `The taxes owed by this ${locationPlaceholder} have been stolen and need to be reacquired before officials begin an inquiry.`,
     spawn: ({ entity: loc }) => (location__isVillage(loc) ? 1 : 0)
   },
   'succession dispute': {
     tag: 'succession dispute',
     text: () =>
-      "The site's rule is due to pass to the next generation, but there are multiple claimants to it.",
+      `The ${locationPlaceholder}'s rule is due to pass to the next generation, but there are multiple claimants to it.`,
     spawn: () => 0.5
   },
   'tenuous diplomacy': {
@@ -272,7 +267,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
   'toxic economy': {
     tag: 'toxic economy',
     text: () => {
-      return `This site is reliant on ${window.dice.choice([
+      return `This ${locationPlaceholder} is reliant on ${window.dice.choice([
         'the manufacture an addictive substance',
         'the hazardous extraction of a valuable resource'
       ])}.`
@@ -282,7 +277,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
   'wanted outlaw': {
     tag: 'wanted outlaw',
     text: () =>
-      `Some nefarious outlaw has made his home in or near this site, and there are locals that feel obligated to protect him for some reason.`,
+      `Some nefarious outlaw has made his home in or near this ${locationPlaceholder}, and there are locals that feel obligated to protect him for some reason.`,
     spawn: () => 1
   },
   'warlord rule': {
@@ -292,7 +287,7 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
       `A ${
         location__raiders(loc).length > 0 ? 'raider' : 'bandit'
       } warlord has ${window.dice.choice([
-        'taken control over this site and rules with an iron fist',
+        `taken control over this ${locationPlaceholder} and rules with an iron fist`,
         'made an agreement with the local authorities to create a safe haven from which raids on neighboring settlements can be staged'
       ])}.`,
     spawn: ({ entity: loc }) => (location__isVillage(loc) ? 0.5 : 0)

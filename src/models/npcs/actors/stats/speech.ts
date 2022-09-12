@@ -1,5 +1,5 @@
 import { properList, titleCase } from '../../../utilities/text'
-import { actor__details } from '../../../utilities/text/entities/actor'
+import { actor__details } from '../text'
 import { Actor } from '../types'
 
 type ActorVoice = Actor['voice']

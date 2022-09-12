@@ -117,10 +117,3 @@ export const world__getMountains = (idx: number) => {
   }
   return window.world.mountains[idx]
 }
-
-export const world__getLands = () => {
-  return {
-    land: Shaper.land.length,
-    water: Shaper.water.length
-  }
-}

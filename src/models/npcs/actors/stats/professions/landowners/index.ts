@@ -33,7 +33,7 @@ export const aristocracy: Record<AristocratProfessions, Profession> = {
     skills: nobleSkills
   },
   'gentry (minor)': {
-    key: 'gentry (major)',
+    key: 'gentry (minor)',
     lifestyle: 'comfortable',
     category: 'aristocrats',
     occurrence: 1.5,

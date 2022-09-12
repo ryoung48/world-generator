@@ -5,7 +5,3 @@ export type WizardProfessions =
   | 'wizard (great)'
   | 'oracle'
   | 'fortune teller'
-  | 'druid (petty)'
-  | 'druid (minor)'
-  | 'druid (major)'
-  | 'druid (great)'

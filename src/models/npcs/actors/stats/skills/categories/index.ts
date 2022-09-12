@@ -34,8 +34,7 @@ export const artisticSkills = [
   'knitting',
   'leatherworking',
   'literature',
-  'composition',
-  'music',
+  'composition (music)',
   'painting',
   'pottery',
   'scribing',
@@ -64,15 +63,6 @@ export const socialSkills = [
 ] as const
 
 export type SocialSkill = typeof socialSkills[number]
-
-export const survivalSpecializations = [
-  'forest',
-  'plains',
-  'mountains',
-  'desert',
-  'marsh',
-  'arctic'
-] as const
 
 export const worldlySkills = [
   'animal handling',
@@ -103,8 +93,7 @@ export const worldlySkills = [
   'survival',
   'vintner',
   'wagoneering',
-  'woodcutting',
-  ...survivalSpecializations
+  'woodcutting'
 ] as const
 
 export type WorldlySkill = typeof worldlySkills[number]

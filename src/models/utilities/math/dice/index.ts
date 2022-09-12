@@ -150,4 +150,10 @@ export class Dice {
   public generateId() {
     return generateId(this.random)
   }
+  public spin(text: string): string {
+    return text.replace(/\{((?:[^{}]*\{[^{}]*\})*[^{}]*?)\}/g, match => {
+      const spun = this.choice(match.substring(1, match.length - 1).split(/\|(?![^{]*\})/))
+      return this.spin(spun)
+    })
+  }
 }

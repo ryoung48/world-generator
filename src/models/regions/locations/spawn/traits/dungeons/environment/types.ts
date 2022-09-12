@@ -1,5 +1,6 @@
 export type dungeon__environment =
   | 'abundant traps'
+  | 'ancient monument'
   | 'chokepoint'
   | 'contagion'
   | 'dampened arcana'
@@ -15,4 +16,5 @@ export type dungeon__environment =
   | 'noxious fumes'
   | 'taboo territory'
   | 'temporal distortion'
+  | 'unusual biome'
   | 'wild magic'

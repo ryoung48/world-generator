@@ -1,12 +1,8 @@
 import {
   profession__colors,
   profession__map,
-  profession__socialClass
+  profession__randomBalanced
 } from '../../../../models/npcs/actors/stats/professions'
-import {
-  location__professions,
-  socialClassDistributions
-} from '../../../../models/regions/locations/actors'
 import { Loc } from '../../../../models/regions/locations/types'
 import { titleCase } from '../../../../models/utilities/text'
 import { view__context } from '../../../context'
@@ -22,56 +18,51 @@ const prepareNestedData = (node: NestedPieData) => {
 }
 
 const occupations = (loc: Loc) => {
-  const jobs = {
-    lower: location__professions({ loc, time: window.world.date, social: 'lower' }),
-    middle: location__professions({ loc, time: window.world.date, social: 'middle' }),
-    upper: location__professions({ loc, time: window.world.date, social: 'upper' })
-  }
-  const socialClasses = socialClassDistributions(loc)
+  const jobs = profession__randomBalanced({
+    loc,
+    time: window.world.date
+  })
   const nestedJobs: NestedPieData = {
     label: '',
     value: 0,
     color: '',
     children: []
   }
-  Object.entries(jobs).forEach(([, v]) => {
-    v.forEach(({ v: job, w }) => {
-      const { category, subcategory } = profession__map[job]
-      let nested = nestedJobs.children.find(child => child.label === category)
-      if (!nested) {
-        nested = {
-          label: category,
+  jobs.forEach(({ w, v }) => {
+    const { category, subcategory } = profession__map[v]
+    let nested = nestedJobs.children.find(child => child.label === category)
+    if (!nested) {
+      nested = {
+        label: category,
+        value: 0,
+        color: profession__colors.category[category],
+        children: []
+      }
+      nestedJobs.children.push(nested)
+    }
+    let curr = nested
+    if (subcategory) {
+      let sub = nested.children.find(child => child.label === subcategory)
+      if (!sub) {
+        sub = {
+          label: subcategory,
           value: 0,
-          color: profession__colors.category[category],
+          color: profession__colors.subcategory[subcategory],
           children: []
         }
-        nestedJobs.children.push(nested)
+        nested.children.push(sub)
       }
-      let curr = nested
-      if (subcategory) {
-        let sub = nested.children.find(child => child.label === subcategory)
-        if (!sub) {
-          sub = {
-            label: subcategory,
-            value: 0,
-            color: profession__colors.subcategory[subcategory],
-            children: []
-          }
-          nested.children.push(sub)
-        }
-        curr = sub
-      }
-      const social = socialClasses.find(({ v: s }) => s === profession__socialClass(job))
-      const weight = w * social.w
-      nestedJobs.value += weight
-      nested.value += weight
-      if (curr !== nested) curr.value += weight
-      curr.children.push({
-        label: job,
-        value: weight,
-        color: profession__colors.job[job],
-        children: []
-      })
+      curr = sub
+    }
+    const weight = w
+    nestedJobs.value += weight
+    nested.value += weight
+    if (curr !== nested) curr.value += weight
+    curr.children.push({
+      label: v,
+      value: weight,
+      color: profession__colors.job[v],
+      children: []
     })
   })
   prepareNestedData(nestedJobs)

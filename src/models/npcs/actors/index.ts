@@ -1,5 +1,5 @@
 import { item__lookup } from '../../items'
-import { npc__adjustedCR, npc__sumCR } from '../stats'
+import { npc__adjustedCR, npc__CRToLvl, npc__lvlToCR, npc__sumCR } from '../stats'
 import { difficulty__cr, difficulty__stats } from '../stats/difficulty'
 import { NPC } from '../types'
 import { Actor } from './types'
@@ -99,4 +99,13 @@ export const actor__difficultyStats = (params: { actor: Actor; cr: number }) => 
   const { actor, cr } = params
   const actorCR = actor__cr({ actor, max: false })
   return difficulty__stats({ ref: actorCR, adversary: cr })
+}
+
+export const actor__rewardXP = (params: { actor: Actor; exp: number }) => {
+  const { actor, exp } = params
+  const party = actor__relation({ actor, type: 'party' })
+  const weights = window.dice.uniformDist(party.length)
+  party.forEach((npc, i) => {
+    npc.level = npc__CRToLvl(npc__lvlToCR(npc.level) + exp * weights[i])
+  })
 }

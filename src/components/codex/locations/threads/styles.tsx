@@ -1,6 +1,5 @@
 import { css } from '@emotion/css'
 import {
-  AlertCircle,
   CheckBold,
   CheckCircle,
   CloseCircle,
@@ -12,9 +11,6 @@ import {
 
 import { cssColors } from '../../../theme/colors'
 
-export const style__threadFailures = css`
-  color: ${cssColors.primary};
-`
 export const style__disabledThread = css`
   background-color: #e5e5e5 !important;
 `
@@ -26,7 +22,6 @@ export const thread__icons = {
   failure: { icon: CloseCircle, color: cssColors.difficulty.hard },
   abandoned: { icon: CloseCircle, color: 'gray' },
   blocked: { icon: Skull, color: 'gray' },
-  fresh: { icon: AlertCircle, color: cssColors.difficulty.medium },
   'in progress': { icon: ExclamationThick, color: cssColors.difficulty.medium },
   paused: { icon: PauseCircle, color: 'gray' }
 }

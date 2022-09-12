@@ -1,9 +1,9 @@
 import { Grid } from '@mui/material'
 
 import { actor__isChild } from '../../../../models/npcs/actors/stats/age'
-import { actor__describeAppearance } from '../../../../models/npcs/actors/stats/appearance/physique'
+import { actor__appearance } from '../../../../models/npcs/actors/stats/appearance/physique'
 import { profession__title } from '../../../../models/npcs/actors/stats/professions'
-import { actorSkill__lookup, actorSkill__rank } from '../../../../models/npcs/actors/stats/skills'
+import { actorSkill__rank } from '../../../../models/npcs/actors/stats/skills'
 import { fluency__rank } from '../../../../models/npcs/actors/stats/skills/fluency'
 import { ActorSkill } from '../../../../models/npcs/actors/stats/skills/types'
 import { describe__voice } from '../../../../models/npcs/actors/stats/speech'
@@ -37,7 +37,7 @@ const persona = (actor: Actor) => {
     personaMetric({ value: altruism, high: 'altruistic', low: 'greedy' }),
     personaMetric({ value: lawful, high: 'honest', low: 'deceptive' }),
     personaMetric({ value: change, high: 'progressive', low: 'traditional' }),
-    personaMetric({ value: social, high: 'social', low: 'enigmatic' }),
+    personaMetric({ value: social, high: 'gregarious', low: 'enigmatic' }),
     personaMetric({ value: conflict, high: 'aggressive', low: 'diplomatic' }),
     personaMetric({ value: neuroticism, high: 'passionate', low: 'stoic' })
   ].sort((a, b) => b.value - a.value)
@@ -50,7 +50,7 @@ export function ActorStatistics() {
   const stats = [
     {
       label: 'Appearance',
-      content: <StyledText key='appearance' text={actor__describeAppearance(actor)}></StyledText>
+      content: <StyledText key='appearance' text={actor__appearance(actor)}></StyledText>
     }
   ]
   if (adult)
@@ -69,22 +69,7 @@ export function ActorStatistics() {
     )
   })
   if (adult && Object.entries(actor.skills).length > 0) {
-    const allSkills = Object.entries(actor.skills)
-    const standalone = allSkills.filter(
-      ([skill]) => !actorSkill__lookup[skill as ActorSkill['key']].parent
-    )
-    const grouped = allSkills
-      .filter(([skill]) => actorSkill__lookup[skill as ActorSkill['key']].parent)
-      .reduce((groups: Record<string, [string, number][]>, [skill, exp]) => {
-        const { parent } = actorSkill__lookup[skill as ActorSkill['key']]
-        if (!groups[parent]) groups[parent] = []
-        groups[parent].push([skill, exp])
-        return groups
-      }, {})
-    const parents: [string, number][] = Object.entries(grouped).map(([parent, group]) => {
-      return [parent, Math.max(...group.map(([_, exp]) => exp))]
-    })
-    const skills = standalone.concat(parents)
+    const skills = Object.entries(actor.skills)
     stats.push({
       label: 'Skills',
       content: (
@@ -93,12 +78,6 @@ export function ActorStatistics() {
           text={skills
             .sort((a, b) => b[1] - a[1])
             .map(([skill]) => {
-              if (grouped[skill]) {
-                const children = grouped[skill].sort((a, b) => b[1] - a[1])
-                return `${skill} (${children
-                  .map(([child]) => decorateSkill({ skill: child as ActorSkill['key'], actor }))
-                  .join(', ')})`
-              }
               return decorateSkill({ skill: skill as ActorSkill['key'], actor })
             })
             .join(', ')}

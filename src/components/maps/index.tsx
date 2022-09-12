@@ -147,7 +147,7 @@ export function WorldMap() {
       await delay(50)
       // pan & zoom
       const controller = zoom()
-        .scaleExtent([1, 200])
+        .scaleExtent([10, 200])
         .translateExtent([
           [0, 0],
           [window.world.dim.w, window.world.dim.h]
@@ -187,6 +187,7 @@ export function WorldMap() {
       const node = select(canvas) as any
       zoomController.zoom.scaleTo(node, zoom)
       zoomController.zoom.translateTo(node, x, y)
+      setCursor({ x, y })
       setInit(true)
     }
   }, [state.gps, zoomController])
@@ -214,12 +215,14 @@ export function WorldMap() {
     const oldScale = prevTransformRef.current?.scale
     const newScale = transform.scale
     const regionalTransition =
-      newScale <= map__breakpoints.global && oldScale > map__breakpoints.global
-    const globalTransition =
       oldScale <= map__breakpoints.global && newScale > map__breakpoints.global
+    const globalTransition =
+      newScale <= map__breakpoints.global && oldScale > map__breakpoints.global
     const localTransition =
-      newScale <= map__breakpoints.regional && oldScale > map__breakpoints.regional
-    if (regionalTransition || localTransition || globalTransition) transition()
+      oldScale <= map__breakpoints.regional && newScale > map__breakpoints.regional
+    if (regionalTransition || localTransition || globalTransition) {
+      transition()
+    }
     prevTransformRef.current = transform
   }, [transform])
   return (

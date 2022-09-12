@@ -1,10 +1,10 @@
 import { computeWeight, imperialHeight } from '../../../../utilities/math'
 import { titleCase } from '../../../../utilities/text'
 import { decorateText } from '../../../../utilities/text/decoration'
-import { actor__details } from '../../../../utilities/text/entities/actor'
-import { entityPlaceholder, replacePlaceholders } from '../../../../utilities/text/placeholders'
 import { species__byCulture } from '../../../species/taxonomy'
 import { earings, facialWounds, tattooStyles } from '../../../species/taxonomy/common/appearance'
+import { actor__details } from '../../text'
+import { entityPlaceholder, replacePlaceholders } from '../../text/placeholders'
 import { Actor, ActorAppearance } from '../../types'
 import { actor__isChild, actor__lifePhase } from '../age'
 import { actor__socialClass } from '../professions'
@@ -214,7 +214,7 @@ const describeYouth = (actor: Actor) => {
   }${actor__outfit(actor)}`
 }
 
-export const actor__describeAppearance = (actor: Actor) => {
+export const actor__appearance = (actor: Actor) => {
   const appearanceText = actor__isChild({ actor }) ? describeYouth(actor) : describeAdult(actor)
   return replacePlaceholders({
     primary: actor.name,
@@ -223,7 +223,8 @@ export const actor__describeAppearance = (actor: Actor) => {
     `${entityPlaceholder} is ${actor__details.age({ actor })} ${
       actor.gender
     } ${actor__details.species({
-      actor
+      actor,
+      link: true
     })}. ${appearanceText}`
   )
 }

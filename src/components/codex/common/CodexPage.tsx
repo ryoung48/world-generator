@@ -18,6 +18,9 @@ const classes = {
     overscroll-behavior-y: contain;
     scroll-snap-type: y proximity;
     max-height: 810px;
+  `,
+  content: css`
+    font-size: 14px;
   `
 }
 
@@ -64,7 +67,7 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12} p={0} my={3}>
+      <Grid item xs={12} p={0} my={3} className={classes.content}>
         {content}
       </Grid>
     </Grid>

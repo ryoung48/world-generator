@@ -11,7 +11,7 @@ export const personas = [
   'diplomatic',
   'passionate',
   'stoic',
-  'social',
+  'gregarious',
   'enigmatic'
 ] as const
 

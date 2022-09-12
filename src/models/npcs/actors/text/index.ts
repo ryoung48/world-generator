@@ -1,9 +1,8 @@
-import { actor__location } from '../../../npcs/actors'
-import { actor__spawnParents } from '../../../npcs/actors/spawn/relations/parent'
-import { actor__age, actor__expired, actor__lifePhaseAdj } from '../../../npcs/actors/stats/age'
-import { profession__title } from '../../../npcs/actors/stats/professions'
-import { Actor } from '../../../npcs/actors/types'
-import { decorateText } from '../decoration'
+import { decorateText } from '../../../utilities/text/decoration'
+import { actor__location } from '..'
+import { actor__age, actor__expired, actor__lifePhaseAdj } from '../stats/age'
+import { profession__title } from '../stats/professions'
+import { Actor } from '../types'
 
 interface ActorDetailsParams {
   actor: Actor
@@ -59,27 +58,15 @@ export const actor__details = {
       tooltip: `${age} years old${expired ? ' (deceased)' : ''}`
     })
   },
-  species: ({ actor }: ActorDetailsParams) => {
+  species: ({ actor, link }: ActorDetailsParams) => {
     const { culture } = actor
     const actorCulture = window.world.cultures[culture]
-    return decorateText({
-      label: actorCulture.species.toLowerCase(),
-      link: actorCulture,
-      tooltip: actorCulture.name.toLowerCase()
-    })
+    return link
+      ? decorateText({
+          label: actorCulture.species.toLowerCase(),
+          link: actorCulture,
+          tooltip: actorCulture.name.toLowerCase()
+        })
+      : actorCulture.species.toLowerCase()
   }
-}
-
-export const actor__describeRelation = (params: { actor: Actor; ref: Actor }) => {
-  const { actor, ref } = params
-  const actorParents = actor__spawnParents(actor)
-  const refParents = actor__spawnParents(ref)
-  if (actorParents.some(parent => refParents.includes(parent))) {
-    const actorAge = actor__age({ actor })
-    const refAge = actor__age({ actor: ref })
-    return `${actorAge > refAge ? 'younger' : 'older'} ${
-      ref.gender === 'female' ? 'sister' : 'brother'
-    }`
-  }
-  return false
 }

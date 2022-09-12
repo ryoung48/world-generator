@@ -7,11 +7,11 @@ import {
   actor__lifestyle,
   profession__title
 } from '../../../../models/npcs/actors/stats/professions'
+import { actor__details } from '../../../../models/npcs/actors/text'
 import { Actor } from '../../../../models/npcs/actors/types'
 import { describeCoarseDuration } from '../../../../models/utilities/math/time'
 import { decorateText } from '../../../../models/utilities/text/decoration'
-import { actor__details } from '../../../../models/utilities/text/entities/actor'
-import { format__dateRange, formatters } from '../../../../models/utilities/text/formatters'
+import { formatters } from '../../../../models/utilities/text/formatters'
 import { World } from '../../../../models/world/types'
 import { view__context } from '../../../context'
 import { cssColors } from '../../../theme/colors'
@@ -54,7 +54,7 @@ const skillText = (background: Actor['history']['backgrounds'][number]) => {
   return background.skills
     .filter(skills => Object.entries(skills.exp).some(skill => skill[1] > 0))
     .map(skills => ({
-      label: format__dateRange(skills),
+      label: formatters.dateRange(skills),
       content: (
         <StyledText
           text={Object.entries(skills.exp)

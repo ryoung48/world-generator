@@ -1,4 +1,8 @@
+import { location__getClosestSettlement } from '../../../../regions/locations'
+import { location__context } from '../../../../regions/locations/context'
+import { Loc } from '../../../../regions/locations/types'
 import { colors__randomPreset } from '../../../../utilities/colors'
+import { buildDistribution } from '../../../../utilities/math'
 import { yearMS } from '../../../../utilities/math/time'
 import { titleCase } from '../../../../utilities/text'
 import { Actor } from '../../types'
@@ -237,4 +241,48 @@ export const socialClass__randomDrift = (social: SocialClass) => {
       { w: 0.05, v: Math.min(2, rank + 1) }
     ])
   ]
+}
+
+const lifestyle__mod: Record<Profession['lifestyle'], number> = {
+  impoverished: 8,
+  poor: 16,
+  modest: 8,
+  comfortable: 4,
+  prosperous: 2,
+  rich: 1
+}
+
+const weights: Partial<Record<Profession['category'] | Profession['subcategory'], number>> = {
+  academic: 0.25,
+  aristocrats: 1,
+  artisans: 0.18,
+  artistic: 0.25,
+  bureaucrats: 0.25,
+  guards: 0.5,
+  laborers: 0.1,
+  mercenary: 0.25,
+  merchants: 0.3,
+  military: 0.5,
+  monks: 0.25,
+  priests: 0.25,
+  templars: 0.5,
+  underclass: 0.125,
+  wizards: 0.5
+}
+
+export const profession__randomBalanced = (params: { loc: Loc; time: number }) => {
+  const { time } = params
+  const loc = location__getClosestSettlement(params.loc)
+  const context = location__context(loc)
+  const professionDists = Object.values(profession__map)
+    .map(profession => {
+      const { key, occurrence, lifestyle, subcategory, category } = profession
+      const weight =
+        typeof occurrence === 'number' ? occurrence : occurrence?.({ context, time }) ?? 0
+      const match = weights[subcategory] ?? weights[category] ?? 0
+      return { v: key, w: weight * lifestyle__mod[lifestyle] * match }
+    })
+    .filter(({ w }) => w > 0)
+  const dist = buildDistribution(professionDists, 1)
+  return dist
 }

@@ -1,26 +1,21 @@
 import { Button, Divider, Grid } from '@mui/material'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 
 import { actor__location } from '../../../../models/npcs/actors'
 import {
-  task__inProgress,
-  thread__progress,
-  thread__status,
-  thread__taskOdds,
-  thread__tasks,
-  thread__xp
-} from '../../../../models/threads'
-import {
+  thread__abandoned,
   thread__advance,
+  thread__blocked,
   thread__close,
-  thread__exp,
-  thread__fork
-} from '../../../../models/threads/actions'
-import { thread__spawnChildren } from '../../../../models/threads/spawn'
+  thread__formattedXP,
+  thread__ongoing,
+  thread__paused,
+  thread__tasks
+} from '../../../../models/threads'
+import { task__blocked, task__xp } from '../../../../models/threads/tasks'
 import { Thread } from '../../../../models/threads/types'
 import { titleCase } from '../../../../models/utilities/text'
 import { view__context } from '../../../context'
-import { RadioSelect } from '../../common/input/RadioSelect'
 import { SectionList } from '../../common/text/SectionList'
 import { thread__icons } from './styles'
 import { TaskView } from './Task'
@@ -32,28 +27,23 @@ export function ThreadView(props: {
 }) {
   const { thread, goToThread, clearExpand } = props
   const { state, dispatch } = view__context()
-  const [selectedFork, setSelectedFork] = useState(-1)
   const avatar = window.world.actors[state.avatar]
-  const { goal, tasks, fork, closed } = thread
-  const hasTasks = tasks.length > 0
-  const { completed, failed, status } = thread__progress({ thread, avatar })
-  const ended = failed || completed
-  const coreTasks = thread__tasks({ tasks, avatar })
-  const forkedTasks = thread__tasks({ tasks: fork?.tasks ?? [], avatar })
-  const noFork = fork && !fork?.tasks[selectedFork]
-  const latestTask = coreTasks.find(task__inProgress)
-  const childRequired = latestTask?.thread !== undefined
+  const { goal, closed } = thread
+  const tasks = thread__tasks(thread)
+  const ended = !thread__ongoing(thread)
+  const blocked = thread__blocked({ thread, avatar })
+  const paused = thread__paused(thread)
   const loc = window.world.locations[thread.location]
   const avatarAtLoc = avatar && actor__location(avatar) === loc
+  const parent = window.world.threads[thread.parent]
   const closeThread = () => {
-    thread__close({ thread, ref: avatar, avatar })
-    const parent = window.world.threads[thread.parent]
+    thread__close({ thread, avatar })
     dispatch({ type: 'set avatar', payload: { avatar } })
     if (parent) goToThread(parent)
     else clearExpand()
   }
   return (
-    <Grid container>
+    <Grid>
       <Grid item xs={12}>
         <SectionList
           list={[
@@ -69,57 +59,38 @@ export function ThreadView(props: {
           ]}
         ></SectionList>
       </Grid>
-      {hasTasks && (
-        <Fragment>
-          <Grid item xs={12}>
-            <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-          </Grid>
-          {coreTasks.map((task, i) => {
-            const { tier } = thread__taskOdds({
-              difficulty: task.difficulty,
-              actor: avatar
-            })
-            const { icon: Icon, color } =
-              thread__icons[tier === 'insanity' ? 'blocked' : task.status]
-            return (
-              <Grid item xs={12} key={i}>
-                <Grid container alignContent='center'>
-                  <Grid item xs={1}>
-                    <Icon style={{ color }}></Icon>
-                  </Grid>
-                  <Grid item xs={11}>
-                    <TaskView task={task} goToThread={goToThread}></TaskView>
-                  </Grid>
+      <Fragment>
+        <Grid item xs={12}>
+          <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
+        </Grid>
+        {tasks.map((task, i) => {
+          if (!task) return <span key={i}>placeholder</span>
+          const blocked = task__blocked({ task, avatar })
+          const ref = window.world.threads[task.idx]
+          const paused = ref && thread__ongoing(ref)
+          const abandoned = ref && thread__abandoned(ref)
+          const status = abandoned
+            ? 'abandoned'
+            : blocked
+            ? 'blocked'
+            : paused
+            ? 'paused'
+            : task.status ?? 'in progress'
+          const { icon: Icon, color } = thread__icons[status]
+          return (
+            <Grid item xs={12} key={i}>
+              <Grid container alignContent='center'>
+                <Grid item xs={1}>
+                  <Icon style={{ color }}></Icon>
+                </Grid>
+                <Grid item xs={11}>
+                  <TaskView task={task} goToThread={goToThread}></TaskView>
                 </Grid>
               </Grid>
-            )
-          })}
-        </Fragment>
-      )}
-      {fork && (
-        <Fragment>
-          <Grid item xs={12}>
-            <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-          </Grid>
-          <Grid item xs={12}>
-            <SectionList
-              list={[{ label: 'Fork', content: <span>{fork.text}</span> }]}
-            ></SectionList>
-          </Grid>
-          <Grid item xs={12}>
-            <RadioSelect
-              selected={{
-                value: selectedFork,
-                setValue: value => setSelectedFork(parseInt(value))
-              }}
-              items={forkedTasks.map((task, i) => ({
-                value: i,
-                label: <TaskView task={task} goToThread={goToThread}></TaskView>
-              }))}
-            ></RadioSelect>
-          </Grid>
-        </Fragment>
-      )}
+            </Grid>
+          )
+        })}
+      </Fragment>
       {ended && (
         <Fragment>
           <Grid item xs={12}>
@@ -130,20 +101,18 @@ export function ThreadView(props: {
               list={[
                 {
                   label: 'Outcome',
-                  content: <span>Quest {failed ? 'failed' : 'completed'}.</span>
+                  content: (
+                    <span>Quest {thread.status === 'failure' ? 'failed' : 'completed'}.</span>
+                  )
                 },
                 {
                   label: 'Rewards',
                   content: (
                     <span>
-                      {thread__xp(
-                        thread.exp ??
-                          thread__exp({
-                            status: thread__status(thread),
-                            difficulty: thread.difficulty.cr,
-                            complexity: thread.complexity,
-                            avatar
-                          })
+                      {thread__formattedXP(
+                        !thread__abandoned(thread) && thread.exp === 0
+                          ? task__xp({ task: thread, avatar, mod: thread.complexity })
+                          : thread.exp
                       )}
                       .
                     </span>
@@ -162,26 +131,18 @@ export function ThreadView(props: {
           <Grid item xs={12}>
             <Button
               style={{ marginRight: 10 }}
-              disabled={noFork || childRequired || !avatarAtLoc || status === 'blocked'}
+              disabled={!avatarAtLoc || blocked || paused}
               onClick={() => {
-                ended
-                  ? closeThread()
-                  : fork
-                  ? thread__fork({
-                      thread,
-                      decision: forkedTasks[selectedFork],
-                      ref: avatar,
-                      avatar
-                    })
-                  : thread__advance({ thread, ref: avatar, avatar })
-                if (!ended) {
-                  thread__spawnChildren({ thread, avatar })
+                if (ended) {
+                  closeThread()
+                } else {
+                  const duration = thread__advance({ thread, avatar })
+                  dispatch({ type: 'tick', payload: { duration } })
                   dispatch({ type: 'set avatar', payload: { avatar } })
                 }
-                setSelectedFork(-1)
               }}
             >
-              Continue
+              {ended ? 'Complete' : 'Continue'}
             </Button>
             <Button disabled={ended} onClick={() => closeThread()}>
               Abandon

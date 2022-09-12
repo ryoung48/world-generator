@@ -38,8 +38,6 @@ const assignInhabitants: LocationTemplate['traits'] = (loc: Loc) => {
     if (loc.subtype.includes('monastery')) traits.push('prominent monastery')
     if (loc.subtype.includes('temple')) traits.push('major temple')
     if (loc.subtype.includes('academy')) traits.push('prestigious academy')
-    if (loc.subtype.includes('military')) traits.push('military outpost')
-    if (loc.subtype.includes('guards')) traits.push('guard outpost')
     if (loc.subtype.includes('criminal')) traits.push('criminal bosses')
     if (loc.subtype.includes('crossroads')) traits.push('trade hub')
     if (loc.subtype.includes('templars')) traits.push('templar order')
@@ -52,6 +50,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'metropolis',
     population: [100000, 500000],
     coastal: coastalSettlements,
+    alias: 'city',
     icon: 'city',
     group: 'settlement'
   },
@@ -59,6 +58,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'huge city',
     population: [50000, 99500],
     coastal: coastalSettlements,
+    alias: 'city',
     icon: 'city',
     group: 'settlement'
   },
@@ -66,6 +66,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'large city',
     population: [25000, 49500],
     coastal: coastalSettlements,
+    alias: 'city',
     icon: 'city',
     group: 'settlement'
   },
@@ -73,6 +74,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'small city',
     population: [10000, 24500],
     coastal: coastalSettlements,
+    alias: 'city',
     icon: 'city',
     group: 'settlement'
   },
@@ -80,6 +82,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'large town',
     population: [5000, 9500],
     coastal: coastalSettlements,
+    alias: 'town',
     icon: 'town',
     group: 'settlement'
   },
@@ -87,11 +90,13 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'small town',
     population: [1000, 4500],
     coastal: coastalSettlements,
+    alias: 'town',
     icon: 'town',
     group: 'settlement'
   },
   'large village': {
     type: 'large village',
+    alias: 'village',
     population: [500, 950],
     coastal: coastalSettlements,
     icon: loc => (!loc.hub && loc.coastal ? 'fishing_village' : 'village'),
@@ -103,6 +108,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   },
   'small village': {
     type: 'small village',
+    alias: 'village',
     population: [100, 450],
     coastal: coastalSettlements,
     icon: loc => (!loc.hub && loc.coastal ? 'fishing_village' : 'village'),
@@ -114,6 +120,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   },
   'tiny village': {
     type: 'tiny village',
+    alias: 'village',
     population: [30, 95],
     coastal: coastalSettlements,
     icon: loc => (!loc.hub && loc.coastal ? 'fishing_village' : 'hamlet'),
@@ -128,7 +135,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: 'battlefield_1',
     group: 'wilderness',
     spawn: 0.5,
-    traits: () => ['haunted'],
     finalize: loc => {
       loc.hostile = true
       const province = window.world.provinces[loc.province]
@@ -215,28 +221,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       loc.hostile = true
     }
   },
-  'sacred grove': {
-    type: 'sacred grove',
-    icon: loc => {
-      return window.dice.choice(
-        loc.subtype.includes('crystal')
-          ? ['grove_7']
-          : loc.hostile
-          ? ['grove_1', 'grove_2', 'grove_3', 'grove_4', 'grove_5', 'grove_6']
-          : ['grove_8', 'grove_9', 'grove_10', 'grove_11', 'grove_12', 'grove_13', 'grove_14']
-      )
-    },
-    group: 'wilderness',
-    spawn: 0.1,
-    finalize: loc => {
-      loc.hostile = window.dice.flip
-      loc.subtype = `sacred grove (${
-        loc.hostile
-          ? window.dice.choice(['withered', 'corrupted', 'cursed', 'scorched', 'crystal'])
-          : 'druidic'
-      })`
-    }
-  },
   keep: {
     type: 'keep',
     icon: () => window.dice.choice(['keep_1', 'keep_2', 'keep_3', 'keep_4', 'keep_5']),
@@ -313,6 +297,7 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
   },
   ruins: {
     type: 'ruins',
+    alias: 'ruin',
     icon: () =>
       window.dice.choice(['ruins_1', 'ruins_2', 'ruins_3', 'ruins_4', 'ruins_5', 'ruins_6']),
     group: 'wilderness',

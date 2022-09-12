@@ -4,15 +4,17 @@ import { useState } from 'react'
 
 import { actor__location } from '../../../../models/npcs/actors'
 import { profession__title } from '../../../../models/npcs/actors/stats/professions'
+import { actor__details } from '../../../../models/npcs/actors/text'
 import { difficulties } from '../../../../models/npcs/stats/difficulty'
 import {
-  thread__describeComplexity,
-  thread__progress,
-  thread__status,
-  thread__taskOdds
+  thread__abandoned,
+  thread__blocked,
+  thread__close,
+  thread__complexity,
+  thread__ongoing,
+  thread__paused
 } from '../../../../models/threads'
-import { thread__close } from '../../../../models/threads/actions'
-import { thread__spawnChildren } from '../../../../models/threads/spawn'
+import { task__odds } from '../../../../models/threads/tasks'
 import { Thread } from '../../../../models/threads/types'
 import { titleCase } from '../../../../models/utilities/text'
 import { decorateText } from '../../../../models/utilities/text/decoration'
@@ -23,7 +25,7 @@ import { cssColors } from '../../../theme/colors'
 import { DataTable, DetailedTableRow } from '../../common/DataTable'
 import { ToggleButtons } from '../../common/navigation/ToggleButtons'
 import { StyledText } from '../../common/text/StyledText'
-import { style__disabledThread, style__threadFailures, thread__icons } from './styles'
+import { style__disabledThread, thread__icons } from './styles'
 import { ThreadView } from './Thread'
 
 const itemsPerPage = 5
@@ -54,7 +56,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
     const threads = thread.closed ? closed : active
     const idx = threads.findIndex(({ idx }) => thread.idx === idx)
     setPage(Math.floor(idx / itemsPerPage))
-    setExpanded(idx)
+    setExpanded(thread.idx)
   }
   return (
     <ToggleButtons
@@ -75,8 +77,22 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               {
                 text: '',
                 value: item => {
-                  const { status } = thread__progress({ thread: item, avatar })
-                  const { icon: Icon, color } = thread__icons[status]
+                  const blocked = thread__blocked({ thread: item, avatar })
+                  const paused = thread__paused(item)
+                  const progress = thread__ongoing(item)
+                  const abandoned = thread__abandoned(item)
+                  const { icon: Icon, color } =
+                    thread__icons[
+                      abandoned
+                        ? 'abandoned'
+                        : blocked
+                        ? 'blocked'
+                        : paused
+                        ? 'paused'
+                        : progress
+                        ? 'in progress'
+                        : item.status
+                    ]
                   return <Icon style={{ color }} />
                 }
               },
@@ -122,7 +138,7 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                 text: 'Patron',
                 value: item => {
                   const patron = window.world.actors[item.patron]
-                  return (
+                  return patron ? (
                     <DetailedTableRow
                       title={
                         <StyledText
@@ -134,13 +150,17 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                       subtitle={
                         <StyledText
                           color={cssColors.subtitle}
-                          text={profession__title({
+                          text={`${profession__title({
                             actor: patron
-                          }).toLocaleLowerCase()}
+                          }).toLocaleLowerCase()}, ${actor__details.species({
+                            actor: patron
+                          })}`}
                         ></StyledText>
                       }
                       link
                     ></DetailedTableRow>
+                  ) : (
+                    <DetailedTableRow title='None' subtitle='n/a'></DetailedTableRow>
                   )
                 }
               },
@@ -168,18 +188,18 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                 text: 'Progress',
                 hidden: availableSelected,
                 value: item => {
-                  const desc =
-                    selected === 'closed'
-                      ? thread__progress({ thread: item, avatar }).status
-                      : thread__status(item)
+                  const abandoned = thread__abandoned(item)
                   return (
                     <DetailedTableRow
-                      title={`${item.progress}/${item.complexity}`}
-                      subtitle={
-                        <span>
-                          {desc} <span className={style__threadFailures}>({item.failures})</span>
-                        </span>
+                      title={
+                        <StyledText
+                          text={`${item.progress}/${decorateText({
+                            label: item.failures.toString(),
+                            color: cssColors.primary
+                          })}`}
+                        ></StyledText>
                       }
+                      subtitle={<span>{abandoned ? 'abandoned' : item.status}</span>}
                     ></DetailedTableRow>
                   )
                 }
@@ -187,8 +207,8 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               {
                 text: 'Difficulty',
                 value: item => {
-                  const desc = thread__describeComplexity(item)
-                  const { odds, tier } = thread__taskOdds({
+                  const desc = thread__complexity(item)
+                  const { odds, tier } = task__odds({
                     difficulty: item.difficulty,
                     actor: avatar
                   })
@@ -197,13 +217,12 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                       title={
                         <StyledText
                           text={decorateText({
-                            label: titleCase(tier),
-                            color: difficulties[tier].color,
-                            tooltip: `${formatters.percent({ value: odds, precision: 2 })}`
+                            label: formatters.percent({ value: odds, precision: 2 }),
+                            color: difficulties[tier].color
                           })}
                         ></StyledText>
                       }
-                      subtitle={desc}
+                      subtitle={`${desc} (${item.complexity})`}
                     ></DetailedTableRow>
                   )
                 }
@@ -211,9 +230,10 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
               {
                 text: 'Actions',
                 hidden: !availableSelected,
+                align: 'center',
                 value: item => {
                   return (
-                    <Grid container>
+                    <Grid container wrap='nowrap'>
                       <Grid item>
                         <Tooltip title='Accept'>
                           <IconButton
@@ -241,7 +261,6 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                             onClick={() => {
                               thread__close({
                                 thread: item,
-                                ref: window.world.locations[codex.location],
                                 avatar: window.world.actors[avatar.idx]
                               })
                               updateState()
@@ -263,8 +282,6 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                 ? undefined
                 : {
                     content: item => {
-                      const children = thread__spawnChildren({ thread: item, avatar })
-                      if (children) dispatch({ type: 'set avatar', payload: { avatar } })
                       return (
                         <ThreadView
                           thread={item}
@@ -273,7 +290,8 @@ export function ThreadList(props: { active: Thread[]; closed: Thread[]; availabl
                         ></ThreadView>
                       )
                     },
-                    expanded: [expanded, setExpanded]
+                    expanded: [expanded, setExpanded],
+                    idx: item => item.idx
                   }
             }
           ></DataTable>

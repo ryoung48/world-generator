@@ -29,9 +29,8 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
     key: 'cobbling',
     valid: 0
   },
-  composition: {
-    key: 'composition',
-    parent: 'music',
+  'composition (music)': {
+    key: 'composition (music)',
     valid: 0
   },
   dancing: {
@@ -54,8 +53,7 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
     valid: 0
   },
   instrumental: {
-    key: 'instrumental',
-    parent: 'music'
+    key: 'instrumental'
   },
   jeweling: {
     key: 'jeweling',
@@ -71,10 +69,6 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
   literature: {
     key: 'literature'
   },
-  music: {
-    key: 'music',
-    valid: 0
-  },
   painting: {
     key: 'painting'
   },
@@ -89,8 +83,7 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
     key: 'sculpting'
   },
   singing: {
-    key: 'singing',
-    parent: 'music'
+    key: 'singing'
   },
   sketching: {
     key: 'sketching'

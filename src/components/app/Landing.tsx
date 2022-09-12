@@ -88,6 +88,7 @@ export function Landing() {
         </Grid>
       </Grid>
       <Grid item xs={12}></Grid>
+      <Grid item xs={12}></Grid>
       {generating && (
         <Grid item xs={5}>
           <Stepper activeStep={active} alternativeLabel>

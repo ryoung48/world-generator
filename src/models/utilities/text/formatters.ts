@@ -1,4 +1,4 @@
-import dayjs from 'dayjs'
+import * as dayjs from 'dayjs'
 
 const local = 'en-US'
 export const formatters = {
@@ -10,11 +10,10 @@ export const formatters = {
     new Intl.NumberFormat(local, { notation: 'compact' } as any).format(value),
   date: (value: number) => dayjs(value).format('MM/DD/YYYY'),
   time: (value: number) => dayjs(value).format('h:mm A'),
-  dateTime: (value: number) => dayjs(value).format('MM/DD/YYYY, h:mm A')
-}
-
-export const format__dateRange = (params: { start: number; end?: number }) => {
-  const start = formatters.date(params.start)
-  const end = Number.isFinite(params.end) ? formatters.date(params.end) : 'Present'
-  return `${start} - ${end}`
+  dateTime: (value: number) => dayjs(value).format('MM/DD/YYYY, h:mm A'),
+  dateRange: (params: { start: number; end?: number }) => {
+    const start = formatters.date(params.start)
+    const end = Number.isFinite(params.end) ? formatters.date(params.end) : 'Present'
+    return `${start} - ${end}`
+  }
 }

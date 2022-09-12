@@ -32,7 +32,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       }
     },
     skills: priestSkills,
-    subcategory: 'clergy',
+    subcategory: 'monks',
     title: ({ actor }) =>
       genderBasedTitle({
         male: 'Abbot',
@@ -44,15 +44,14 @@ export const religious: Record<ReligiousProfessions, Profession> = {
     category: 'scholars',
     key: 'acolyte',
     lifestyle: 'poor',
-    occurrence: ({ context }) =>
-      (context.remote ? 0 : context.tribal ? 0.1 : context.incense ? 1 : 0.5) * religiousMod,
+    occurrence: ({ context }) => (context.incense ? 1 : 0.5) * religiousMod,
     prevalence: 'uncommon',
     skills: {
       primary: ['theology'],
       secondary: ['housekeeping'],
       tertiary: [...religiousSkills]
     },
-    subcategory: 'clergy'
+    subcategory: 'priests'
   },
   inquisitor: {
     category: 'soldiers',
@@ -66,7 +65,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       secondary: ['theology'],
       tertiary: [...religiousSkills]
     },
-    subcategory: 'inquisitors'
+    subcategory: 'templars'
   },
   missionary: {
     category: 'scholars',
@@ -79,15 +78,14 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       secondary: ['living language', 'teaching'],
       tertiary: [...religiousSkills]
     },
-    subcategory: 'clergy'
+    subcategory: 'priests'
   },
   monk: {
     category: 'scholars',
     key: 'monk',
     lifestyle: 'modest',
     occurrence: ({ context }) =>
-      (context.remote ? 0 : context.tribal ? 0.1 : context.text || context.incense ? 1 : 0.5) *
-      religiousMod,
+      (context.remote ? 0 : context.text || context.incense ? 1 : 0.5) * religiousMod,
     prevalence: 'uncommon',
     progression: {
       acolyte: {
@@ -101,7 +99,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       secondary: ['martial'],
       tertiary: [...religiousSkills]
     },
-    subcategory: 'clergy',
+    subcategory: 'monks',
     title: 'Monk'
   },
   'priest (petty)': {
@@ -109,7 +107,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
     category: 'scholars',
     key: 'priest (petty)',
     lifestyle: 'modest',
-    occurrence: ({ context }) => (context.urban ? (context.incense ? 1 : 0.5) * religiousMod : 0),
+    occurrence: ({ context }) => (context.incense ? 1 : 0.5) * religiousMod,
     prevalence: 'uncommon',
     progression: {
       acolyte: {
@@ -119,7 +117,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       }
     },
     skills: priestSkills,
-    subcategory: 'clergy'
+    subcategory: 'priests'
   },
   'priest (minor)': {
     ages: ageRanges.seasoned,
@@ -129,7 +127,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
     occurrence: ({ context }) => (context.urban ? (context.incense ? 1 : 0.5) * religiousMod : 0),
     prevalence: 'uncommon',
     skills: priestSkills,
-    subcategory: 'clergy'
+    subcategory: 'priests'
   },
   'priest (major)': {
     ages: ageRanges.expert,
@@ -146,7 +144,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       }
     },
     skills: priestSkills,
-    subcategory: 'clergy'
+    subcategory: 'priests'
   },
   'priest (great)': {
     ages: ageRanges.master,
@@ -163,7 +161,7 @@ export const religious: Record<ReligiousProfessions, Profession> = {
       }
     },
     skills: priestSkills,
-    subcategory: 'clergy'
+    subcategory: 'priests'
   },
   templar: {
     category: 'soldiers',

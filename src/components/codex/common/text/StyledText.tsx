@@ -16,10 +16,6 @@ const style__links = css`
     }
   }
 `
-
-const style__italics = css`
-  font-style: italic;
-`
 /**
  * @component
  * @param props - test
@@ -33,7 +29,7 @@ export function StyledText(props: { text: string; color?: string }) {
     <span className={style__links}>
       {text.split(/@(.+?)@/g).map((text, j) => {
         if (text.match(/.+|.+|.+/)) {
-          const [label, i, cat, tooltip, color, italics] = text.split('|')
+          const [label, i, cat, tooltip, color, italics, bold] = text.split('|')
           const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
           const onClick = entity__tags.includes(tag)
@@ -43,6 +39,8 @@ export function StyledText(props: { text: string; color?: string }) {
           const style: CSSProperties = {
             cursor: onClick || tooltip ? 'pointer' : undefined,
             color: textColor,
+            fontStyle: italics === 'true' ? 'italic' : undefined,
+            fontWeight: bold === 'true' ? 'bold' : undefined,
             borderBottom: onClick
               ? `1px solid ${textColor}`
               : tooltip
@@ -58,8 +56,14 @@ export function StyledText(props: { text: string; color?: string }) {
             <span style={style}>{label}</span>
           )
           return (
-            <span className={italics === 'true' ? style__italics : undefined} key={j}>
-              {tooltip ? <Tooltip title={tooltip}>{link}</Tooltip> : link}
+            <span key={j}>
+              {tooltip ? (
+                <Tooltip disableInteractive title={tooltip}>
+                  {link}
+                </Tooltip>
+              ) : (
+                link
+              )}
             </span>
           )
         }

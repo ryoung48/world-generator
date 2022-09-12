@@ -1,17 +1,17 @@
-import { actor__finalize } from '../../../src/models/npcs/actors/spawn/finalize'
-import { location__spawnTraits } from '../../../src/models/regions/locations/spawn/traits'
-import { province__sprawl } from '../../../src/models/regions/provinces/spawn/sprawl'
+import { actor__finalize } from '../../../../src/models/npcs/actors/spawn/finalize'
+import { location__spawnTraits } from '../../../../src/models/regions/locations/spawn/traits'
+import { province__sprawl } from '../../../../src/models/regions/provinces/spawn/sprawl'
 import {
   codex__restoreHistory,
   codex__spawn,
   codex__targetZoom,
   codex__update
-} from '../../../src/models/utilities/codex'
-import { test__world } from '../../helpers/world'
+} from '../../../../src/models/utilities/codex'
+import { test__world } from '../../../helpers/world'
 
-jest.mock('../../../src/models/regions/locations/spawn/traits')
-jest.mock('../../../src/models/regions/provinces/spawn/sprawl')
-jest.mock('../../../src/models/npcs/actors/spawn/finalize')
+jest.mock('../../../../src/models/regions/locations/spawn/traits')
+jest.mock('../../../../src/models/regions/provinces/spawn/sprawl')
+jest.mock('../../../../src/models/npcs/actors/spawn/finalize')
 
 const mockLocSpawnTraits = location__spawnTraits as jest.MockedFunction<
   typeof location__spawnTraits

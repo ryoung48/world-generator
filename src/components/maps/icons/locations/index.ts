@@ -4,7 +4,6 @@ import { cave__icons } from './caves'
 import { coastal__icons } from './coastal'
 import { crypt__icons } from './crypts'
 import { farm__icons } from './farms'
-import { grove__icons } from './groves'
 import { inn__icons } from './inn'
 import { keep__icons } from './keeps'
 import { laboratory__icons } from './laboratory'
@@ -24,7 +23,6 @@ export const location__icons: Record<LocationIcon, LocationIconDetails> = {
   ...coastal__icons,
   ...crypt__icons,
   ...farm__icons,
-  ...grove__icons,
   ...inn__icons,
   ...keep__icons,
   ...laboratory__icons,

@@ -8,7 +8,7 @@ import { Profession } from '../types'
 import { UnderworldProfessions } from './types'
 
 const thiefOccurrence: Profession['occurrence'] = ({ context }) =>
-  context.city ? 1 : !context.tribal ? 0.1 : 0
+  context.city ? 1 : context.urban ? 0.5 : 0
 
 export const underworld: Record<UnderworldProfessions, Profession> = {
   'thief (minor)': {
@@ -52,7 +52,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     lifestyle: 'comfortable',
     category: 'underclass',
     prevalence: 'rare',
-    occurrence: params => thiefOccurrence(params) * 0.5,
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['martial'],
       secondary: ['alchemy', 'streetwise'],
@@ -141,6 +141,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     category: 'underclass',
     lifestyle: 'poor',
     ages: [20, 45],
+    occurrence: params => thiefOccurrence(params),
     afterSpawn: ({ inventory }) => {
       inventory.currency += window.dice.randint(0, 5)
     },
@@ -167,6 +168,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'rare',
+    occurrence: params => thiefOccurrence(params),
     progression: {
       'soldier (rebels, recruit)': { years: 5, weight: 1, transition: true },
       'soldier (military, recruit)': { years: 5, weight: 1, transition: true },
@@ -187,6 +189,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     lifestyle: 'prosperous',
     category: 'underclass',
     prevalence: 'rare',
+    occurrence: params => thiefOccurrence(params) * 0.5,
     skills: {
       primary: ['logistics', 'streetwise'],
       tertiary: [...laborerSkills, ...socialSkills]
@@ -198,6 +201,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     lifestyle: 'comfortable',
     category: 'underclass',
     prevalence: 'rare',
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['logistics', 'streetwise'],
       tertiary: [...laborerSkills, ...socialSkills]
@@ -209,6 +213,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     lifestyle: 'comfortable',
     category: 'underclass',
     prevalence: 'rare',
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['logistics', 'streetwise'],
       tertiary: [...laborerSkills, ...socialSkills]
@@ -220,6 +225,7 @@ export const underworld: Record<UnderworldProfessions, Profession> = {
     lifestyle: 'modest',
     category: 'underclass',
     prevalence: 'rare',
+    occurrence: params => thiefOccurrence(params),
     skills: {
       primary: ['logistics', 'streetwise'],
       tertiary: [...laborerSkills, ...socialSkills]

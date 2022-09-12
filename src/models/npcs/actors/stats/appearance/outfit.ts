@@ -8,7 +8,7 @@ import {
 import { BasicCache, memoize } from '../../../../utilities/performance/memoization'
 import { properList } from '../../../../utilities/text'
 import { decorateText } from '../../../../utilities/text/decoration'
-import { entityPlaceholder } from '../../../../utilities/text/placeholders'
+import { entityPlaceholder } from '../../text/placeholders'
 import { Culture } from '../../../species/cultures/types'
 import { Actor } from '../../types'
 import { actor__isChild } from '../age'

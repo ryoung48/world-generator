@@ -4,8 +4,8 @@ import {
   colors__permutations,
   colors__randomHue,
   colors__randomPreset
-} from '../../src/models/utilities/colors'
-import { Dice } from '../../src/models/utilities/math/dice'
+} from '../../../src/models/utilities/colors'
+import { Dice } from '../../../src/models/utilities/math/dice'
 
 test('returns color permutations for a given color set', () => {
   const hues = colors__permutations(['pale', 'dark'], ['amber', 'red'])

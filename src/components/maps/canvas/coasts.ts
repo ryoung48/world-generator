@@ -4,7 +4,7 @@ import { map__breakpoints, map__styles } from './draw_styles'
 
 const waves = [
   {
-    strokeWidth: 1,
+    strokeWidth: 0.5,
     opacity: 0.5
   },
   {

@@ -35,7 +35,7 @@ export const performers: Record<PerformerProfessions, Profession> = {
     lifestyle: 'modest',
     occurrence: params => performerOccurrence(0)(params),
     skills: {
-      primary: ['composition'],
+      primary: ['composition (music)'],
       secondary: ['instrumental'],
       tertiary: artisanSkills
     },

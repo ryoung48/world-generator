@@ -54,6 +54,7 @@ const drawNations = (params: {
   const { borders } = window.world.display
   const globalScale = scale <= map__breakpoints.global
   const drawnBorders = nations
+  // nations
   ctx.lineWidth = 2
   drawnBorders.forEach(nation => {
     ctx.fillStyle = '#f7eedc'
@@ -68,6 +69,7 @@ const drawNations = (params: {
       ctx.restore()
     })
   })
+  // wars
   const usedWars = new Set<number>()
   const usedRebellions = new Set<number>()
   const conflictZones = globalScale ? drawnBorders : nations

@@ -11,7 +11,6 @@ import { climateLookup } from '../../../models/world/climate/types'
 import { view__context } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
-import { StyledTabs } from '../common/navigation/StyledTabs'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
 import { Geography } from './Geography'
@@ -118,15 +117,8 @@ export function NationView() {
               ]}
             ></SectionList>
           </Grid>
-          <Grid item xs={12} mt={5}>
-            <StyledTabs
-              active={state.codex.current === 'nation'}
-              tabs={[
-                { label: 'geography', content: <Geography></Geography> },
-                { label: 'politics', content: 'politics tab content' },
-                { label: 'history', content: 'history tab content' }
-              ]}
-            ></StyledTabs>
+          <Grid item xs={12} mt={3}>
+            <Geography></Geography>
           </Grid>
         </Grid>
       }

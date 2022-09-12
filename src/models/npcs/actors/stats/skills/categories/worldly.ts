@@ -1,9 +1,3 @@
-import { location__terrain } from '../../../../../regions/locations/environment'
-import { Loc } from '../../../../../regions/locations/types'
-import { province__hub } from '../../../../../regions/provinces'
-import { Terrain } from '../../../../../world/climate/terrain'
-import { Actor } from '../../../types'
-import { actorSkill__notMaster, actorSkills__apply } from '../common/apply'
 import {
   skillGate__coastal,
   skillGate__constitution,
@@ -13,33 +7,11 @@ import {
 } from '../common/checks'
 import { fluency__applySkill, fluency__languagesExist } from '../fluency'
 import { ActorSkill } from '../types'
-import { ActorSkills, WorldlySkill } from '.'
+import { WorldlySkill } from '.'
 
 export const languageSkillChecks: Omit<ActorSkill, 'key'> = {
   valid: ({ actor, context }) => (fluency__languagesExist({ actor, context }) ? 1 : 0),
   apply: ({ actor, exp, loc }) => fluency__applySkill({ actor, exp, loc })
-}
-
-const translateTerrain = (terrain: Terrain): ActorSkills => {
-  if (terrain === 'Arctic') return 'arctic'
-  else if (terrain === 'Marsh') return 'marsh'
-  else if (terrain === 'Forest') return 'forest'
-  else if (terrain === 'Plains') return 'plains'
-  else if (terrain === 'Desert') return 'desert'
-  else if (terrain === 'Mountains') return 'mountains'
-  else throw new Error(`bad survival application: ${terrain}`)
-}
-
-const validTerrain = (params: { actor: Actor; loc: Loc }) => {
-  const { actor, loc } = params
-  const region = window.world.regions[loc.region]
-  return region.regional.provinces
-    .map(p => {
-      const province = window.world.provinces[p]
-      const { terrain } = location__terrain(province__hub(province))
-      return { w: loc.idx === province.hub ? 10 : 1, v: translateTerrain(terrain) }
-    })
-    .filter(skill => actorSkill__notMaster({ actor, key: skill.v }))
 }
 
 export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
@@ -138,16 +110,7 @@ export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
   },
   survival: {
     key: 'survival',
-    valid: ({ context, actor }) => {
-      const loc = window.world.locations[context.idx]
-      const terrain = validTerrain({ actor, loc })
-      return terrain.length > 0 ? skillGate__constitution({ context, actor }) : 0
-    },
-    apply: ({ loc, actor, exp }) => {
-      const location = window.world.locations[loc]
-      const terrain = window.dice.weightedChoice(validTerrain({ actor, loc: location }))
-      actorSkills__apply({ actor, exp, key: terrain, loc })
-    }
+    valid: ({ context, actor }) => skillGate__constitution({ context, actor })
   },
   vintner: {
     key: 'vintner',
@@ -160,41 +123,5 @@ export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
   woodcutting: {
     key: 'woodcutting',
     valid: 0
-  },
-  forest: {
-    key: 'forest',
-    parent: 'survival',
-    valid: 0,
-    derived: true
-  },
-  plains: {
-    key: 'plains',
-    parent: 'survival',
-    valid: 0,
-    derived: true
-  },
-  desert: {
-    key: 'desert',
-    parent: 'survival',
-    valid: 0,
-    derived: true
-  },
-  mountains: {
-    key: 'mountains',
-    parent: 'survival',
-    valid: 0,
-    derived: true
-  },
-  marsh: {
-    key: 'marsh',
-    parent: 'survival',
-    valid: 0,
-    derived: true
-  },
-  arctic: {
-    key: 'arctic',
-    parent: 'survival',
-    valid: 0,
-    derived: true
   }
 }

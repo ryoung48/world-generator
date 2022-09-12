@@ -6,6 +6,7 @@ import { LocationTrait } from '../traits/types'
 
 export interface LocationTemplate {
   type: Loc['type']
+  alias?: 'city' | 'town' | 'village' | 'ruin'
   population?: [number, number]
   coastal?: number
   icon: ((_loc: Loc) => LocationIcon) | LocationIcon

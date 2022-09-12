@@ -10,7 +10,7 @@ import {
   monthMS,
   weekMS,
   yearMS
-} from '../../../src/models/utilities/math/time'
+} from '../../../../src/models/utilities/math/time'
 
 jest.spyOn(global, 'setTimeout')
 

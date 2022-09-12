@@ -4,6 +4,7 @@ type CodexLinkParams = {
   tooltip?: string
   color?: string
   italics?: boolean
+  bold?: boolean
 } & ({ link: TaggedEntity; label?: string } | { link?: TaggedEntity; label: string })
 
 const cleanDecoration = (str: string) =>
@@ -17,8 +18,9 @@ export const decorateText = ({
   link,
   tooltip = '',
   color = '',
-  italics = false
+  italics = false,
+  bold = false
 }: CodexLinkParams) =>
   `@${label ?? link.name}|${link?.idx ?? ''}|${link?.tag ?? ''}|${cleanDecoration(
     tooltip
-  )}|${color}|${italics}@`
+  )}|${color}|${italics}|${bold}@`

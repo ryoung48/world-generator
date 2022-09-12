@@ -73,7 +73,6 @@ export interface Loc extends Point, TaggedEntity, ThreadedEntity, TraitEnriched<
     | 'laboratory'
     | 'battlefield'
     | 'shipwreck'
-    | 'sacred grove'
     | 'lighthouse'
     | 'watchtower'
   subtype?: string

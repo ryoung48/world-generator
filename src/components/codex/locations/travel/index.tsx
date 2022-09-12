@@ -92,7 +92,7 @@ export function TravelView() {
           }}
         ></ToggleButtons>
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} pt={5}>
         <WaitView></WaitView>
       </Grid>
     </Grid>

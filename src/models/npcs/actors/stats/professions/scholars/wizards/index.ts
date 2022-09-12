@@ -33,7 +33,7 @@ export const wizards: Record<WizardProfessions, Profession> = {
     ...wizardKits.wizard
   },
   'wizard (major)': {
-    key: 'wizard (minor)',
+    key: 'wizard (major)',
     lifestyle: 'prosperous',
     category: 'scholars',
     subcategory: 'wizards',
@@ -62,63 +62,13 @@ export const wizards: Record<WizardProfessions, Profession> = {
       secondary: ['logistics']
     }
   },
-  'druid (petty)': {
-    key: 'druid (petty)',
-    lifestyle: 'modest',
-    category: 'scholars',
-    subcategory: 'wizards',
-    ages: ageRanges.seasoned,
-    prevalence: 'uncommon',
-    occurrence: params => wizardOccurrence(params),
-    ...wizardKits.druid
-  },
-  'druid (minor)': {
-    key: 'druid (minor)',
-    lifestyle: 'comfortable',
-    category: 'scholars',
-    subcategory: 'wizards',
-    ages: ageRanges.seasoned,
-    prevalence: 'uncommon',
-    occurrence: params => wizardOccurrence(params),
-    ...wizardKits.druid
-  },
-  'druid (major)': {
-    key: 'druid (major)',
-    lifestyle: 'prosperous',
-    category: 'scholars',
-    subcategory: 'wizards',
-    ages: ageRanges.expert,
-    prevalence: 'uncommon',
-    occurrence: params => wizardOccurrence(params),
-    progression: {
-      'druid (minor)': { weight: 1, years: 10, transition: true }
-    },
-    ...wizardKits.druid
-  },
-  'druid (great)': {
-    key: 'druid (great)',
-    lifestyle: 'rich',
-    category: 'scholars',
-    subcategory: 'wizards',
-    ages: ageRanges.veteran,
-    prevalence: 'rare',
-    occurrence: params => wizardOccurrence(params),
-    progression: {
-      'druid (major)': { weight: 1, years: 10, transition: true }
-    },
-    ...wizardKits.druid,
-    skills: {
-      ...wizardKits.druid.skills,
-      secondary: ['logistics']
-    }
-  },
   oracle: {
     key: 'oracle',
     lifestyle: 'comfortable',
     category: 'scholars',
     subcategory: 'wizards',
     ages: ageRanges.expert,
-    prevalence: 'uncommon',
+    prevalence: 'rare',
     occurrence: params => divinerOccurrence(params),
     attributes: scholarAttributes,
     skills: {

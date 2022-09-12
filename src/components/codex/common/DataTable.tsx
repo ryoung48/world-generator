@@ -14,7 +14,7 @@ import {
   TableRow
 } from '@mui/material'
 import { ChevronDown, ChevronUp } from 'mdi-material-ui'
-import { Dispatch, Fragment, ReactNode, SetStateAction, useState } from 'react'
+import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from 'react'
 
 import { style__subtitle } from '../../theme'
 
@@ -28,6 +28,7 @@ type table_headers<T extends Object> = {
 type table_row_expansion<T extends Object> = {
   align?: TableCellProps['align']
   content: (_data: T) => ReactNode
+  idx?: (_data: T) => number
   disabled?: (_data: T) => boolean
   expanded?: [number, (_item: number) => void]
 }
@@ -69,7 +70,8 @@ function ExpandableRow<T extends Object>(props: {
   expand: table_row_expansion<T>
   rowStyles?: (_item: T) => string | undefined
 }) {
-  const { row, expand, headers, idx, rowStyles } = props
+  const { row, expand, headers, rowStyles } = props
+  const idx = expand?.idx?.(row) ?? props.idx
   const [expanded, setExpanded] = expand.expanded
   const open = expanded === idx
   return (
@@ -81,7 +83,7 @@ function ExpandableRow<T extends Object>(props: {
           </TableCell>
         ))}
         {expand.content && (
-          <TableCell key='expand' align={expand.align}>
+          <TableCell key='expand' align={expand.align} className={classes.cell}>
             <IconButton
               size='small'
               onClick={() => setExpanded(open ? -1 : idx)}
@@ -117,6 +119,9 @@ export function DataTable<T extends Object>(props: {
   const [page, setPage] = props.paging ?? useState(0)
   const rows = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
   const expand = { expanded: useState(-1), ...props.expand }
+  useEffect(() => {
+    rows.length === 0 && setPage(0)
+  }, [data])
   return (
     <TableContainer component='div' className={classes.root}>
       <Table size='small'>
@@ -134,7 +139,7 @@ export function DataTable<T extends Object>(props: {
           {rows.map((row, i) => (
             <ExpandableRow
               key={i}
-              idx={i}
+              idx={page * rowsPerPage + i}
               row={row}
               headers={headers}
               expand={expand}
@@ -162,9 +167,9 @@ export function DataTable<T extends Object>(props: {
 }
 
 export function DetailedTableRow(props: { title: ReactNode; subtitle: ReactNode; link?: boolean }) {
-  const { title, subtitle } = props
+  const { title, subtitle, link } = props
   return (
-    <Grid container m={0}>
+    <Grid container m={0} style={{ lineHeight: link ? 1.5 : 1.2 }}>
       <Grid item xs={12}>
         {title}
       </Grid>

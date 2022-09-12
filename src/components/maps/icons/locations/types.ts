@@ -5,7 +5,6 @@ import { cave__icon } from './caves/types'
 import { coastal__icon } from './coastal/types'
 import { crypt__icon } from './crypts/types'
 import { farm__icon } from './farms/types'
-import { grove__icon } from './groves/types'
 import { inn__icon } from './inn/types'
 import { keep__icon } from './keeps/types'
 import { laboratory__icon } from './laboratory/types'
@@ -24,7 +23,6 @@ export type LocationIcon =
   | coastal__icon
   | crypt__icon
   | farm__icon
-  | grove__icon
   | inn__icon
   | keep__icon
   | laboratory__icon
