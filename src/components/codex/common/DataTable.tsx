@@ -17,15 +17,16 @@ import { ChevronDown, ChevronUp } from 'mdi-material-ui'
 import { Dispatch, Fragment, ReactNode, SetStateAction, useEffect, useState } from 'react'
 
 import { style__subtitle } from '../../theme'
+import { cssColors } from '../../theme/colors'
 
-type table_headers<T extends Object> = {
+type TableHeaders<T extends Object> = {
   text: string
   align?: TableCellProps['align']
   value: keyof T | ((_data: T) => ReactNode)
   hidden?: boolean
 }[]
 
-type table_row_expansion<T extends Object> = {
+type TableRowExpansion<T extends Object> = {
   align?: TableCellProps['align']
   content: (_data: T) => ReactNode
   idx?: (_data: T) => number
@@ -41,7 +42,7 @@ const classes = {
     tfoot,
     th,
     table tbody tr:nth-child(even) {
-      background-color: #f7f2e1;
+      background-color: ${cssColors.background.cards};
     }
   `,
   header: css`
@@ -57,7 +58,7 @@ const classes = {
   expanded: css`
     padding: 15px;
     font-size: 0.88rem !important;
-    background-color: #faf7ea !important;
+    background-color: ${cssColors.background.cards} !important;
     box-shadow: inset 0px 4px 8px -5px rgb(50 50 50 / 75%),
       inset 0px -4px 8px -5px rgb(50 50 50 / 75%);
   `
@@ -66,8 +67,8 @@ const classes = {
 function ExpandableRow<T extends Object>(props: {
   row: T
   idx: number
-  headers: table_headers<T>
-  expand: table_row_expansion<T>
+  headers: TableHeaders<T>
+  expand: TableRowExpansion<T>
   rowStyles?: (_item: T) => string | undefined
 }) {
   const { row, expand, headers, rowStyles } = props
@@ -107,10 +108,10 @@ function ExpandableRow<T extends Object>(props: {
 }
 
 export function DataTable<T extends Object>(props: {
-  headers: table_headers<T>
+  headers: TableHeaders<T>
   data: T[]
   rowsPerPage?: number
-  expand?: table_row_expansion<T>
+  expand?: TableRowExpansion<T>
   paging?: [number, Dispatch<SetStateAction<number>>]
   rowStyles?: (_item: T) => string | undefined
 }) {

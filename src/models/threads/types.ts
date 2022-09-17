@@ -1,5 +1,5 @@
 import { location__tag } from '../regions/locations/spawn/traits/types'
-import { Task } from './tasks/types'
+import type { Task } from './tasks/types'
 
 export interface Thread extends Task {
   type: 'urban' | 'ruin' | 'explore'

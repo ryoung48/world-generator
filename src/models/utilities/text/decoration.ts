@@ -7,7 +7,7 @@ type CodexLinkParams = {
   bold?: boolean
 } & ({ link: TaggedEntity; label?: string } | { link?: TaggedEntity; label: string })
 
-const cleanDecoration = (str: string) =>
+export const cleanDecoration = (str: string) =>
   str.replace(/@(.*?)@/g, (_, group) => {
     const [label, , , tooltip] = group.split('|')
     return tooltip ? `${label} (${tooltip})` : label

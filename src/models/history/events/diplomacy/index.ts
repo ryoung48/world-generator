@@ -4,7 +4,7 @@ import {
   randomRelation,
   region__allies,
   region__hasSubjectRelation,
-  region__IsAtWarWith,
+  region__isAtWarWith,
   region__setRelation
 } from '../../../regions/diplomacy/relations'
 import { region__atPeace, region__wealthPercent } from '../../../regions/diplomacy/status'
@@ -71,7 +71,7 @@ class DiplomacyController extends EventController {
       neighbors.forEach(n => {
         restoration(n)
         if (
-          !region__IsAtWarWith(nation, n) && // not at war
+          !region__isAtWarWith(nation, n) && // not at war
           !nation.allies[n.idx] && // not an ally (debt)
           !n.allies[nation.idx] && // not an ally (credit)
           !region__hasSubjectRelation(nation, n) // not a subject / overlord

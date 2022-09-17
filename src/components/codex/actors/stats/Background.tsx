@@ -92,7 +92,7 @@ export function ActorBackgroundView() {
               {hasEvents && (
                 <SectionList list={eventText({ actor, events: item.events })}></SectionList>
               )}
-              {item.skills && hasEvents && <Divider></Divider>}
+              {item.skills && hasEvents && <Divider sx={{ marginY: 1 }}></Divider>}
               {item.skills && <SectionList list={skillText(item)}></SectionList>}
             </span>
           )

@@ -1,4 +1,4 @@
-import { Goal } from '../goals/types'
+import type { Goal } from '../goals/types'
 
 export type Task = {
   // thread index (window.world.threads)

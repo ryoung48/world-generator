@@ -1,4 +1,4 @@
-import { Thread } from '../types'
+import type { Thread } from '../types'
 
 const goals = [
   'blackmail',
