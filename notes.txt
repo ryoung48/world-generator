@@ -1,0 +1,359 @@
+villages: fishing|farming|mining :: country estate :: military outpost :: reclaimed ruins :: trading posts :: remote temple
+toxic economy: mining pollution
+
+bugs: lb7nkxl3al
+
+-- goals --
+* blackmail: a foe is using strong leverage (secrets|threats|debts) to force support from an actor important to the patron. Help the patron remove this leverage.
+* bounty: a criminal|monster that is hazardous to the patron needs to be apprehended|slain.
+* conflict: there is an ongoing conflict between two actors. The patron wants help (supporting one side against the other)|(prolonging the conflict for as long as possible)|(finding a diplomatic solution to the conflict)|(destroying both sides of the conflict).
+* crime: investigate an old|recent crime (theft|murder|abduction|assault|blackmail|fraud|vandalism) that has affected the patron :: the patron has been framed for a crime and needs help proving their innocence :: frame foe for a crime
+* cursed: lift a curse that is affecting a place|actor that the patron cares about.
+* customs: challenge|change|circumvent a custom|law that is displeasing to the patron ({persecution|immigration|taxes|debts|slavery|romance|gender roles})
+* event: a precipitous|portentous event (violent|diplomatic|chaotic|stabilizing|marriage|religious) is about to happen and needs to be prevented|protected.
+* folly: an actor important to the patron has suffered a major defeat|setback :: broken an important local custom (romance|ethnic|religious) :: fallen to vice (vengeance|lust|greed|paranoia|alcohol|drugs|gambling|debts). Help the patron conceal|fix this error.
+* heist: acquire information|items for the patron without being noticed (replace with replica) :: prevent important information|items from being stolen.
+* intrigue: the patron suspects an actor of a fault (corruption|adultery|seduction|treachery|theft|incompetence|heresy). Find evidence to expose them.
+* mystery: {locate | determine the fate of} a missing ({friendly|hostile|neutral}) {actor|object|shipment}
+* negotiate: convince an {actor} to agree with the terms of a {compromise|exchange|contract} that will benefit the patron
+* rescue: help an {actor} that is important to the patron escape from a dangerous situation (imprisonment|assault).
+* retrieval: help the patron acquire the resources needed to (build|repair an essential structure|item)|(overcome a major shortage|obstacle).
+-- tasks --
+* ambush: survive an ambush arranged by the foe :: prepare and execute an ambush on allies of the foe. (combat)
+* confrontation: confront the foe directly in effort to disrupt their plans. (combat?)
+* defend: an actor who is important to the patron needs to be defended from assassination|imprisonment|assault. (combat?)
+* deliver: deliver resources|information to ally in order to {progress the objective | discredit the foe} :: spread disinformation that will disrupt|delay the foes plan.
+* distract: create a distraction while {the patron | an ally} progresses the objective. (combat?)
+* escort: the patron needs help transporting an important actor|item|resources through unsafe territory. (combat?)
+* infiltration: infiltrate a location and {gather plot sensitive information from the occupants | steal an important object}.
+* observe: observe a location where it is suspected that plot sensitive information might be revealed.
+* persuade: convince ({negotiate|intimidate|trick|bribe}) an actor to {reveal plot sensitive information | act in support of the objective}. (nested?)
+* preparation: prepare for the next phase of the objective ({gather supplies | consult allies | compile evidence | plan strategy})
+* recruit: convince an actor to assist with the patron with the problem. (nested?)
+* research: search a location for plot sensitive information :: determine the {location|identity} of actor who might have plot sensitive information
+* sabotage: sabotage an {tool|information|ally} of the foe so that it betrays their attempted use of it.
+* smuggle: the patron needs an important actor|item transported to a location without being noticed. (combat?)
+* support: support an actor who's working against the foe for their own reasons. (nested)
+* surveillance: shadow an actor without being notice to see if they reveal plot sensitive information.
+* traitor: identify a suspected traitor amongst the patron's allies.
+* waylay: a plot sensitive {object|actor} is being transported and needs to be intercepted. (combat?)
+* weaken: destroy|plunder|steal {an object|information|a location|resources} that is|are vital to the foe's plans. (combat?)
+-- complications --
+* anonymity (goal): the objective must be completed without revealing the patron's identity
+* appeal (task): the foe appeals to the PCs and makes them an offer to switch sides against the interests of the patron.
+* blackmail (goal): the patron has strong leverage (secrets|threats|debts) on the PCs and is using this blackmail to force cooperation
+* chaos (task|goal): unrelated third party intervention (guards|military|criminal|religious|mercantile|artisans|peasants) complicates the issue
+* competition (goal): the objective must be completed while competing with a rival group
+* conflict (task): there is disagreement between the patron|allies|PCs on how to best complete this task.
+* cooperation (task): the PCs is forced to work with the foe temporarily to {complete this objective | overcome a greater threat}
+* curse (goal): {The curse is tied to an innocent local's life | The locals have a badly wrong idea how to lift it | The curse is a fake, a cover for some dark crime}
+* diplomatic (goal|task): this objective must be completed with as little {violence | collateral damage} as possible
+* duplicates (goal|task :: object): there are many examples of a key {object|actor} needed to complete the objective, all but one fake
+* hostile (task): a {potential ally | neutral actor} does not like the {patron|PCs} :: was a former foe :: is bad|unpleasant :: might be working for the foe and cannot be trusted
+* morality (goal|task): the objective has an easy, but morally repugnant, solution (cruel|bloody|deceptive|greedy|illegal|taboo) :: helps a morally repugnant actor ({neutral|paton|foe})
+* obscure (goal): the identity of the foe is unknown
+* scattered (goal|task): the map or lead to the objective is in widely-scattered parts
+* solitude (goal): the locals are {unhelpful in regards to | hostile to |afraid to help with} the patron's cause; this will make allies hard to come by
+* tainted (task :: actor): {An enemy is poisoning their mind against the patron | The actor is afraid of the consequences of cooperating}.
+* time (goal|task): the objective is time sensitive (limited resources | escalating tensions | upcoming event)
+* transient (goal|task :: object|actor): an essential {actor|object} moves constantly, so locations go stale rapidly
+* trust (goal): the ({patron|allies}) cannot be trusted :: will betray the PCs at earliest opportunity
+* untouchable (goal): the foe is {well-respected | above the law} with many resources and favors at their disposal
+* wounded (task): the objective must be completed while under the effects of a curse (strength|constitution|wisdom|intellect|dexterity|charisma) :: wounded|injured|sick
+-- escalations --
+* betrayal: an ally has betrayed the patron and created a dangerous situation.
+* bolster: the foe joins forces with another enemy of the patron :: the foe acquires a powerful new ally (blackmail|contract)
+* damaged: a key item|location|person essential to the patron's objective is cursed|broken|destroyed|dead|stolen
+* essential: it is revealed that the foe has {key information | hostages} needed to complete the objective, which forces the PCs to negotiate.
+* facade: the foe establishes a good public facing image and gains general local support
+* intrigue: the foe reveals a secret about the {PCs|patron|allies} that causes {internal|external} {mistrust|confusion}
+* mastermind: it is discovered that the foe is being {blackmailed|led} by a greater villain
+* misinformation: the PCs have received {false|extraneous|incomplete} information, which has {delayed the objective | created a dangerous situation}
+* reinforcements: reinforcements arrive to support the foe's schemes
+* removal: ally|patron {death|disappearance|imprisoned|coerced to stop supporting the objective}
+* resources: the foe has obtained essential {resources|object|information} needed to advance their plans.
+* safety: the PCs become responsible for the safety of an (innocent|vulnerable) actor.
+* treachery: the patron has betrayed the PCs and enlists minions to remove loose ends :: the patron's hidden ({dangerous|treacherous}) motives reveal them as the true foe ({original foe becomes the patron | becomes an ally of the foe})
+* weaken: the foe destroy|plunder|steal {an object|information|a location|resources} that is|are vital to the patron's plans.
+-- motivations --
+* redemption|vengeance
+* fear (internal|external)
+* status (professional|rival|tradition)
+* favor (credit|debt :: romance)
+* altruism|wealth|ambition
+** relation (friend|family)
+-- source --
+* rumor
+* notice board
+* patron (direct|messenger)
+* anonymous (notes|messenger)
+
+humanoids
+beasts
+primordials (symbiotic + beast)
+spirits (spirit + spirit)
+vessels (undead + construct) :: hosts (humanoid|beast|primordial)
+aberrations (spirit + other)
+
+1-3: 
+    * small (6-10)|tiny (12-20)|diminutive (24-40)|fine (48-80) :: swarms
+    * medium beasts/primordial (3-5)
+    * large beasts/primordials (1-2)
+    * bandits (3-5) + ?boss
+    * skeletons|zombies (3-5)
+    * small spirits (3-6)
+4-6
+    * huge beasts/primordials (1)
+    * medium aberrations (3-5)
+    * large aberrations (1-2)
+    * pirates/mercenaries/cultists/deserters/raiders/soldiers (3-5)
+    * wizards/constructs (3-5)
+    * medium spirits (2-3)
+    * large spirits (1)
+    * ghouls|wraiths|gargoyles|flesh golems
+7-9
+    * gargantuan beasts/primordials (1)
+    * huge aberrations (1)
+    * vampires|abominations
+    * huge spirits (1)
+    * archmages + large constructs
+
+10-12
+    * gargantuan aberrations
+    * gargantuan spirits
+    * lich|high vampire
+
+ruins:
+-----------------------------------------------
+* combat encounters
+* (friendly|neutral|injured|fleeing|fallen) allies
+* puzzles (intellect|wisdom|charisma)
+* hazards (strength|dexterity|constitution)
+---
+ruins
+---
+* affixes: abandoned|haunted|cursed|overgrown|forgotten|feral
+* ruins (village|town|city):
+    * remnant road
+    * military {stronghold|fortress|keep|watchtower}
+    * production {farmstead|plantation|mine|granary|brewery}
+    * religious {temple|monastery|shrine|crypt|tomb}
+    * {academic|arcane} {library|archive|laboratory|observatory}
+    * aristocratic {estate|residence|gardens}
+    * residential {slums|rural|urban|plaza}
+* wilderness (treacherous|labyrinthine)
+    * unusual biome (wasteland|verdant|primordial|arctic|tropical|storms|volcanic|crystalline)
+    * cavern
+    * trackless wilderness
+    * perilous path
+    * camp
+    * savage hamlet
+    * lost battlefield
+* enigmas:
+    * {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|maps|writing|scrolls}
+    * {altered|augmented} gravity
+    * arcane {dampener|amplifier}
+    * temporal distortion {slow|fast}
+    * benign enchantment ({healing|blessing|visions})
+    * {mutated|enchanted} {vermin|flora|fungi}
+    * locked {room|container} ({enchanted|mechanical})
+    * {cryptic|warped|withered|defiled|mundane} {books|records|debris} from past {inhabitants|intruders}
+    * corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
+    * signs of recent {bloodshed|battle|destruction}
+    * signs of a recent arcane {ritual|experiment}
+    * empty {cabinets|containers}
+    * {discharged|broken} trap
+    * {hidden|illusory} {ingress|egress}
+* hazards:
+    * {unstable|crumbling} structures ({floors|ceilings|walls})
+    * {dangerous|chaotic} {radiation|miasma|flames|arcana}
+    * noxious {pools|flora|fungi}
+    * infestation ({mammal|arthropod|reptile})
+    * trapped {containers|interior} ({hidden|alluring}, {harmful|alarming|sealing})
+    * explosive {dust|gases}
+    * {contagious|virulent} disease
+    * treacherous terrain ({flooded|verticality|footing})
+    * obscuring {darkness|fog}
+    * malign enchantment ({despair|madness|decay|transformation})
+    * the way forward is blocked by {heavy|dangerous} {debris|rubble|overgrowth}
+    * {broken|shattered} {corridors|egress|ingress} 
+    * {warded|sealed|bound} entity
+    * {auditory|visual|spatial} {distortions|illusions}
+* encounters:
+    * combat
+    * survivor {prisoner|victim} (wounded)
+    * inhabitant (traitor|non-combatant)
+* treasure:
+    * {worthless|ruined|cursed}
+    * wealth|lore|secrets|maps|keys|artifacts
+* abilities
+    * illusions: can masquerade as something harmless
+    * vicious: can easily slice through even the heaviest armor
+    * frenzied: more aggressive when wounded
+    * poisonous: attacks poison victims
+    * unyielding: can shrug off mortal wounds
+    * warded: resistant to magic
+    * stealthy: very good at sneaking around unnoticed
+    * invisibility
+    * armored
+    * domination
+    * teleportation
+    * keen {senses|sight|smell|hearing}
+    * packs|swarms|hivemind
+    * quills
+    * petrification
+    * diseased
+    * aquatic|scorched
+    * shapeshift
+    * blurred image
+
+
+
+* nations:
+    * government: autocratic|feudal|confederation|anarchic (plutocratic|stratocracy|theocratic|sorcerous)
+    * leadership: elected|hereditary :: regency|respected|despotic|corrupt|incompetent :: coups (failed|successful) : :diplomatic marriages
+    * administration: merit|inherited|wealth|eunuchs :: cutthroat|byzantine|efficient
+    * economy: prosperous|struggling|mercantilism|controlled
+    * tolerance: isolationist|xenophobic|xenophilic
+    * arcane: illegal|restricted|unrestricted
+    * law: strong|weak|informal
+    * crime: corruption|punishment|addiction|police state
+    * enslavement: abolished|slavery|indenture|serfdom
+    -- states --
+    * empire (rising)
+    * empire (established) with tributaries
+    * empire (declining)
+    * empire (fallen) with successor states
+    * wilds|wasteland|archipelago (remote)
+    -- relations --
+    * diplomatic marriage:
+    * raiders (slavers)
+    * vassals
+    * colonial:
+        * new arrivals
+        * conquered (protectorate)
+        * contested (many foreign powers)
+        * independent (unshackled natives|colonists)
+
+    -- leaders --
+    * traditional: the nation is ruled by {{ruler}} and {{his|her}} trusted court of advisors: {xyz}.
+    * former slaves: the nation is ruled by former slaves who succeeded in overthrowing their masters.
+    * ruling minority: the nation is ruled by a foreign minority who declared independence from their parent nation.
+    * proxy leadership: {ruler} communicates orders only through a trusted {consort|official} as the recover from an incapacitating illness
+        * the proxy is secretly manipulating the ruler and fabricating the illness in an effort to prolong their authority
+        * the proxy is an agent of a foreign power and purposefully sows chaos by obfuscating the {ruler}'s mandates.
+        * other members of the court vie for influence from the proxy and mostly ignore the ostensible ruler
+    * regency: the nation is ruled by a {regent (general|consort|official) :: regency council} because the current ruler is {too young|absent on pilgrimage|incapacitated (illness)}
+        * the regent is distrusted by many court officials who believe {he|she} is working to exploit the court's resources for personal gain.
+        * many court officials believe that a strong ruler is needed to guide the nation forward and wish to install {regent} as the new ruler.
+    * despotic: the ruler of {nation} is feared as a despotic tyrant, with harsh punishments to those who oppose {him|her}.
+    * respected: {ruler} has earned the respect of the people | is seen as a strong ruler as a result of {the recent victory in war|rebellion :: the successful implementation of important {religious|economic|legal} edicts|reforms :: successful {diplomatic|trade} agreements}
+    * corrupt: {ruler} is very unpopular with the common people due to {his|her} obvious use of state funds to support a luxurious lifestyle
+    * neglectful: {ruler} frequently neglects administrative duties and focused on worldly pleasures
+    * paranoid: {ruler}'s growing paranoia has prompted the assassination of many political rivals and created an air of distrust in the court.
+    * inept: {ruler} may have the best interests of tha nation in mind, but is hopelessly incompetent and unable to effectively collect taxes or provide basic services.
+        * foreign powers a vigorously backing {ruler}
+    * succession: the current {ruler} has recently passed away
+        * their successor is {well-favored by the court :: condemned by the court}
+        * succession is disputed by various heirs each claiming to be the legitimate ruler
+    * subversion: one of the court members has unusual sway over the ruler and the rest of the court is concerned by this development
+        * consort: charm
+        * court wizard: enchantment
+        * priest: piety
+        * other: blackmail
+    * illness: the ruler of nation suffers from a serious illness and is not expected to live for much longer;
+        * many scheme for power in the court to fill this impending vacancy
+        * {he|she} is desperately searching for a cure to end this malady before it is too late 
+        * {he|she} is desperately trying to {proclaim one final edict|win the war once and for all|finalize a critical trade|diplomatic agreement} before they perish.
+    -- events --
+    * culled nobility: Most of the aristocratic family heads have fallen victim to a series of political executions intended to curb their growing influence.
+    * fallen prosperity: a combination of poor trade agreements and depleted natural resources have left this state very poor.
+    * famine: repeated poor harvests have made food scarce in the following provinces; aid is only being distributed by the politically reliable; cannibalism is becoming quite common here;
+    * plague: A virulent disease afflicts the following provinces; an extremely tight|harsh quarantine is in place.
+    * wars
+    * rebellions
+    --- military ---
+    * citizen service: All citizens of {{nation}} are expected to serve in the military for {x} years.
+    * elite legions: this {{nation}} is well-known for its few, but peerless legions of {infantry|cavalry|marksman|warships}.
+    * endless legions: this {{nation}} is well-known for its numerous, but poorly trained and outfitted, soldiers.
+    * slave legions: this {{nation}} is well-known for its highly disciplined and loyal slave soldiers.
+    * mercenary companies: this nation is known for sending it's armies to fight as mercenaries in foreign wars.
+    --- customs ---
+    * ubiquitous slavery: {{nation}} uses numerous {slaves|serfs} for the heavy labor required in the mines and plantations.
+    * abolished slavery: {{nation}} has declared slavery illegal and looks upon all those who still permit this practice with disdain.
+    --- ruling elites | bureaucracy ---
+    * legalistic: {{nation}} regards the rule of law and its codification as being the most important parameter of a civilized society.
+    * corrupt laws: the legal system in {{nation}} is unstable and often corrupt. laws are selectively applied and rarely to those with money and power.
+    * court eunuchs: this {{nation}} makes great use of eunuchs as domestic servants and bureaucratic administrators.
+    * venal offices: {{nation}} is selling government offices to wealthy citizens in order to overcome mounting debts.
+    * meritocracy: {{nation}} uses an merit-based examination system to identify the most able bureaucratic officials.
+    * addiction: the widespread use and dependence on a toxic narcotic has forced the government to implement harsh measures to cut off supply.
+    * police state: the ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents.
+    * banned sorcery: this nation distrusts the arcane arts and greatly restricts its use.
+    * overextended: the nation has grown too quickly and does not have the governing infrastructure to hold it's new territories securely. the military | treasury is stretched thin; border provinces are only nominally under state control;
+    * poisonous cliques: the court is split into several factions who are growing increasingly hostile to one another. Nonaligned members are being forced to choose sides; administrative duties are being neglected due to incessant confrontations.
+        * the {ruler} is purposefully dividing the court to solidify {his|her} authority.
+        * a foreign power is secretly driving the conflict to sow chaos for the nation.
+    * cosmopolitan|supremacist|isolationist|traditionalist|imperialist|pacifist: 
+        * foreigners are distrusted and excluded; minority religions and customs are suppressed; refugees are always turned away.
+        * foreign customs and people are welcomed; minority religions and customs are protected; refugees are always accepted
+        * the disposition of the ruling authority has been shifting towards isolationism and traditionalism in recent years; edicts have been passed severely limiting foreign relations and trade; strict border controls limiting immigration and emigration
+    --- religion ---
+    * theocratic economy: the faith has established themselves has prominent {bankers|landowners|artisans|merchants} and exerts great economic influence within this nation.
+    * imperial cult: this nation blends the state religion with reverence of the ruler as a living deity.
+    --- values ---
+    * adaptation: seeking fortune in new places or new roles
+    * aesthetic: beauty in material goods and architecture; complex designs; attention to details
+    * arcane: magical prowess and occult ability
+    * bravery: courage and valiance in danger
+    * charisma: eloquence and social expertise 
+    * charity: sharing wealth and goods with others
+    * decadence: personal indulgence and luxuriant pleasure
+    * equality: justice and fairness between people
+    * exploration: exploring the unknown and discovering secrets
+    * forbearance: patience and restraint in the face of adversity
+    * forgiveness: showing mercy to enemies
+    * freedom: individual rights and freedom of action; independence; slavery is viewed with disdain
+    * guile: cunning and the ability to trick others
+    * history: remembrance of the past and memorializing history; strong oral traditions are used to pass stories to future generations
+    * honor: honesty and truthfulness in speech and action
+    * idealistic: social progress toward some eventual utopia
+    * imperialism: conquest and domination of others 
+    * industrious: hard work and excellence in one’s profession
+    * intrigue: scheming subtly against enemies or rivals
+    * loyalty: strong obligations to honoring family, friends, and fellow citizens
+    * naturalism: harmony with nature and existing life; vegetarian diets; constructing and maintaining various types of gardens
+    * order: discipline and obedience to the law; structure and uniformity
+    * pacifism: peaceful resolution of problems
+    * persevering: hardiness and endurance before woes; optimism
+    * purity: ethnic purity of blood and culture 
+    * revanchism: restoring some real or imagined glorious past
+    * sacrifice: personal sacrifice for one’s causes or purposes
+    * scholarship: education and knowledge-seeking 
+    * stewardship: zealous guardianship of their own land and holy sites
+    * strength: raw strength and martial prowess 
+    * supremacy: societal or ethnic superiority over all outsiders
+    * tradition: submission to the cultural norms; assimilation of foreign cultures
+    * vengeance: vengeance and execution of just vendettas
+    * wealth: prosperity and accruing material wealth
+    * zeal: piety and devotion to religious doctrine and tenets
+
+    * gardens: this culture has a long tradition of constructing and maintaining various types of gardens, building themselves a small paradise.
+    * marriage: for this culture, the union of two people in marriage is considered a highly public and ritualistic affair.
+    * metalworkers: smiths of this culture are highly respected and are well known for creating high quality and durable products.
+    * pastoralist: this culture is at home in wide and open terrain, where they herd large groups of animals.
+    * architecture: this culture is famed for its impressive feats of engineering.
+    * seafarers: this culture is at home on the ocean and sails to every corner of the known world.
+    * storytellers: this culture has a strong and persistent oral tradition. The past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations.
+    * warriors: children are brought up knowing how to fight and disputes are settled with trails-by-combat.
+    * culinary artists: food isn't just sustenance for this culture; it is both an art and a ritual, a focal point for family and community alike.
+    * fortified monasteries: This culture has a tradition of fortified monastic retreats. This lifestyle breeds able and pious warriors and attracts mystics.
+    * strong kinship: this culture has a strong tradition of kinship within the extended family, or clan.
+    * ancestor veneration: lineage is very important to this culture, to the point where ancestors have become mythical and legendary beings with many who claim to be their descendants.
+
+
+
+    * arid: this culture is accustomed to living in dry climates, knowing where to find hidden water sources and valuable minerals.
+    * forests: this culture lives close to vast forests, and knows how to forage its bounties.
+
+
