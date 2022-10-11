@@ -1,10 +1,10 @@
-import { region__isActive, region__rebellionInProgress, world__nations } from '../../../regions'
-import { region__allies, region__warRivals } from '../../../regions/diplomacy/relations'
-import { region__atPeace } from '../../../regions/diplomacy/status'
-import { Region } from '../../../regions/types'
-import { yearMS } from '../../../utilities/math/time'
-import { addEvent, logEvent } from '../..'
-import { EventController, LogRecord } from '../../types'
+import { region__isActive, region__rebellionInProgress, world__nations } from '../../regions'
+import { region__allies, region__warRivals } from '../../regions/diplomacy/relations'
+import { region__atPeace } from '../../regions/diplomacy/status'
+import { Region } from '../../regions/types'
+import { yearMS } from '../../utilities/math/time'
+import { addEvent, logEvent } from '..'
+import { EventController, LogRecord } from '../types'
 import { HealthCheckEvent } from './types'
 
 export const statusSplitter = '###' // used to create new lines within tooltips

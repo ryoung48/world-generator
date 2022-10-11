@@ -1,4 +1,4 @@
-import { DiplomaticRelation } from '../../../models/history/events/diplomacy/types'
+import { DiplomaticRelation } from '../../../models/history/diplomacy/types'
 import { region__neighbors } from '../../../models/regions'
 import { randomRelation, region__setRelation } from '../../../models/regions/diplomacy/relations'
 import { province__decoration } from '../../../models/regions/provinces'

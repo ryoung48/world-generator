@@ -9,10 +9,25 @@ export interface ActorEvent {
   loc?: number
   actor?: number
   gender?: genders
+  expires?: number
 }
+
+export type ActorEventPlan = Omit<ActorEvent, 'idx'>
 
 export interface ActorEventSpawn {
   actor: Actor
   event: ActorEvent
   override?: Partial<ActorParams>
+}
+
+export interface PlanChildParams {
+  culture: number
+  birth: number
+  death: number
+  events: ActorEvent[]
+}
+
+export interface GetActorEventParams {
+  actor: Actor
+  type?: ActorEvent['type']
 }

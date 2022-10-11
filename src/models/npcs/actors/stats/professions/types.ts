@@ -116,4 +116,4 @@ export type ProfessionKit = {
   skills: ProfessionSkillKits
 }
 
-export type occupation = { key: ActorProfessions; spec?: ProfessionSpecialization }
+export type Occupation = { key: ActorProfessions; spec?: ProfessionSpecialization }

@@ -1,5 +1,5 @@
 import { logEvent } from '../../history'
-import { event__succession } from '../../history/events/succession'
+import { event__succession } from '../../history/succession'
 import { titleCase } from '../../utilities/text'
 import { decorateText } from '../../utilities/text/decoration'
 import { region__isActive } from '..'

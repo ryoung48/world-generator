@@ -1,9 +1,9 @@
-import { profile } from '../../utilities/performance'
-import { EventController, EventType } from '../types'
+import { profile } from '../utilities/performance'
 import { event__diplomacy } from './diplomacy'
 import { event__healthCheck } from './health'
 import { event__rebellion } from './rebellion'
 import { event__succession } from './succession'
+import { EventController, EventType } from './types'
 import { event__war } from './war'
 
 const event__dispatcher: Record<EventType, EventController> = {

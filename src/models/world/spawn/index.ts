@@ -103,6 +103,8 @@ export const world__spawn = (params: {
     historyRecording: false,
     rebellions: [],
     wars: [],
+    actorPlans: [],
+    dynasties: [],
     statistics: {
       current: { wars: 0, rebellions: 0, regions: 0 },
       past: []

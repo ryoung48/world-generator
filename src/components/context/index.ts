@@ -1,6 +1,6 @@
 import { createContext, Dispatch, useContext } from 'react'
 
-import { world__tick } from '../../models/history/events'
+import { world__tick } from '../../models/history/dispatcher'
 import { region__nation } from '../../models/regions'
 import { province__hub } from '../../models/regions/provinces'
 import {

@@ -2,8 +2,8 @@ import { Grid } from '@mui/material'
 import { useState } from 'react'
 import { Line } from 'react-chartjs-2'
 
-import { region__politics, statusSplitter } from '../../../models/history/events/health'
-import { succession__decode } from '../../../models/history/events/succession'
+import { event__decode } from '../../../models/history/encoding'
+import { region__politics, statusSplitter } from '../../../models/history/health'
 import { EventType, eventTypes } from '../../../models/history/types'
 import { yearMS } from '../../../models/utilities/math/time'
 import { cleanDecoration } from '../../../models/utilities/text/decoration'
@@ -114,11 +114,11 @@ export function History() {
                           const past = dataset.raw[item[0].dataIndex]
                           return `${dataset.label} [${formatters.date(
                             past.time
-                          )}]: ${cleanDecoration(past.title)} [${past.idx}]`
+                          )}]: ${cleanDecoration(event__decode(past.title))} [${past.idx}]`
                         },
                         label: item => {
                           const dataset = item.dataset as unknown as { raw: PastEvent[] }
-                          return succession__decode(dataset.raw[item.dataIndex].text)
+                          return event__decode(dataset.raw[item.dataIndex].text)
                             .split(statusSplitter)
                             .map(cleanDecoration)
                         },
@@ -159,10 +159,13 @@ export function History() {
                 <DataTable
                   headers={[
                     { text: 'Date', value: item => formatters.date(item.time) },
-                    { text: 'Event', value: item => <StyledText text={item.title}></StyledText> },
+                    {
+                      text: 'Event',
+                      value: item => <StyledText text={event__decode(item.title)}></StyledText>
+                    },
                     {
                       text: 'Description',
-                      value: item => <StyledText text={succession__decode(item.text)}></StyledText>
+                      value: item => <StyledText text={event__decode(item.text)}></StyledText>
                     }
                   ]}
                   data={[window.world.past[selected]]}

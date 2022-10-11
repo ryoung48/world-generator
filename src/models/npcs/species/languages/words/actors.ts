@@ -8,9 +8,9 @@ export const lang__surname = (params: { lang: Language; npc: Actor; parent?: str
   const { surnames } = lang
   const { suffix, patronymic } = surnames
   if (patronymic) {
-    const { gender, parentName } = npc
+    const { gender, parent } = npc
     const chosen = window.dice.choice(suffix[gender])
-    return `${parentName}${chosen}`
+    return `${parent.name}${chosen}`
   }
   return lang__last(lang)
 }

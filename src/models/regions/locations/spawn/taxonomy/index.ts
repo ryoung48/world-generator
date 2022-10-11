@@ -1,4 +1,4 @@
-import { recentBattleWindow } from '../../../../history/events/war/battles'
+import { recentBattleWindow } from '../../../../history/war/battles'
 import { nation__hasRefugees } from '../../../diplomacy/refugees'
 import { province__hub } from '../../../provinces'
 import { location__pendingInvasion, location__raiders, location__recentBattle } from '../..'

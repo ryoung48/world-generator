@@ -1,4 +1,4 @@
-import { Region } from '../../../../regions/types'
+import { Region } from '../../../regions/types'
 import { War } from '../types'
 
 export interface WarBackgroundArgs {

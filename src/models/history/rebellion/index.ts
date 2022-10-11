@@ -1,12 +1,12 @@
-import { lang__uniqueName } from '../../../npcs/species/languages/words'
-import { nation__regionalTerritories, region__neighbors } from '../../../regions'
-import { developmentMap } from '../../../regions/development'
-import { region__formattedWealth } from '../../../regions/diplomacy/status'
-import { Region } from '../../../regions/types'
-import { yearMS } from '../../../utilities/math/time'
-import { decorateText } from '../../../utilities/text/decoration'
-import { logEvent } from '../..'
-import { EventController } from '../../types'
+import { nation__regionalTerritories, region__neighbors } from '../../regions'
+import { developmentMap } from '../../regions/development'
+import { region__formattedWealth } from '../../regions/diplomacy/status'
+import { Region } from '../../regions/types'
+import { yearMS } from '../../utilities/math/time'
+import { decorateText } from '../../utilities/text/decoration'
+import { logEvent } from '..'
+import { event__encode } from '../encoding'
+import { EventController } from '../types'
 import { loyalistAllies, rebelAllies } from './allies'
 import { rebellion__background } from './background'
 import { rebellion__battle, rebellion__plan, rebellion__resolveBattle } from './battles'
@@ -18,7 +18,6 @@ class RebellionController extends EventController {
     // increment the number of global rebellions
     window.world.statistics.current.rebellions += 1
     const nation = window.world.regions[window.world.provinces[region.capital].currNation]
-    const culture = window.world.cultures[region.culture.ruling]
     const { development } = region
     // determine the rebel type
     const background = rebellion__background({ nation, rebels: region })
@@ -30,15 +29,7 @@ class RebellionController extends EventController {
     window.world.rebellions.push({
       idx,
       type: 'rebellion',
-      name: `${lang__uniqueName({ lang: culture.language, key: 'rebellion' })} ${
-        background.type === 'ideology'
-          ? 'Revolution'
-          : background.type === 'peasants'
-          ? 'Uprising'
-          : background.type === 'anarchism'
-          ? 'Warfare'
-          : window.dice.choice(['Rebellion', 'Civil War'])
-      }`,
+      name: '',
       start: window.world.date,
       end: Infinity,
       background,
@@ -74,7 +65,7 @@ class RebellionController extends EventController {
       idx,
       time: window.world.date,
       type: 'rebellion',
-      title: `Start: ${rebellion.name}`,
+      title: `Start: ${event__encode({ type: 'rebellion', entity: idx })}`,
       odds,
       battles: {},
       lastBattle: -1
@@ -84,7 +75,7 @@ class RebellionController extends EventController {
     region.memory.rebelFatigue = window.world.date + years * yearMS * 6
     logEvent({
       eventType: event.type,
-      title: `Start: ${window.world.rebellions[idx].name}`,
+      title: `Start: ${event__encode({ type: 'rebellion', entity: idx })}`,
       text: `Rebellion (${background.type}) erupts in ${decorateText({
         link: nation
       })} (${region__formattedWealth(nation)}).`,

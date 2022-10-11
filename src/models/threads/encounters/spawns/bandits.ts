@@ -23,7 +23,6 @@ const bandit__spawn = (params: { loc: Loc; cr: number; boss?: boolean }) => {
     location: loc,
     occupation: { key: 'brigand' },
     living: true,
-    alias: 'Bandit',
     tier,
     level
   })

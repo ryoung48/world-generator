@@ -1,4 +1,4 @@
-import { WorldEvent } from '../../types'
+import { WorldEvent } from '../types'
 
 export interface HealthCheckEvent extends WorldEvent {
   type: 'healthCheck'

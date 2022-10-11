@@ -5,7 +5,7 @@ import { genders } from './stats/appearance/gender'
 import { attribute } from './stats/attributes/types'
 import type {
   ActorProfessions,
-  occupation,
+  Occupation,
   ProfessionSpecialization
 } from './stats/professions/types'
 import { ActorSkills } from './stats/skills/categories'
@@ -32,7 +32,6 @@ type actor_relation = 'parent' | 'spouse' | 'child' | 'party'
 
 export interface Actor extends NPC, TaggedEntity {
   tag: 'actor' // codex tag
-  alias?: string // used for generic encounter npcs
   surname: string // family name
   lineage: string // house name (can be different than surname if married or non-standard cultural last name)
   culture: number // actor culture idx
@@ -49,10 +48,12 @@ export interface Actor extends NPC, TaggedEntity {
     speed?: string
     verbosity?: string
   } // how does this actor sound?
-  // age
-  spawnDate: number
-  birthDate: number // when was this actor born? (ms)
-  expires: number // when will this actor (naturally?) expire? (ms)
+  // dates of importance
+  dates: {
+    spawn: number // when was this actor spawned? (ms)
+    birth: number // when was this actor born? (ms)
+    death: number // when will this actor (naturally?) expire? (ms)
+  }
   // physical traits
   attributes: Record<attribute, number>
   // personality traits
@@ -68,7 +69,7 @@ export interface Actor extends NPC, TaggedEntity {
   skills: Partial<Record<ActorSkills, number>>
   languages: Record<number, number>
   // occupation
-  occupation: occupation
+  occupation: Occupation
   progression: Partial<
     Record<
       ActorProfessions,
@@ -81,7 +82,7 @@ export interface Actor extends NPC, TaggedEntity {
     >
   >
   // relations
-  parentName: string
+  parent: { name: string; plan?: number }
   relations: { type: actor_relation; actor: number }[]
   // containers
   equipment: Equipment
@@ -96,7 +97,7 @@ export interface Actor extends NPC, TaggedEntity {
     backgrounds: {
       loc: number
       target?: ActorProfessions
-      occupation?: occupation
+      occupation?: Occupation
       skills?: {
         start: number
         end?: number

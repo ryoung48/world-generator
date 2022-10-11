@@ -1,5 +1,5 @@
-import { Region } from '../../../regions/types'
-import { EventRecord, MajorEvent, WorldEvent } from '../../types'
+import { Region } from '../../regions/types'
+import { EventRecord, MajorEvent, WorldEvent } from '../types'
 import { WarActorRecord, WarEvent } from '../war/types'
 
 export interface RebelBehavior {

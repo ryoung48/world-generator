@@ -12,7 +12,6 @@ import {
   lang__surname
 } from '../../species/languages/words/actors'
 import { equipment__spawn } from '../equipment'
-import { actor__planHistory } from '../history/events/planning'
 import { actor__birthDate, actor__expirationDate, actor__expired } from '../stats/age'
 import { npc__randomGender } from '../stats/appearance/gender'
 import { profession__ages, profession__set, profession__socialClass } from '../stats/professions'
@@ -87,6 +86,7 @@ export const actor__spawn = (params: ActorParams): Actor => {
     location,
     birthLoc,
     birthTime,
+    expires,
     relativeTime,
     ages = profession__ages(params.occupation.key),
     living,
@@ -94,10 +94,8 @@ export const actor__spawn = (params: ActorParams): Actor => {
     venerable,
     unbound,
     planned,
-    unknownLoc,
     level,
-    tier,
-    alias
+    tier
   } = params
   const culture = actor__culture({ culture: params.culture, location, socialClass })
   const origin = actor__birthLoc({ birthLoc, location, culture })
@@ -120,8 +118,8 @@ export const actor__spawn = (params: ActorParams): Actor => {
     tag: 'actor',
     location: {
       birth: origin,
-      residence: unknownLoc ? -1 : location__hub(location).idx,
-      curr: unknownLoc ? -1 : location.idx
+      residence: location__hub(location).idx,
+      curr: location.idx
     },
     occupation: params.occupation,
     progression: {},
@@ -131,16 +129,19 @@ export const actor__spawn = (params: ActorParams): Actor => {
     culture: culture.idx,
     surname: params.last,
     lineage: params.lineage,
-    alias,
-    spawnDate: params.relativeTime ?? window.world.date,
-    birthDate: birthDate,
-    expires: actor__expirationDate({
-      culture: culture,
-      birthDate: birthDate,
-      relativeTime: relativeTime,
-      living,
-      venerable
-    }),
+    dates: {
+      spawn: params.relativeTime ?? window.world.date,
+      birth: birthDate,
+      death:
+        expires ??
+        actor__expirationDate({
+          culture: culture,
+          birthDate: birthDate,
+          relativeTime: relativeTime,
+          living,
+          venerable
+        })
+    },
     history: {
       planned,
       unbound,
@@ -157,7 +158,10 @@ export const actor__spawn = (params: ActorParams): Actor => {
       wisdom: 0,
       charisma: 0
     },
-    parentName: params.parentName ?? lang__first(language, culture.lineage),
+    parent: {
+      name: params?.parent?.name ?? lang__first(language, culture.lineage),
+      plan: params?.parent?.plan
+    },
     relations: [],
     equipment: equipment__spawn(),
     carryCapacity: 120,
@@ -170,7 +174,6 @@ export const actor__spawn = (params: ActorParams): Actor => {
   if (!actor.lineage) actor.lineage = derivedLast ? lang__last(language) : actor.surname
   window.world.actors.push(actor)
   if (relation) relation.afterSpawn(actor)
-  if (!unknownLoc) actor__planHistory(actor)
-  if (!unbound && !unknownLoc && !actor__expired(actor)) location.actors.push(idx)
+  if (!unbound && !actor__expired(actor)) location.actors.push(idx)
   return actor
 }

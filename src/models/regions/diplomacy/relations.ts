@@ -1,4 +1,4 @@
-import { DiplomaticRelation, diplomaticRelations } from '../../history/events/diplomacy/types'
+import { DiplomaticRelation, diplomaticRelations } from '../../history/diplomacy/types'
 import { region__isActive } from '..'
 import { Region } from '../types'
 import { region__atPeace, region__formattedWealth } from './status'
@@ -58,7 +58,7 @@ export const region__setRelation = (params: {
  * @param n2 - 2nd nation
  * @returns {boolean}
  */
-export const region__IsAtWarWith = (n1: Region, n2: Region) => {
+export const region__isAtWarWith = (n1: Region, n2: Region) => {
   return n1.wars.current.some(n => {
     const { invader, defender } = window.world.wars[n]
     return invader.idx === n2.idx || defender.idx === n2.idx

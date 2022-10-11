@@ -12,7 +12,7 @@ const voices: Record<keyof ActorVoice, string[]> = {
   verbosity: ['sparsely', 'copiously']
 }
 
-export const npc__voice = (npc: Actor) => {
+export const actor__voice = (actor: Actor) => {
   const attributes = window.dice.weightedSample<keyof ActorVoice>(
     [
       { v: 'pitch', w: 2 },
@@ -23,7 +23,7 @@ export const npc__voice = (npc: Actor) => {
     ],
     2
   )
-  npc.voice = attributes.reduce((voice: ActorVoice, attr) => {
+  actor.voice = attributes.reduce((voice: ActorVoice, attr) => {
     voice[attr] = window.dice.choice(voices[attr])
     return voice
   }, {})

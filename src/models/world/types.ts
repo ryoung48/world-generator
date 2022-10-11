@@ -1,9 +1,9 @@
 import { Delaunay, Voronoi } from 'd3'
 import PriorityQueue from 'js-priority-queue'
 
-import { Rebellion } from '../history/events/rebellion/types'
-import { War } from '../history/events/war/types'
+import { Rebellion } from '../history/rebellion/types'
 import { LogRecord, WorldEvent } from '../history/types'
+import { War } from '../history/war/types'
 import { ActorEvent } from '../npcs/actors/history/events/types'
 import { Actor } from '../npcs/actors/types'
 import { Culture } from '../npcs/species/cultures/types'
@@ -105,4 +105,17 @@ export interface World {
   rebellions: Rebellion[]
   historyRecording: boolean // used to halt detailed npc generation
   statistics: { current: EventCounts; past: (EventCounts & { time: number })[] }
+  dynasties: string[]
+  actorPlans: {
+    birth: number
+    death: number
+    region: number
+    culture: number
+    gender: Actor['gender']
+    dynasty?: number
+    actor?: number
+    parent?: number
+    heir?: number
+    events: number[]
+  }[]
 }

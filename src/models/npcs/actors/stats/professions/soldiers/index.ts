@@ -1,4 +1,4 @@
-import { recentBattleWindow } from '../../../../../history/events/war/battles'
+import { recentBattleWindow } from '../../../../../history/war/battles'
 import { ageRanges } from '../../age/life_phases'
 import { laborerSkills, socialSkills, worldlySkills } from '../../skills/categories'
 import { Profession } from '../types'

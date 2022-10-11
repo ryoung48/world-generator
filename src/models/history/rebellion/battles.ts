@@ -1,15 +1,16 @@
-import { nation__regionalTerritories, region__isActive } from '../../../regions'
-import { region__formattedWealth } from '../../../regions/diplomacy/status'
+import { nation__regionalTerritories, region__isActive } from '../../regions'
+import { region__formattedWealth } from '../../regions/diplomacy/status'
 import {
   province__decoration,
   province__filterNoFutureInvasions,
   province__hub,
   province__neighbors
-} from '../../../regions/provinces'
-import { Province } from '../../../regions/provinces/types'
-import { dayMS } from '../../../utilities/math/time'
-import { decorateText } from '../../../utilities/text/decoration'
-import { addEvent, logEvent } from '../..'
+} from '../../regions/provinces'
+import { Province } from '../../regions/provinces/types'
+import { dayMS } from '../../utilities/math/time'
+import { decorateText } from '../../utilities/text/decoration'
+import { addEvent, logEvent } from '..'
+import { event__encode } from '../encoding'
 import { recordBattle } from '../war/battles'
 import { rebellion__achieveGoals } from './background'
 import { rebel__actors, Rebellion, RebellionEvent } from './types'
@@ -42,7 +43,7 @@ const endRebellion = (params: { event: RebellionEvent; victory: boolean; earlyEn
   // log the results
   logEvent({
     eventType: event.type,
-    title: `End: ${rebellion.name}`,
+    title: `End: ${event__encode({ type: 'rebellion', entity: rebellion.idx })}`,
     text: `Rebellion (${rebellion.background.type}) ends in ${
       nation.name
     } (${region__formattedWealth(nation)}). ${

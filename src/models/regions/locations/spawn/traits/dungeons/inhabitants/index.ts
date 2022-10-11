@@ -1,4 +1,4 @@
-import { recentBattleWindow } from '../../../../../../history/events/war/battles'
+import { recentBattleWindow } from '../../../../../../history/war/battles'
 import { decorateText } from '../../../../../../utilities/text/decoration'
 import { location__raiders } from '../../../..'
 import { Loc } from '../../../../types'

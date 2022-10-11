@@ -1,4 +1,4 @@
-import { EventRecord, MajorEvent, WorldEvent } from '../../types'
+import { EventRecord, MajorEvent, WorldEvent } from '../types'
 import { Battle, NextBattle } from './battles/types'
 
 interface AllyRecord {

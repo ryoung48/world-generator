@@ -32,12 +32,12 @@ export function ActorView() {
           text={`(${actor.idx}) ${species__sizeRank(
             species.size
           )} humanoid (${culture.species.toLowerCase()}), ${decorateText({
-            label: formatters.date(actor.birthDate),
+            label: formatters.date(actor.dates.birth),
             link: birthplace,
             tooltip: birthplace.name,
             color: cssColors.subtitle
           })} - ${decorateText({
-            label: expired ? formatters.date(actor.expires) : 'Present',
+            label: expired ? formatters.date(actor.dates.death) : 'Present',
             link: loc,
             tooltip: loc?.name ?? 'unknown',
             color: cssColors.subtitle

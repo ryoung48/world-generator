@@ -1,4 +1,4 @@
-import { recentBattleWindow } from '../../history/events/war/battles'
+import { recentBattleWindow } from '../../history/war/battles'
 import { point__distance } from '../../utilities/math/points'
 import { hoursPerDay } from '../../utilities/math/time'
 import { region__neighbors } from '..'

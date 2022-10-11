@@ -113,7 +113,6 @@ export const culture__decorations = (params: {
 }) => {
   const { culture, title, color } = params
   return decorateText({
-    link: culture,
     label: title ? titleCase(culture.name) : culture.name.toLowerCase(),
     tooltip: culture.species,
     color

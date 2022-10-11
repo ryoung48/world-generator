@@ -1,5 +1,6 @@
 import { range } from 'd3'
 
+import { decoratedProfile } from '../../../utilities/performance'
 import { titleCase } from '../../../utilities/text'
 import { Cluster, Language, PhonemeCatalog, STOP_CHAR, vowelRules } from './types'
 
@@ -153,10 +154,12 @@ const femininePattern = (cluster: Cluster, src: Language) => {
   }
   return pattern
 }
-const patternize = (cluster: Cluster, src: Language) => {
+const _patternize = (cluster: Cluster, src: Language) => {
   if (cluster.key === 'female') return femininePattern(cluster, src)
   return basePatternize(cluster)
 }
+
+const patternize = decoratedProfile(_patternize)
 
 const notHarsh = (
   src: Language,
@@ -343,7 +346,7 @@ const newMorph = (
   return prospect
 }
 
-const morpheme = (
+const _morpheme = (
   cluster: Cluster,
   src: Language,
   params: {
@@ -411,6 +414,8 @@ const morpheme = (
   word.push(prospect)
   return { usedLongVowel, usedDigraph }
 }
+
+const morpheme = decoratedProfile(_morpheme)
 
 export const cluster__word = (cluster: Cluster, src: Language, repeat = false) => {
   // pick a pattern from the selected group

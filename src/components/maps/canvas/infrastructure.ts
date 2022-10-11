@@ -1,4 +1,4 @@
-import { recentBattleWindow } from '../../../models/history/events/war/battles'
+import { recentBattleWindow } from '../../../models/history/war/battles'
 import { region__imperialName } from '../../../models/regions/diplomacy/status'
 import { location__hub } from '../../../models/regions/locations'
 import { location__icon } from '../../../models/regions/locations/spawn/taxonomy/settlements'

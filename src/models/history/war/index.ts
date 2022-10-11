@@ -1,4 +1,4 @@
-import { region__isActive, region__population } from '../../../regions'
+import { region__isActive, region__population } from '../../regions'
 import {
   region__allies,
   region__allyRelation,
@@ -6,16 +6,16 @@ import {
   region__hasSubjectRelation,
   region__neutralReason,
   region__setRelation
-} from '../../../regions/diplomacy/relations'
+} from '../../regions/diplomacy/relations'
 import {
   region__atPeace,
   region__overextended,
   region__wealthPercent
-} from '../../../regions/diplomacy/status'
-import { Region } from '../../../regions/types'
-import { romanize } from '../../../utilities/text'
-import { logEvent } from '../..'
-import { EventController } from '../../types'
+} from '../../regions/diplomacy/status'
+import { Region } from '../../regions/types'
+import { romanize } from '../../utilities/text'
+import { logEvent } from '..'
+import { EventController } from '../types'
 import { war__background } from './background'
 import { war__battle, war__plan } from './battles'
 import { war__ceasefire, war__resolve } from './truce'

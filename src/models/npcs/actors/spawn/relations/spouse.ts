@@ -3,7 +3,8 @@ import { Loc } from '../../../../regions/locations/types'
 import { lang__derivedSurnames } from '../../../species/languages/words/actors'
 import { species__byCulture } from '../../../species/taxonomy'
 import { actor__pastLocation, actor__relation } from '../..'
-import { actor__events, actor__fixExpiration, actor__unionDate } from '../../history/events'
+import { actor__addEvent, actor__events } from '../../history/events'
+import { actor__findUnionDate } from '../../history/events/planning'
 import { ActorEventSpawn } from '../../history/events/types'
 import { actor__age, actor__unionRange, getAge } from '../../stats/age'
 import { convertAge, lifePhaseBoundaries } from '../../stats/age/life_phases'
@@ -12,9 +13,27 @@ import { actor__socialClass, socialClass__randomDrift } from '../../stats/profes
 import { Actor } from '../../types'
 import { actor__spawn } from '..'
 import { ActorParams, Relation } from '../types'
-import { actorEvent__relation } from '.'
+import { actor__fixExpiration, actorEvent__relation } from '.'
 
-const spouse__culture = (params: {
+export const actor__unionDate = (params: { actor: Actor; chance: number }) => {
+  const { actor, chance } = params
+  const events = actor__events({ actor })
+  const { dates, culture } = actor
+  const union = actor__findUnionDate({
+    birth: dates.birth,
+    death: dates.death,
+    culture,
+    events,
+    chance
+  })
+  if (union?.event) {
+    const event = actor__addEvent({ event: { type: 'union', time: union.date } })
+    actor.history.events.push(event)
+  }
+  return union?.date
+}
+
+const spouseCulture = (params: {
   unionLoc: Loc
   species: ReturnType<typeof species__byCulture>
 }) => {
@@ -45,7 +64,7 @@ export class Spouse implements Relation {
     if (!window.world.historyRecording) {
       delete params.occupation
       delete params.birthLoc
-      params.culture = window.world.cultures[spouse__culture({ unionLoc: unionLoc, species })]
+      params.culture = window.world.cultures[spouseCulture({ unionLoc: unionLoc, species })]
       params.socialClass = socialClass__randomDrift(params.socialClass)
     }
     const partnerAge = Math.floor(
@@ -55,7 +74,7 @@ export class Spouse implements Relation {
       convertAge(
         species.ages,
         lifePhaseBoundaries,
-        getAge({ birth: partner.birthDate, ref: unionDate })
+        getAge({ birth: partner.dates.birth, ref: unionDate })
       )
     )
     const relativeAge = Math.max(0, partnerAge - unionAge)

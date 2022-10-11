@@ -1,4 +1,5 @@
-import { recentBattleWindow } from '../../../../../../history/events/war/battles'
+import { rebellion__name } from '../../../../../../history/encoding'
+import { recentBattleWindow } from '../../../../../../history/war/battles'
 import { decorateText } from '../../../../../../utilities/text/decoration'
 import { terrain__isWet } from '../../../../../../world/climate/terrain'
 import { region__neighbors, region__nonAlliedNeighbors } from '../../../../..'
@@ -68,7 +69,9 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
       const event = location__recentBattle(loc) && window.world[lastInvasion.type][lastInvasion.idx]
       return `This ${locationPlaceholder} was recently the victim of a violent conflict and has sustained great damage (${
         event
-          ? event.name
+          ? event.type === 'rebellion'
+            ? rebellion__name(event)
+            : event.name
           : location__raiders(loc).length > 0
           ? 'raiders'
           : window.dice.choice(['bandits', 'titanic beast'])
@@ -156,7 +159,9 @@ export const settlement__conflictTraits: Record<settlement__conflict, LocationTr
         } this ${locationPlaceholder} (${event.name}).`
       } else {
         const { nextBattle: nextBattle } = event
-        return `The ${nextBattle.attacker} prepare to capture this ${locationPlaceholder} (${event.name}).`
+        return `The ${
+          nextBattle.attacker
+        } prepare to capture this ${locationPlaceholder} (${rebellion__name(event)}).`
       }
     },
     spawn: ({ entity: loc }) => {

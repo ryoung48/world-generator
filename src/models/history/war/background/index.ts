@@ -1,8 +1,8 @@
-import { relation__isHostile } from '../../../../regions/diplomacy/relations'
-import { region__formattedWealth } from '../../../../regions/diplomacy/status'
-import { Region } from '../../../../regions/types'
-import { yearMS } from '../../../../utilities/math/time'
-import { decorateText } from '../../../../utilities/text/decoration'
+import { relation__isHostile } from '../../../regions/diplomacy/relations'
+import { region__formattedWealth } from '../../../regions/diplomacy/status'
+import { Region } from '../../../regions/types'
+import { yearMS } from '../../../utilities/math/time'
+import { decorateText } from '../../../utilities/text/decoration'
 import { War } from '../types'
 import { WarBackground, WarBackgroundArgs } from './types'
 

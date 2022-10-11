@@ -1,5 +1,5 @@
 import { Button, Grid } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
 import { pieChart__construct } from '../../common/charts'
@@ -14,14 +14,15 @@ export function NestedPieChart(props: {
 }) {
   const { data, title, tooltips } = props
   const [_context, setContext] = useState<string[]>([])
-  useEffect(() => {
-    setContext([])
-  }, [data])
   const context = [..._context]
   let current = data
   while (context.length > 0) {
     const child = context.shift()
     current = current.children.find(({ label }) => child === label)
+  }
+  if (!current) {
+    setContext([])
+    return <span>nothing here :)</span>
   }
   const pieData = pieChart__construct(current.children)
   return (

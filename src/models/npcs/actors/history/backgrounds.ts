@@ -31,12 +31,12 @@ export const actor__initBackground = (actor: Actor) => {
   })
   const { ages } = species__byCulture(window.world.cultures[actor.culture])
   const childhood = convertAgeStandard(ages, window.dice.uniform(12, 16))
-  actor.history.childhoodEnd = actor.birthDate + childhood * yearMS
+  actor.history.childhoodEnd = actor.dates.birth + childhood * yearMS
   actor.history.nextBackground = actor.history.childhoodEnd
   // check to see if parents move before childhood ends
   const parents = background__checkRelation({
     actor,
-    start: actor.birthDate,
+    start: actor.dates.birth,
     end: actor.history.nextBackground,
     type: 'parent'
   }).filter(eventLocChange(actor.location.birth))
@@ -46,14 +46,14 @@ export const actor__initBackground = (actor: Actor) => {
   actor.history.backgrounds = [
     {
       loc: actor.location.birth,
-      start: actor.birthDate
+      start: actor.dates.birth
     }
   ]
   // set transition cutoff after which location is static (based on spouse if applicable)
   const [spouse] = actor__relation({ actor, type: 'spouse' })
   actor.history.transitionCutoff =
     spouse?.history.transitionCutoff ??
-    actor.birthDate +
+    actor.dates.birth +
       window.dice.weightedChoice([
         { v: ages['childhood'], w: 0.3 },
         { v: ages['adolescence'], w: 0.3 },
@@ -170,13 +170,13 @@ export const actor__checkBackground = (actor: Actor) => {
   })
   const professionCutoff = Math.min(
     locationCutoff,
-    actor.spawnDate - Math.max(5, targetProgress.total) * yearMS,
+    actor.dates.spawn - Math.max(5, targetProgress.total) * yearMS,
     targetProgress.transition ? Infinity : actor.history.nextBackground
   )
   const { ages } = species__byCulture(window.world.cultures[actor.culture])
   while (
     actor.history.nextBackground < window.world.date &&
-    actor.history.nextBackground < actor.expires
+    actor.history.nextBackground < actor.dates.death
   ) {
     let end = actor.history.nextBackground
     const [curr] = actor.history.backgrounds.slice(-1)
@@ -260,9 +260,9 @@ export const actor__checkBackground = (actor: Actor) => {
     } else if (curr.skills) {
       curr.skills.push(background__skillRecord(end))
     }
-    if (next >= actor.expires) {
+    if (next >= actor.dates.death) {
       const [finalBackground] = actor.history.backgrounds.slice(-1)
-      finalBackground.end = actor.expires
+      finalBackground.end = actor.dates.death
       const finalSkills = finalBackground.skills?.slice(-1)?.[0]
       if (finalSkills) finalSkills.end = finalBackground.end
       // TODO: this does not remove them from the planned location list
@@ -290,7 +290,7 @@ export const actor__checkBackground = (actor: Actor) => {
     const childhoodEnd = !adult ? actor.history.childhoodEnd : Infinity
     actor.history.nextBackground = Math.min(
       next,
-      actor.expires,
+      actor.dates.death,
       childhoodEnd,
       nextPromotion,
       nextEvent?.time ?? Infinity

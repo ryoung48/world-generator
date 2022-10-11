@@ -66,7 +66,7 @@ export const actor__birthDate = (params: {
   return relativeTime - trueAge * yearMS
 }
 
-export const actor__expired = (npc: Actor) => npc?.expires <= window.world.date
+export const actor__expired = (npc: Actor) => npc?.dates.death <= window.world.date
 
 interface ActorAgeProps {
   actor: Actor
@@ -83,8 +83,8 @@ interface ActorAgeProps {
  */
 export const actor__age = ({ actor, refDate = window.world.date, expireCap }: ActorAgeProps) =>
   getAge({
-    birth: actor.birthDate,
-    ref: expireCap ? Math.min(refDate, actor.expires) : refDate
+    birth: actor.dates.birth,
+    ref: expireCap ? Math.min(refDate, actor.dates.death) : refDate
   })
 
 export const actor__baseAge = ({ actor, refDate }: Omit<ActorAgeProps, 'expireCap'>) => {

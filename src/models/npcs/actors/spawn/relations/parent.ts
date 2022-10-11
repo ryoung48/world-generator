@@ -1,13 +1,13 @@
 import { lang__derivedSurnames } from '../../../species/languages/words/actors'
 import { species__byCulture } from '../../../species/taxonomy'
 import { actor__relation } from '../..'
-import { actor__addChildRelation } from '../../history/events'
 import { actor__age, actor__childbirthRange } from '../../stats/age'
 import { convertAge, lifePhaseBoundaries } from '../../stats/age/life_phases'
 import { actor__socialClass, socialClass__randomDrift } from '../../stats/professions'
 import { Actor } from '../../types'
 import { actor__spawn } from '../'
 import { ActorParams, Relation } from '../types'
+import { actor__addChildRelation } from '.'
 import { actor__spawnSpouse } from './spouse'
 
 export class Parent implements Relation {
@@ -30,7 +30,7 @@ export class Parent implements Relation {
     const nonStandardLast = lang__derivedSurnames(language)
     params.last = nonStandardLast ? undefined : this.child.lineage
     params.lineage = this.child.lineage
-    params.first = this.child.parentName
+    params.first = this.child.parent.name
     if (window.world.historyRecording) {
       params.birthLoc = window.world.locations[this.child.location.birth]
       params.occupation = this.child.occupation

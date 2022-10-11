@@ -52,9 +52,11 @@ export const test__world = () => {
     culture: 35,
     surname: 'test',
     lineage: 'test',
-    spawnDate: 16592401740000,
-    birthDate: 16026925696893.182,
-    expires: 18201500931149.97,
+    dates: {
+      spawn: 16592401740000,
+      birth: 16026925696893.182,
+      death: 18201500931149.97
+    },
     history: {
       unbound: true,
       events: [],
@@ -70,7 +72,7 @@ export const test__world = () => {
       wisdom: 8,
       charisma: 12
     },
-    parentName: 'test',
+    parent: { name: 'test' },
     relations: [],
     equipment: { armor: null, offhand: null, mainhand: null },
     carryCapacity: 120,

@@ -1,4 +1,4 @@
-import { DiplomaticRelation } from '../history/events/diplomacy/types'
+import { DiplomaticRelation } from '../history/diplomacy/types'
 import { TradeGood } from '../items/economy'
 import { TaggedEntity } from '../utilities/codex/entities'
 import { directions } from '../utilities/math/points'
@@ -9,7 +9,7 @@ export interface Region extends TaggedEntity {
   tag: 'nation'
   colors: string
   capital?: number
-  ruler?: { birthDate: number; successionDate: number; expirationDate: number; culture: number }
+  ruler?: number
   side: directions
   edge: directions
   bordersChanged: boolean

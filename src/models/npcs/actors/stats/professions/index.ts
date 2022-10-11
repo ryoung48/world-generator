@@ -86,7 +86,7 @@ export const profession__progression = (params: {
   const { actor, profession, time } = params
   const curr = { profession, next: Infinity, total: 0, transition: true }
   const currAge = actor__baseAge({ actor, refDate: time })
-  const ceiling = actor__baseAge({ actor, refDate: actor.spawnDate }) - 1
+  const ceiling = actor__baseAge({ actor, refDate: actor.dates.spawn }) - 1
   while (profession__map[curr.profession.key].progression) {
     const current = profession__map[curr.profession.key]
     if (!actor.progression[curr.profession.key]) {

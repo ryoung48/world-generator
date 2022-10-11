@@ -3,7 +3,8 @@ import { yearMS } from '../../../../utilities/math/time'
 import { lang__derivedSurnames } from '../../../species/languages/words/actors'
 import { species__byCulture } from '../../../species/taxonomy'
 import { actor__pastLocation } from '../..'
-import { actor__addChildRelation, actor__findBirthDate } from '../../history/events'
+import { actor__events } from '../../history/events'
+import { actor__planChild } from '../../history/events/planning'
 import { ActorEventSpawn } from '../../history/events/types'
 import { getAge } from '../../stats/age'
 import { convertAge, lifePhaseBoundaries } from '../../stats/age/life_phases'
@@ -11,8 +12,8 @@ import { npc__randomGender } from '../../stats/appearance/gender'
 import { actor__socialClass, socialClass__randomDrift } from '../../stats/professions'
 import { Actor } from '../../types'
 import { ActorParams, Relation } from '../types'
-import { actorEvent__relation } from '.'
-import { actor__spawnSpouse } from './spouse'
+import { actor__addChildRelation, actorEvent__relation } from '.'
+import { actor__spawnSpouse, actor__unionDate } from './spouse'
 
 export class Child implements Relation {
   private parent: Actor
@@ -34,8 +35,12 @@ export class Child implements Relation {
     const species = species__byCulture(culture)
     params.birthTime =
       params.birthTime ??
-      actor__findBirthDate({
-        actor: this.parent,
+      actor__planChild({
+        unionDate: actor__unionDate({ actor: this.parent, chance: 1 }),
+        birth: this.parent.dates.birth,
+        death: this.parent.dates.death,
+        culture: this.parent.culture,
+        events: actor__events({ actor: this.parent }),
         ages: ages?.map(
           age => relativeTime - convertAge(lifePhaseBoundaries, species.ages, age) * yearMS
         )
@@ -47,7 +52,7 @@ export class Child implements Relation {
     }
     const spouse = actor__spawnSpouse(this.parent)
     const parent = [this.parent, spouse].find(p => p.gender === culture.lineage)
-    params.parentName = parent.name
+    params.parent = { ...params.parent, name: parent.name }
     params.gender = params.gender ?? npc__randomGender()
     params.culture = culture
     const nonStandardLast = lang__derivedSurnames(culture.language)
@@ -83,6 +88,6 @@ export const actorEvent__child = (params: ActorEventSpawn) => {
   return actorEvent__relation({
     ...params,
     relation: () => new Child({ ref: actor, event: true, locationLocked: false }),
-    override: { birthTime: event.time, ...override }
+    override: { birthTime: event.time, expires: event.expires, gender: event.gender, ...override }
   })
 }

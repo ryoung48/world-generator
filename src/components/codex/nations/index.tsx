@@ -1,5 +1,6 @@
 import { Grid } from '@mui/material'
 
+import { rebellion__name } from '../../../models/history/encoding'
 import { culture__decorations } from '../../../models/npcs/species/cultures'
 import { region__population } from '../../../models/regions'
 import { region__warRivals } from '../../../models/regions/diplomacy/relations'
@@ -46,7 +47,7 @@ export function NationView() {
     const rebellion = window.world.rebellions[subject.rebellions.current]
     return decorateText({
       label: subject.name,
-      tooltip: rebellion.name
+      tooltip: rebellion__name(rebellion)
     })
   })
   const conflicts = currentWars.concat(currentRebellions)

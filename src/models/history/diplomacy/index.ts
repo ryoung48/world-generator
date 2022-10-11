@@ -1,20 +1,20 @@
-import { region__isActive, region__neighbors } from '../../../regions'
-import { nation__annexRegion, region__releaseOverlord } from '../../../regions/diplomacy/claims'
+import { region__isActive, region__neighbors } from '../../regions'
+import { nation__annexRegion, region__releaseOverlord } from '../../regions/diplomacy/claims'
 import {
   randomRelation,
   region__allies,
   region__hasSubjectRelation,
   region__isAtWarWith,
   region__setRelation
-} from '../../../regions/diplomacy/relations'
-import { region__atPeace, region__wealthPercent } from '../../../regions/diplomacy/status'
-import { province__sortClosest } from '../../../regions/provinces'
-import { Region } from '../../../regions/types'
-import { yearMS } from '../../../utilities/math/time'
-import { decoratedProfile, profile } from '../../../utilities/performance'
-import { addEvent } from '../..'
-import { EventController } from '../../types'
+} from '../../regions/diplomacy/relations'
+import { region__atPeace, region__wealthPercent } from '../../regions/diplomacy/status'
+import { province__sortClosest } from '../../regions/provinces'
+import { Region } from '../../regions/types'
+import { yearMS } from '../../utilities/math/time'
+import { decoratedProfile, profile } from '../../utilities/performance'
+import { addEvent } from '../'
 import { event__rebellion } from '../rebellion'
+import { EventController } from '../types'
 import { event__war } from '../war'
 import { DiplomaticEvent } from './types'
 
