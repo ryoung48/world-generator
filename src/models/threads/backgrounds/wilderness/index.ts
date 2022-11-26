@@ -17,7 +17,7 @@ export const backgrounds__wilderness: Record<Wilderness, Background> = {
       { alias: `Hapless pioneer who's arrived to an empty ruin` }
     ],
     complications: [
-      `It's now populated by something {wilder|cursed|eldritch}`,
+      `It's now populated by something ({wilder|cursed|eldritch})`,
       `It was built on top of a place abandoned for good reason`,
       `The wilderness is reclaiming it in a dangerous way`
     ],

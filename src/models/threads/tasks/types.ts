@@ -1,19 +1,28 @@
-import type { Goal } from '../goals/types'
+const tasks = [
+  'ambush',
+  'confrontation',
+  'defend',
+  'deliver',
+  'distract',
+  'escort',
+  'infiltration',
+  'observe',
+  'persuade',
+  'preparation',
+  'recruit',
+  'research',
+  'sabotage',
+  'smuggle',
+  'support',
+  'surveillance',
+  'traitor',
+  'waylay',
+  'weaken'
+] as const
 
 export type Task = {
-  // thread index (window.world.threads)
-  idx?: number
-  // the specific objective of this task
-  goal: Goal['tag']
-  // text describing the goal
-  text: string
-  // status of the task
-  status?: 'perfection' | 'success' | 'pyrrhic' | 'failure'
-  // task difficulty (cr); not the same as the parent
-  // PC cr upon completing the thread
-  difficulty: { cr: number; pc?: number }
-  // how long the task will take to attempt
-  duration: number
-  // experience rewarded by this task
-  exp: number
+  tag: typeof tasks[number]
+  text: () => string
+  nested?: number
+  combat?: number
 }

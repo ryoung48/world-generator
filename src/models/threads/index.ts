@@ -1,21 +1,21 @@
 import { actor__enemyCR } from '../npcs/actors'
-import { actor__spawn } from '../npcs/actors/spawn'
-import { profession__randomBalanced } from '../npcs/actors/stats/professions'
 import { Actor } from '../npcs/actors/types'
-import { location__spawnTraits } from '../regions/locations/spawn/traits'
 import { Loc } from '../regions/locations/types'
 import { province__hub } from '../regions/provinces'
 import { decorateText } from '../utilities/text/decoration'
+import { location__weather } from '../world/climate/weather'
+import { thread__background } from './backgrounds'
+import { complication__spawn } from './complications'
 import { goal__spawn } from './goals'
 import {
-  task__blocked,
-  task__current,
-  task__difficulty,
-  task__placeholder,
-  task__resolve,
-  task__reward,
-  task__spawn
-} from './tasks'
+  stage__blocked,
+  stage__current,
+  stage__difficulty,
+  stage__placeholder,
+  stage__resolve,
+  stage__reward,
+  stage__spawn
+} from './stages'
 import { Thread, ThreadedEntity } from './types'
 
 export const thread__spawn = (params: {
@@ -23,18 +23,13 @@ export const thread__spawn = (params: {
   avatar: Actor
   parent?: Thread
   target: ThreadedEntity
-  type: Thread['type']
 }) => {
-  const { avatar, loc, target, parent, type } = params
-  const difficulty = parent ? task__difficulty(parent) : actor__enemyCR(avatar)
-  const prev = parent ? thread__tasks(parent).slice(-1)[0]?.goal ?? parent?.goal : undefined
-  const urban = type === 'urban'
-  const hooks: Thread['hook'][] = loc.traits.map(({ tag }) => tag)
-  if (urban) hooks.push('personal')
+  const { avatar, loc, target, parent } = params
+  const difficulty = parent ? stage__difficulty(parent) : actor__enemyCR(avatar)
+  const prev = parent?.goal
+  const { season, time, heat, conditions, variance } = location__weather(loc)
   const thread: Thread = {
     idx: window.world.threads.length,
-    type,
-    ...goal__spawn({ type, blacklist: [prev] }),
     status: 'perfection',
     difficulty: { cr: difficulty },
     complexity: window.dice.weightedChoice([
@@ -51,43 +46,41 @@ export const thread__spawn = (params: {
     progress: 0,
     failures: 0,
     location: loc.idx,
-    patron: urban
-      ? actor__spawn({
-          location: loc,
-          living: true,
-          occupation: {
-            key: window.dice.weightedChoice(
-              profession__randomBalanced({ loc, time: window.world.date })
-            )
-          }
-        }).idx
-      : undefined,
-    hook: window.dice.choice(hooks),
-    tasks: [],
+    background: thread__background(loc),
+    stages: [],
     duration: 0,
-    exp: 0
+    exp: 0,
+    setting: `${decorateText({
+      label: heat.desc,
+      tooltip: `${heat.degrees.toFixed(0)}°F`
+    })}${
+      variance === 'normal'
+        ? ''
+        : decorateText({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
+    }, ${season}, ${time}, ${conditions}`
   }
+  thread.goal = goal__spawn({ thread, blacklist: [prev?.tag] })
+  if (window.dice.random < 0.1) thread.complication = complication__spawn({ thread, type: 'goal' })
   window.world.threads.push(thread)
-  task__spawn({ thread })
+  stage__spawn({ thread })
   target.threads = [...target.threads, thread.idx]
   return thread
 }
 
 const thread__spawnChild = (params: { thread: Thread; avatar: Actor }) => {
   const { avatar, thread } = params
-  const [task] = thread.tasks.slice(-1)
-  if (task !== task__placeholder) return false
-  const loc = thread__transition(thread)?.loc ?? window.world.locations[thread.location]
+  const [stage] = thread.stages.slice(-1)
+  if (stage.child !== stage__placeholder) return false
+  const loc = window.world.locations[thread.location]
   const child = thread__spawn({
     avatar,
     loc,
     target: avatar,
-    parent: thread,
-    type: thread.type
+    parent: thread
   })
   child.parent = thread.idx
   child.depth = thread.depth + 1
-  thread.tasks.splice(-1, 1, child.idx)
+  stage.child = child.idx
   return true
 }
 
@@ -108,13 +101,13 @@ export const thread__ongoing = (thread: Thread) => {
 
 export const thread__blocked = (params: { thread: Thread; avatar: Actor }) => {
   const { thread, avatar } = params
-  const current = task__current(thread)
-  return current ? task__blocked({ task: current, avatar }) : false
+  const current = stage__current(thread)
+  return current ? stage__blocked({ stage: current, avatar }) : false
 }
 
-export const thread__child = ({ tasks }: Thread) => {
-  const previous = tasks.slice(-1)[0]
-  if (typeof previous === 'number') return window.world.threads[previous]
+export const thread__child = (thread: Thread) => {
+  const current = stage__current(thread)
+  return window.world.threads[current?.child]
 }
 
 export const thread__paused = (thread: Thread) => {
@@ -124,29 +117,23 @@ export const thread__paused = (thread: Thread) => {
 
 const thread__transition = (thread: Thread) => {
   const location = window.world.locations[thread.location]
-  if (thread.type !== 'urban' || thread.tasks.length === 0 || window.dice.random > 0.1)
-    return undefined
+  if (thread.stages.length === 0 || window.dice.random > 0.1) return undefined
   const chosen = window.dice.choice(window.world.provinces[location.province].neighbors)
   const transition = province__hub(window.world.provinces[chosen])
-  location__spawnTraits(transition)
-  return {
-    loc: transition,
-    text: ` ${decorateText({
-      link: location,
-      tooltip: location.type
-    })} → ${decorateText({
-      link: transition,
-      tooltip: transition.type
-    })}.`
-  }
+  return { src: location.idx, dst: transition.idx }
 }
 
 export const thread__advance = (params: { avatar: Actor; thread: Thread }) => {
   const { avatar, thread } = params
-  const current = task__current(thread)
+  const current = stage__current(thread)
   const child = thread__child(thread)
   // determine the result of the task
-  if (!child) task__resolve({ task: current, avatar })
+  if (!child) stage__resolve({ stage: current, avatar })
+  else {
+    current.status = child.status
+    current.difficulty.pc = child.difficulty.pc
+    stage__reward({ avatar, stage: current })
+  }
   // determine the resultant effect on the entire thread
   if (current.status === 'perfection') thread.progress += 2
   else if (current.status === 'success') thread.progress += 1
@@ -155,8 +142,8 @@ export const thread__advance = (params: { avatar: Actor; thread: Thread }) => {
   // spawn the next task (if applicable)
   if (thread__ongoing(thread)) {
     const transition = thread__transition(thread)
-    if (transition) thread.location = transition.loc.idx
-    task__spawn({ thread, transition: transition?.text })
+    if (transition) thread.location = transition.dst
+    stage__spawn({ thread, transition })
     thread__spawnChild({ thread, avatar })
   }
   // update the status of the entire thread
@@ -169,11 +156,6 @@ export const thread__advance = (params: { avatar: Actor; thread: Thread }) => {
   return duration
 }
 
-export const thread__tasks = (thread: Thread) =>
-  thread.tasks
-    .filter(task => task !== task__placeholder)
-    .map(task => (typeof task === 'number' ? window.world.threads[task] : task))
-
 export const thread__close = (params: { avatar: Actor; thread: Thread }) => {
   const { avatar, thread } = params
   thread.closed = true
@@ -183,7 +165,7 @@ export const thread__close = (params: { avatar: Actor; thread: Thread }) => {
     const child = thread__child(thread)
     if (child && !child.closed) thread__close({ thread: child, avatar })
   } else {
-    task__reward({ task: thread, avatar, mod: thread.complexity })
+    stage__reward({ stage: thread, avatar, mod: thread.complexity })
   }
   // update parent thread if applicable
   const parent = window.world.threads[thread.parent]

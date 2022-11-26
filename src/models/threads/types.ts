@@ -1,14 +1,38 @@
-import { location__tag } from '../regions/locations/spawn/traits/types'
-import type { Task } from './tasks/types'
+import { LifePhase } from '../npcs/actors/stats/age/life_phases'
+import { Gender } from '../npcs/actors/stats/appearance/gender'
+import { CourtGroup } from './backgrounds/courts/types'
+import { BackgroundTag } from './backgrounds/types'
+import { Goal } from './goals/types'
+import { Stage } from './stages/types'
 
-export interface Thread extends Task {
-  type: 'urban' | 'ruin' | 'explore'
+export interface ThreadActor {
+  alias: string
+  name: string
+  culture: number
+  age?: LifePhase
+  gender?: Gender
+  monstrous?: boolean
+}
+
+export interface Thread extends Omit<Stage, 'child' | 'task' | 'text'> {
+  // thread index (window.world.threads)
+  idx?: number
+  // goal that defines the thread
+  goal?: { tag: Goal['tag']; text: string }
   // location where the thread takes place
   location: number
-  // quest giver
-  patron?: number
   // quest hook
-  hook: location__tag | 'personal'
+  background: {
+    tag: BackgroundTag
+    context: string
+    complication: string
+    category: string
+    patron: ThreadActor
+    antagonist: ThreadActor
+    place: string
+    thing: string
+    court?: CourtGroup
+  }
   // how deep is the ancestral tree? (max 3)
   depth: number
   // how many tasks must be completed to achieve the goal?
@@ -20,9 +44,11 @@ export interface Thread extends Task {
   // is this thread closed?
   closed?: boolean
   // list of child tasks
-  tasks: (Task | number)[]
+  stages: Stage[]
   // parent thread
   parent?: number
+  // setting (weather, time of day, etc)
+  setting: string
 }
 
 export interface ThreadedEntity {

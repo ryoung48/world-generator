@@ -1,34 +1,20 @@
-import type { Thread } from '../types'
-
 const goals = [
   'blackmail',
   'bounty',
-  'defend',
-  'destroy',
-  'encounter',
-  'escape',
-  'escort',
-  'explore',
+  'conflict',
+  'crime',
+  'cursed',
+  'event',
   'folly',
-  'hazard',
   'heist',
   'intrigue',
-  'investigate',
-  'locate',
-  'persuade',
-  'prevent',
-  'promote',
-  'puzzle',
+  'mystery',
+  'negotiate',
   'rescue',
-  'research',
-  'resources',
-  'retrieval',
-  'smuggle',
-  'waylay'
+  'retrieval'
 ] as const
 
 export interface Goal {
   tag: typeof goals[number]
-  type?: Thread['type']
-  spawn: () => { text: string; complication?: () => string }
+  text: () => string
 }
