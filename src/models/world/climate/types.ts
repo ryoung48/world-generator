@@ -1,29 +1,3 @@
-/* eslint-disable no-unused-vars */
-import { Terrain } from './terrain'
-
-type zones = 'Arctic' | 'Temperate' | 'Tropical'
-
-export type BasicClimate = 'Warm' | 'Temperate' | 'Cold'
-
-export const enum climates {
-  EQUATORIAL = 'Tropical Rainforest',
-  TROPICAL_MONSOON = 'Tropical Monsoon',
-  SAVANNA = 'Savanna',
-  HOT_STEPPE = 'Hot Steppe',
-  HOT_DESERT = 'Hot Desert',
-  COLD_DESERT = 'Cold Desert',
-  COLD_STEPPE = 'Cold Steppe',
-  SUBTROPICAL = 'Subtropical',
-  TEMPERATE_MONSOON = 'Temperate Monsoon',
-  MEDITERRANEAN = 'Mediterranean',
-  OCEANIC = 'Oceanic',
-  CONTINENTAL = 'Laurentian',
-  MANCHURIAN = 'Manchurian',
-  SUBARCTIC = 'Subarctic',
-  SIBERIAN = 'Siberian',
-  POLAR = 'Polar'
-}
-
 export const rain = {
   dry: 0.05,
   low: 0.15,
@@ -32,11 +6,25 @@ export const rain = {
   humid: 0.8
 }
 
-const baseBiodiversity = 30
-
 export interface Climate {
-  type: climates
-  zone: zones
+  type:
+    | 'tropical rainforest'
+    | 'tropical monsoon'
+    | 'savanna'
+    | 'hot steppe'
+    | 'hot desert'
+    | 'cold desert'
+    | 'cold steppe'
+    | 'subtropical'
+    | 'temperate monsoon'
+    | 'mediterranean'
+    | 'oceanic'
+    | 'laurentian'
+    | 'manchurian'
+    | 'subarctic'
+    | 'siberian'
+    | 'polar'
+  zone: 'arctic' | 'temperate' | 'tropical'
   code: string
   display: string
   population: number
@@ -45,8 +33,8 @@ export interface Climate {
   diurnalHeat: [number, number]
   precipitation: [number, number]
   affixes: string[]
-  terrain: Terrain
-  biodiversity: number
+  terrain: 'forest' | 'plains' | 'desert' | 'arctic'
+  arid?: boolean
 }
 
 const diurnalVariation: Record<'low' | 'standard' | 'extreme', [number, number]> = {
@@ -55,218 +43,210 @@ const diurnalVariation: Record<'low' | 'standard' | 'extreme', [number, number]>
   extreme: [20, 4]
 }
 
-export const climateLookup: Record<climates, Climate> = {
-  [climates.EQUATORIAL]: {
-    type: climates.EQUATORIAL,
+export const climates: Record<Climate['type'], Climate> = {
+  'tropical rainforest': {
+    type: 'tropical rainforest',
     code: 'Af',
-    zone: 'Tropical',
+    zone: 'tropical',
     display: '#0000FE',
     population: 1,
     scorePenalty: 1.2,
     diurnalHeat: diurnalVariation.low,
     precipitation: [0.6, 0.3],
-    affixes: ['Jungle'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 3
+    affixes: ['jungle'],
+    terrain: 'forest'
   },
-  [climates.TROPICAL_MONSOON]: {
-    type: climates.TROPICAL_MONSOON,
+  'tropical monsoon': {
+    type: 'tropical monsoon',
     code: 'Am',
-    zone: 'Tropical',
+    zone: 'tropical',
     population: 1.5,
     scorePenalty: 1,
     diurnalHeat: diurnalVariation.low,
     display: '#0077FF',
     precipitation: [0.8, 0.1],
-    affixes: ['Jungle'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 3
+    affixes: ['jungle'],
+    terrain: 'forest'
   },
-  [climates.SAVANNA]: {
-    type: climates.SAVANNA,
+  savanna: {
+    type: 'savanna',
     code: 'Aw',
-    zone: 'Tropical',
+    zone: 'tropical',
     display: '#46A9FA',
     population: 1.5,
     scorePenalty: 0.8,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.4, 0.1],
-    affixes: ['Savanna'],
-    terrain: 'Plains',
-    biodiversity: baseBiodiversity * 2
+    affixes: ['savanna'],
+    terrain: 'plains',
+    arid: true
   },
-  [climates.HOT_STEPPE]: {
-    type: climates.HOT_STEPPE,
+  'hot steppe': {
+    type: 'hot steppe',
     code: 'BSh',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#F5A301',
     population: 1,
     scorePenalty: 0.8,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.2, 0.05],
-    affixes: ['Steppe', 'Plains'],
-    terrain: 'Plains',
-    biodiversity: baseBiodiversity * 1.8
+    affixes: ['steppe', 'plains'],
+    terrain: 'plains',
+    arid: true
   },
-  [climates.COLD_STEPPE]: {
-    type: climates.COLD_STEPPE,
+  'cold steppe': {
+    type: 'cold steppe',
     code: 'BWh',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#FFDB63',
     population: 1,
     scorePenalty: 0.8,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.15, 0.05],
-    affixes: ['Steppe', 'Plains'],
-    terrain: 'Plains',
-    biodiversity: baseBiodiversity * 1.5
+    affixes: ['steppe', 'plains'],
+    terrain: 'plains',
+    arid: true
   },
-  [climates.HOT_DESERT]: {
-    type: climates.HOT_DESERT,
+  'hot desert': {
+    type: 'hot desert',
     code: 'BWk',
-    zone: 'Tropical',
+    zone: 'tropical',
     display: '#FE0000',
     population: 0.5,
     scorePenalty: 1.5,
     diurnalHeat: diurnalVariation.extreme,
     precipitation: [0.1, 0.01],
-    affixes: ['Desert'],
-    terrain: 'Desert',
+    affixes: ['desert'],
+    terrain: 'desert',
     heatMod: { summer: 10, winter: 0 },
-    biodiversity: baseBiodiversity * 1.2
+    arid: true
   },
-  [climates.COLD_DESERT]: {
-    type: climates.COLD_DESERT,
+  'cold desert': {
+    type: 'cold steppe',
     code: 'BSk',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#FE9695',
     population: 0.5,
     scorePenalty: 1,
     diurnalHeat: diurnalVariation.extreme,
     precipitation: [0.1, 0.01],
-    affixes: ['Desert'],
-    terrain: 'Desert',
+    affixes: ['desert'],
+    terrain: 'desert',
     heatMod: { summer: 10, winter: 0 },
-    biodiversity: baseBiodiversity * 1.1
+    arid: true
   },
-  [climates.MEDITERRANEAN]: {
-    type: climates.MEDITERRANEAN,
+  mediterranean: {
+    type: 'mediterranean',
     code: 'Cfa',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#FFFF00',
     population: 3,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.1, 0.35],
-    affixes: ['Forest'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 2.2
+    affixes: ['forest'],
+    terrain: 'forest'
   },
-  [climates.OCEANIC]: {
-    type: climates.OCEANIC,
+  oceanic: {
+    type: 'oceanic',
     code: 'Cwa',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#66FF33',
     population: 3,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.6, 0.4],
-    affixes: ['Forest'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 2
+    affixes: ['forest'],
+    terrain: 'forest'
   },
-  [climates.SUBTROPICAL]: {
-    type: climates.SUBTROPICAL,
+  subtropical: {
+    type: 'subtropical',
     code: 'Csa',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#C6FF4E',
     population: 2.5,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.5, 0.3],
-    affixes: ['Forest'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 2.2
+    affixes: ['forest'],
+    terrain: 'forest'
   },
-  [climates.TEMPERATE_MONSOON]: {
-    type: climates.TEMPERATE_MONSOON,
+  'temperate monsoon': {
+    type: 'temperate monsoon',
     code: 'Cfb',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#96FF96',
     population: 2.5,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
     heatMod: { summer: 0, winter: -5 },
     precipitation: [0.6, 0.1],
-    affixes: ['Forest'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 2.2
+    affixes: ['forest'],
+    terrain: 'forest'
   },
-  [climates.CONTINENTAL]: {
-    type: climates.CONTINENTAL,
+  laurentian: {
+    type: 'laurentian',
     code: 'Dfa',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#38C7FF',
     population: 3,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.4, 0.2],
-    affixes: ['Forest'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 2
+    affixes: ['forest'],
+    terrain: 'forest'
   },
-  [climates.MANCHURIAN]: {
-    type: climates.MANCHURIAN,
+  manchurian: {
+    type: 'manchurian',
     code: 'Dwa',
-    zone: 'Temperate',
+    zone: 'temperate',
     display: '#ABB1FF',
     population: 2,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
     heatMod: { summer: 0, winter: -8 },
     precipitation: [0.35, 0.1],
-    affixes: ['Forest'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 2.2
+    affixes: ['forest'],
+    terrain: 'forest'
   },
-  [climates.SUBARCTIC]: {
-    type: climates.SUBARCTIC,
+  subarctic: {
+    type: 'subarctic',
     code: 'Dfc',
-    zone: 'Arctic',
+    zone: 'arctic',
     display: '#007E7D',
     population: 1,
     scorePenalty: 0.4,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.35, 0.15],
-    affixes: ['Boreal', 'Taiga'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 1.5
+    affixes: ['boreal'],
+    terrain: 'forest'
   },
-  [climates.SIBERIAN]: {
-    type: climates.SIBERIAN,
+  siberian: {
+    type: 'siberian',
     code: 'Dwc',
-    zone: 'Arctic',
+    zone: 'arctic',
     display: '#4C51B5',
     population: 1,
     scorePenalty: 0.4,
     diurnalHeat: diurnalVariation.standard,
     heatMod: { summer: 0, winter: -8 },
     precipitation: [0.35, 0.1],
-    affixes: ['Boreal', 'Taiga'],
-    terrain: 'Forest',
-    biodiversity: baseBiodiversity * 1.5
+    affixes: ['boreal'],
+    terrain: 'forest'
   },
-  [climates.POLAR]: {
-    type: climates.POLAR,
+  polar: {
+    type: 'polar',
     code: 'ET',
-    zone: 'Arctic',
+    zone: 'arctic',
     display: '#B2B2B2',
     population: 0.3,
     scorePenalty: 1.5,
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.15, 0.05],
-    affixes: ['Glacial'],
-    terrain: 'Desert',
-    biodiversity: baseBiodiversity
+    affixes: ['glacial'],
+    terrain: 'arctic',
+    arid: true
   }
 }
+
+export const glacierLatitudeCutoff = 80

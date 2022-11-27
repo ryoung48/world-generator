@@ -1,5 +1,5 @@
 import { world__gps } from '../../../../world'
-import { climateLookup } from '../../../../world/climate/types'
+import { climates } from '../../../../world/climate/types'
 import { humanoid__spawn } from '../common'
 import { eyeColor, hairStyles, hornDressing, nosePiercings } from '../common/appearance'
 import { Humanoid } from '../types'
@@ -83,12 +83,12 @@ export const humanoids__beastfolk: Record<beastfolk__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin = { type: 'feathers', colors: [''] }
-      if (zone === 'Tropical') {
+      if (zone === 'tropical') {
         skin.colors = window.dice.sample(['blue', 'green', 'golden', 'sandy brown'], 3)
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.colors = window.dice.sample(['dark red', 'burgundy', 'magenta', 'red', 'orange'], 3)
       } else {
         skin.colors = window.dice.sample(['dark purple', 'indigo', 'purple', 'black'], 3)
@@ -110,12 +110,12 @@ export const humanoids__beastfolk: Record<beastfolk__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin = { type: 'scales', colors: [''] }
-      if (zone === 'Tropical') {
+      if (zone === 'tropical') {
         skin.colors = window.dice.sample(['vermilion', 'ochre', 'dark red', 'red'], 3)
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.colors = window.dice.sample(['green', 'olive', 'dark green', 'golden'], 3)
       } else {
         skin.colors = window.dice.sample(['greyish-purple', 'blue', 'silver', 'greyish-blue'], 3)
@@ -137,7 +137,7 @@ export const humanoids__beastfolk: Record<beastfolk__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin = { type: 'skin', colors: ['fair'] }
       const styles = hairStyles()
@@ -154,10 +154,10 @@ export const humanoids__beastfolk: Record<beastfolk__species, Humanoid> = {
           female: styles.female
         }
       }
-      if (zone === 'Tropical') {
+      if (zone === 'tropical') {
         skin.colors = ['dark red', 'red', 'magenta']
         hair.colors = ['brown', 'black', 'auburn']
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.colors = ['magenta', 'dark purple', 'purple', 'indigo']
         hair.colors = ['brown', 'black']
       } else {

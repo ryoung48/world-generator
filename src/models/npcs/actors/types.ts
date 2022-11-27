@@ -1,8 +1,8 @@
 import { TaggedEntity } from '../../utilities/codex/entities'
 import { NPC } from '../types'
 import { Equipment } from './equipment/types'
-import { genders } from './stats/appearance/gender'
-import { attribute } from './stats/attributes/types'
+import { Gender } from './stats/appearance/gender'
+import { ActorAttribute } from './stats/attributes/types'
 import type {
   ActorProfessions,
   Occupation,
@@ -28,7 +28,7 @@ export interface ActorAppearance {
   }
 }
 
-type actor_relation = 'parent' | 'spouse' | 'child' | 'party'
+type ActorRelation = 'parent' | 'spouse' | 'child' | 'party'
 
 export interface Actor extends NPC, TaggedEntity {
   tag: 'actor' // codex tag
@@ -37,9 +37,9 @@ export interface Actor extends NPC, TaggedEntity {
   culture: number // actor culture idx
   finalized?: boolean // used to determine if the actor needs to be finalized (appearance|traits|relations|profession)
   // location
-  location: { curr: number; residence: number; birth: number }
+  location: { curr: number; birth: number }
   // physique
-  gender: genders
+  gender: Gender
   appearance?: ActorAppearance // how does this actor look?
   voice?: {
     pitch?: string
@@ -55,21 +55,19 @@ export interface Actor extends NPC, TaggedEntity {
     death: number // when will this actor (naturally?) expire? (ms)
   }
   // physical traits
-  attributes: Record<attribute, number>
+  attributes: Record<ActorAttribute, number>
   // personality traits
   persona?: {
-    altruism: number
-    lawful: number
+    morals: number
+    order: number
     change: number
     conflict: number
     social: number
-    neuroticism: number
+    ego: number
   }
-  // known skill proficiencies
-  skills: Partial<Record<ActorSkills, number>>
-  languages: Record<number, number>
   // occupation
   occupation: Occupation
+  skills: { skill: ActorSkills; weight: number }[]
   progression: Partial<
     Record<
       ActorProfessions,
@@ -83,40 +81,14 @@ export interface Actor extends NPC, TaggedEntity {
   >
   // relations
   parent: { name: string; plan?: number }
-  relations: { type: actor_relation; actor: number }[]
+  relations: { type: ActorRelation; actor: number }[]
   // containers
   equipment: Equipment
   carryCapacity: number
-  // interactions
-  barter?: boolean // can this actor trade goods?
   // history
   history: {
     planned?: boolean
     unbound: boolean
     events: number[]
-    backgrounds: {
-      loc: number
-      target?: ActorProfessions
-      occupation?: Occupation
-      skills?: {
-        start: number
-        end?: number
-        checkDate: number
-        tiers?: {
-          primary: ActorSkills[]
-          secondary: ActorSkills[]
-          tertiary: ActorSkills[]
-        }
-        exp: Partial<Record<ActorSkills, number>>
-      }[]
-      start: number
-      end?: number
-    }[]
-    childhoodEnd: number
-    nextBackground: number
-    // cutoff after which profession|location transitions are not allowed
-    transitionCutoff?: number
   }
-  // quest threads
-  threads: number[]
 }

@@ -3,7 +3,7 @@ import { Region } from '../../../regions/types'
 import { colors__hues, colors__randomHue } from '../../../utilities/colors'
 import { titleCase } from '../../../utilities/text'
 import { decorateText } from '../../../utilities/text/decoration'
-import { climateLookup } from '../../../world/climate/types'
+import { climates } from '../../../world/climate/types'
 import { spawnConstruct } from '../languages/spawn'
 import { lang__uniqueName } from '../languages/words'
 import { species__finalizeCulture } from '../taxonomy'
@@ -16,7 +16,7 @@ export const culture__spawn = (region: Region) => {
     idx,
     origin: region.idx,
     tag: 'culture',
-    zone: climateLookup[region.climate].zone,
+    zone: climates[region.climate].zone,
     side: region.side,
     currency: region.side === 'E' ? '¥' : '€',
     neighbors: [],
@@ -47,10 +47,10 @@ export const culture__flavorize = (culture: Culture, species: Culture['species']
   culture.civilized = civil > culture.regions.length
   const origin = window.world.regions[culture.origin]
   const capitalProvince = window.world.provinces[origin.capital]
-  const climate = climateLookup[origin.climate]
+  const climate = climates[origin.climate]
   const { mountains, land } = origin.regional
   let prefix = window.dice.choice(climate.affixes)
-  if (climate.zone !== 'Arctic' && culture__islander(culture)) {
+  if (climate.zone !== 'arctic' && culture__islander(culture)) {
     prefix = window.dice.choice(['Islander', 'Coastal'])
   } else if (mountains / land > 0.6) {
     prefix = window.dice.choice(['Mountain', 'Highlander'])

@@ -9,8 +9,7 @@ const imperium = 3 // number regions needed to be considered an empire
  * @param region - reference region
  * @returns {boolean} true or false
  */
-export const region__overextended = (region: Region) =>
-  window.dice.random < region.regions.length / 6
+export const region__overextended = ({ regions }: Region) => window.dice.random < regions.length / 6
 
 /**
  * determines if a region is at peace
@@ -34,15 +33,6 @@ export const region__isImperial = (nation: Region) => {
 }
 
 /**
- * gets a nations name with imperial title if applicable
- * @param nation - reference region
- * @returns {string} the regions name
- */
-export const region__imperialName = (nation: Region) => {
-  return region__isImperial(nation) && nation.government ? nation.imperialTitle : nation.name
-}
-
-/**
  * get a nations remaining percentage of unspent wealth
  * @param nation - reference nation
  * @returns {number} wealth % between 0 and 1
@@ -56,7 +46,7 @@ export const region__wealthPercent = (nation: Region) => {
  * @returns {string} wealth % as text
  */
 export const region__formattedWealthPercent = (nation: Region) => {
-  return formatters.percent({ value: region__wealthPercent(nation), precision: 0 })
+  return formatters.percent(region__wealthPercent(nation))
 }
 /**
  * get a nation's wealth formatted as a string with currency

@@ -3,47 +3,9 @@ import { nation__hasRefugees } from '../../../diplomacy/refugees'
 import { province__hub } from '../../../provinces'
 import { location__pendingInvasion, location__raiders, location__recentBattle } from '../..'
 import { Loc } from '../../types'
-import { LocationTrait } from '../traits/types'
 import { LocationTemplate } from './types'
 
 const coastalSettlements = 0.5
-
-/**
- * Assign location inhabitants (hostile) based on subtype
- * @param loc
- * @returns a list of inhabitant traits
- */
-const assignInhabitants: LocationTemplate['traits'] = (loc: Loc) => {
-  const traits: LocationTrait['tag'][] = []
-  if (loc.hostile) {
-    if (loc.subtype.includes('beast')) traits.push('beasts')
-    if (loc.subtype.includes('primordial')) traits.push('primordials')
-    if (loc.subtype.includes('aberration')) traits.push('aberrations')
-    if (loc.subtype.includes('bandits')) traits.push('bandits')
-    if (loc.subtype.includes('occultists')) traits.push('occultists')
-    if (loc.subtype.includes('cultists')) traits.push('cultists')
-    if (loc.subtype.includes('deserters')) traits.push('deserters')
-    if (loc.subtype.includes('raiders')) traits.push('raiders')
-    if (loc.subtype.includes('vampiric')) traits.push('vampiric')
-    if (loc.subtype.includes('cursed')) traits.push('lingering curse')
-    if (loc.subtype.includes('haunted')) traits.push('haunted')
-    if (loc.subtype.includes('exiled')) traits.push('exiled noble')
-  } else {
-    if (loc.subtype.includes('vampiric')) traits.push('dark secret')
-    if (loc.subtype.includes('rebels')) traits.push('rebel stronghold')
-    if (loc.subtype.includes('refugees')) traits.push('foreign enclave')
-    if (loc.subtype.includes('nomadic')) traits.push('nomadic populace')
-    if (loc.subtype.includes('druidic')) traits.push('druidic circle')
-    if (loc.subtype.includes('heretics')) traits.push('heretical faith')
-    if (loc.subtype.includes('monastery')) traits.push('prominent monastery')
-    if (loc.subtype.includes('temple')) traits.push('major temple')
-    if (loc.subtype.includes('academy')) traits.push('prestigious academy')
-    if (loc.subtype.includes('criminal')) traits.push('criminal bosses')
-    if (loc.subtype.includes('crossroads')) traits.push('trade hub')
-    if (loc.subtype.includes('templars')) traits.push('templar order')
-  }
-  return traits
-}
 
 export const location__templates: Record<Loc['type'], LocationTemplate> = {
   metropolis: {
@@ -154,7 +116,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['cave_1', 'cave_2']),
     group: 'wilderness',
     spawn: 1,
-    traits: assignInhabitants,
     finalize: loc => {
       const raiders = location__raiders(loc)
       loc.subtype = `${window.dice.choice(['cave', 'lair'])} (${window.dice.weightedChoice([
@@ -174,7 +135,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['camp_1', 'camp_2', 'camp_3']),
     group: 'wilderness',
     spawn: 1,
-    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
       const recentBattle = location__recentBattle(loc)
@@ -210,7 +170,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['crypt_1', 'crypt_2', 'crypt_3']),
     group: 'wilderness',
     spawn: 0.5,
-    traits: () => ['undeath'],
     finalize: loc => {
       loc.subtype = `${window.dice.choice([
         'crypt',
@@ -229,7 +188,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       const { development } = window.world.regions[province.region]
       return development === 'remote' ? 0 : 1
     },
-    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
       const raiders = location__raiders(loc)
@@ -270,7 +228,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       const { civilized } = window.world.regions[province.region]
       return civilized ? 0.5 : 0
     },
-    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
       loc.subtype = `${window.dice.weightedChoice([
@@ -289,7 +246,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['portal_1', 'portal_2']),
     group: 'wilderness',
     spawn: 0.1,
-    traits: () => ['spirits'],
     finalize: loc => {
       loc.subtype = `portal (${window.dice.choice(['elementals', 'fiends', 'celestials', 'fey'])})`
       loc.hostile = true
@@ -332,7 +288,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
       const { development } = window.world.regions[province.region]
       return development === 'remote' ? 0 : 0.5
     },
-    traits: assignInhabitants,
     finalize: loc => {
       loc.hostile = window.dice.flip
       loc.subtype = `${window.dice.choice(['temple', 'monastery'])} (${window.dice.choice(
@@ -379,7 +334,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'mine',
     icon: () => window.dice.choice(['mines_1', 'mines_2']),
     group: 'wilderness',
-    traits: assignInhabitants,
     spawn: province => {
       const { development } = window.world.regions[province.region]
       return development === 'remote' ? 0 : 0.5
@@ -411,7 +365,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () => window.dice.choice(['lighthouse_1', 'lighthouse_2']),
     group: 'wilderness',
     coastal: 0.5,
-    traits: assignInhabitants,
     spawn: province => {
       const { civilized } = window.world.regions[province.region]
       return province.ocean > 0 && civilized ? 0.5 : 0
@@ -428,7 +381,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     type: 'inn',
     icon: () => window.dice.choice(['inn_1', 'inn_2', 'inn_3']),
     group: 'wilderness',
-    traits: assignInhabitants,
     spawn: province => {
       const { civilized } = window.world.regions[province.region]
       return Object.keys(province.trade.land).length > 0 && civilized ? 0.5 : 0
@@ -444,7 +396,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     icon: () =>
       window.dice.choice(['watchtower_1', 'watchtower_2', 'watchtower_3', 'watchtower_4']),
     group: 'wilderness',
-    traits: assignInhabitants,
     spawn: province => {
       const { civilized } = window.world.regions[province.region]
       return Object.keys(province.trade.land).length > 0 && civilized ? 0.5 : 0
@@ -456,3 +407,5 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     restrictions: cell => cell.roads.land.length > 0
   }
 }
+
+export const location__type = (loc: Loc) => location__templates[loc.type].alias ?? loc.type

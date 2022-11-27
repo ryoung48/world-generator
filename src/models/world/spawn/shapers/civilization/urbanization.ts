@@ -13,7 +13,7 @@ import { point__distance } from '../../../../utilities/math/points'
 import { world__landFeatures } from '../../..'
 import { cell__isHub, cell__neighbors, cell__province } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'
-import { climateLookup, climates } from '../../../climate/types'
+import { climates } from '../../../climate/types'
 import { Shaper } from '..'
 
 const developmentPopulation = (dev: DevelopmentRank) => {
@@ -44,7 +44,7 @@ const placeSettlements = () => {
   })
   Shaper.land.forEach(poly => {
     const region = window.world.regions[poly.region]
-    const climate = climateLookup[region.climate]
+    const climate = climates[region.climate]
     // biome penalty
     poly.score -= climate.scorePenalty
     poly.score += window.dice.uniform(-0.5, 0.5)
@@ -69,7 +69,7 @@ const placeSettlements = () => {
   // make sure there are no large empty spaces
   const currProvinces = window.world.provinces.map(t => province__cell(t))
   window.world.regions
-    .filter(region => region.climate !== climates.POLAR)
+    .filter(region => region.climate !== 'polar')
     .forEach(region => {
       const land = Shaper.regionLand[region.idx].length
       const settlements = regionSettlements[region.idx].length
@@ -171,7 +171,7 @@ const assignProvinces = (provinceNeighbors: Record<number, Set<number>>) => {
   window.world.regions.forEach(region => {
     const culture = window.world.cultures[region.culture.ruling]
     const dev = developmentPopulation(region.development)
-    const climate = climateLookup[region.climate]
+    const climate = climates[region.climate]
     region.provinces
       .map(t => window.world.provinces[t])
       .forEach(province => {
@@ -197,7 +197,7 @@ const majorCities = (params: {
     provinces[region.idx] = []
     // get all the towns in the region
     const towns = window.world.provinces.filter(
-      city => city.currNation === region.idx && !city.regionalCapital
+      city => city.currNation === region.idx && !city.capital
     )
     // sort towns by score
     const cells = towns.map(town => province__cell(town)).sort((a, b) => b.score - a.score)
@@ -231,7 +231,7 @@ const demographics = (provinces: Record<number, Province[]>) => {
     // find all cities in the region
     const major = provinces[region.idx]
     // find all towns in the region
-    const towns = cities.filter(town => !major.includes(town) && !town.regionalCapital)
+    const towns = cities.filter(town => !major.includes(town) && !town.capital)
     // set the capital's population
     const capitalMod = window.dice.uniform(0.02, 0.03) - (region.civilized ? 0 : 0.005)
     let pop = region__population(region) * capitalMod

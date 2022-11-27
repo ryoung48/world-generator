@@ -6,15 +6,6 @@ import { climates } from '../../../climate/types'
 import { seaLevelCutoff } from '../../../types'
 import { Shaper } from '..'
 
-const aridClimates = [
-  climates.SAVANNA,
-  climates.HOT_DESERT,
-  climates.HOT_STEPPE,
-  climates.COLD_DESERT,
-  climates.COLD_STEPPE,
-  climates.POLAR
-]
-
 export const removeLake = (params: { lakes: ExteriorCell[]; lake: number }) => {
   const { lakes, lake } = params
   const lakeCells = lakes.filter(cell => cell.landmark === lake)
@@ -44,9 +35,7 @@ const cleanupLakes = () => {
     .filter(idx => window.world.landmarks[idx].type !== 'ocean')
     .forEach(landmark => {
       const border = shallow.filter(cell => cell.landmark === landmark)
-      const arid = border.some(cell =>
-        aridClimates.includes(window.world.regions[cell.region].climate)
-      )
+      const arid = border.some(cell => climates[window.world.regions[cell.region].climate].arid)
       const mountainous = border.some(cell => cell__neighbors(cell).some(n => n.isMountains))
       if (arid || mountainous) removeLake({ lakes, lake: landmark })
     })

@@ -34,6 +34,7 @@ const religion__spawn = ({ cultures, religions, tribal }: ReligionSpawnParams) =
     const { name, type } = pick
     queue.unshift(pick)
     const religion: Religion = {
+      tag: 'religion',
       name: name.replace('%', lang__uniqueName({ lang: culture.language, key: 'religion' })),
       idx: window.world.religions.length,
       leadership: window.dice.weightedChoice([

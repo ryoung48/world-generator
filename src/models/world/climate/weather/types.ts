@@ -1,4 +1,10 @@
-import { climates } from '../types'
+import { Climate } from '../types'
+
+export type Season = 'spring' | 'summer' | 'autumn' | 'winter'
+
+export type TimeOfDay = 'dawn' | 'morning' | 'afternoon' | 'dusk' | 'night'
+
+export type TemperatureVariance = 'warmer' | 'colder' | 'normal'
 
 export type WeatherConditions =
   | 'clear'
@@ -19,28 +25,40 @@ export type CloudTypes =
   | 'cumulus clouds'
   | 'nimbus clouds'
 
-export type WeatherIcons =
-  | 'cloudy'
-  | 'fog'
-  | 'lightning'
-  | 'night'
-  | 'pouring'
-  | 'snowy-heavy'
-  | 'snowy-rainy'
-  | 'snowy'
-  | 'sunny'
-  | 'sunset'
-  | 'windy'
-
 export interface WeatherParams {
   rain: number
   temp: number
   clouds: CloudTypes
-  climate: climates
+  climate: Climate['type']
 }
 
 export interface WeatherPhenomena {
   wind: number
-  icon: WeatherIcons
-  weather: string
+  weather:
+    | 'clear skies'
+    | 'cloudy'
+    | 'dew'
+    | 'thin mist'
+    | 'mist'
+    | 'fog'
+    | 'drizzle'
+    | 'spattering rain'
+    | 'pelting rain'
+    | 'rain shower'
+    | 'thunderstorm'
+    | 'quiet downpour'
+    | 'sleet'
+    | 'cold surface'
+    | 'thin frost'
+    | 'frost'
+    | 'rime'
+    | 'ice fog'
+    | 'dusting'
+    | 'tiny flakes'
+    | 'ice crystals'
+    | 'snow flurry'
+    | 'snowfall'
+    | 'blizzard'
+    | 'sand storm'
+    | 'dust storm'
 }

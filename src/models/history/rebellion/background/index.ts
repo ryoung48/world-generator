@@ -8,7 +8,7 @@ import { Rebellion } from '../types'
 import { RebellionBackground, RebellionBackgroundArgs } from './types'
 
 const fracturedState = (nation: Region) =>
-  nation.government.structure === 'confederation' || nation.government.structure === 'autonomous'
+  nation.government.structure === 'confederation' || nation.government.structure === 'anarchic'
 
 const nativeLeadership = (rebellion: Rebellion) => {
   const rebels = window.world.regions[rebellion.rebels.idx]
@@ -95,7 +95,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
   },
   arcanists: {
     tag: 'arcanists',
-    spawn: ({ nation }) => (nation.law.magic === 'banned' ? 3 : 0),
+    spawn: ({ nation }) => (nation.development === 'remote' ? 0 : 1),
     text: () => `Arcanists and templars fight over a recent edict outlawing magic`,
     goal: ({ rebellion }) => {
       rebellion.result += ' The edict banning magic is reversed.'
@@ -129,10 +129,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
   },
   interregnum: {
     tag: 'interregnum',
-    spawn: ({ nation }) =>
-      nation.government.succession === 'hereditary' && nation.government.structure !== 'republic'
-        ? 1
-        : 0,
+    spawn: ({ nation }) => (nation.government.succession === 'hereditary' ? 1 : 0),
     text: () => `Multiple claimants fight for a disputed throne`,
     goal: ({ rebellion }) => {
       rebellion.result += ' A single claimant remains to take the throne.'
@@ -171,10 +168,7 @@ const rebellion__backgrounds: Record<Rebellion['background']['type'], RebellionB
   },
   unification: {
     tag: 'unification',
-    spawn: ({ nation, rebels }) =>
-      nation.development === 'remote' || rebels.idx !== nation.idx || !fracturedState(nation)
-        ? 0
-        : 1,
+    spawn: ({ nation, rebels }) => (rebels.idx !== nation.idx || !fracturedState(nation) ? 0 : 1),
     text: () => `A charismatic leader attempts to unify a fractured state`,
     goal: ({ rebellion }) => {
       rebellion.result += ' The region is unified under more centralized leadership.'

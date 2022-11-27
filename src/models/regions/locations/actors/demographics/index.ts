@@ -1,4 +1,4 @@
-import { scale } from '../../../../utilities/math'
+import { buildDistribution, scale, WeightedDistribution } from '../../../../utilities/math'
 import { dayMS } from '../../../../utilities/math/time'
 import { decoratedProfile } from '../../../../utilities/performance'
 import { BasicCache, memoize } from '../../../../utilities/performance/memoization'
@@ -8,35 +8,14 @@ import { location__getClosestSettlement } from '../..'
 import { Loc } from '../../types'
 
 interface Demographics {
-  provinces: Record<string, number>
-  regions: Record<string, number>
-  commonCultures: Record<string, number>
-  rulingCultures: Record<string, number>
-  species: Record<string, number>
+  common: WeightedDistribution<number>
+  native: WeightedDistribution<number>
+  foreign: WeightedDistribution<number>
 }
 
-export const location__culture = (location: Loc) => {
-  const province = window.world.provinces[location.province]
-  return province__culture(province)
-}
-
-const scaleDemographic = (demographic: Record<string, number>) => {
-  const totalProvinces = Object.values(demographic).reduce((sum, v) => sum + v, 0)
-  Object.entries(demographic).forEach(([k, v]) => {
-    demographic[k] = v / totalProvinces
-  })
-}
-const _settlementDemographics = (loc: Loc): Demographics => {
-  const demographics: Demographics = {
-    provinces: {},
-    regions: {},
-    commonCultures: {},
-    rulingCultures: {},
-    species: {}
-  }
-  window.world.provinces.forEach(k => (demographics.provinces[k.idx] = 0))
-  window.world.regions.forEach(k => (demographics.regions[k.idx] = 0))
-  window.world.cultures.forEach(k => (demographics.commonCultures[k.idx] = 0))
+const _demographics = (loc: Loc): Demographics => {
+  const common: Record<string, number> = {}
+  window.world.cultures.forEach(k => (common[k.idx] = 0))
   const popScale = scale([0, 100000], [40, 400], loc.population)
   const origins = scale([0, 100000], [0.9, 0.6], loc.population)
   const province = window.world.provinces[loc.province]
@@ -66,36 +45,31 @@ const _settlementDemographics = (loc: Loc): Demographics => {
         }
       }
     })
-    .forEach(({ regional, national, province }) => {
-      demographics.provinces[province.idx] += province.value
-      demographics.regions[regional.region] += regional.value
-      demographics.regions[national.region] += national.value
-      demographics.commonCultures[regional.ruling] += regional.value * 0.3
-      demographics.commonCultures[national.ruling] += national.value * 0.3
-      demographics.commonCultures[regional.native] += regional.value * 0.7
-      demographics.commonCultures[national.native] += national.value * 0.7
+    .forEach(({ regional, national }) => {
+      common[regional.ruling] += regional.value * 0.3
+      common[national.ruling] += national.value * 0.3
+      common[regional.native] += regional.value * 0.7
+      common[national.native] += national.value * 0.7
     })
+  const commonDist = Object.entries(common)
+    .map(([k, v]) => {
+      return { w: v, v: parseInt(k) }
+    })
+    .sort((a, b) => b.w - a.w)
   const nativeIdx = window.world.regions[province.region].culture.native
   const rulingIdx = window.world.regions[province.currNation].culture.ruling
-  const majorityMod = 4
-  demographics.rulingCultures = {
-    ...demographics.commonCultures,
-    [nativeIdx]: demographics.commonCultures[nativeIdx] * majorityMod,
-    [rulingIdx]: demographics.commonCultures[rulingIdx] * majorityMod
+  return {
+    common: buildDistribution(commonDist),
+    native: buildDistribution(commonDist.filter(({ v }) => v === nativeIdx || v === rulingIdx)),
+    foreign: buildDistribution(commonDist.filter(({ v }) => v !== nativeIdx && v !== rulingIdx))
   }
-  scaleDemographic(demographics.provinces)
-  scaleDemographic(demographics.regions)
-  scaleDemographic(demographics.commonCultures)
-  scaleDemographic(demographics.rulingCultures)
-  scaleDemographic(demographics.species)
-  return demographics
 }
-const computeDemographics = memoize(_settlementDemographics, {
+const computeDemographics = memoize(_demographics, {
   store: (): BasicCache<Demographics> => ({}),
   get: (cache, loc) => {
     // recompute very 10 days
-    if (loc.memory.demographics === undefined || loc.memory.demographics < window.world.date) {
-      loc.memory.demographics = window.world.date + 10 * dayMS
+    if (loc.memory._demographics === undefined || loc.memory._demographics < window.world.date) {
+      loc.memory._demographics = window.world.date + 10 * dayMS
     } else {
       return cache[loc.idx]
     }

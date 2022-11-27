@@ -4,7 +4,7 @@ import PriorityQueue from 'js-priority-queue'
 import { Rebellion } from '../history/rebellion/types'
 import { LogRecord, WorldEvent } from '../history/types'
 import { War } from '../history/war/types'
-import { ActorEvent } from '../npcs/actors/history/events/types'
+import { ActorEvent } from '../npcs/actors/spawn/events/types'
 import { Actor } from '../npcs/actors/types'
 import { Culture } from '../npcs/species/cultures/types'
 import { Religion } from '../npcs/species/religions/types'
@@ -12,7 +12,6 @@ import { Humanoid, humanoid__species } from '../npcs/species/taxonomy/types'
 import { Loc } from '../regions/locations/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
-import { Thread } from '../threads/types'
 import { Dimensions } from '../utilities/dimensions'
 import { ExteriorCell } from './cells/types'
 import { ContinentTemplate } from './spawn/shapers/continents/templates'
@@ -80,7 +79,6 @@ export interface World {
   actors: Actor[]
   actorEvents: ActorEvent[]
   religions: Religion[]
-  threads: Thread[]
   uniqueNames: Record<string, boolean>
   // planet info
   date: number

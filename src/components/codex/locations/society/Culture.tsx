@@ -1,7 +1,7 @@
 import { Pie } from 'react-chartjs-2'
 
 import { species__byCulture } from '../../../../models/npcs/species/taxonomy'
-import { location__demographics } from '../../../../models/regions/locations/actors/demographics'
+import { location__demographics } from '../../../../models/regions/locations/actors/demographics/demo'
 import { Loc } from '../../../../models/regions/locations/types'
 import { view__context } from '../../../context'
 import { pieChart__construct, pieChart__percentTooltips } from '../../common/charts'

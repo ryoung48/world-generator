@@ -1,9 +1,9 @@
 import { yearMS } from '../../../../utilities/math/time'
-import { actor__pastLocation, actor__relation } from '../..'
-import { actor__addEvent, actor__events } from '../../history/events'
-import { ActorEventSpawn } from '../../history/events/types'
+import { actor__relation } from '../..'
 import { Actor } from '../../types'
 import { actor__spawn } from '..'
+import { actor__addEvent, actor__events } from '../events'
+import { ActorEventSpawn } from '../events/types'
 import { Relation } from '../types'
 
 export const actor__fixExpiration = (actor: Actor) => {
@@ -22,7 +22,7 @@ export const actorEvent__relation = (params: ActorEventSpawn & { relation: () =>
   let target = window.world.actors[event.actor]
   if (target) return target
   // pre-select the location
-  const location = actor__pastLocation({ actor, time: event.time })
+  const location = window.world.locations[actor.location.curr]
   if (event.loc === undefined) event.loc = location.idx
   target = actor__spawn({
     location,

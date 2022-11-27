@@ -1,7 +1,7 @@
 import { Culture } from '../../../../npcs/species/cultures/types'
 import { province__hub } from '../../../provinces'
 import { Loc } from '../../types'
-import { location__demographics } from '.'
+import { location__demographics } from './demo'
 
 /**
  * foreigners who were born in the region they are currently reside in (2nd-gen)

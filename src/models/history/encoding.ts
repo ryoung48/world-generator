@@ -50,7 +50,7 @@ const succession__unpackRuler = (idx: number) => {
     culture,
     birthLoc: capital,
     lineage: window.world.dynasties[dynasty],
-    occupation: { key: 'noble (major)' },
+    occupation: { key: 'noble' },
     parent: { name: window.world.actors[parent?.actor]?.name, plan: ruler.parent }
   })
   actor.history.events.push(...events)

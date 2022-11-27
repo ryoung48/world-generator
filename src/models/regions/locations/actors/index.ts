@@ -2,20 +2,13 @@ import { profession__map, profession__socialClass } from '../../../npcs/actors/s
 import {
   ActorProfessions,
   Profession,
-  SocialClass
+  SocialStratum
 } from '../../../npcs/actors/stats/professions/types'
 import { buildDistribution, scale, WeightedDistribution } from '../../../utilities/math'
 import { location__getClosestSettlement, location__isSettlement } from '..'
 import { location__context } from '../context'
 import { LocationContext } from '../context/types'
 import { Loc } from '../types'
-
-const prevalenceMods: Record<Profession['prevalence'], number> = {
-  rare: 1,
-  uncommon: 3,
-  common: 9,
-  abundant: 27
-}
 
 /**
  * weights the chance of finding an occupation at a given location
@@ -29,18 +22,21 @@ const professionWeight = (params: {
   time: number
 }) => {
   const { profession, context, time } = params
-  const { key, occurrence, prevalence } = profession
+  const { key, occurrence } = profession
   const weight = typeof occurrence === 'number' ? occurrence : occurrence?.({ context, time }) ?? 0
-  const prevalenceMod = prevalenceMods[prevalence ?? 'common']
-  return { v: key, w: weight * prevalenceMod }
+  return { v: key, w: weight }
 }
 
 const socialFilter =
-  (social: SocialClass) =>
+  (social: SocialStratum) =>
   ({ v }: WeightedDistribution<Profession['key']>[number]) =>
     profession__socialClass(v) === social
 
-export const location__professions = (params: { loc: Loc; time: number; social: SocialClass }) => {
+export const location__professions = (params: {
+  loc: Loc
+  time: number
+  social: SocialStratum
+}) => {
   const { time, social } = params
   const loc = location__getClosestSettlement(params.loc)
   const context = location__context(loc)
@@ -51,7 +47,7 @@ export const location__professions = (params: { loc: Loc; time: number; social: 
 }
 
 // used as a fallback when no social class and no profession is given a npc creation
-export const socialClassDistributions = (loc: Loc): WeightedDistribution<SocialClass> => {
+export const socialClassDistributions = (loc: Loc): WeightedDistribution<SocialStratum> => {
   const pop = location__isSettlement(loc) ? loc.population : 0
   const upper = scale([0, 100000], [0.0001, 0.0005], pop)
   const middle = scale([0, 100000], [0.05, 0.3], pop)
@@ -62,15 +58,15 @@ export const socialClassDistributions = (loc: Loc): WeightedDistribution<SocialC
   ]
 }
 
-const defaultProfessions: Record<SocialClass, ActorProfessions> = {
-  lower: 'farmer (tenant)',
+const defaultProfessions: Record<SocialStratum, ActorProfessions> = {
+  lower: 'farmer',
   middle: 'merchant',
-  upper: 'noble (minor)'
+  upper: 'noble'
 }
 
 export const location__randomProfession = (params: {
   loc: Loc
-  social?: SocialClass
+  social?: SocialStratum
   time: number
 }) => {
   const { loc, social = window.dice.weightedChoice(socialClassDistributions(loc)), time } = params

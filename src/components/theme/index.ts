@@ -80,6 +80,27 @@ export const theme = createTheme({
           lineHeight: 1
         }
       }
+    },
+    MuiAccordion: {
+      styleOverrides: {
+        root: ({ theme }) => ({
+          backgroundColor: '#f1e5d6',
+          border: `1px solid ${theme.palette.divider}`,
+          '&:not(:last-child)': {
+            borderBottom: 0
+          },
+          '&:before': {
+            display: 'none'
+          }
+        })
+      }
+    },
+    MuiAccordionDetails: {
+      styleOverrides: {
+        root: {
+          paddingTop: 0
+        }
+      }
     }
   }
 })

@@ -2,7 +2,7 @@ import { DiplomaticRelation } from '../history/diplomacy/types'
 import { TradeGood } from '../items/economy'
 import { TaggedEntity } from '../utilities/codex/entities'
 import { directions } from '../utilities/math/points'
-import { climates } from '../world/climate/types'
+import { Climate } from '../world/climate/types'
 import { DevelopmentRank } from './development'
 
 export interface Region extends TaggedEntity {
@@ -22,7 +22,7 @@ export interface Region extends TaggedEntity {
   // cultural traits
   culture: { ruling: number; native: number }
   // weather
-  climate?: climates
+  climate?: Climate['type']
   coastal: boolean
   // geographic borders (regions)
   borders: number[]
@@ -47,35 +47,14 @@ export interface Region extends TaggedEntity {
   development?: DevelopmentRank
   civilized?: boolean
   imperialTitle?: string
-  economy?: {
-    status: 'struggling' | 'healthy' | 'prosperous'
-    management: 'market' | 'mixed' | 'planned' | 'barter'
-    trade: 'free' | 'protectionism'
-  }
   government?: {
-    structure: 'autocratic' | 'republic' | 'oligarchic' | 'confederation' | 'autonomous'
-    succession: 'hereditary' | 'elected'
-    entry: 'merit' | 'hereditary' | 'wealth' | 'eunuchs' | 'assigned'
-  }
-  law?: {
-    ruleOfLaw: 'ubiquitous' | 'selective' | 'none'
-    accountability: 'judicial' | 'top-down' | 'informal'
-    magic: 'banned' | 'restricted' | 'unrestricted'
+    structure: 'autocratic' | 'theocratic' | 'oligarchic' | 'confederation' | 'anarchic'
+    succession?: 'hereditary' | 'elected'
   }
   religion?: {
-    authority: 'protest' | 'theocratic' | 'aristocratic' | 'independent'
-    tolerance: 'traditional' | 'selective' | 'cosmopolitan'
     state: number
     native: number
   }
-  military?: (
-    | 'slave army'
-    | 'centralized draft'
-    | 'regional draft'
-    | 'tribal militias'
-    | 'mercenaries'
-    | 'aristocratic mounted'
-  )[]
   // history
   past: number[]
   wealth: number

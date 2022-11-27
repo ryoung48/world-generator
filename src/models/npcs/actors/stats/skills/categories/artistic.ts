@@ -1,4 +1,4 @@
-import { skillGate__dexterity } from '../common/checks'
+import { skillGate__dexterity } from '../checks'
 import { ActorSkill } from '../types'
 import { ArtisticSkill } from '.'
 
@@ -22,9 +22,6 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
     key: 'bookbinding',
     valid: 0
   },
-  carving: {
-    key: 'carving'
-  },
   cobbling: {
     key: 'cobbling',
     valid: 0
@@ -35,10 +32,6 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
   },
   dancing: {
     key: 'dancing'
-  },
-  engraving: {
-    key: 'engraving',
-    valid: 0
   },
   fletching: {
     key: 'fletching',
@@ -52,8 +45,8 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
     key: 'glazing',
     valid: 0
   },
-  instrumental: {
-    key: 'instrumental'
+  'instrument (music)': {
+    key: 'instrument (music)'
   },
   jeweling: {
     key: 'jeweling',
@@ -73,20 +66,19 @@ export const actorSkills__artistic: Record<ArtisticSkill, ActorSkill> = {
     key: 'painting'
   },
   pottery: {
-    key: 'pottery'
+    key: 'pottery',
+    valid: 0
   },
   scribing: {
     key: 'scribing',
     valid: 0
   },
   sculpting: {
-    key: 'sculpting'
+    key: 'sculpting',
+    valid: 0
   },
   singing: {
     key: 'singing'
-  },
-  sketching: {
-    key: 'sketching'
   },
   tailoring: {
     key: 'tailoring',

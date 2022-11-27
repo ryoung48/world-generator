@@ -16,6 +16,7 @@ export const world__spawn = (params: {
   template: ContinentTemplate['isles']
 }) => {
   const { seed, res, template } = params
+  console.log(seed)
   window.dice = new Dice(seed)
   window.profiles = {
     history: profile__spawn('Total'),
@@ -79,7 +80,6 @@ export const world__spawn = (params: {
     actors: [],
     actorEvents: [],
     religions: [],
-    threads: [],
     uniqueNames: {},
     date,
     firstNewMoon,

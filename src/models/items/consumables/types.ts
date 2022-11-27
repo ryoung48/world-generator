@@ -1,4 +1,4 @@
-import { attribute } from '../../npcs/actors/stats/attributes/types'
+import { ActorAttribute } from '../../npcs/actors/stats/attributes/types'
 import { resistance } from '../../npcs/stats/types'
 import type { Item } from '../types'
 
@@ -36,7 +36,7 @@ export interface ResistanceConsumable extends Item {
 }
 export interface AttributeConsumable extends Item {
   tag: typeof attributeConsumables[number]
-  attribute?: attribute
+  attribute?: ActorAttribute
 }
 
 export type Consumables = Consumable | ResistanceConsumable | AttributeConsumable

@@ -1,6 +1,5 @@
-import { location__hub } from '../../../regions/locations'
 import { location__randomProfession } from '../../../regions/locations/actors'
-import { location__demographics } from '../../../regions/locations/actors/demographics'
+import { location__demographics } from '../../../regions/locations/actors/demographics/demo'
 import { location__randomOrigin } from '../../../regions/locations/actors/demographics/origins'
 import { Loc } from '../../../regions/locations/types'
 import { npc__spawn } from '../..'
@@ -15,7 +14,7 @@ import { equipment__spawn } from '../equipment'
 import { actor__birthDate, actor__expirationDate, actor__expired } from '../stats/age'
 import { npc__randomGender } from '../stats/appearance/gender'
 import { profession__ages, profession__set, profession__socialClass } from '../stats/professions'
-import { SocialClass } from '../stats/professions/types'
+import { SocialStratum } from '../stats/professions/types'
 import { Actor } from '../types'
 import { ActorParams } from './types'
 
@@ -27,7 +26,11 @@ import { ActorParams } from './types'
  * @param params.social_class - nobles will only take from ruling cultures
  * @returns {Culture} selected culture
  */
-const actor__culture = (params: { culture?: Culture; location: Loc; socialClass: SocialClass }) => {
+const actor__culture = (params: {
+  culture?: Culture
+  location: Loc
+  socialClass: SocialStratum
+}) => {
   const { culture, location, socialClass } = params
   const region = window.world.regions[location.region]
   if (culture) return culture
@@ -118,13 +121,11 @@ export const actor__spawn = (params: ActorParams): Actor => {
     tag: 'actor',
     location: {
       birth: origin,
-      residence: location__hub(location).idx,
       curr: location.idx
     },
     occupation: params.occupation,
     progression: {},
-    skills: {},
-    languages: {},
+    skills: [],
     gender,
     culture: culture.idx,
     surname: params.last,
@@ -145,10 +146,7 @@ export const actor__spawn = (params: ActorParams): Actor => {
     history: {
       planned,
       unbound,
-      events: [],
-      backgrounds: [],
-      nextBackground: Infinity,
-      childhoodEnd: Infinity
+      events: []
     },
     attributes: {
       strength: 0,
@@ -164,8 +162,7 @@ export const actor__spawn = (params: ActorParams): Actor => {
     },
     relations: [],
     equipment: equipment__spawn(),
-    carryCapacity: 120,
-    threads: []
+    carryCapacity: 120
   }
   profession__set({ actor, profession: actor.occupation })
   const derivedLast = lang__derivedSurnames(language)

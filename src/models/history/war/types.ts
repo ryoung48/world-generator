@@ -35,7 +35,6 @@ export interface War extends MajorEvent {
       | 'conquest'
       | 'dynastic'
       | 'excommunication'
-      | 'ideology'
       | 'jihad'
       | 'liberation'
       | 'raiders'

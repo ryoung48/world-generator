@@ -9,7 +9,7 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
   cell.province = idx
   const province: Province = {
     idx,
-    regionalCapital: capital,
+    capital: capital,
     region: cell.region,
     cell: cell.idx,
     memory: {

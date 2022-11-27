@@ -1,7 +1,10 @@
 import { createContext, Dispatch, useContext } from 'react'
 
 import { world__tick } from '../../models/history/dispatcher'
+import { actor__relation } from '../../models/npcs/actors'
 import { region__nation } from '../../models/regions'
+import { location__travel } from '../../models/regions/locations'
+import { Loc } from '../../models/regions/locations/types'
 import { province__hub } from '../../models/regions/provinces'
 import {
   codex__restoreHistory,
@@ -10,6 +13,7 @@ import {
   codex__update
 } from '../../models/utilities/codex'
 import { Dice } from '../../models/utilities/math/dice'
+import { hourMS } from '../../models/utilities/math/time'
 import { DisplayShaper } from '../../models/world/spawn/shapers/display'
 import { ViewActions, ViewState } from './types'
 
@@ -91,4 +95,28 @@ export const ViewContext = createContext(
 
 export const view__context = () => {
   return useContext(ViewContext)
+}
+
+export const avatar__travel = (params: {
+  state: ViewState
+  dispatch: Dispatch<ViewActions>
+  target: Loc
+}) => {
+  const { state, dispatch, target } = params
+  const avatar = window.world.actors[state.avatar]
+  const src = window.world.locations[state.codex.location]
+  const { hours } = location__travel({ src, dst: target })
+  avatar.location.curr = target.idx
+  actor__relation({ actor: avatar, type: 'party' }).forEach(actor => {
+    actor.location.curr = target.idx
+  })
+  dispatch({ type: 'set avatar', payload: { avatar } })
+  dispatch({
+    type: 'update codex',
+    payload: { target: window.world.locations[target.idx] }
+  })
+  dispatch({
+    type: 'tick',
+    payload: { duration: hours * hourMS }
+  })
 }

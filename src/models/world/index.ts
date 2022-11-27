@@ -6,7 +6,7 @@ import {
 } from '../npcs/species/languages/words/places'
 import { degrees, radians, scale } from '../utilities/math'
 import { Point } from '../utilities/math/points'
-import { daysPerYear, hourMS } from '../utilities/math/time'
+import { daysPerYear } from '../utilities/math/time'
 import { ExteriorCell } from './cells/types'
 import { Shaper } from './spawn/shapers'
 import { seaLevelCutoff } from './types'
@@ -48,12 +48,6 @@ const hourAngle = (latitude: number, day?: number) => {
 export const world__dayLength = (latitude: number, day?: number) => {
   const angularVelocity = 360 / window.world.rotation
   return (hourAngle(latitude, day) * 2) / angularVelocity
-}
-
-export const world__timezoneOffset = ({ x, y }: Point) => {
-  const { longitude } = world__gps({ x, y })
-  // approx 1 hour diff per 15 degrees
-  return Math.round(longitude / 15) * hourMS
 }
 
 export const world__heightToKM = (h: number) => scale([seaLevelCutoff, 1.5], [0, 6], h)

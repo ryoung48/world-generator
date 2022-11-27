@@ -29,36 +29,21 @@ const occupations = (loc: Loc) => {
     children: []
   }
   jobs.forEach(({ w, v }) => {
-    const { category, subcategory } = profession__map[v]
-    let nested = nestedJobs.children.find(child => child.label === category)
+    const { stratum } = profession__map[v]
+    let nested = nestedJobs.children.find(child => child.label === stratum)
     if (!nested) {
       nested = {
-        label: category,
+        label: stratum,
         value: 0,
-        color: profession__colors.category[category],
+        color: profession__colors.strata[stratum],
         children: []
       }
       nestedJobs.children.push(nested)
     }
-    let curr = nested
-    if (subcategory) {
-      let sub = nested.children.find(child => child.label === subcategory)
-      if (!sub) {
-        sub = {
-          label: subcategory,
-          value: 0,
-          color: profession__colors.subcategory[subcategory],
-          children: []
-        }
-        nested.children.push(sub)
-      }
-      curr = sub
-    }
     const weight = w
     nestedJobs.value += weight
     nested.value += weight
-    if (curr !== nested) curr.value += weight
-    curr.children.push({
+    nested.children.push({
       label: v,
       value: weight,
       color: profession__colors.job[v],

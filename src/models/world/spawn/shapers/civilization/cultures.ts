@@ -12,21 +12,16 @@ import { DevelopmentRank } from '../../../../regions/development'
 import { Region } from '../../../../regions/types'
 import { entity__partitionBFS } from '../../../../utilities/codex/entities'
 import { directions } from '../../../../utilities/math/points'
-import { climateLookup, climates } from '../../../climate/types'
+import { Climate, climates } from '../../../climate/types'
 
 const culture__cultureScore = (culture: Culture) =>
   culture__regions(culture)
-    .map(r => climateLookup[r.climate].population * (r.coastal ? 1.5 : 1))
+    .map(r => climates[r.climate].population * (r.coastal ? 1.5 : 1))
     .reduce((sum, pop) => sum + pop, 0) / culture.regions.length
 
-const distantClimates = [climates.POLAR, climates.EQUATORIAL]
+const distantClimates: Climate['type'][] = ['polar', 'tropical rainforest']
 
-const tribalLands = [
-  climates.HOT_STEPPE,
-  climates.COLD_DESERT,
-  climates.COLD_STEPPE,
-  climates.SAVANNA
-]
+const tribalLands: Climate['type'][] = ['hot steppe', 'cold desert', 'cold steppe', 'savanna']
 
 const isDistant = (culture: Culture) => {
   const regions = culture__regions(culture)
@@ -77,7 +72,7 @@ const civilizationCenter = (side: directions) => {
   // civilized
   const civilized = Math.floor(count * 0.5)
   partition.slice(0, civilized).forEach(c => {
-    const development = civil < 3 && c.zone === 'Temperate' ? 'civilized' : 'frontier'
+    const development = civil < 3 && c.zone === 'temperate' ? 'civilized' : 'frontier'
     c.regions.map(r => window.world.regions[r]).forEach(r => setDevelopment(r, development))
     civil += development === 'civilized' ? 1 : 0
   })

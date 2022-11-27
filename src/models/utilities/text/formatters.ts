@@ -2,7 +2,7 @@ import * as dayjs from 'dayjs'
 
 const local = 'en-US'
 export const formatters = {
-  percent: ({ value, precision }: { value: number; precision?: number }) =>
+  percent: (value: number, precision = 0) =>
     new Intl.NumberFormat(local, { style: 'percent', minimumFractionDigits: precision }).format(
       value
     ),

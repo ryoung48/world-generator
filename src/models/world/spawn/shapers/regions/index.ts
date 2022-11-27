@@ -71,7 +71,7 @@ export class RegionalShaper extends Shaper {
       this.regionBorders[region.idx] = {}
     })
     const queue = window.world.provinces
-      .filter(province => province.regionalCapital)
+      .filter(province => province.capital)
       .map(province => province__cell(province))
     // use capital cities to start the regional floodfill
     while (queue.length > 0) {

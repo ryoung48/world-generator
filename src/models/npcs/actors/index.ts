@@ -49,22 +49,7 @@ export const actor__relation = (params: {
 
 export const actor__location = ({ location }: Actor) => {
   const curr = window.world.locations[location.curr]
-  const residence = window.world.locations[location.residence]
-  return curr ?? residence
-}
-
-interface ActorBackgroundParams {
-  actor: Actor
-  time: number
-}
-
-const actor__findBackground = ({ actor, time }: ActorBackgroundParams) =>
-  actor.history.backgrounds.find(background => time >= background.start && time < background.end)
-
-export const actor__pastLocation = (params: ActorBackgroundParams) => {
-  const background = actor__findBackground(params)
-  const loc = window.world.locations[background?.loc]
-  return loc ?? window.world.locations[params.actor.location.residence]
+  return curr
 }
 
 /**

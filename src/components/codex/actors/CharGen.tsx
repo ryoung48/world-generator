@@ -21,7 +21,7 @@ import { npc__randomGender } from '../../../models/npcs/actors/stats/appearance/
 import { Actor } from '../../../models/npcs/actors/types'
 import { lang__first, lang__last } from '../../../models/npcs/species/languages/words/actors'
 import { location__hub } from '../../../models/regions/locations'
-import { location__demographics } from '../../../models/regions/locations/actors/demographics'
+import { location__demographics } from '../../../models/regions/locations/actors/demographics/demo'
 import { view__context } from '../../context'
 import { StyledSelect } from '../common/input/Select'
 import { CodexTitle } from '../common/text/title'
@@ -145,7 +145,7 @@ export function CharGen() {
               range(4).forEach(() =>
                 party.push(
                   actor__spawn({
-                    location: window.world.locations[avatar.location.residence],
+                    location: window.world.locations[avatar.location.curr],
                     occupation: { key: 'mercenary' },
                     living: true,
                     unbound: true,

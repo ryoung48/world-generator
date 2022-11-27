@@ -1,7 +1,7 @@
 import { formatters } from '../../../../src/models/utilities/text/formatters'
 
 test('formatters: percentages', () => {
-  const result = formatters.percent({ value: 0.9812, precision: 0 })
+  const result = formatters.percent(0.9812)
   expect(result).toEqual('98%')
 })
 test('formatters: compact', () => {

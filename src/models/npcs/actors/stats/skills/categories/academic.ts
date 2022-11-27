@@ -1,8 +1,7 @@
 import { profession__socialClass } from '../../professions'
-import { skillGate__intellect, skillGate__nonPoor } from '../common/checks'
+import { skillGate__intellect, skillGate__nonPoor } from '../checks'
 import { ActorSkill } from '../types'
 import { AcademicSkill } from '.'
-import { languageSkillChecks } from './worldly'
 
 export const actorSkills__academic: Record<AcademicSkill, ActorSkill> = {
   accounting: {
@@ -11,7 +10,7 @@ export const actorSkills__academic: Record<AcademicSkill, ActorSkill> = {
   },
   alchemy: {
     key: 'alchemy',
-    valid: skillGate__intellect
+    valid: params => skillGate__intellect(params) * skillGate__nonPoor(params)
   },
   arcana: {
     key: 'arcana',
@@ -20,10 +19,6 @@ export const actorSkills__academic: Record<AcademicSkill, ActorSkill> = {
   astronomy: {
     key: 'astronomy',
     valid: params => skillGate__intellect(params) * skillGate__nonPoor(params)
-  },
-  divination: {
-    key: 'divination',
-    valid: skillGate__intellect
   },
   history: {
     key: 'history',
@@ -35,11 +30,6 @@ export const actorSkills__academic: Record<AcademicSkill, ActorSkill> = {
   },
   law: {
     key: 'law',
-    valid: 0
-  },
-  linguistics: {
-    key: 'linguistics',
-    ...languageSkillChecks,
     valid: 0
   },
   mechanics: {

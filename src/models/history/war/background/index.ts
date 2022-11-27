@@ -6,10 +6,6 @@ import { decorateText } from '../../../utilities/text/decoration'
 import { War } from '../types'
 import { WarBackground, WarBackgroundArgs } from './types'
 
-const liberalState = (state: Region) => state.government.structure === 'republic'
-const conservativeState = (state: Region) =>
-  state.government.structure === 'autocratic' || state.government.structure === 'oligarchic'
-
 const findLastWar = ({ invader, defender }: WarBackgroundArgs) => {
   const [lastWar] = invader.wars.past
     .map(i => window.world.wars[i])
@@ -92,20 +88,6 @@ const war__backgrounds: Record<War['background']['type'], WarBackground> = {
         : 0,
     text: () => `to ${window.dice.choice(['punish', 'correct'])} poor interpretations of the faith`
   },
-  ideology: {
-    tag: 'ideology',
-    spawn: ({ defender, invader }) => {
-      const liberalDefender = liberalState(defender)
-      const conservativeDefender = conservativeState(defender)
-      const liberalInvader = liberalState(invader)
-      const conservativeInvader = conservativeState(invader)
-      return (liberalDefender && conservativeInvader) || (conservativeDefender && liberalInvader)
-        ? 3
-        : 0
-    },
-    text: ({ invader }) =>
-      `to spread ${liberalState(invader) ? 'liberal' : 'authoritarian'} idealogies`
-  },
   jihad: {
     tag: 'jihad',
     spawn: ({ defender, invader }) =>
@@ -164,7 +146,14 @@ const war__backgrounds: Record<War['background']['type'], WarBackground> = {
   },
   trade: {
     tag: 'trade',
-    spawn: ({ defender }) => (defender.economy.trade === 'protectionism' ? 0.5 : 0),
+    spawn: ({ defender }) =>
+      defender.development === 'remote'
+        ? 0.05
+        : defender.development === 'tribal'
+        ? 0.1
+        : defender.development === 'frontier'
+        ? 0.3
+        : 0.5,
     text: () =>
       window.dice.choice([
         'over continued trade disputes',

@@ -1,5 +1,5 @@
-import { ColorHue } from '../../../../utilities/colors'
-import { SocialClass } from '../../../actors/stats/professions/types'
+import { ColorHue } from '../../../../utilities/colors';
+import { SocialStratum } from '../../../actors/stats/professions/types';
 
 // eyes
 const eyeColors: Record<
@@ -41,7 +41,7 @@ export const hairStyles = () => {
 
 export const facialHair = () => {
   const base = {
-    chance: window.dice.choice([0.3, 0.6, 0.9]),
+    chance: window.dice.choice([0.6, 0.9]),
     styles: ['trimmed beard']
   }
   if (base.chance > 0.3) base.styles.push('full beard')
@@ -54,7 +54,7 @@ export const nosePiercings = {
   styles: ['gold', 'iron', 'copper'],
   chance: 0.05
 }
-const earingChance: Record<SocialClass, number> = {
+const earingChance: Record<SocialStratum, number> = {
   lower: 0.3,
   middle: 0.6,
   upper: 0.9

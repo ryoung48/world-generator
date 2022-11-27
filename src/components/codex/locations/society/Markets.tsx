@@ -67,21 +67,18 @@ export function MarketsView() {
               value: item => {
                 return (
                   <Grid container p='3px'>
-                    {`${formatters.percent({ value: item.rarity })} (${titleCase(
-                      rarity(item.rarity)
-                    )})`}
+                    {`${formatters.percent(item.rarity)} (${titleCase(rarity(item.rarity))})`}
                   </Grid>
                 )
               }
             },
             {
               text: 'Demand',
-              value: item =>
-                `${formatters.percent({ value: item.demand })} (${demand(item.demand)})`
+              value: item => `${formatters.percent(item.demand)} (${demand(item.demand)})`
             },
             {
               text: 'Price',
-              value: item => formatters.percent({ value: item.price })
+              value: item => formatters.percent(item.price)
             }
           ]}
         ></DataTable>

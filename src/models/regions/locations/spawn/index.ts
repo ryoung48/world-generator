@@ -149,7 +149,7 @@ export const location__spawn = (params: {
     tag: 'location',
     type,
     population: population ? window.dice.randint(...population) : undefined,
-    memory: { weather: -Infinity, threads: -Infinity },
+    memory: { weather: -Infinity },
     x,
     y,
     cell: point.cell.idx,
@@ -158,8 +158,7 @@ export const location__spawn = (params: {
     coastal: coastal !== undefined && point.cell.beach,
     hub,
     actors: [],
-    threads: [],
-    traits: []
+    _threads: []
   }
   finalize?.(location)
   window.world.locations[location.idx] = location

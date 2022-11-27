@@ -16,7 +16,7 @@ import { Province } from '../../../regions/provinces/types'
 import { Region } from '../../../regions/types'
 import { yearMS } from '../../../utilities/math/time'
 import { profile } from '../../../utilities/performance'
-import { climates } from '../../climate/types'
+import { Climate } from '../../climate/types'
 import { Shaper } from '.'
 
 const maxMarketsTotal: Partial<Record<Loc['type'], number>> = {
@@ -62,7 +62,7 @@ const randomPlacement = (key: TradeGood, market: Province[], rarity: number) => 
   placeResources(key, refs, weights)
 }
 
-const climateRandomPlacement = (key: TradeGood, climes: climates[], rarity: number) => {
+const climateRandomPlacement = (key: TradeGood, climes: Climate['type'][], rarity: number) => {
   const markets = window.world.provinces.filter(province =>
     climes.includes(window.world.regions[province.region].climate)
   )
@@ -101,9 +101,7 @@ export class LoreShaper extends Shaper {
     window.world.regions.forEach(region => {
       const { religion: ridx } = window.world.cultures[region.culture.ruling]
       const religion = window.world.religions[ridx]
-      region.religion.state = religion.idx
-      region.religion.native = religion.idx
-      if (religion.leadership === 'secular') region.religion.authority = 'theocratic'
+      region.religion = { state: religion.idx, native: religion.idx }
     })
   }
   private imperialColonies() {
@@ -198,28 +196,30 @@ export class LoreShaper extends Shaper {
     randomPlacement('metals (gemstones)', mountainProvinces, commodityRarity)
     randomPlacement('metals (precious)', mountainProvinces, commodityRarity)
     randomPlacement('metals (common)', mountainProvinces, 0.6)
-    const deserts = [climates.HOT_DESERT, climates.COLD_DESERT]
-    const grasslands = [climates.HOT_STEPPE, climates.COLD_STEPPE, climates.SAVANNA]
-    const forests = [
-      climates.EQUATORIAL,
-      climates.TROPICAL_MONSOON,
-      climates.SUBTROPICAL,
-      climates.MEDITERRANEAN,
-      climates.OCEANIC,
-      climates.CONTINENTAL,
-      climates.SUBARCTIC
+    const deserts: Climate['type'][] = ['hot desert', 'cold desert']
+    const grasslands: Climate['type'][] = ['hot steppe', 'cold steppe', 'savanna']
+    const forests: Climate['type'][] = [
+      'tropical rainforest',
+      'tropical monsoon',
+      'temperate monsoon',
+      'subtropical',
+      'mediterranean',
+      'oceanic',
+      'laurentian',
+      'siberian',
+      'subarctic'
     ]
     const farmland = [...forests, ...grasslands]
     const trees = [...forests]
     const common = [...deserts, ...grasslands, ...forests]
     climateRandomPlacement(
       'furs',
-      [climates.CONTINENTAL, climates.OCEANIC, climates.SUBARCTIC, climates.POLAR],
+      ['laurentian', 'oceanic', 'subarctic', 'siberian', 'polar'],
       commodityRarity
     )
     climateRandomPlacement(
       'spices',
-      [climates.EQUATORIAL, climates.TROPICAL_MONSOON, climates.SAVANNA, climates.SUBTROPICAL],
+      ['tropical rainforest', 'tropical monsoon', 'temperate monsoon', 'savanna', 'subtropical'],
       commodityRarity
     )
     climateRandomPlacement('lumber', trees, 0.6)
@@ -243,7 +243,7 @@ export class LoreShaper extends Shaper {
     climateRandomPlacement('clay', common, commodityRarity)
     climateRandomPlacement('dyes', common, commodityRarity)
     climateRandomPlacement('incense', common, commodityRarity)
-    climateRandomPlacement('reagents (alchemical)', [...common, climates.POLAR], commodityRarity)
+    climateRandomPlacement('reagents (alchemical)', [...common, 'polar'], commodityRarity)
     randomPlacement('reagents (arcane)', window.world.provinces, commodityRarity)
   }
   private history() {

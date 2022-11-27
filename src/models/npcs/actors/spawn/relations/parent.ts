@@ -21,8 +21,7 @@ export class Parent implements Relation {
     params.gender = culture.lineage
     params.culture = window.world.cultures[this.child.culture]
     params.socialClass = actor__socialClass({
-      actor: this.child,
-      time: params.relativeTime ?? window.world.date
+      actor: this.child
     })
     if (!window.world.historyRecording) {
       params.socialClass = socialClass__randomDrift(params.socialClass)

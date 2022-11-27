@@ -107,7 +107,7 @@ export const region__claimProvince = (params: { nation: Region; province: Provin
   const { nation, province } = params
   const old = window.world.regions[province.currNation]
   const severed = province__sever(province)
-  const capitals = severed.filter(t => t.regionalCapital).map(({ idx }) => idx)
+  const capitals = severed.filter(t => t.capital).map(({ idx }) => idx)
   // remove capital cities from old owner
   old.regions = old.regions.filter(r => !capitals.includes(r))
   // add regions to new owner

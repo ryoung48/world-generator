@@ -1,5 +1,5 @@
 import { world__gps } from '../../../../world'
-import { climateLookup } from '../../../../world/climate/types'
+import { climates } from '../../../../world/climate/types'
 import { humanoid__spawn } from '../common'
 import { eyeColor, facialHair, hairStyles, nosePiercings } from '../common/appearance'
 import { Humanoid, HumanoidAppearance } from '../types'
@@ -15,7 +15,7 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin = { type: 'skin', colors: ['fair'] }
       const styles = hairStyles()
@@ -38,13 +38,13 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
           styles: ['trimmed beard']
         }
       }
-      if (zone === 'Tropical') {
+      if (zone === 'tropical') {
         skin.colors = window.dice.sample(
           ['dark purple', 'dark blue', 'greyish-purple', 'greyish-blue'],
           3
         )
         hair.hair.colors = ['white', 'blond', 'brown', 'black']
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.colors = ['fair', 'light tan', 'dark tan']
         hair.hair.colors = ['auburn', 'red', 'black', 'blond']
       } else {
@@ -105,7 +105,7 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin: HumanoidAppearance['skin'] = { type: 'skin', colors: ['fair'] }
       const hair = {
@@ -113,12 +113,12 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
         colors: ['brown', ...window.dice.sample(['blond', 'red', 'auburn', 'black'], 2)],
         styles: hairStyles()
       }
-      const tropical = zone === 'Tropical'
+      const tropical = zone === 'tropical'
       if (tropical) {
         skin.texture = '50% fur'
         skin.colors = ['dark green', 'olive', 'greyish-green']
         hair.colors = ['auburn', 'brown', 'blond']
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.texture = '50% fur'
         skin.colors = ['fair', 'light tan']
         hair.textures = ['curly', 'wavy']
@@ -148,12 +148,12 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin = { type: 'fur', colors: ['fair'] }
-      if (zone === 'Tropical') {
+      if (zone === 'tropical') {
         skin.colors = ['mahogany', 'dark brown']
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.colors = ['light tan', 'dark tan', 'light brown']
       } else {
         skin.colors = ['pale gray', 'greyish-blue', 'ashen gray']
@@ -186,7 +186,7 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
       const { longitude } = world__gps(point)
       const province = window.world.provinces[point.province]
       const region = window.world.regions[province.region]
-      const { zone } = climateLookup[region.climate]
+      const { zone } = climates[region.climate]
       const eyes = eyeColor({ longitude })
       const skin = { type: 'skin', colors: ['fair'] }
       const styles = hairStyles()
@@ -207,10 +207,10 @@ export const humanoids__demihumans: Record<demihuman__species, Humanoid> = {
           female: styles.female
         }
       }
-      if (zone === 'Tropical') {
+      if (zone === 'tropical') {
         skin.colors = ['mahogany', 'copper', 'ochre']
         hair.colors = ['brown', 'black']
-      } else if (zone === 'Temperate') {
+      } else if (zone === 'temperate') {
         skin.colors = ['greyish-green', 'olive', 'dark green']
         hair.colors = ['auburn', 'brown', 'black']
       } else {

@@ -1,3 +1,3 @@
-export type genders = 'male' | 'female'
-export const npc__randomGender = () => window.dice.choice<genders>(['male', 'female'])
-export const npc__oppositeGender = (gender: genders) => (gender === 'male' ? 'female' : 'male')
+export type Gender = 'male' | 'female'
+export const npc__randomGender = () => window.dice.choice<Gender>(['male', 'female'])
+export const npc__oppositeGender = (gender: Gender) => (gender === 'male' ? 'female' : 'male')

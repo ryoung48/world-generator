@@ -9,7 +9,6 @@ export type ValidActorSkill = (_params: SkillContextParams) => number
 export interface ActorSkill {
   key: ActorSkills
   valid?: number | ValidActorSkill
-  derived?: boolean
   apply?: (_params: SkillApplyParams) => void
 }
 

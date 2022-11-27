@@ -59,7 +59,7 @@ export const actor__physique = (actor: Actor) => {
     }
   }
   const { nosePiercing, hornDressing, tattoos } = appearance
-  const lifestyle = actor__socialClass({ actor, time: window.world.date })
+  const lifestyle = actor__socialClass({ actor })
   const tribal = !culture.civilized
   const upper = lifestyle === 'upper'
   const lower = lifestyle === 'lower'

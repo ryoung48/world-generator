@@ -6,4 +6,4 @@ export const attributes = [
   'wisdom',
   'charisma'
 ] as const
-export type attribute = typeof attributes[number]
+export type ActorAttribute = typeof attributes[number]

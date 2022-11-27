@@ -3,9 +3,10 @@ import { region__neighbors } from '../../../models/regions'
 import { randomRelation, region__setRelation } from '../../../models/regions/diplomacy/relations'
 import { province__decoration } from '../../../models/regions/provinces'
 import { Region } from '../../../models/regions/types'
+import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { climateLookup, climates } from '../../../models/world/climate/types'
+import { Climate, climates } from '../../../models/world/climate/types'
 import { view__context } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { SectionList } from '../common/text/SectionList'
@@ -27,9 +28,9 @@ const region__biomes = (nation: Region) => {
     .map(
       ([k, v]) =>
         `${decorateText({
-          label: k,
-          tooltip: climateLookup[k as climates].code
-        })} (${formatters.percent({ value: v / total })})`
+          label: titleCase(k),
+          tooltip: climates[k as Climate['type']].code
+        })} (${formatters.percent(v / total)})`
     )
     .join(', ')
 }
@@ -125,9 +126,7 @@ export function Geography() {
                     link: n,
                     color: rebel ? cssColors.primary : undefined,
                     tooltip: rebel ? 'rebellion' : undefined
-                  })} (${formatters.percent({
-                    value: owned / total
-                  })})`
+                  })} (${formatters.percent(owned / total)})`
                 })
                 .join(', ')}
             ></StyledText>

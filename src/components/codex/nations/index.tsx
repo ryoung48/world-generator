@@ -1,28 +1,60 @@
-import { Grid } from '@mui/material'
+import { Box, Divider, Grid } from '@mui/material'
 
 import { rebellion__name } from '../../../models/history/encoding'
 import { culture__decorations } from '../../../models/npcs/species/cultures'
 import { region__population } from '../../../models/regions'
 import { region__warRivals } from '../../../models/regions/diplomacy/relations'
+import { region__isImperial } from '../../../models/regions/diplomacy/status'
 import { location__isVillage } from '../../../models/regions/locations/spawn/taxonomy/settlements'
 import { province__hub } from '../../../models/regions/provinces'
+import { Region } from '../../../models/regions/types'
+import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { climateLookup } from '../../../models/world/climate/types'
+import { climates } from '../../../models/world/climate/types'
 import { view__context } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
-import { StyledTabs } from '../common/navigation/StyledTabs'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
 import { Geography } from './Geography'
-import { History } from './History'
+
+const government = (nation: Region) => {
+  const { government, civilized } = nation
+  const overlord = window.world.regions[nation.overlord.idx]
+  const empire = region__isImperial(nation)
+  const tier = empire ? 'empire' : 'kingdom'
+  const vassal = `${
+    overlord
+      ? `, ${decorateText({
+          label: 'vassal',
+          link: overlord,
+          tooltip: overlord?.name ?? undefined,
+          color: cssColors.subtitle
+        })}`
+      : ''
+  }`
+  if (nation.provinces.length === 1) {
+    return `free city${vassal}`
+  } else if (government.structure === 'autocratic') {
+    return `autocratic ${tier}${vassal}`
+  } else if (government.structure === 'theocratic') {
+    return `theocratic ${tier}${vassal}`
+  } else if (government.structure === 'oligarchic') {
+    return `feudal ${tier}${vassal}`
+  } else if (government.structure === 'confederation') {
+    return `${civilized ? 'city-state' : 'tribal'} ${
+      empire ? 'federation' : 'confederacy'
+    }${vassal}`
+  } else {
+    return `anarchic ${empire ? 'kingdoms' : civilized ? 'warlords' : 'tribes'}${vassal}`
+  }
+}
 
 export function NationView() {
   const { state } = view__context()
   const nation = window.world.regions[state.codex.nation]
-  const climate = climateLookup[nation.climate]
-  const overlord = window.world.regions[nation.overlord.idx]
+  const climate = climates[nation.climate]
   const { regions, religion } = nation
   const rebellions = regions
     .map(p => {
@@ -38,19 +70,13 @@ export function NationView() {
       .find(w => {
         return w.invader.idx === nation.idx || w.defender.idx === nation.idx
       })
-    return decorateText({
-      label: rival.name,
-      tooltip: `${war.name}`
-    })
+    return war
   })
   const currentRebellions = rebellions.map(subject => {
     const rebellion = window.world.rebellions[subject.rebellions.current]
-    return decorateText({
-      label: subject.name,
-      tooltip: rebellion__name(rebellion)
-    })
+    return rebellion
   })
-  const conflicts = currentWars.concat(currentRebellions)
+  const conflicts = [...currentWars, ...currentRebellions]
   const totalPop = region__population(nation)
   const urbanPop = nation.provinces
     .map(i => province__hub(window.world.provinces[i]))
@@ -62,16 +88,9 @@ export function NationView() {
       subtitle={
         <StyledText
           color={cssColors.subtitle}
-          text={`(${nation.idx}) ${
-            overlord
-              ? decorateText({
-                  label: 'Vassal',
-                  link: overlord,
-                  tooltip: overlord?.name ?? undefined,
-                  color: cssColors.subtitle
-                })
-              : 'Nation'
-          } (${climate.zone.toLowerCase()}, ${nation.development})`}
+          text={`(${nation.idx}) ${government(nation)} (${climate.zone.toLowerCase()}, ${
+            nation.development
+          })`}
         ></StyledText>
       }
       content={
@@ -95,7 +114,16 @@ export function NationView() {
                     ></StyledText>
                   )
                 },
-                { label: 'Religion', content: window.world.religions[religion.state].name }
+                {
+                  label: 'Religion',
+                  content: (
+                    <StyledText
+                      text={decorateText({
+                        link: window.world.religions[religion.state]
+                      })}
+                    ></StyledText>
+                  )
+                }
               ]}
             ></SectionList>
           </Grid>
@@ -108,26 +136,37 @@ export function NationView() {
                     (urbanPop / totalPop) *
                     100
                   ).toFixed(0)}% Urban)`
-                },
-                {
-                  label: 'Conflicts',
-                  content: (
-                    <StyledText
-                      text={conflicts.length > 0 ? conflicts.join(', ') : 'None'}
-                    ></StyledText>
-                  )
                 }
               ]}
             ></SectionList>
           </Grid>
-          <Grid item xs={12} mt={3}>
-            <StyledTabs
-              active={state.codex.current === 'nation'}
-              tabs={[
-                { label: 'geography', content: <Geography></Geography> },
-                { label: 'history', content: <History></History> }
-              ]}
-            ></StyledTabs>
+          {conflicts.length > 0 && (
+            <Grid item xs={12} mt={2}>
+              <Divider>Conflicts</Divider>
+              <Box py={1}>
+                <SectionList
+                  list={conflicts.map(conflict => {
+                    return {
+                      label: `${
+                        conflict.type === 'rebellion' ? rebellion__name(conflict) : conflict.name
+                      }`,
+                      content: (
+                        <span>
+                          <i>{titleCase(conflict.background.type)}. </i>
+                          <StyledText text={conflict.background.text}></StyledText>
+                        </span>
+                      )
+                    }
+                  })}
+                ></SectionList>
+              </Box>
+            </Grid>
+          )}
+          <Grid item xs={12} mt={conflicts.length > 0 ? 1 : 2}>
+            <Divider>Geography</Divider>
+            <Box py={1}>
+              <Geography></Geography>
+            </Box>
           </Grid>
         </Grid>
       }

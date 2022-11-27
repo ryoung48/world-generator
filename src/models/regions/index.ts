@@ -58,7 +58,7 @@ export const region__foreignProvinces = (params: { host: Region; guest: Region }
     )
   )
 }
-export const region__neighbors = (nation: Region) => {
+export const region__neighbors = (nation: Region): number[] => {
   return province__foreignStates(nation.provinces.map(t => window.world.provinces[t]))
 }
 export const region__nonAlliedNeighbors = (nation: Region) => {

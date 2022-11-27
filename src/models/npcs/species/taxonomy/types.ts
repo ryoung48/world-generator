@@ -1,7 +1,7 @@
 import { Loc } from '../../../regions/locations/types'
 import { WeightedDistribution } from '../../../utilities/math'
 import { lifePhaseBoundaries } from '../../actors/stats/age/life_phases'
-import { genders } from '../../actors/stats/appearance/gender'
+import { Gender } from '../../actors/stats/appearance/gender'
 import { beastfolk__species } from './beastfolk/types'
 import { demihuman__species } from './demihumans/types'
 
@@ -20,7 +20,7 @@ export interface HumanoidAppearance {
   hair?: {
     textures: string[]
     colors: string[]
-    styles: Record<genders, WeightedDistribution<string>>
+    styles: Record<Gender, WeightedDistribution<string>>
     ageless?: boolean
   }
   facialHair?: {

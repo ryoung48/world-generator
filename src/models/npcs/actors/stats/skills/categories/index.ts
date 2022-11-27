@@ -3,11 +3,9 @@ export const academicSkills = [
   'alchemy',
   'arcana',
   'astronomy',
-  'divination',
   'history',
   'investigation',
   'law',
-  'linguistics',
   'mechanics',
   'nature',
   'philosophy',
@@ -22,14 +20,12 @@ export const artisticSkills = [
   'basketry',
   'blacksmithing',
   'bookbinding',
-  'carving',
   'cobbling',
   'dancing',
-  'engraving',
   'fletching',
   'glazing',
   'hair styling',
-  'instrumental',
+  'instrument (music)',
   'jeweling',
   'knitting',
   'leatherworking',
@@ -40,7 +36,6 @@ export const artisticSkills = [
   'scribing',
   'sculpting',
   'singing',
-  'sketching',
   'tailoring',
   'weaving',
   'whitesmithing'
@@ -52,6 +47,7 @@ export const socialSkills = [
   'bluff',
   'carouse',
   'charm',
+  'debate',
   'etiquette',
   'insight',
   'intimidate',
@@ -65,8 +61,8 @@ export const socialSkills = [
 export type SocialSkill = typeof socialSkills[number]
 
 export const worldlySkills = [
-  'animal handling',
-  'architecture',
+  'animal (handling)',
+  'animal (riding)',
   'athletics',
   'baking',
   'brawling',
@@ -79,7 +75,6 @@ export const worldlySkills = [
   'fletching',
   'folklore',
   'housekeeping',
-  'living language',
   'logistics',
   'marksman',
   'martial',
@@ -91,6 +86,7 @@ export const worldlySkills = [
   'seafaring',
   'streetwise',
   'survival',
+  'tactics',
   'vintner',
   'wagoneering',
   'woodcutting'
@@ -104,8 +100,5 @@ export const allSkills = [
   ...worldlySkills,
   ...academicSkills
 ] as const
-export const artisanSkills = [...socialSkills, ...artisticSkills, ...worldlySkills]
-export const scholarSkills = [...socialSkills, ...academicSkills]
-export const laborerSkills = [...worldlySkills]
 
 export type ActorSkills = typeof allSkills[number]

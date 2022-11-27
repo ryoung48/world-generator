@@ -27,7 +27,7 @@ export function NPCHealthView(props: { npc: NPC }) {
             ? 'bloodied'
             : 'healthy'
       })} (${decorateText({
-        label: formatters.percent({ value: percent, precision: 0 }),
+        label: formatters.percent(percent),
         color: percent === 0 ? 'gray' : hpColorScale(percent).toString()
       })})`}
     ></StyledText>

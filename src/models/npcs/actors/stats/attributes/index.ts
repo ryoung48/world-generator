@@ -1,9 +1,9 @@
 import { Actor } from '../../types'
 import { profession__map, profession__socialClass } from '../professions'
-import { SocialClass } from '../professions/types'
-import { attribute } from './types'
+import { SocialStratum } from '../professions/types'
+import { ActorAttribute } from './types'
 
-const socialClassWeights: Record<SocialClass, number[][]> = {
+const socialClassWeights: Record<SocialStratum, number[][]> = {
   lower: [
     [12, 12, 9, 9, 9, 9],
     [11, 11, 10, 10, 9, 9],
@@ -17,7 +17,7 @@ const socialClassWeights: Record<SocialClass, number[][]> = {
   ]
 }
 
-const socialClassPoints: Record<SocialClass, number> = {
+const socialClassPoints: Record<SocialStratum, number> = {
   lower: 64,
   middle: 66,
   upper: 68
@@ -48,7 +48,7 @@ export const actor__attributeRoll = (actor: Actor) => {
   actor.attributes = attributeRoll({ weights, points, min: 8, max: 18 })
 }
 
-const attribute__descriptors: Record<attribute, [string, string, string, string]> = {
+const attribute__descriptors: Record<ActorAttribute, [string, string, string, string]> = {
   strength: ['weak', 'average', 'strong', 'powerful'],
   dexterity: ['clumsy', 'average', 'agile', 'graceful'],
   constitution: ['frail', 'average', 'healthy', 'robust'],
@@ -57,7 +57,7 @@ const attribute__descriptors: Record<attribute, [string, string, string, string]
   charisma: ['dull', 'average', 'captivating', 'magnetic']
 }
 
-const attribute__describe = (params: { key: attribute; value: number }) => {
+const attribute__describe = (params: { key: ActorAttribute; value: number }) => {
   const { key, value } = params
   if (value < 10) return attribute__descriptors[key][0]
   if (value < 13) return attribute__descriptors[key][1]

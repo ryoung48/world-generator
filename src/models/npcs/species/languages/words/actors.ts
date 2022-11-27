@@ -1,7 +1,7 @@
-import { genders } from '../../../actors/stats/appearance/gender'
+import { lang__word } from '.'
+import { Gender } from '../../../actors/stats/appearance/gender'
 import { Actor } from '../../../actors/types'
 import { Language } from '../types'
-import { lang__word } from '.'
 
 export const lang__surname = (params: { lang: Language; npc: Actor; parent?: string }): string => {
   const { lang, npc } = params
@@ -30,4 +30,4 @@ export const lang__derivedSurnames = (lang: Language) => {
   return patronymic || epithets.length > 0
 }
 
-export const lang__first = (lang: Language, gender: genders) => lang__word({ lang, key: gender })
+export const lang__first = (lang: Language, gender: Gender) => lang__word({ lang, key: gender })

@@ -3,24 +3,20 @@ import {
   skillGate__constitution,
   skillGate__dexterity,
   skillGate__nobility,
-  skillGate__strength
-} from '../common/checks'
-import { fluency__applySkill, fluency__languagesExist } from '../fluency'
+  skillGate__nonPoor,
+  skillGate__strength,
+  skillGate__wisdom
+} from '../checks'
 import { ActorSkill } from '../types'
 import { WorldlySkill } from '.'
 
-export const languageSkillChecks: Omit<ActorSkill, 'key'> = {
-  valid: ({ actor, context }) => (fluency__languagesExist({ actor, context }) ? 1 : 0),
-  apply: ({ actor, exp, loc }) => fluency__applySkill({ actor, exp, loc })
-}
-
 export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
-  'animal handling': {
-    key: 'animal handling'
+  'animal (handling)': {
+    key: 'animal (handling)'
   },
-  architecture: {
-    key: 'architecture',
-    valid: 0
+  'animal (riding)': {
+    key: 'animal (riding)',
+    valid: skillGate__nonPoor
   },
   athletics: {
     key: 'athletics',
@@ -66,10 +62,6 @@ export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
     key: 'housekeeping',
     valid: 0
   },
-  'living language': {
-    key: 'living language',
-    ...languageSkillChecks
-  },
   logistics: {
     key: 'logistics',
     valid: 0
@@ -98,7 +90,8 @@ export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
     valid: 0
   },
   perception: {
-    key: 'perception'
+    key: 'perception',
+    valid: skillGate__wisdom
   },
   seafaring: {
     key: 'seafaring',
@@ -111,6 +104,10 @@ export const actorSkills__worldly: Record<WorldlySkill, ActorSkill> = {
   survival: {
     key: 'survival',
     valid: ({ context, actor }) => skillGate__constitution({ context, actor })
+  },
+  tactics: {
+    key: 'tactics',
+    valid: 0
   },
   vintner: {
     key: 'vintner',

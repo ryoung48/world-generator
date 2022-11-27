@@ -78,7 +78,7 @@ const paint = (params: {
       .flat()
   )
   const lands = map__drawOceans({ ctx, scale, nations })
-  map__drawRegions({ ctx, style: 'Nations', scale, nations })
+  map__drawRegions({ ctx, scale, nations })
   map__drawLakes({ ctx, scale, nations })
   map__drawRoads({ ctx, scale, nationSet })
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
@@ -147,7 +147,7 @@ export function WorldMap() {
       await delay(50)
       // pan & zoom
       const controller = zoom()
-        .scaleExtent([10, 200])
+        .scaleExtent([1, 200])
         .translateExtent([
           [0, 0],
           [window.world.dim.w, window.world.dim.h]
@@ -227,7 +227,6 @@ export function WorldMap() {
   }, [transform])
   return (
     <Grid container>
-      {/* <Grid.Col span={3} py={0}></Grid.Col> */}
       <Grid item xs={12} ref={containerRef} pb={0}>
         <canvas
           ref={canvasRef}

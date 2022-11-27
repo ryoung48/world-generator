@@ -1,10 +1,18 @@
 import { scaleLinear, scalePow } from 'd3'
 
-import { titleCase } from '../../../utilities/text'
+import { Loc } from '../../../regions/locations/types'
 import { world__gps, world__heightToKM } from '../..'
 import { ExteriorCell } from '../../cells/types'
 import { Climate, climates, rain } from '../types'
-import { CloudTypes, WeatherConditions, WeatherParams, WeatherPhenomena } from './types'
+import {
+  CloudTypes,
+  Season,
+  TemperatureVariance,
+  TimeOfDay,
+  WeatherConditions,
+  WeatherParams,
+  WeatherPhenomena
+} from './types'
 
 export const computeHeat = (params: { cell: ExteriorCell; month: number; climate: Climate }) => {
   const { month, cell, climate } = params
@@ -113,133 +121,113 @@ const clouds = (rainChance: number, condition: WeatherConditions) => {
 }
 
 const fairWeather = (): WeatherPhenomena => ({
-  weather: 'fair',
-  wind: window.dice.roll(1, 4),
-  icon: 'sunny'
+  weather: 'clear skies',
+  wind: window.dice.roll(1, 4)
 })
 
-const desertClimates = [climates.COLD_DESERT, climates.HOT_DESERT]
+const desertClimates = Object.values(climates)
+  .filter(({ terrain }) => terrain === 'desert')
+  .map(({ type }) => type)
 
 export const freezingPoint = 33
 
 const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => WeatherPhenomena> = {
   stormy: ({ clouds, rain, temp }) => {
-    let { weather, wind, icon } = fairWeather()
+    let { weather, wind } = fairWeather()
     const rained = rain * 2 > window.dice.random
     if (clouds === 'nimbus clouds') {
-      wind = window.dice.roll(2, 10)
-      icon = 'cloudy'
+      wind = window.dice.roll(2, 9)
       if (rained) {
         weather = 'thunderstorm'
-        icon = 'lightning'
         if (temp < 31) {
           weather = 'blizzard'
-          icon = 'snowy-heavy'
         } else if (temp >= 31 && temp <= 34) {
           weather = 'sleet'
-          icon = 'snowy-rainy'
         } else if (temp > 34 && temp <= 69) {
           weather = 'quiet downpour'
-          icon = 'pouring'
         }
       }
     } else if (clouds === 'cumulus clouds') {
       wind = window.dice.roll(2, 6)
-      icon = 'cloudy'
       if (rained) {
         weather = 'spattering rain'
-        icon = 'pouring'
         if (temp <= freezingPoint) {
           weather = 'ice crystals'
-          icon = 'snowy'
         }
       }
     }
-    return { wind, weather, icon }
+    return { wind, weather }
   },
   rainy: ({ clouds, rain, temp }) => {
-    let { weather, wind, icon } = fairWeather()
+    let { weather, wind } = fairWeather()
     if (clouds === 'altostratus clouds') {
       wind = window.dice.roll(2, 4)
-      icon = 'cloudy'
       if (rain > window.dice.random) {
         weather = 'spattering rain'
-        icon = 'pouring'
         if (temp <= freezingPoint) {
           weather = 'ice crystals'
-          icon = 'snowy'
         }
       }
     } else if (clouds === 'stratus clouds') {
       wind = window.dice.roll(2, 4)
       weather = 'spattering rain'
-      icon = 'pouring'
       if (temp <= freezingPoint) {
         weather = 'tiny flakes'
-        icon = 'snowy'
       }
       if (rain > window.dice.random) {
         weather = 'pelting rain'
-        icon = 'pouring'
         if (temp <= freezingPoint) {
           weather = 'snow flurry'
-          icon = 'snowy'
         }
       }
     } else if (clouds === 'cumulus clouds') {
       wind = window.dice.roll(1, 6)
       weather = 'drizzle'
-      icon = 'pouring'
       if (temp <= freezingPoint) {
         weather = 'dusting'
-        icon = 'snowy'
       }
       if (rain > window.dice.random) {
         wind = window.dice.roll(2, 6)
         weather = 'rain shower'
-        icon = 'pouring'
         if (temp <= freezingPoint) {
           weather = 'snowfall'
-          icon = 'snowy'
         }
       }
     }
-    return { wind, weather, icon }
+    return { wind, weather }
   },
   windy: ({ climate }) => {
-    let { weather, wind, icon } = fairWeather()
+    let { weather, wind } = fairWeather()
     const desert = desertClimates.includes(climate)
     wind = window.dice.roll(2, desert ? 9 : 7)
-    icon = 'windy'
     if (wind >= 12 && desert) {
-      if (climate === climates.HOT_DESERT) {
+      if (climate === 'hot desert') {
         weather = 'sand storm'
-      } else if (climate === climates.COLD_DESERT) {
+      } else if (climate === 'cold desert') {
         weather = 'dust storm'
       }
     }
-    return { wind, weather, icon }
+    return { wind, weather }
   },
   fog: ({ rain, temp }) => {
     const fair = fairWeather()
-    let { weather, icon } = fair
-    icon = 'fog'
+    let { weather } = fair
     weather = temp >= freezingPoint ? 'dew' : 'cold surface'
     const intensity = window.dice.random
     if (rain > intensity) weather = temp >= freezingPoint ? 'fog' : temp >= -30 ? 'rime' : 'ice fog'
-    else if (rain * 2 > intensity) weather = temp >= freezingPoint ? 'mist' : 'frost'
     else if (rain * 3 > intensity) weather = temp >= freezingPoint ? 'thin mist' : 'thin frost'
-    return { wind: fair.wind, weather, icon }
+    else if (rain * 2 > intensity) weather = temp >= freezingPoint ? 'mist' : 'frost'
+    return { wind: fair.wind, weather }
   },
   clear: () => ({ ...fairWeather() }),
-  cloudy: () => ({ ...fairWeather(), icon: 'cloudy' }),
-  overcast: () => ({ ...fairWeather(), icon: 'cloudy' })
+  cloudy: () => ({ ...fairWeather() }),
+  overcast: () => ({ ...fairWeather() })
 }
 
 export const proceduralWeather = (params: {
   rainChance: number
   temp: number
-  climate: climates
+  climate: Climate['type']
 }) => {
   const condition = window.dice.weightedChoice<WeatherConditions>(
     params.rainChance > window.dice.random
@@ -256,24 +244,68 @@ export const proceduralWeather = (params: {
         ]
   )
   const cloudType = clouds(params.rainChance, condition)
-  const { wind, weather, icon } = weatherPhenomena[condition]({
+  const { wind, weather } = weatherPhenomena[condition]({
     clouds: cloudType,
     rain: params.rainChance,
     temp: params.temp,
     climate: params.climate
   })
   const windSpeed = windMap(wind)
+  const cloudy = weather === 'clear skies' && cloudType !== 'clear skies'
   return {
     wind: {
       speed: windSpeed,
-      desc: titleCase(beaufort(windSpeed))
+      desc: beaufort(windSpeed)
     },
     heat: {
       degrees: params.temp,
-      desc: titleCase(tempDescriptor(params.temp))
+      desc: tempDescriptor(params.temp)
     },
-    conditions: titleCase(weather),
-    clouds: titleCase(cloudType),
-    icon: icon
+    conditions: cloudy ? 'cloudy' : weather,
+    clouds: cloudType
+  }
+}
+
+const season = (): Season => {
+  const month = new Date(window.world.date).getMonth()
+  const { winter, spring, summer, fall } = window.world.seasons
+  if (winter.includes(month)) return 'winter'
+  if (summer.includes(month)) return 'summer'
+  if (spring.includes(month)) return 'spring'
+  if (fall.includes(month)) return 'autumn'
+}
+
+export const location__weather = (loc: Loc) => {
+  const month = new Date(window.world.date).getMonth()
+  // day temperature
+  const cell = window.world.cells[loc.cell]
+  const climate = climates[window.world.regions[cell.region].climate]
+  const rain = computeRain({ climate, month, cell })
+  const meanTemp = computeHeat({ cell, month, climate })
+  let localTemp = window.dice.norm(meanTemp, 4)
+  const diff = localTemp - meanTemp
+  const variance: TemperatureVariance = diff >= 8 ? 'warmer' : diff <= -8 ? 'colder' : 'normal'
+  // night temperature
+  const { diurnalHeat } = climate
+  const diurnalVar = Math.max(1, window.dice.norm(...diurnalHeat))
+  const time = window.dice.weightedChoice<TimeOfDay>([
+    { w: 0.05, v: 'dawn' },
+    { w: 0.35, v: 'morning' },
+    { w: 0.35, v: 'afternoon' },
+    { w: 0.05, v: 'dusk' },
+    { w: 0.2, v: 'night' }
+  ])
+  const night = time === 'night' || time === 'dusk'
+  if (night) localTemp -= diurnalVar
+  const weather = proceduralWeather({
+    rainChance: rain,
+    temp: localTemp,
+    climate: climate.type
+  })
+  return {
+    ...weather,
+    variance,
+    season: season(),
+    time
   }
 }

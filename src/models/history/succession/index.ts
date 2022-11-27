@@ -1,4 +1,4 @@
-import { actor__plan } from '../../npcs/actors/history/events/planning'
+import { actor__plan } from '../../npcs/actors/spawn/events/planning'
 import { actor__birthDate, actor__expirationDate, getAge } from '../../npcs/actors/stats/age'
 import { region__isActive } from '../../regions'
 import { Region } from '../../regions/types'
@@ -35,7 +35,7 @@ const addRuler = (params: {
           birth,
           death,
           events: [],
-          occupation: { key: 'noble (major)' }
+          occupation: { key: 'noble' }
         })
       : [...spawned.history.events]
   })

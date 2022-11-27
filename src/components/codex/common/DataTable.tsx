@@ -37,7 +37,7 @@ type TableRowExpansion<T extends Object> = {
 const classes = {
   root: css`
     table tbody tr:nth-child(odd) {
-      background-color: #e0e5c1;
+      background-color: #f1e5d6;
     }
     tfoot,
     th,

@@ -1,5 +1,4 @@
 import { recentBattleWindow } from '../../../models/history/war/battles'
-import { region__imperialName } from '../../../models/regions/diplomacy/status'
 import { location__hub } from '../../../models/regions/locations'
 import { location__icon } from '../../../models/regions/locations/spawn/taxonomy/settlements'
 import { Loc } from '../../../models/regions/locations/types'
@@ -194,11 +193,7 @@ export const map__drawLocationsRegional = (params: {
       // region name
       ctx.fillStyle = 'rgba(0,0,0,0.5)'
       ctx.font = `${fontSize * 10}px ${fontFamily}`
-      ctx.fillText(
-        region__imperialName(window.world.regions[province.region]),
-        c.x,
-        c.y + 4 + radius
-      )
+      ctx.fillText(window.world.regions[province.region].name, c.x, c.y + 4 + radius)
     })
     const capitals = hubs.filter(province => {
       const city = province.hub
@@ -218,11 +213,7 @@ export const map__drawLocationsRegional = (params: {
       })
       // region name
       ctx.font = `${fontSize * 12}px ${fontFamily}`
-      ctx.fillText(
-        region__imperialName(window.world.regions[province.region]),
-        c.x,
-        c.y + 5 + radius
-      )
+      ctx.fillText(window.world.regions[province.region].name, c.x, c.y + 5 + radius)
     })
   }
 }
@@ -251,9 +242,9 @@ export const map__drawLocations = (params: {
       const icon = location__icons[tag]
       const { height } = canvas__drawIcon({ ctx, img, icon, sh, sw, point: loc, bigger: loc.hub })
       ctx.font = `${icon.fontScale * baseFont * (loc.hub ? 1.75 : 1.5)}px ${fontFamily}`
-      ctx.fillText(loc.name, loc.x, loc.y - height - 0.15)
+      ctx.fillText(loc.name, loc.x, loc.y - height - 0.23)
       ctx.font = `${icon.fontScale * baseFont * 0.75}px ${fontFamily}`
-      ctx.fillText(loc.subtype ?? loc.type, loc.x, loc.y - height)
+      ctx.fillText(loc.subtype ?? loc.type, loc.x, loc.y - height - 0.04)
     })
     ctx.restore()
   }

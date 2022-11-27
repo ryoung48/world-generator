@@ -3,7 +3,6 @@ import { region__spawn } from '../../src/models/regions'
 import { province__hub } from '../../src/models/regions/provinces'
 import { province__spawn } from '../../src/models/regions/provinces/spawn'
 import { ExteriorCell } from '../../src/models/world/cells/types'
-import { climates } from '../../src/models/world/climate/types'
 import { world__spawn } from '../../src/models/world/spawn'
 import { shapes } from '../../src/models/world/spawn/shapers/continents/templates'
 
@@ -27,7 +26,7 @@ export const test__world = () => {
   window.world = world__spawn({ seed: 'test', res: 1, template: shapes[0] })
   window.world.cells.push(cell)
   const region = region__spawn(cell)
-  region.climate = climates.COLD_DESERT
+  region.climate = 'cold desert'
   region.regional = { provinces: [0] }
   const province = province__spawn({ cell, capital: true })
   window.world.cells.push(cell2)
@@ -43,11 +42,10 @@ export const test__world = () => {
     inventory: { items: {}, currency: 0 },
     idx: 0,
     tag: 'actor',
-    location: { birth: 0, residence: 0, curr: 0 },
+    location: { birth: 0, curr: 0 },
     occupation: { key: 'mercenary', spec: 'rogue' },
     progression: {},
-    skills: {},
-    languages: {},
+    skills: [],
     gender: 'male',
     culture: 35,
     surname: 'test',
@@ -59,10 +57,7 @@ export const test__world = () => {
     },
     history: {
       unbound: true,
-      events: [],
-      backgrounds: [],
-      nextBackground: 16699934084199.662,
-      childhoodEnd: 16433611729042.094
+      events: []
     },
     attributes: {
       strength: 9,
@@ -76,7 +71,6 @@ export const test__world = () => {
     relations: [],
     equipment: { armor: null, offhand: null, mainhand: null },
     carryCapacity: 120,
-    threads: [],
     finalized: false
   })
 }

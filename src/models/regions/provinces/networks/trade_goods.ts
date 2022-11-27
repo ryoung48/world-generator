@@ -3,7 +3,7 @@ import { scale } from '../../../utilities/math'
 import { dayMS } from '../../../utilities/math/time'
 import { decoratedProfile } from '../../../utilities/performance'
 import { BasicCache, memoize } from '../../../utilities/performance/memoization'
-import { climateLookup } from '../../../world/climate/types'
+import { climates } from '../../../world/climate/types'
 import { region__demand } from '../..'
 import { region__atPeace } from '../../diplomacy/status'
 import { province__cell } from '..'
@@ -87,7 +87,7 @@ const _tradeSim = (city: Province): TradeGoods => {
     warEffort.forEach(market => (tradeGoods[market].demand += 0.3))
   }
   // tropical regions don't need furs
-  if (climateLookup[currNation.climate].zone === 'Tropical') {
+  if (climates[currNation.climate].zone === 'tropical') {
     tradeGoods.furs.demand -= 0.5
   }
   // inland provinces don't need skilled shipwrights

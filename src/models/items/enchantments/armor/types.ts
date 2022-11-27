@@ -1,4 +1,4 @@
-import { attribute } from '../../../npcs/actors/stats/attributes/types'
+import { ActorAttribute } from '../../../npcs/actors/stats/attributes/types'
 import { persona } from '../../../npcs/actors/stats/persona'
 import { ActorSkills } from '../../../npcs/actors/stats/skills/categories'
 import { resistance } from '../../../npcs/stats/types'
@@ -32,7 +32,7 @@ export const armor__enchantments = [
 export type armor__enchant = typeof armor__enchantments[number]
 
 export interface InspirationEnchantmentInstance extends EnchantmentInstance {
-  attribute: attribute
+  attribute: ActorAttribute
 }
 export interface EmpoweredEnchantmentInstance extends EnchantmentInstance {
   element: resistance

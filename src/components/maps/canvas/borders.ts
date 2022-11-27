@@ -3,23 +3,8 @@ import { range } from 'd3'
 import { province__foreignNeighbors } from '../../../models/regions/provinces'
 import { Region } from '../../../models/regions/types'
 import { cell__bfsNeighborhood, cells__boundary } from '../../../models/world/cells'
-import { climateLookup } from '../../../models/world/climate/types'
 import { display__coastCurve } from '../../../models/world/spawn/shapers/display/coasts'
-import { DrawStyles, map__breakpoints } from './draw_styles'
-
-export const map__drawRegions = (params: {
-  ctx: CanvasRenderingContext2D
-  scale: number
-  style: DrawStyles
-  nations: Region[]
-}) => {
-  const { ctx, scale, style, nations } = params
-  if (style === 'Climate') drawClimates(ctx)
-  else if (style === 'Tech') drawTech(ctx)
-  else if (style === 'Cultures') drawCulture(ctx)
-  else if (style === 'Religions') drawReligions(ctx)
-  else drawNations({ ctx, scale, nations })
-}
+import { map__breakpoints } from './draw_styles'
 
 /** Creates a canvas filled with a horizontal striped pattern.
  * @returns the filled HTMLCanvasElement. */
@@ -45,7 +30,7 @@ const stripesPattern = (color: string) => {
   return patternCanvas
 }
 
-const drawNations = (params: {
+export const map__drawRegions = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
@@ -132,87 +117,4 @@ const drawNations = (params: {
         })
     })
   })
-}
-
-const drawClimates = (ctx: CanvasRenderingContext2D) => {
-  const { regions } = window.world.display
-  ctx.lineWidth = 1
-  Object.values(regions)
-    .flat()
-    .forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      const color = climateLookup[window.world.regions[border.r].climate].display
-      ctx.fillStyle = color
-      ctx.clip(p)
-      ctx.strokeStyle = color
-      ctx.fill(p)
-      ctx.stroke(p)
-      ctx.restore()
-    })
-}
-
-const drawTech = (ctx: CanvasRenderingContext2D) => {
-  const { regions } = window.world.display
-  ctx.lineWidth = 1
-  Object.values(regions)
-    .flat()
-    .forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      const region = window.world.regions[border.r]
-      const dev = region.development
-      const color =
-        dev === 'civilized'
-          ? '#efeae8'
-          : dev === 'frontier'
-          ? '#f7d9cf'
-          : dev === 'tribal'
-          ? '#f4bead'
-          : '#efa088'
-      ctx.strokeStyle = color
-      ctx.clip(p)
-      ctx.fillStyle = color
-      ctx.fill(p)
-      ctx.stroke(p)
-      ctx.restore()
-    })
-}
-
-const drawCulture = (ctx: CanvasRenderingContext2D) => {
-  const { regions } = window.world.display
-  ctx.lineWidth = 1
-  Object.values(regions)
-    .flat()
-    .forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      const region = window.world.regions[border.r]
-      const color = window.world.cultures[region.culture.native].display.replace('%)', '%, 0.75)')
-      ctx.strokeStyle = color
-      ctx.clip(p)
-      ctx.fillStyle = color
-      ctx.fill(p)
-      ctx.stroke(p)
-      ctx.restore()
-    })
-}
-
-const drawReligions = (ctx: CanvasRenderingContext2D) => {
-  const { regions } = window.world.display
-  ctx.lineWidth = 1
-  Object.values(regions)
-    .flat()
-    .forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      const region = window.world.regions[border.r]
-      const color = window.world.religions[region.religion.native].display.replace('%)', '%, 0.75)')
-      ctx.strokeStyle = color
-      ctx.clip(p)
-      ctx.fillStyle = color
-      ctx.fill(p)
-      ctx.stroke(p)
-      ctx.restore()
-    })
 }

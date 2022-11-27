@@ -30,7 +30,7 @@ export const percentageScale = (a: number[]) => {
 export type WeightedDistribution<T> = { v: T; w: number }[]
 export const buildDistribution = <T>(
   map: WeightedDistribution<T>,
-  qty: number
+  qty = 1
 ): WeightedDistribution<T> => {
   const total = map.reduce((sum, { w }) => sum + w, 0)
   return map.map(({ w, v }) => ({ v, w: (w / total) * qty }))
@@ -95,4 +95,8 @@ export const findRanges = (params: {
     },
     [domain]
   )
+}
+
+export const sorting = {
+  descending: (a: number, b: number) => b - a
 }

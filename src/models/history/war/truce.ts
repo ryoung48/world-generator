@@ -56,7 +56,7 @@ const regionalTransfers = (event: WarEvent) => {
     .filter(idx => ownedProvinces.defender.includes(idx))
     .map(t => window.world.provinces[t])
   const regions = provinces.filter(
-    province => province.regionalCapital && province.region !== event.defender
+    province => province.capital && province.region !== event.defender
   )
   const text =
     provinces.length > 0

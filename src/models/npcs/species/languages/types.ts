@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { WeightedDistribution } from '../../../utilities/math'
-import { genders } from '../../actors/stats/appearance/gender'
+import { Gender } from '../../actors/stats/appearance/gender'
 
 export const enum PhonemeCatalog {
   START_CONSONANT = 'B',
@@ -34,7 +34,7 @@ interface Surnames {
   // patronymic surnames
   patronymic: boolean
   // patronymic suffix
-  suffix: Record<genders, string[]>
+  suffix: Record<Gender, string[]>
   // epithet prefixes to be used to construct descriptive bynames - i.e 'the wise'
   epithets: string[]
 }

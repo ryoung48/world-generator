@@ -27,5 +27,5 @@ export const pieChart__construct = (chart: PieData[]): ChartData<'pie', number[]
 export const pieChart__percentTooltips = (item: TooltipItem<'pie'>) => {
   const label = item.label
   const value = item.dataset.data[item.dataIndex]
-  return `${label}: ${formatters.percent({ value, precision: 2 })}`
+  return `${label}: ${formatters.percent(value, 2)}`
 }

@@ -29,22 +29,23 @@ export function StyledText(props: { text: string; color?: string }) {
     <span className={style__links}>
       {text.split(/@(.+?)@/g).map((text, j) => {
         if (text.match(/.+|.+|.+/)) {
-          const [label, i, cat, tooltip, color, italics, bold] = text.split('|')
+          const [label, i, cat, tooltip, color, italics, bold, underline] = text.split('|')
           const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
           const onClick = entity__tags.includes(tag)
             ? () => dispatch({ type: 'update codex', payload: { target: { tag, idx } } })
             : false
           const textColor = color !== '' ? color : baseColor
+          const underlineColor = underline || textColor
           const style: CSSProperties = {
             cursor: onClick || tooltip ? 'pointer' : undefined,
             color: textColor,
             fontStyle: italics === 'true' ? 'italic' : undefined,
             fontWeight: bold === 'true' ? 'bold' : undefined,
             borderBottom: onClick
-              ? `1px solid ${textColor}`
+              ? `1px solid ${underlineColor}`
               : tooltip
-              ? `1px dotted ${textColor}`
+              ? `1px dotted ${underlineColor}`
               : undefined
           }
           const link = onClick ? (
@@ -55,17 +56,7 @@ export function StyledText(props: { text: string; color?: string }) {
           ) : (
             <span style={style}>{label}</span>
           )
-          return (
-            <span key={j}>
-              {tooltip ? (
-                <Tooltip disableInteractive title={tooltip}>
-                  {link}
-                </Tooltip>
-              ) : (
-                link
-              )}
-            </span>
-          )
+          return <span key={j}>{tooltip ? <Tooltip title={tooltip}>{link}</Tooltip> : link}</span>
         }
         return (
           <span key={j} style={{ color: baseColor }}>

@@ -5,7 +5,7 @@ export interface Province {
   idx: number
   cell: number
   region: number
-  regionalCapital: boolean
+  capital: boolean
   finalized: boolean
   memory: {
     tradeGoods: number

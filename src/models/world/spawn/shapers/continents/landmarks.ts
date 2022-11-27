@@ -83,13 +83,11 @@ export const landmarks__water = (idx: number) => {
     // increment the water feature index after a completed floodfill
     idx += 1
   }
-  // remove excess lakes
-  const total = window.world.cells.length
+  // remove lakes
   world__waterFeatures()
     .filter(i => {
       const lake = window.world.landmarks[i]
-      const large = lake.size / total > 0.0001
-      return lake.type !== 'ocean' && (large || window.dice.random > 0.4)
+      return lake.type !== 'ocean'
     })
     .forEach(i => {
       delete window.world.landmarks[i]

@@ -1,4 +1,10 @@
-import { skillGate__chaotic, skillGate__charisma, skillGate__social } from '../common/checks'
+import {
+  skillGate__chaotic,
+  skillGate__charisma,
+  skillGate__nonPoor,
+  skillGate__social,
+  skillGate__wisdom
+} from '../checks'
 import { ActorSkill } from '../types'
 import { SocialSkill } from '.'
 
@@ -14,12 +20,17 @@ export const actorSkills__social: Record<SocialSkill, ActorSkill> = {
   charm: {
     key: 'charm'
   },
-  etiquette: {
-    key: 'etiquette',
+  debate: {
+    key: 'debate',
     valid: skillGate__charisma
   },
+  etiquette: {
+    key: 'etiquette',
+    valid: params => skillGate__charisma(params) * skillGate__nonPoor(params)
+  },
   insight: {
-    key: 'insight'
+    key: 'insight',
+    valid: skillGate__wisdom
   },
   intimidate: {
     key: 'intimidate'

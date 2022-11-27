@@ -1,53 +1,9 @@
 import { location__icons } from '../../../components/maps/icons/locations'
-import { ThreadedEntity } from '../../threads/types'
+import { Thread } from '../../threads/types'
 import { TaggedEntity } from '../../utilities/codex/entities'
 import { Point } from '../../utilities/math/points'
-import { TraitEnriched } from '../../utilities/traits/types'
-import { Terrain } from '../../world/climate/terrain'
-import { BasicClimate } from '../../world/climate/types'
-import { WeatherIcons } from '../../world/climate/weather/types'
-import { location__tag } from './spawn/traits/types'
 
-type Weather = {
-  conditions: string
-  heat: { degrees: number; desc: string }
-  clouds: string
-  icon: WeatherIcons
-  wind: {
-    speed: number
-    desc: string
-  }
-}
-
-type Conditions = {
-  season: string
-  rainChance: number
-  day: Weather
-  night: Weather
-  sun: {
-    hours: number
-    rise: number
-    set: number
-  }
-  moon: {
-    phase: string
-    rise: number
-    set: number
-    hours: number
-    nextDay: boolean
-    icon:
-      | 'new'
-      | 'waxing-crescent'
-      | 'first-quarter'
-      | 'waxing-gibbous'
-      | 'full'
-      | 'waning-gibbous'
-      | 'last-quarter'
-      | 'waning-crescent'
-  }
-}
-
-export interface Loc extends Point, TaggedEntity, ThreadedEntity, TraitEnriched<location__tag> {
+export interface Loc extends Point, TaggedEntity {
   tag: 'location'
   type:
     | 'metropolis'
@@ -62,7 +18,7 @@ export interface Loc extends Point, TaggedEntity, ThreadedEntity, TraitEnriched<
     | 'cave'
     | 'keep'
     | 'crypt'
-    | `temple`
+    | 'temple'
     | 'ruins'
     | 'camp'
     | 'portal'
@@ -77,8 +33,12 @@ export interface Loc extends Point, TaggedEntity, ThreadedEntity, TraitEnriched<
     | 'watchtower'
   subtype?: string
   hostile?: boolean
-  memory: { weather: number; threads: number; demographics?: number }
+  memory: { weather: number; demographics?: number; _demographics?: number }
   population?: number
+  leadership?: {
+    ruler: string
+    courtiers?: { name: string; type: string }[]
+  }
   actors: number[]
   finalized?: boolean
   // world location (quick access)
@@ -88,9 +48,7 @@ export interface Loc extends Point, TaggedEntity, ThreadedEntity, TraitEnriched<
   // geography
   hub?: boolean
   coastal: boolean
-  _weather?: Conditions
-  _terrain?: Terrain
-  _climate?: BasicClimate
-  // map (settlements only for the moment)
+  _terrain?: { terrain: string; elevation: string }
   _icon?: keyof typeof location__icons
+  _threads: Thread[]
 }

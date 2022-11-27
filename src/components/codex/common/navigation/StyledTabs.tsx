@@ -20,10 +20,10 @@ export function StyledTabs(props: {
   }
   const valid = tabs.some(tab => tab.label === value)
   if (!valid) setValue(tabs[0].label)
-  return active ? (
+  return (
     <Box>
       <Tabs
-        value={value}
+        value={active ? value : false}
         textColor='primary'
         indicatorColor='secondary'
         centered
@@ -40,7 +40,5 @@ export function StyledTabs(props: {
         </Box>
       ))}
     </Box>
-  ) : (
-    <span></span>
   )
 }

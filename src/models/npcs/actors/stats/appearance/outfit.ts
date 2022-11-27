@@ -1,4 +1,4 @@
-import { location__culture } from '../../../../regions/locations/actors/demographics'
+import { location__culture } from '../../../../regions/locations/actors/demographics/demo'
 import {
   ColorHue,
   colors__adjacent,
@@ -8,24 +8,24 @@ import {
 import { BasicCache, memoize } from '../../../../utilities/performance/memoization'
 import { properList } from '../../../../utilities/text'
 import { decorateText } from '../../../../utilities/text/decoration'
-import { entityPlaceholder } from '../../text/placeholders'
 import { Culture } from '../../../species/cultures/types'
+import { entityPlaceholder } from '../../text/placeholders'
 import { Actor } from '../../types'
 import { actor__isChild } from '../age'
 import { actor__socialClass } from '../professions'
-import { SocialClass } from '../professions/types'
+import { SocialStratum } from '../professions/types'
 
 const modest = ['rustic', 'practical', 'rugged']
 const comfortable = ['stylish', 'professional', 'fine']
 const prosperous = ['lavish', 'exquisite', 'elegant']
 
-const qualities: Record<SocialClass, string[]> = {
+const qualities: Record<SocialStratum, string[]> = {
   lower: modest,
   middle: comfortable,
   upper: prosperous
 }
 
-const accents: Record<SocialClass, number> = {
+const accents: Record<SocialStratum, number> = {
   lower: 0.5,
   middle: 1,
   upper: 1
@@ -47,7 +47,7 @@ const culture__fashion = memoize(_culture__fashion, {
 
 export const actor__genOutfit = (actor: Actor) => {
   const actorCulture = window.world.cultures[actor.culture]
-  const location = window.world.locations[actor.location.residence]
+  const location = window.world.locations[actor.location.curr]
   const { local, ruling } = location__culture(location)
   const localCulture = window.world.cultures[local.culture.native]
   const rulingCulture = window.world.cultures[ruling.culture.ruling]
@@ -59,7 +59,7 @@ export const actor__genOutfit = (actor: Actor) => {
     [actorCulture, localCulture],
     [rulingCulture, localCulture]
   ])
-  const social = actor__socialClass({ actor, time: window.world.date })
+  const social = actor__socialClass({ actor })
   const quality = qualities[social]
   const { hues, neutralHues } = culture__fashion(window.dice.choice(cultures))
   const neutrals: ColorHue[] = [...neutralHues, 'grey', 'brown']

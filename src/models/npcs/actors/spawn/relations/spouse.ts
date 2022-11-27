@@ -1,19 +1,19 @@
-import { location__demographics } from '../../../../regions/locations/actors/demographics'
+import { actorEvent__relation, actor__fixExpiration } from '.'
+import { actor__spawn } from '..'
+import { actor__relation } from '../..'
+import { location__demographics } from '../../../../regions/locations/actors/demographics/demo'
 import { Loc } from '../../../../regions/locations/types'
 import { lang__derivedSurnames } from '../../../species/languages/words/actors'
 import { species__byCulture } from '../../../species/taxonomy'
-import { actor__pastLocation, actor__relation } from '../..'
-import { actor__addEvent, actor__events } from '../../history/events'
-import { actor__findUnionDate } from '../../history/events/planning'
-import { ActorEventSpawn } from '../../history/events/types'
 import { actor__age, actor__unionRange, getAge } from '../../stats/age'
 import { convertAge, lifePhaseBoundaries } from '../../stats/age/life_phases'
 import { npc__oppositeGender } from '../../stats/appearance/gender'
 import { actor__socialClass, socialClass__randomDrift } from '../../stats/professions'
 import { Actor } from '../../types'
-import { actor__spawn } from '..'
+import { actor__addEvent, actor__events } from '../events'
+import { actor__findUnionDate } from '../events/planning'
+import { ActorEventSpawn } from '../events/types'
 import { ActorParams, Relation } from '../types'
-import { actor__fixExpiration, actorEvent__relation } from '.'
 
 export const actor__unionDate = (params: { actor: Actor; chance: number }) => {
   const { actor, chance } = params
@@ -50,7 +50,7 @@ export class Spouse implements Relation {
     const { partner, unionDate } = params
     this.partner = partner
     this.unionDate = unionDate ?? actor__unionDate({ actor: partner, chance: 1 })
-    this.unionLoc = actor__pastLocation({ actor: this.partner, time: this.unionDate })
+    this.unionLoc = window.world.locations[partner.location.curr]
   }
   public beforeSpawn(params: ActorParams) {
     const { partner, unionDate, unionLoc } = this
@@ -60,7 +60,7 @@ export class Spouse implements Relation {
     params.birthLoc = window.world.locations[partner.location.birth]
     params.occupation = partner.occupation
     const species = species__byCulture(culture)
-    params.socialClass = actor__socialClass({ actor: partner, time: unionDate })
+    params.socialClass = actor__socialClass({ actor: partner })
     if (!window.world.historyRecording) {
       delete params.occupation
       delete params.birthLoc
@@ -132,6 +132,6 @@ export const actor__spawnSpouse = (parent: Actor) => {
   return actor__spawn({
     relation: new Spouse({ partner: parent }),
     living: false,
-    location: window.world.locations[parent.location.residence]
+    location: window.world.locations[parent.location.curr]
   })
 }

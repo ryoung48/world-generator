@@ -1,7 +1,7 @@
 import { Loc } from '../../../regions/locations/types'
 import { Culture } from '../../species/cultures/types'
-import { genders } from '../stats/appearance/gender'
-import { SocialClass } from '../stats/professions/types'
+import { Gender } from '../stats/appearance/gender'
+import { SocialStratum } from '../stats/professions/types'
 import { Actor } from '../types'
 
 export interface Relation {
@@ -18,8 +18,8 @@ export type ActorParams = {
   expires?: number // death (ms) - will randomize if not provided
   relativeTime?: number // spawn time relative to birthday (ms) - defaults to the current date
   culture?: Culture // actor culture - will randomize if not provided based on spawn location
-  socialClass?: SocialClass // social class (used to randomize profession) - overridden by profession
-  gender?: genders // actor gender - will randomize if not provided
+  socialClass?: SocialStratum // social class (used to randomize profession) - overridden by profession
+  gender?: Gender // actor gender - will randomize if not provided
   first?: string // actor first name
   last?: string // actor surname
   parent?: { name?: string; plan?: number } // parent information
