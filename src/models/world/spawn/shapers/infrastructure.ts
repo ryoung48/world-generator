@@ -1,4 +1,4 @@
-import { culture__regions } from '../../../npcs/species/cultures'
+import { culture__regions } from '../../../npcs/cultures'
 import { region__borders, region__neighbors } from '../../../regions'
 import {
   province__cell,
@@ -144,7 +144,7 @@ export class InfrastructureShaper extends Shaper {
       const regionCapital = window.world.provinces[region.capital]
       const neighbors = region__neighbors(region)
       region__borders(region)
-        .filter(n => !neighbors.includes(n.idx))
+        .filter(n => !neighbors.includes(n))
         .forEach(n => {
           const nCapital = window.world.provinces[n.capital]
           const land = province__cell(regionCapital).landmark === province__cell(nCapital).landmark
@@ -160,7 +160,7 @@ export class InfrastructureShaper extends Shaper {
           const n = window.world.regions[r]
           return window.world.provinces[n.capital]
         })
-        const { currNation } = province__findClosest(
+        const { nation: currNation } = province__findClosest(
           capitals,
           window.world.provinces[region.capital]
         )
@@ -179,15 +179,12 @@ export class InfrastructureShaper extends Shaper {
     DisplayShaper.drawBorders()
     window.world.display.regions = window.world.display.borders
     window.world.display.borders = {}
-    window.world.regions.forEach(region => {
-      region.bordersChanged = true
-    })
     // finalize cultural relations
     window.world.cultures.forEach(c => {
       c.neighbors = Array.from(
         new Set(
           culture__regions(c)
-            .map(r => region__neighbors(r).map(b => window.world.regions[b]))
+            .map(r => region__neighbors(r))
             .flat()
             .filter(r => r.culture.ruling !== c.idx)
             .map(r => r.culture.ruling)

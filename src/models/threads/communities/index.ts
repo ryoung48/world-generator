@@ -321,7 +321,7 @@ export const backgrounds__community: Record<Community, Background> = {
     constraints: { conflicts: ['inherited architecture'] },
     enemies: [
       { alias: `Reckless adventurer stirring up things beneath` },
-      { alias: `{Person enslaved by a buried evil}` },
+      { alias: `Person enslaved by a buried evil` },
       { alias: 'Criminal lord of the undercity' },
       { alias: '{Cult leader|Sorcerer} who uses the undercity for privacy' }
     ],
@@ -855,7 +855,7 @@ export const backgrounds__community: Record<Community, Background> = {
     places: [
       'at a control nexus for the enchantment',
       'at an enterprise dependent on the enchantment',
-      'at the site of a enchantment {failure|accident}'
+      'at the site of an enchantment {failure|accident}'
     ]
   },
   'despotic lord': {
@@ -1268,6 +1268,7 @@ export const backgrounds__community: Record<Community, Background> = {
   'guild oligarchy': {
     tag: 'guild oligarchy',
     type: 'community',
+    constraints: { urban: true },
     context:
       'While this #site# might ostensibly be ruled by some other power, real control lies with the senior members of the local craft and labor guilds. Their decisions have the practical weight of law, and much of their time and effort is spent squeezing out competitors and parceling out economic opportunities in this #site#. Some guilds might have little or nothing to do with their original trade, and now exist purely as shells for political influence.',
     enemies: [
@@ -1396,7 +1397,7 @@ export const backgrounds__community: Record<Community, Background> = {
     tag: 'incompetent leaders',
     type: 'community',
     context:
-      'This #site# is led by incompetents. While they must have been very good at something to have acquired the position, they are fundamentally incapable of leading and {are prone to {uncontrolled lust}|profound laziness|pigheaded obstinacy in the face of failure}|are committed to a hopelessly impractical ideal|have a total lack of interpersonal skills}.',
+      'This #site# is led by incompetents. While they must have been very good at something to have acquired the position, they are fundamentally incapable of leading and {are prone to {uncontrolled lust|profound laziness|pigheaded obstinacy in the face of failure}|are committed to a hopelessly impractical ideal|have a total lack of interpersonal skills}.',
     constraints: { conflicts: leadership },
     enemies: [
       { alias: 'Heir who is totally unsuited to their new rule' },
@@ -2992,6 +2993,7 @@ export const backgrounds__community: Record<Community, Background> = {
   'wilder enclave': {
     tag: 'wilder enclave',
     type: 'community',
+    constraints: { rural: true },
     context:
       'A particular breed of wilder {are the majority|have the dominant positions} in this #site#. Architecture, local laws, and social customs are all tuned to suit them, and they may not be particularly forgiving or friendly to baseline kith.',
     enemies: [

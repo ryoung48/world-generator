@@ -1,18 +1,23 @@
-import { DiplomaticRelation } from '../history/diplomacy/types'
-import { TradeGood } from '../items/economy'
 import { TaggedEntity } from '../utilities/codex/entities'
-import { directions } from '../utilities/math/points'
+import { Directions } from '../utilities/math/points'
 import { Climate } from '../world/climate/types'
-import { DevelopmentRank } from './development'
+
+export type DiplomaticRelation =
+  | 'vassal'
+  | 'suzerain'
+  | 'ally'
+  | 'friendly'
+  | 'neutral'
+  | 'suspicious'
+  | 'at war'
 
 export interface Region extends TaggedEntity {
   tag: 'nation'
   colors: string
   capital?: number
   ruler?: number
-  side: directions
-  edge: directions
-  bordersChanged: boolean
+  side: Directions
+  provinces: number[] // owned provinces
   regional: {
     provinces?: number[]
     land?: number
@@ -27,51 +32,21 @@ export interface Region extends TaggedEntity {
   // geographic borders (regions)
   borders: number[]
   landBorders: number[]
-  // relational contacts
-  colonialPresence: {
-    colonies: {
-      nation: number
-      tag: 'trading company' | 'colonial settlers'
-      type: 'overlord' | 'colony'
-    }[]
-    embassy: number
-  }
   relations: Record<number, DiplomaticRelation>
-  allies: Record<number, number>
-  subjects: number[]
-  overlord: {
-    idx: number
-    joinDate: number
-  }
   // society
-  development?: DevelopmentRank
+  development?: 'civilized' | 'frontier' | 'tribal' | 'remote'
   civilized?: boolean
-  imperialTitle?: string
-  government?: {
-    structure: 'autocratic' | 'theocratic' | 'oligarchic' | 'confederation' | 'anarchic'
-    succession?: 'hereditary' | 'elected'
-  }
-  religion?: {
-    state: number
-    native: number
-  }
-  // history
-  past: number[]
-  wealth: number
-  maxWealth: number
-  wars: { current: number[]; past: number[] } // national
-  rebellions: { current: number; past: number[] } // regional
-  memory: {
-    rebelFatigue: number // cooldown until next rebellion can happen
-    plagueFatigue: number // cooldown until next plague can happen
-    lastUpdate: number // time in ms
-    tradeDemand: number // economic demand (price flux)
-    populationCheck: number
-  }
-  // owned provinces
-  provinces: number[]
-  regions: number[] // regional capitals
-
-  // economy
-  tradeDemand: Partial<Record<TradeGood, number>>
+  government?:
+    | `${'autocratic' | 'feudal' | 'theocratic' | 'stratocratic'} ${
+        | 'empire'
+        | 'kingdom'
+        | 'chiefdom'}`
+    | `steppe ${'nomads' | 'horde'}`
+    | 'free city'
+    | `${'city-state' | 'tribal'} confederacy`
+    | `warring ${'states' | 'tribes'}`
+    | `autonomous tribes`
+    | 'grand duchy'
+    | 'monastic order'
+  religion?: number
 }

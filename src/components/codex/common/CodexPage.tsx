@@ -4,7 +4,6 @@ import { ReactNode } from 'react'
 
 import { view__context } from '../../context'
 import { cssColors } from '../../theme/colors'
-import { CharGen } from '../actors/CharGen'
 import { CodexTitle } from './text/title'
 import { CodexTitleProps } from './text/title/types'
 
@@ -30,11 +29,8 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
       <Grid item xs={7}>
         <CodexTitle title={title} subtitle={subtitle}></CodexTitle>
       </Grid>
-      <Grid item xs={4} m={1}>
+      <Grid item xs={2} m={1}>
         <Grid container spacing={4} justifyContent='center'>
-          <Grid xs={3} item>
-            <CharGen></CharGen>
-          </Grid>
           <Grid xs={3} item>
             <Button
               disabled={state.codex.history.length < 1}

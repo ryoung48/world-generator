@@ -12,26 +12,18 @@ export const province__neighborhood = (province: Province) =>
     .flat()
     .map(i => window.world.locations[i])
 
-/**
- * find provinces that do not have any future conflicts scheduled
- * @param provinces
- * @returns a list of provinces that have no scheduled battles
- */
-export const province__filterNoFutureInvasions = (provinces: Province[]) =>
-  provinces.filter(province => province.memory.nextInvasion.time <= window.world.date)
-
 export const province__localNeighbors = (provinces: Province) =>
-  province__neighbors(provinces).filter(n => n.currNation === provinces.currNation)
+  province__neighbors(provinces).filter(n => n.nation === provinces.nation)
 
 export const province__foreignNeighbors = (provinces: Province) =>
-  province__neighbors(provinces).filter(n => n.currNation !== provinces.currNation)
+  province__neighbors(provinces).filter(n => n.nation !== provinces.nation)
 
 export const province__foreignStates = (provinces: Province[]) =>
   Array.from(
     new Set(
       provinces
         .map(t => {
-          return province__foreignNeighbors(t).map(n => n.currNation)
+          return province__foreignNeighbors(t).map(n => n.nation)
         })
         .flat()
     )
@@ -69,7 +61,7 @@ export const province__findFurthest = (provinces: Province[], dists: Province[])
   ).province
 }
 export const province__isCapital = (province: Province) => {
-  return window.world.regions[province.currNation].capital === province.idx
+  return window.world.regions[province.nation].capital === province.idx
 }
 
 export const province__hub = (province: Province) => window.world.locations[province.hub]
@@ -87,6 +79,6 @@ export const province__decoration = (provinces: Province[]) =>
 
 export const province__culture = (province: Province) => {
   const region = window.world.regions[province.region]
-  const nation = window.world.regions[province.currNation]
+  const nation = window.world.regions[province.nation]
   return { local: region, ruling: nation }
 }

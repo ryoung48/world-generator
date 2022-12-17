@@ -1,4 +1,3 @@
-import { recentBattleWindow } from '../../../models/history/war/battles'
 import { location__hub } from '../../../models/regions/locations'
 import { location__icon } from '../../../models/regions/locations/spawn/taxonomy/settlements'
 import { Loc } from '../../../models/regions/locations/types'
@@ -10,7 +9,6 @@ import { World } from '../../../models/world/types'
 import { fonts } from '../../theme/fonts'
 import { canvas__drawIcon, icon__scaling } from '../icons'
 import { location__icons } from '../icons/locations'
-import { terrain__icons } from '../icons/terrain'
 import { canvas__circle } from '.'
 import { map__breakpoints, map__styles } from './draw_styles'
 
@@ -21,7 +19,7 @@ const regionalPath =
   (regions: Set<number>) => (route: World['display']['routes'][RouteTypes][number]) => {
     return route.provinces.some(idx => {
       const province = window.world.provinces[idx]
-      return regions.has(province.currNation)
+      return regions.has(province.nation)
     })
   }
 
@@ -104,58 +102,22 @@ const drawLocation = (params: {
   ctx.fillText(location.name, location.x, location.y - text.offset)
 }
 
-const drawBattles = () => {
-  const { sh, sw } = icon__scaling()
-  return (params: {
-    ctx: CanvasRenderingContext2D
-    province: Province
-    offset: number
-    cachedImages: Record<string, HTMLImageElement>
-  }) => {
-    const { ctx, province, offset, cachedImages } = params
-    const { nextInvasion, lastInvasion } = province.memory
-    const c = province__hub(province)
-    if (nextInvasion.time > window.world.date) {
-      canvas__drawIcon({
-        ctx,
-        img: cachedImages['battle_pending'],
-        icon: terrain__icons.battle_pending,
-        sh,
-        sw,
-        point: { x: c.x, y: c.y + offset }
-      })
-    } else if (window.world.date - lastInvasion.time < recentBattleWindow) {
-      canvas__drawIcon({
-        ctx,
-        img: cachedImages['battle_old'],
-        icon: terrain__icons.battle_old,
-        sh,
-        sw,
-        point: { x: c.x, y: c.y + offset }
-      })
-    }
-  }
-}
-
 export const map__drawLocationsRegional = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nationSet: Set<number>
   cachedImages: Record<string, HTMLImageElement>
 }) => {
-  const { ctx, scale, nationSet, cachedImages } = params
+  const { ctx, scale, nationSet } = params
   ctx.textAlign = 'center'
   ctx.shadowColor = 'white'
   if (scale <= map__breakpoints.regional) {
-    const settlements = window.world.provinces.filter(province =>
-      nationSet.has(province.currNation)
-    )
+    const settlements = window.world.provinces.filter(province => nationSet.has(province.nation))
     const fontSize = baseFontSize()
-    const drawBattleIcon = drawBattles()
     const towns = settlements.filter(province => {
       const city = province.hub
       return (
-        city !== window.world.regions[province.currNation].capital &&
+        city !== window.world.regions[province.nation].capital &&
         city !== window.world.regions[province.region].capital
       )
     })
@@ -163,7 +125,6 @@ export const map__drawLocationsRegional = (params: {
       const c = province__hub(province)
       const radius = locRadius(c, fontSize)
       const offset = 0.3 + radius
-      drawBattleIcon({ ctx, cachedImages: cachedImages, province, offset })
       drawLocation({
         ctx,
         fill: { radius, color: 'black' },
@@ -171,11 +132,10 @@ export const map__drawLocationsRegional = (params: {
         location: c
       })
     })
-    const hubs = window.world.provinces
-    const defunct = hubs.filter(province => {
+    const defunct = settlements.filter(province => {
       const city = province.hub
       return (
-        city !== window.world.regions[province.currNation].capital &&
+        city !== window.world.regions[province.nation].capital &&
         city === window.world.regions[province.region].capital
       )
     })
@@ -183,7 +143,6 @@ export const map__drawLocationsRegional = (params: {
       const c = province__hub(province)
       const radius = locRadius(c, fontSize)
       const offset = 0.5 + radius
-      drawBattleIcon({ ctx, cachedImages: cachedImages, province, offset })
       drawLocation({
         ctx,
         fill: { radius, color: 'black' },
@@ -195,15 +154,14 @@ export const map__drawLocationsRegional = (params: {
       ctx.font = `${fontSize * 10}px ${fontFamily}`
       ctx.fillText(window.world.regions[province.region].name, c.x, c.y + 4 + radius)
     })
-    const capitals = hubs.filter(province => {
+    const capitals = settlements.filter(province => {
       const city = province.hub
-      return city === window.world.regions[province.currNation].capital
+      return city === window.world.regions[province.nation].capital
     })
     capitals.forEach(province => {
       const c = province__hub(province)
       const radius = locRadius(c, fontSize)
       const offset = 0.8 + radius
-      drawBattleIcon({ ctx, cachedImages: cachedImages, province, offset: offset * 0.7 })
       drawLocation({
         ctx,
         fill: { radius, color: 'white' },

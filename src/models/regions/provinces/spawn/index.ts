@@ -12,33 +12,21 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
     capital: capital,
     region: cell.region,
     cell: cell.idx,
-    memory: {
-      tradeGoods: -Infinity,
-      refugees: -Infinity,
-      nextInvasion: { type: 'wars', time: -Infinity, idx: -1 },
-      lastInvasion: { type: 'wars', time: -Infinity, idx: -1 },
-      tradeDemand: -Infinity
-    },
     locations: [],
     trade: { land: {}, sea: {} },
-    resources: { supply: {}, demand: {} },
-    wealth: 0,
     hub: -1,
-    lands: {},
-    lakes: {},
+    islands: {},
     land: 0,
     ocean: 0,
     mountains: 0,
     population: 0,
     neighbors: [],
     artery: [],
-    currNation: cell.region,
-    prevNation: cell.region,
+    nation: cell.region,
     finalized: false
   }
   if (capital) {
     region.capital = province.idx
-    region.regions.push(province.idx)
   }
   region.provinces.push(province.idx)
   window.world.provinces.push(province)

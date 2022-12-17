@@ -2,7 +2,7 @@ import { Box, Divider, Grid } from '@mui/material'
 import { Fragment } from 'react'
 
 import { location__isSettlement } from '../../../models/regions/locations'
-import { location__demographics } from '../../../models/regions/locations/actors/demographics'
+import { location__demographics } from '../../../models/regions/locations/demographics'
 import { location__threads } from '../../../models/threads'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
@@ -64,7 +64,7 @@ export function LocationView() {
               ? `(${formatters.compact(location.population).toLowerCase()})`
               : ''
           }, ${decorateText({
-            link: window.world.regions[province.currNation]
+            link: window.world.regions[province.nation]
           })}`}
         ></StyledText>
       }

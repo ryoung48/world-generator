@@ -1,7 +1,3 @@
-import * as PriorityQueue from 'js-priority-queue'
-
-import { WorldEvent } from '../../history/types'
-import { humanoid__speciesInit } from '../../npcs/species/taxonomy'
 import { canvasDims } from '../../utilities/dimensions'
 import { Dice } from '../../utilities/math/dice'
 import { dayMS } from '../../utilities/math/time'
@@ -73,12 +69,10 @@ export const world__spawn = (params: {
       cellLength: 0
     },
     regions: [],
+    conflicts: [],
     provinces: [],
     locations: [],
     cultures: [],
-    humanoids: humanoid__speciesInit(),
-    actors: [],
-    actorEvents: [],
     religions: [],
     uniqueNames: {},
     date,
@@ -95,19 +89,6 @@ export const world__spawn = (params: {
     geoBounds: {
       lat: [-10, 90],
       long: [0, 80]
-    },
-    past: [],
-    future: new PriorityQueue({
-      comparator: (a: WorldEvent, b: WorldEvent) => a.time - b.time
-    }),
-    historyRecording: false,
-    rebellions: [],
-    wars: [],
-    actorPlans: [],
-    dynasties: [],
-    statistics: {
-      current: { wars: 0, rebellions: 0, regions: 0 },
-      past: []
     }
   }
   // average voronoi cell area (square miles)

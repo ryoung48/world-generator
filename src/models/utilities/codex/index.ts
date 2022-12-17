@@ -1,5 +1,3 @@
-import { actor__finalize } from '../../npcs/actors/spawn/finalize'
-import { religion__spawnTraits } from '../../npcs/species/religions/traits'
 import { location__isSettlement } from '../../regions/locations'
 import { Loc } from '../../regions/locations/types'
 import { province__sprawl } from '../../regions/provinces/spawn/sprawl'
@@ -35,7 +33,7 @@ const updateTarget: Record<
     const old = codex.nation
     const region = window.world.regions[idx]
     const capital = window.world.provinces[region.capital]
-    codex.nation = capital.currNation
+    codex.nation = capital.nation
     codex.location = capital.idx
     return old !== codex.nation
   },
@@ -48,27 +46,13 @@ const updateTarget: Record<
     const old = codex.culture
     codex.culture = idx
     return old !== codex.culture
-  },
-  religion: ({ idx, codex }) => {
-    const old = codex.religion
-    codex.religion = idx
-    return old !== codex.religion
-  },
-  actor: ({ idx, codex }) => {
-    const old = codex.actor
-    codex.actor = idx
-    return old !== codex.actor
   }
 }
 
 const finalize = (codex: Codex) => {
-  const actor = window.world.actors[codex.actor]
-  if (actor) actor__finalize(actor)
   const loc = window.world.locations[codex.location]
   const province = window.world.provinces[loc?.province]
   if (province) province__sprawl(province)
-  const religion = window.world.religions[codex.religion]
-  if (religion) religion__spawnTraits(religion)
 }
 
 export const codex__restoreHistory = (codex: Codex) => {

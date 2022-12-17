@@ -1,6 +1,3 @@
-import PriorityQueue from 'js-priority-queue'
-
-import { WorldEvent } from '../../history/types'
 import { profile, profile__switch, Profiles } from '../../utilities/performance'
 import { RouteTypes } from '../travel/types'
 import { World } from '../types'
@@ -26,17 +23,14 @@ const customRetriever = (_key: string, value: unknown) => {
 export const world__save = () => {
   console.time('Save')
   // delete the elements that wont save properly
-  const { future, diagram, cells, coasts } = window.world
+  const { diagram, cells, coasts } = window.world
   delete window.world.diagram
-  delete window.world.future
   delete window.world.cells
   delete window.world.coasts
-  const queue = (future as any)['priv']['data']
   // initiate serialization
   const text = JSON.stringify(
     {
       world: window.world,
-      future: queue,
       profiles: window.profiles
     },
     customReplacer
@@ -62,7 +56,6 @@ export const world__save = () => {
   document.body.removeChild(element)
   // re-add elements
   window.world.diagram = diagram
-  window.world.future = future
   window.world.cells = cells
   window.world.coasts = coasts
 }
@@ -71,15 +64,10 @@ export const world__load = (saved: string) => {
   const label = 'Load'
   console.time(label)
   // delete the elements that wont save properly
-  const { world, future, profiles } = JSON.parse(saved, customRetriever) as {
+  const { world, profiles } = JSON.parse(saved, customRetriever) as {
     world: World
-    future: WorldEvent[]
     profiles: Profiles
   }
-  world.future = new PriorityQueue({
-    comparator: (a: WorldEvent, b: WorldEvent) => a.time - b.time,
-    initialValues: future
-  })
   window.world = world__spawn({
     seed: world.id,
     res: world.dim.cells / 16000,

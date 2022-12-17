@@ -1,10 +1,8 @@
 import { range } from 'd3'
 
-import { province__foreignNeighbors } from '../../../models/regions/provinces'
 import { Region } from '../../../models/regions/types'
 import { cell__bfsNeighborhood, cells__boundary } from '../../../models/world/cells'
 import { display__coastCurve } from '../../../models/world/spawn/shapers/display/coasts'
-import { map__breakpoints } from './draw_styles'
 
 /** Creates a canvas filled with a horizontal striped pattern.
  * @returns the filled HTMLCanvasElement. */
@@ -37,7 +35,7 @@ export const map__drawRegions = (params: {
 }) => {
   const { ctx, scale, nations } = params
   const { borders } = window.world.display
-  const globalScale = scale <= map__breakpoints.global
+  // const globalScale = scale <= map__breakpoints.global
   const drawnBorders = nations
   // nations
   ctx.lineWidth = 2
@@ -55,45 +53,17 @@ export const map__drawRegions = (params: {
     })
   })
   // wars
-  const usedWars = new Set<number>()
-  const usedRebellions = new Set<number>()
-  const conflictZones = globalScale ? drawnBorders : nations
-  conflictZones.forEach(nation => {
-    const rebellions = nation.regions
-      .map(r => {
-        const province = window.world.provinces[r]
-        const region = window.world.regions[province.region]
-        return window.world.rebellions[region.rebellions.current]
-      })
-      .filter(rebellion => rebellion && rebellion.events.length > 0)
-    const wars = nation.wars.current.map(w => window.world.wars[w])
-    const conflicts = [...rebellions, ...wars].filter(conflict =>
-      conflict.type === 'war' ? !usedWars.has(conflict.idx) : !usedRebellions.has(conflict.idx)
-    )
-    conflicts.forEach(conflict => {
-      if (conflict.type === 'war') usedWars.add(conflict.idx)
-      else if (conflict.type === 'rebellion') usedRebellions.add(conflict.idx)
+  const conflictZones = new Set(drawnBorders.map(region => region.idx))
+  window.world.conflicts
+    .filter(conflict => conflict.regions.some(r => conflictZones.has(r)))
+    .forEach(conflict => {
       const color = conflict.type === 'war' ? 'rgba(225, 0, 0, 0.5)' : 'rgba(101, 42, 32, 0.5)'
       const pattern = ctx.createPattern(stripesPattern(color), 'repeat')
       ctx.fillStyle = pattern
       ctx.strokeStyle = color
       ctx.lineWidth = 0.5
       ctx.lineCap = 'round'
-      const edges = Array.from(
-        new Set(
-          conflict.events
-            .map(e => e.provinces)
-            .flat()
-            .concat(conflict.nextBattle.province)
-        )
-      )
-        .filter(p => {
-          const province = window.world.provinces[p]
-          if (conflict.type === 'rebellion') return true
-          return province__foreignNeighbors(province).some(
-            n => n.currNation === conflict.defender.idx || n.currNation === conflict.invader.idx
-          )
-        })
+      const edges = conflict.provinces
         .map(p => {
           const province = window.world.provinces[p]
           return cell__bfsNeighborhood({
@@ -116,5 +86,4 @@ export const map__drawRegions = (params: {
           ctx.restore()
         })
     })
-  })
 }

@@ -39,7 +39,6 @@ export interface Loc extends Point, TaggedEntity {
     ruler: string
     courtiers?: { name: string; type: string }[]
   }
-  actors: number[]
   finalized?: boolean
   // world location (quick access)
   region: number

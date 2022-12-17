@@ -1,7 +1,5 @@
-import { recentBattleWindow } from '../../../../history/war/battles'
-import { nation__hasRefugees } from '../../../diplomacy/refugees'
 import { province__hub } from '../../../provinces'
-import { location__pendingInvasion, location__raiders, location__recentBattle } from '../..'
+import { location__raiders } from '../..'
 import { Loc } from '../../types'
 import { LocationTemplate } from './types'
 
@@ -99,13 +97,11 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     spawn: 0.5,
     finalize: loc => {
       loc.hostile = true
-      const province = window.world.provinces[loc.province]
-      const { lastInvasion } = province.memory
       loc.subtype = `${window.dice.choice([
         'battleground',
         'battlefield'
       ])} (${window.dice.weightedChoice([
-        { v: 'recent', w: lastInvasion.time > window.world.date - recentBattleWindow ? 5 : 0 },
+        { v: 'recent', w: 1 },
         { v: 'old', w: 1 },
         { v: 'ancient', w: 1 }
       ])})`
@@ -137,10 +133,6 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
     spawn: 1,
     finalize: loc => {
       loc.hostile = window.dice.flip
-      const recentBattle = location__recentBattle(loc)
-      const invasion = location__pendingInvasion(loc)
-      const province = window.world.provinces[loc.province]
-      const refugees = nation__hasRefugees(window.world.regions[province.currNation])
       const raiders = location__raiders(loc)
       const { civilized, development } = window.world.regions[loc.region]
       const remote = development === 'remote'
@@ -151,13 +143,13 @@ export const location__templates: Record<Loc['type'], LocationTemplate> = {
               { v: 'raiders', w: raiders.length > 0 ? 3 : 0 },
               { v: 'cultists', w: 1 },
               { v: 'occultists', w: 1 },
-              { v: 'deserters', w: recentBattle ? 3 : 0 },
+              { v: 'deserters', w: 1 },
               { v: 'ruined', w: 1 }
             ]
           : [
-              { v: 'military', w: invasion || recentBattle ? 3 : 0 },
+              { v: 'military', w: 1 },
               { v: 'criminal', w: 1 },
-              { v: 'refugees', w: refugees ? 3 : 0 },
+              { v: 'refugees', w: 1 },
               { v: 'rebels', w: 1 },
               { v: 'nomadic', w: remote ? 0 : 1 },
               { v: 'tribal', w: !civilized ? 3 : 0 }

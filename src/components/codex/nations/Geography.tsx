@@ -1,8 +1,6 @@
-import { DiplomaticRelation } from '../../../models/history/diplomacy/types'
-import { region__neighbors } from '../../../models/regions'
-import { randomRelation, region__setRelation } from '../../../models/regions/diplomacy/relations'
+import { region__domains, region__neighbors } from '../../../models/regions'
 import { province__decoration } from '../../../models/regions/provinces'
-import { Region } from '../../../models/regions/types'
+import { DiplomaticRelation, Region } from '../../../models/regions/types'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
@@ -40,52 +38,34 @@ const diplomaticScore: Record<DiplomaticRelation, number> = {
   suspicious: 2,
   neutral: 3,
   friendly: 4,
-  ally: 5
+  ally: 5,
+  vassal: 6,
+  suzerain: 6
 }
 
 const diplomaticColor: Record<DiplomaticRelation, string> = {
   'at war': cssColors.primary,
-  suspicious: 'black',
-  neutral: 'black',
-  friendly: 'black',
-  ally: cssColors.blue
+  suspicious: '#7f4b02',
+  neutral: cssColors.subtitle,
+  friendly: '#285b3c',
+  ally: cssColors.blue,
+  vassal: 'purple',
+  suzerain: 'purple'
 }
 
 export function Geography() {
   const { state } = view__context()
   const nation = window.world.regions[state.codex.nation]
-  const conquered = nation.regions
+  const domains = region__domains(nation)
   const neighbors = region__neighbors(nation)
   const provinces = nation.provinces.map(t => window.world.provinces[t])
-  const regions = Array.from(new Set(provinces.map(city => city.region))).map(
-    r => window.world.regions[r]
-  )
-  const rebellions = conquered
-    .map(p => {
-      const province = window.world.provinces[p]
-      return window.world.regions[province.region]
-    })
-    .filter(region => region.rebellions.current !== -1)
-  const colonial = nation.subjects
-    .map(s => window.world.regions[s])
-    .filter(s => !neighbors.includes(s.idx))
-  const suzerain = window.world.regions[nation.overlord.idx]
-  if (suzerain && !neighbors.includes(suzerain.idx)) colonial.push(suzerain)
   const relations = neighbors
-    .map(n => window.world.regions[n])
-    .concat(colonial)
-    .map(n => {
-      const contract =
-        n.overlord.idx === nation.idx ? 'vassal' : nation.overlord.idx === n.idx ? 'suzerain' : ''
-      if (!nation.relations[n.idx]) {
-        const relation = randomRelation()
-        region__setRelation({ relation, n1: n, n2: nation })
-      }
-      const opinion = contract || nation.relations[n.idx]
+    .map(neighbor => {
+      const opinion = nation.relations[neighbor.idx]
       return {
-        n,
+        neighbor,
         opinion,
-        score: diplomaticScore[opinion as DiplomaticRelation] ?? 6
+        score: diplomaticScore[opinion] ?? 6
       }
     })
     .sort((a, b) => a.score - b.score)
@@ -101,12 +81,12 @@ export function Geography() {
           content: (
             <StyledText
               text={relations
-                .map(({ n, opinion }) => {
-                  const color = diplomaticColor[opinion as DiplomaticRelation] ?? 'gray'
+                .map(({ neighbor, opinion }) => {
                   return decorateText({
-                    link: n,
+                    link: neighbor,
                     tooltip: opinion,
-                    color: color === 'black' ? undefined : color
+                    color: diplomaticColor[opinion],
+                    bold: opinion === 'at war'
                   })
                 })
                 .join(', ')}
@@ -114,18 +94,15 @@ export function Geography() {
           )
         },
         {
-          label: `Regions (${conquered.length})`,
+          label: `Regions (${domains.length})`,
           content: (
             <StyledText
-              text={regions
+              text={domains
                 .map(n => {
                   const owned = provinces.filter(city => city.region === n.idx).length
                   const total = n.regional.provinces.length
-                  const rebel = rebellions.includes(n)
                   return `${decorateText({
-                    link: n,
-                    color: rebel ? cssColors.primary : undefined,
-                    tooltip: rebel ? 'rebellion' : undefined
+                    link: n
                   })} (${formatters.percent(owned / total)})`
                 })
                 .join(', ')}

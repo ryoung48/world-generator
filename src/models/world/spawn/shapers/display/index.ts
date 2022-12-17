@@ -13,18 +13,15 @@ export class DisplayShaper extends Shaper {
     const border = Shaper.land.filter(p => cell__isNationBorder(p) || p.isCoast)
     const borders: Record<string, RegionSegment[]> = {}
     // iterate though all regions
-    Object.values(window.world.regions)
-      .filter(r => r.bordersChanged)
-      .forEach(r => {
-        r.bordersChanged = false
-        borders[r.idx] = []
-        // find all borders & coastline cells
-        const land = border.filter(cell => r.idx === cell__nation(cell))
-        cells__boundary({
-          cells: land,
-          boundary: cell => cell.isWater || cell__nation(cell) !== r.idx
-        }).forEach(path => regions.push({ path, r: r.idx }))
-      })
+    Object.values(window.world.regions).forEach(r => {
+      borders[r.idx] = []
+      // find all borders & coastline cells
+      const land = border.filter(cell => r.idx === cell__nation(cell))
+      cells__boundary({
+        cells: land,
+        boundary: cell => cell.isWater || cell__nation(cell) !== r.idx
+      }).forEach(path => regions.push({ path, r: r.idx }))
+    })
     profile({
       label: 'curve',
       f: () => {

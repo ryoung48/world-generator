@@ -32,7 +32,7 @@ export const map__drawOceans = (params: {
       nations
         .map(r =>
           r.provinces
-            .map(p => Object.keys(window.world.provinces[p].lands).map(i => parseInt(i)))
+            .map(p => Object.keys(window.world.provinces[p].islands).map(i => parseInt(i)))
             .flat()
         )
         .flat()
@@ -45,7 +45,7 @@ export const map__drawOceans = (params: {
           world__nations()
             .map(r =>
               r.provinces
-                .map(p => Object.keys(window.world.provinces[p].lands).map(i => parseInt(i)))
+                .map(p => Object.keys(window.world.provinces[p].islands).map(i => parseInt(i)))
                 .flat()
             )
             .flat()
@@ -71,44 +71,4 @@ export const map__drawOceans = (params: {
   })
   ctx.restore()
   return new Set(landmarks)
-}
-
-export const map__drawLakes = (params: {
-  ctx: CanvasRenderingContext2D
-  scale: number
-  nations: Region[]
-}) => {
-  const { ctx, scale, nations } = params
-  const globalScale = scale <= map__breakpoints.global
-  const drawnLands = globalScale ? world__nations() : nations
-  const landmarks = Array.from(
-    new Set(
-      drawnLands
-        .map(r =>
-          r.provinces
-            .map(p => Object.keys(window.world.provinces[p].lakes).map(i => parseInt(i)))
-            .flat()
-        )
-        .flat()
-    )
-  )
-  const { lakes } = window.world.display
-  ctx.lineCap = 'round'
-  const mod = scale < map__breakpoints.regional ? 0.3 : 0.15
-  const { border, interior } = map__styles.lakes
-  waves.forEach(({ strokeWidth, opacity }, j) => {
-    landmarks.forEach(i => {
-      ctx.save()
-      const lake = lakes[i]
-      ctx.fillStyle = lake.border ? border.color : interior.color
-      const waves = lake.border ? border.waves : interior.waves
-      ctx.strokeStyle = `rgba(${waves},${opacity})`
-      ctx.lineWidth = strokeWidth * mod
-      const p = new Path2D(lake.d)
-      ctx.clip(p)
-      if (j === 0) ctx.fill(p)
-      ctx.stroke(p)
-      ctx.restore()
-    })
-  })
 }

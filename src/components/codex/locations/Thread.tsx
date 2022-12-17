@@ -12,7 +12,7 @@ import {
 } from 'mdi-material-ui'
 import { useEffect, useState } from 'react'
 
-import { difficulties } from '../../../models/npcs/stats/difficulty'
+import { difficulties } from '../../../models/threads/difficulty'
 import { Thread, ThreadActor } from '../../../models/threads/types'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
@@ -57,7 +57,7 @@ export function ThreadView(props: { threads: Thread[] }) {
   }
   useEffect(() => {
     if (threads.length <= expanded) setExpanded(0)
-  }, threads)
+  }, [threads])
   return (
     <div>
       {threads.map((thread, i) => {
@@ -128,8 +128,8 @@ export function ThreadView(props: { threads: Thread[] }) {
                     title={antagonist.name}
                     subtitle={
                       <span>
-                        <b>antagonist</b> {describeActor(antagonist)},{' '}
-                        {antagonist.alias.toLowerCase()}, can be found {place.toLowerCase()}
+                        <b>rival</b> {describeActor(antagonist)}, {antagonist.alias.toLowerCase()},
+                        can be found {place.toLowerCase()}
                       </span>
                     }
                   ></DetailedTableRow>

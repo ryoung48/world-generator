@@ -1,79 +1,61 @@
-import { event__diplomacy } from '../../../history/diplomacy'
-import { world__tick } from '../../../history/dispatcher'
-import { event__healthCheck } from '../../../history/health'
-import { event__succession } from '../../../history/succession'
-import { TradeGood } from '../../../items/economy'
-import { folkReligion__spawn, organizedReligion__spawn } from '../../../npcs/species/religions'
-import { region__neighbors } from '../../../regions'
-import { region__prospectColony } from '../../../regions/diplomacy/colonies'
-import {
-  location__isCity,
-  location__isTown
-} from '../../../regions/locations/spawn/taxonomy/settlements'
-import { Loc } from '../../../regions/locations/types'
-import { province__cell, province__hub } from '../../../regions/provinces'
-import { Province } from '../../../regions/provinces/types'
-import { Region } from '../../../regions/types'
-import { yearMS } from '../../../utilities/math/time'
-import { profile } from '../../../utilities/performance'
-import { Climate } from '../../climate/types'
+import { religion__folk, religion__organized } from '../../../npcs/religions'
+import { region__domains, region__neighbors } from '../../../regions'
+import { province__foreignStates, province__sortClosest } from '../../../regions/provinces'
+import { DiplomaticRelation, Region } from '../../../regions/types'
 import { Shaper } from '.'
 
-const maxMarketsTotal: Partial<Record<Loc['type'], number>> = {
-  'tiny village': 1,
-  'small village': 2,
-  'large village': 3,
-  'small town': 6,
-  'large town': 8,
-  'small city': 10,
-  'large city': 12,
-  'huge city': 14,
-  metropolis: 16
+type RegionalCounters = Record<
+  Region['development'],
+  { target: number; current: number; total: number }
+>
+
+const claim = (params: { nation: Region; region: Region }) => {
+  const { nation, region } = params
+  const { provinces } = region
+  nation.provinces.push(...provinces)
+  region.provinces = []
+  provinces
+    .map(p => window.world.provinces[p])
+    .forEach(province => {
+      province.nation = nation.idx
+    })
 }
 
-let maxMarkets: Partial<Record<Loc['type'], number>> = {
-  'tiny village': 0,
-  'small village': 0,
-  'large village': 0,
-  'small town': 1,
-  'large town': 2,
-  'small city': 4,
-  'large city': 6,
-  'huge city': 8,
-  metropolis: 10
-}
-
-const marketMap = new Map<Province, number>()
-
-const placeResources = (key: TradeGood, markets: Province[], weights: number[]) => {
-  markets.forEach((market, i) => {
-    market.resources.supply[key] = weights[i]
-    const count = marketMap.get(market) || 0
-    marketMap.set(market, count + 1)
+const government = (params: {
+  development: Region['development']
+  governments: (_region: Region) => Region['government']
+}) => {
+  const { development, governments } = params
+  const regions = window.world.regions.filter(region => region.development === development)
+  regions.forEach(region => {
+    region.government =
+      region.provinces.length === 1
+        ? region.civilized
+          ? 'free city'
+          : 'autonomous tribes'
+        : governments(region)
   })
+  return regions
 }
 
-const randomPlacement = (key: TradeGood, market: Province[], rarity: number) => {
-  const target = Math.ceil(market.length * rarity)
-  const open = market.filter(m => (marketMap.get(m) || 0) < maxMarkets[province__hub(m).type])
-  const closed = market.filter(m => (marketMap.get(m) || 0) >= maxMarkets[province__hub(m).type])
-  const refs = window.dice.shuffle(open).concat(window.dice.shuffle(closed)).slice(0, target)
-  const weights = window.dice.uniformDist(target)
-  placeResources(key, refs, weights)
+const sortClosestRegion = (params: { ref: Region; neighbors: Region[] }) => {
+  const { ref, neighbors } = params
+  return province__sortClosest(
+    neighbors.map(neighbor => window.world.provinces[neighbor.capital]),
+    window.world.provinces[ref.capital]
+  ).map(province => window.world.regions[province.region])
 }
 
-const climateRandomPlacement = (key: TradeGood, climes: Climate['type'][], rarity: number) => {
-  const markets = window.world.provinces.filter(province =>
-    climes.includes(window.world.regions[province.region].climate)
-  )
-  randomPlacement(key, markets, rarity)
-}
+const regionRelations = (params: { target: DiplomaticRelation; region: Region }) =>
+  Object.entries(params.region.relations)
+    .filter(([_, relation]) => relation === params.target)
+    .map(([r]) => window.world.regions[parseInt(r)])
+
+const regionAtWar = (region: Region) => regionRelations({ target: 'at war', region }).length > 0
 
 export class LoreShaper extends Shaper {
-  private years = 100
-  constructor(years: number) {
+  constructor() {
     super()
-    this.years = years
   }
   get pipeline() {
     return [
@@ -82,182 +64,287 @@ export class LoreShaper extends Shaper {
         action: this.worldReligions
       },
       {
-        name: 'Imperial Colonies',
-        action: this.imperialColonies
-      },
-      {
-        name: 'Wealth of Nations',
-        action: this.markets
-      },
-      {
         name: 'Historical March',
         action: this.history
       }
     ]
   }
   private worldReligions() {
-    folkReligion__spawn()
-    organizedReligion__spawn()
+    religion__folk()
+    religion__organized()
     window.world.regions.forEach(region => {
       const { religion: ridx } = window.world.cultures[region.culture.ruling]
       const religion = window.world.religions[ridx]
-      region.religion = { state: religion.idx, native: religion.idx }
+      region.religion = religion.idx
     })
-  }
-  private imperialColonies() {
-    const coastalRegions = window.world.regions.filter(region => region.regional.coastal)
-    const prospectColonies = coastalRegions
-      .filter(
-        region =>
-          region__prospectColony(region) &&
-          region__neighbors(region).every(n => !window.world.regions[n].civilized)
-      )
-      .sort((a, b) => b.wealth - a.wealth)
-    const prospectColonists = coastalRegions.filter(region => region.development === 'civilized')
-    prospectColonists.forEach(colonist => {
-      const neighbors = new Set(region__neighbors(colonist))
-      window.dice
-        .shuffle(
-          prospectColonies
-            .filter(
-              colony => !neighbors.has(colony.idx) && colony.colonialPresence.colonies.length < 3
-            )
-            .slice(0, 50)
-        )
-        .slice(0, colonist.development === 'civilized' ? 3 : 1)
-        .forEach(colony => {
-          const initiative = window.dice.choice<
-            Region['colonialPresence']['colonies'][number]['tag']
-          >(['trading company', 'colonial settlers'])
-          colonist.colonialPresence.colonies.push({
-            nation: colony.idx,
-            tag: initiative,
-            type: 'overlord'
-          })
-          colony.colonialPresence.colonies.push({
-            nation: colonist.idx,
-            tag: initiative,
-            type: 'colony'
-          })
-        })
-    })
-    prospectColonies
-      .filter(colony => colony.colonialPresence.colonies.length > 0)
-      .forEach(colony => {
-        colony.colonialPresence.embassy = colony.provinces
-          .map(p => window.world.provinces[p])
-          .filter(province => province.ocean > 0)
-          .reduce((largest, province) => {
-            if (largest === -1) return province.idx
-            const largestHub = province__hub(window.world.provinces[largest])
-            const currHub = province__hub(province)
-            return largestHub.population > currHub.population ? largest : province.idx
-          }, -1)
-      })
-  }
-  private markets() {
-    const productRarity = 0.1
-    const towns = window.world.provinces.filter(province => {
-      const hub = province__hub(province)
-      return location__isCity(hub) || location__isTown(hub)
-    })
-    const industrial = towns.filter(province => {
-      const hub = province__hub(province)
-      const region = window.world.regions[province.region]
-      return location__isCity(hub) && region.civilized
-    })
-    const coastalTowns = towns.filter(province => province__cell(province).beach)
-    randomPlacement('machinery', industrial, productRarity)
-    randomPlacement('texts', industrial, productRarity)
-    randomPlacement('cosmetics', industrial, productRarity)
-    randomPlacement('shipwrights', coastalTowns, productRarity)
-    randomPlacement('products (alchemical)', towns, productRarity)
-    randomPlacement('products (arcane)', towns, productRarity)
-    randomPlacement('artwork', towns, productRarity)
-    randomPlacement('candles', towns, productRarity)
-    randomPlacement('ceramics', towns, productRarity)
-    randomPlacement('cloth goods', towns, productRarity)
-    randomPlacement('glasswork', towns, productRarity)
-    randomPlacement('jewelry', towns, productRarity)
-    randomPlacement('leatherwork', towns, productRarity)
-    randomPlacement('metalwork', towns, productRarity)
-    randomPlacement('spirits', towns, productRarity)
-    randomPlacement('stonework', towns, productRarity)
-    randomPlacement('woodwork', towns, productRarity)
-    randomPlacement('mercenaries', towns, productRarity)
-    randomPlacement('paper', towns, productRarity)
-    maxMarkets = maxMarketsTotal
-    const commodityRarity = 0.15
-    const coastalSettlements = window.world.provinces.filter(
-      province => province__cell(province).beach
-    )
-    randomPlacement('fish', coastalSettlements, 1)
-    const mountainProvinces = window.world.provinces.filter(province => province.mountains > 0)
-    randomPlacement('metals (gemstones)', mountainProvinces, commodityRarity)
-    randomPlacement('metals (precious)', mountainProvinces, commodityRarity)
-    randomPlacement('metals (common)', mountainProvinces, 0.6)
-    const deserts: Climate['type'][] = ['hot desert', 'cold desert']
-    const grasslands: Climate['type'][] = ['hot steppe', 'cold steppe', 'savanna']
-    const forests: Climate['type'][] = [
-      'tropical rainforest',
-      'tropical monsoon',
-      'temperate monsoon',
-      'subtropical',
-      'mediterranean',
-      'oceanic',
-      'laurentian',
-      'siberian',
-      'subarctic'
-    ]
-    const farmland = [...forests, ...grasslands]
-    const trees = [...forests]
-    const common = [...deserts, ...grasslands, ...forests]
-    climateRandomPlacement(
-      'furs',
-      ['laurentian', 'oceanic', 'subarctic', 'siberian', 'polar'],
-      commodityRarity
-    )
-    climateRandomPlacement(
-      'spices',
-      ['tropical rainforest', 'tropical monsoon', 'temperate monsoon', 'savanna', 'subtropical'],
-      commodityRarity
-    )
-    climateRandomPlacement('lumber', trees, 0.6)
-    climateRandomPlacement('silk', trees, commodityRarity)
-    climateRandomPlacement('grapes', farmland, commodityRarity)
-    climateRandomPlacement('oils', farmland, commodityRarity)
-    climateRandomPlacement('vegetables', farmland, commodityRarity)
-    climateRandomPlacement('wax', farmland, commodityRarity)
-    climateRandomPlacement('fabric', farmland, commodityRarity)
-    climateRandomPlacement('grains', farmland, commodityRarity + 0.1)
-    climateRandomPlacement('honey', farmland, commodityRarity)
-    climateRandomPlacement('livestock', farmland, commodityRarity)
-    climateRandomPlacement('marble', common, commodityRarity)
-    climateRandomPlacement('salt', common, commodityRarity)
-    climateRandomPlacement('stone', common, commodityRarity)
-    const tribalCities = window.world.provinces.filter(c => {
-      const region = window.world.regions[c.region]
-      return !region.civilized
-    })
-    randomPlacement('creatures', tribalCities, commodityRarity)
-    climateRandomPlacement('clay', common, commodityRarity)
-    climateRandomPlacement('dyes', common, commodityRarity)
-    climateRandomPlacement('incense', common, commodityRarity)
-    climateRandomPlacement('reagents (alchemical)', [...common, 'polar'], commodityRarity)
-    randomPlacement('reagents (arcane)', window.world.provinces, commodityRarity)
   }
   private history() {
-    const current = window.world.date
-    profile({
-      label: 'Initialize',
-      f: () => {
-        event__healthCheck.spawn()
-        window.world.regions.forEach(region => {
-          event__succession.spawn({ nation: region, init: true })
-          event__diplomacy.spawn(region)
-        })
+    const { provinces, regions } = window.world
+    const civilized = government({
+      development: 'civilized',
+      governments: () =>
+        window.dice.weightedChoice([
+          { v: 'autocratic kingdom', w: 0.5 },
+          { v: 'stratocratic kingdom', w: 0.1 },
+          { v: 'theocratic kingdom', w: 0.1 },
+          { v: 'feudal kingdom', w: 0.25 },
+          { v: 'warring states', w: 0.1 }
+        ])
+    })
+    const frontier = government({
+      development: 'frontier',
+      governments: () =>
+        window.dice.weightedChoice([
+          { v: 'autocratic kingdom', w: 0.1 },
+          { v: 'stratocratic kingdom', w: 0.05 },
+          { v: 'theocratic kingdom', w: 0.15 },
+          { v: 'feudal kingdom', w: 0.3 },
+          { v: 'city-state confederacy', w: 0.3 },
+          { v: 'warring states', w: 0.1 }
+        ])
+    })
+    const tribal = government({
+      development: 'tribal',
+      governments: region =>
+        region.climate.includes('steppe')
+          ? 'steppe nomads'
+          : window.dice.weightedChoice([
+              { v: 'autocratic chiefdom', w: 0.025 },
+              { v: 'stratocratic chiefdom', w: 0.025 },
+              { v: 'theocratic chiefdom', w: 0.025 },
+              { v: 'feudal chiefdom', w: 0.25 },
+              { v: 'tribal confederacy', w: 0.5 },
+              { v: 'autonomous tribes', w: 0.1 },
+              { v: 'warring tribes', w: 0.1 }
+            ])
+    })
+    const remote = government({
+      development: 'remote',
+      governments: region =>
+        region.climate.includes('steppe')
+          ? 'steppe nomads'
+          : window.dice.weightedChoice([
+              { v: 'feudal chiefdom', w: 0.04 },
+              { v: 'tribal confederacy', w: 0.15 },
+              { v: 'autonomous tribes', w: 0.8 },
+              { v: 'warring tribes', w: 0.05 }
+            ])
+    })
+    // empires
+    const imperium: RegionalCounters = {
+      civilized: { target: 0.05, current: 0, total: civilized.length },
+      frontier: { target: 0.05, current: 0, total: frontier.length },
+      tribal: { target: 0.025, current: 0, total: tribal.length },
+      remote: { target: 0, current: 0, total: remote.length }
+    }
+    const decentralized: Region['government'][] = [
+      'warring states',
+      'warring tribes',
+      'autonomous tribes',
+      'city-state confederacy',
+      'tribal confederacy',
+      'free city'
+    ]
+    const imperial: Region['government'][] = [
+      'autocratic empire',
+      'stratocratic empire',
+      'theocratic empire',
+      'feudal empire'
+    ]
+    window.dice.shuffle(regions).forEach(region => {
+      const { current, target, total } = imperium[region.development]
+      const neighbors = region__neighbors(region)
+      if (
+        region.provinces.length > 0 &&
+        !decentralized.includes(region.government) &&
+        current / total < target &&
+        neighbors.every(n => !imperial.includes(n.government))
+      ) {
+        const closest = sortClosestRegion({ ref: region, neighbors }).slice(0, 4)
+        if (closest.length > 2) {
+          imperium[region.development].current++
+          closest.forEach(neighbor => claim({ nation: region, region: neighbor }))
+          region.government =
+            region.government === 'autocratic kingdom' ||
+            region.government === 'autocratic chiefdom'
+              ? 'autocratic empire'
+              : region.government === 'stratocratic kingdom' ||
+                region.government === 'stratocratic chiefdom'
+              ? 'stratocratic empire'
+              : region.government === 'theocratic kingdom' ||
+                region.government === 'theocratic chiefdom'
+              ? 'theocratic empire'
+              : region.government === 'steppe nomads'
+              ? 'steppe horde'
+              : 'feudal empire'
+        }
       }
     })
-    world__tick(current + yearMS * this.years)
+    // regular conquest
+    const anarchy: Region['government'][] = ['warring states', 'warring tribes']
+    window.dice.shuffle(regions).forEach(region => {
+      const neighbors = region__neighbors(region).filter(
+        neighbor => region__domains(neighbor).length === 1
+      )
+      if (
+        region.provinces.length > 0 &&
+        neighbors.length > 0 &&
+        !anarchy.includes(region.government) &&
+        !imperial.includes(region.government) &&
+        window.dice.random < 0.4
+      ) {
+        const closest = province__sortClosest(
+          neighbors.map(neighbor => provinces[neighbor.capital]),
+          provinces[region.capital]
+        )
+          .map(province => regions[province.region])
+          .slice(0, window.dice.choice([1, 1, 2]))
+        closest.forEach(neighbor => claim({ nation: region, region: neighbor }))
+      }
+    })
+    // grand duchies
+    regions.forEach(region => {
+      if (
+        region.provinces.length < 10 &&
+        !anarchy.includes(region.government) &&
+        region.provinces.length > 1 &&
+        region.civilized
+      ) {
+        region.government = 'grand duchy'
+      }
+    })
+    // subjects
+    const theocracy: Region['government'][] = [
+      'theocratic chiefdom',
+      'theocratic kingdom',
+      'theocratic empire'
+    ]
+    window.dice.shuffle(regions).forEach(region => {
+      const domain = region__domains(region).length
+      const neighbors = region__neighbors(region).filter(
+        neighbor =>
+          region__domains(neighbor).length < domain &&
+          !anarchy.includes(neighbor.government) &&
+          Object.values(neighbor.relations).every(
+            relation => relation !== 'vassal' && relation !== 'suzerain'
+          )
+      )
+      if (
+        region.provinces.length > 0 &&
+        !anarchy.includes(region.government) &&
+        Object.values(region.relations).every(relation => relation !== 'suzerain')
+      ) {
+        neighbors
+          .filter(neighbor => {
+            const diff = domain - region__domains(neighbor).length
+            return window.dice.random < diff * 0.05
+          })
+          .forEach(neighbor => {
+            neighbor.relations[region.idx] = 'suzerain'
+            region.relations[neighbor.idx] = 'vassal'
+            if (
+              region.civilized &&
+              theocracy.includes(region.government) &&
+              neighbor.provinces.length > 1 &&
+              window.dice.flip
+            ) {
+              neighbor.government = 'monastic order'
+            }
+          })
+      }
+    })
+    // wars
+    const wars: RegionalCounters = {
+      civilized: { current: 0, total: civilized.length, target: 0.1 },
+      frontier: { current: 0, total: frontier.length, target: 0.1 },
+      tribal: { current: 0, total: tribal.length, target: 0.1 },
+      remote: { current: 0, total: remote.length, target: 0.1 }
+    }
+    window.dice.shuffle(regions).forEach(region => {
+      const { current, target, total } = wars[region.development]
+      if (
+        current / total < target &&
+        region.provinces.length > 1 &&
+        !anarchy.includes(region.government) &&
+        !regionAtWar(region)
+      ) {
+        const neighbors = region__neighbors(region).filter(
+          neighbor =>
+            region.provinces.length > 1 && !neighbor.relations[region.idx] && !regionAtWar(neighbor)
+        )
+        const prospects = window.dice.shuffle(
+          sortClosestRegion({ ref: region, neighbors }).slice(0, 3)
+        )
+        if (prospects.length > 0) {
+          const [belligerent] = prospects
+          belligerent.relations[region.idx] = 'at war'
+          region.relations[belligerent.idx] = 'at war'
+          wars[region.development].current++
+          const regionBorders = region.provinces.filter(p =>
+            province__foreignStates([provinces[p]]).includes(belligerent.idx)
+          )
+          const belligerentBorders = belligerent.provinces.filter(p =>
+            province__foreignStates([provinces[p]]).includes(region.idx)
+          )
+          const contested = regionBorders.concat(belligerentBorders)
+          const borders = window.dice.shuffle(
+            window.dice.weightedChoice([
+              {
+                v: contested,
+                w: 0.3
+              },
+              {
+                v: region.provinces > belligerent.provinces ? belligerentBorders : regionBorders,
+                w: 0.3
+              },
+              {
+                v: window.dice.choice([belligerentBorders, regionBorders]),
+                w: 0.3
+              }
+            ])
+          )
+          window.world.conflicts.push({
+            type: 'war',
+            provinces: borders.slice(0, Math.max(0.6 * borders.length, 3)),
+            regions: [region.idx, belligerent.idx]
+          })
+        }
+      }
+    })
+    // diplomacy
+    regions.forEach(region => {
+      region__neighbors(region)
+        .filter(neighbor => !region.relations[neighbor.idx])
+        .forEach(neighbor => {
+          const relation = window.dice.weightedChoice<DiplomaticRelation>([
+            { v: 'ally', w: 0.1 },
+            { v: 'friendly', w: 0.2 },
+            { v: 'neutral', w: 0.3 },
+            { v: 'suspicious', w: 0.4 }
+          ])
+          region.relations[neighbor.idx] = relation
+          neighbor.relations[region.idx] = relation
+        })
+    })
+    regions
+      .filter(region => Object.values(region.relations).some(relation => relation === 'vassal'))
+      .forEach(region => {
+        const atWar = regionRelations({ target: 'at war', region })
+        regionRelations({ target: 'vassal', region }).forEach(vassal => {
+          const vassalWar = regionRelations({ target: 'at war', region: vassal })
+          vassalWar
+            .filter(belligerent => region.relations[belligerent.idx])
+            .forEach(belligerent => {
+              region.relations[belligerent.idx] = 'suspicious'
+              belligerent.relations[region.idx] = 'suspicious'
+            })
+          atWar
+            .filter(belligerent => vassal.relations[belligerent.idx])
+            .forEach(belligerent => {
+              vassal.relations[belligerent.idx] = 'suspicious'
+              belligerent.relations[vassal.idx] = 'suspicious'
+            })
+        })
+      })
   }
 }

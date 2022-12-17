@@ -1,4 +1,4 @@
-import { culture__spawn } from '../../src/models/npcs/species/cultures'
+import { culture__spawn } from '../../src/models/npcs/cultures'
 import { region__spawn } from '../../src/models/regions'
 import { province__hub } from '../../src/models/regions/provinces'
 import { province__spawn } from '../../src/models/regions/provinces/spawn'
@@ -34,43 +34,4 @@ export const test__world = () => {
   province__spawn({ cell: cell2, capital: true })
   province__hub(province)
   culture__spawn(region)
-  window.world.actors.push({
-    name: 'test',
-    level: 1,
-    species: { type: 'humanoid' },
-    mods: { cr: 0, exp: 0 },
-    inventory: { items: {}, currency: 0 },
-    idx: 0,
-    tag: 'actor',
-    location: { birth: 0, curr: 0 },
-    occupation: { key: 'mercenary', spec: 'rogue' },
-    progression: {},
-    skills: [],
-    gender: 'male',
-    culture: 35,
-    surname: 'test',
-    lineage: 'test',
-    dates: {
-      spawn: 16592401740000,
-      birth: 16026925696893.182,
-      death: 18201500931149.97
-    },
-    history: {
-      unbound: true,
-      events: []
-    },
-    attributes: {
-      strength: 9,
-      dexterity: 13,
-      constitution: 11,
-      intellect: 14,
-      wisdom: 8,
-      charisma: 12
-    },
-    parent: { name: 'test' },
-    relations: [],
-    equipment: { armor: null, offhand: null, mainhand: null },
-    carryCapacity: 120,
-    finalized: false
-  })
 }

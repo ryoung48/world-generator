@@ -1,4 +1,3 @@
-import { TradeGood } from '../../items/economy'
 import { RouteTypes } from '../../world/travel/types'
 
 export interface Province {
@@ -7,13 +6,8 @@ export interface Province {
   region: number
   capital: boolean
   finalized: boolean
-  memory: {
-    tradeGoods: number
-    tradeDemand: number
-    refugees: number
-    lastInvasion: { type: 'wars' | 'rebellions'; time: number; idx: number }
-    nextInvasion: { type: 'wars' | 'rebellions'; time: number; idx: number }
-  }
+  population: number // urban + rural
+  nation: number // current owner
   // travel
   hub: number
   locations: number[]
@@ -22,21 +16,9 @@ export interface Province {
   trade: Record<RouteTypes, Record<string, number>>
   neighbors: number[]
   artery: number[]
-  // economy
-  wealth: number
-  resources: {
-    supply: Partial<Record<TradeGood, number>>
-    demand: Partial<Record<TradeGood, number>>
-  }
   // geography
-  lands: Record<number, number>
-  lakes: Record<number, number>
+  islands: Record<number, number>
   land: number
   ocean: number
   mountains: number
-  // demographics
-  population: number // urban + rural
-  // ownership
-  currNation: number // current owner
-  prevNation: number // previous owner
 }

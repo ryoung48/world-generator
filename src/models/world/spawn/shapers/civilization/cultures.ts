@@ -4,15 +4,42 @@ import {
   culture__regions,
   culture__spawn,
   culture__subCulture
-} from '../../../../npcs/species/cultures'
-import { Culture } from '../../../../npcs/species/cultures/types'
-import { humanoid__speciesDist } from '../../../../npcs/species/taxonomy'
+} from '../../../../npcs/cultures'
+import { Culture } from '../../../../npcs/cultures/types'
 import { region__borders } from '../../../../regions'
-import { DevelopmentRank } from '../../../../regions/development'
 import { Region } from '../../../../regions/types'
 import { entity__partitionBFS } from '../../../../utilities/codex/entities'
-import { directions } from '../../../../utilities/math/points'
+import { WeightedDistribution } from '../../../../utilities/math'
+import { Directions } from '../../../../utilities/math/points'
 import { Climate, climates } from '../../../climate/types'
+
+const speciesDist = (count: number, tribal = true): Culture['species'][] => {
+  const dist: WeightedDistribution<Culture['species']> = tribal
+    ? [
+        { v: 'human', w: 3 },
+        { v: 'dwarf', w: 1 },
+        { v: 'orc', w: 1 },
+        { v: 'elf', w: 1 },
+        { v: 'orlan', w: 1 },
+        { v: 'bovine', w: 1 },
+        { v: 'feline', w: 1 },
+        { v: 'avian', w: 1 },
+        { v: 'draconic', w: 1 }
+      ]
+    : [
+        { v: 'human', w: 8 },
+        { v: 'dwarf', w: 1 },
+        { v: 'orc', w: 1 },
+        { v: 'elf', w: 1 }
+      ]
+  const total = dist.reduce((sum, { w }) => sum + w, 0)
+  return window.dice.shuffle(
+    dist
+      .filter(({ w }) => w > 0)
+      .map(({ v, w }) => Array<Culture['species']>(Math.ceil((w / total) * count)).fill(v))
+      .flat()
+  )
+}
 
 const culture__cultureScore = (culture: Culture) =>
   culture__regions(culture)
@@ -41,7 +68,7 @@ const isTribal = (culture: Culture) => {
   return grass / regions.length > 0.5
 }
 const civilized = ['civilized', 'frontier']
-const setDevelopment = (region: Region, development: DevelopmentRank) => {
+const setDevelopment = (region: Region, development: Region['development']) => {
   region.development = development
   region.civilized = civilized.includes(development)
 }
@@ -60,7 +87,7 @@ const assignCultures = () => {
   })
 }
 
-const civilizationCenter = (side: directions) => {
+const civilizationCenter = (side: Directions) => {
   let civil = 0
   const { cultures } = window.world
   const partition = Object.values(cultures)
@@ -102,10 +129,10 @@ const assignDevelopment = () => {
   })
   const allCultures = Object.values(cultures)
   const civil = allCultures.filter(c => window.world.regions[c.origin].civilized)
-  const civilSpecies = humanoid__speciesDist(civil.length, false)
+  const civilSpecies = speciesDist(civil.length, false)
   civil.forEach(culture => culture__flavorize(culture, civilSpecies.pop()))
   const nonCivil = allCultures.filter(c => !window.world.regions[c.origin].civilized)
-  const species = humanoid__speciesDist(nonCivil.length)
+  const species = speciesDist(nonCivil.length)
   nonCivil.forEach(culture => culture__flavorize(culture, species.pop()))
 }
 

@@ -1,14 +1,7 @@
 import { Delaunay, Voronoi } from 'd3'
-import PriorityQueue from 'js-priority-queue'
 
-import { Rebellion } from '../history/rebellion/types'
-import { LogRecord, WorldEvent } from '../history/types'
-import { War } from '../history/war/types'
-import { ActorEvent } from '../npcs/actors/spawn/events/types'
-import { Actor } from '../npcs/actors/types'
-import { Culture } from '../npcs/species/cultures/types'
-import { Religion } from '../npcs/species/religions/types'
-import { Humanoid, humanoid__species } from '../npcs/species/taxonomy/types'
+import { Culture } from '../npcs/cultures/types'
+import { Religion } from '../npcs/religions/types'
 import { Loc } from '../regions/locations/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
@@ -40,12 +33,6 @@ interface WorldDimensions extends Dimensions {
   cellLength: number
 }
 
-interface EventCounts {
-  wars: number
-  rebellions: number
-  regions: number
-}
-
 export interface World {
   id: string
   diagram?: Voronoi<Delaunay.Point>
@@ -72,12 +59,10 @@ export interface World {
   template: ContinentTemplate['isles']
   // entities
   regions: Region[]
+  conflicts: { type: 'war' | 'rebellion'; provinces: number[]; regions: number[] }[]
   provinces: Province[]
   locations: Loc[]
   cultures: Culture[]
-  humanoids: Record<humanoid__species, Humanoid>
-  actors: Actor[]
-  actorEvents: ActorEvent[]
   religions: Religion[]
   uniqueNames: Record<string, boolean>
   // planet info
@@ -96,24 +81,4 @@ export interface World {
     lat: number[]
     long: number[]
   }
-  // history
-  past: LogRecord[]
-  future: PriorityQueue<WorldEvent>
-  wars: War[]
-  rebellions: Rebellion[]
-  historyRecording: boolean // used to halt detailed npc generation
-  statistics: { current: EventCounts; past: (EventCounts & { time: number })[] }
-  dynasties: string[]
-  actorPlans: {
-    birth: number
-    death: number
-    region: number
-    culture: number
-    gender: Actor['gender']
-    dynasty?: number
-    actor?: number
-    parent?: number
-    heir?: number
-    events: number[]
-  }[]
 }

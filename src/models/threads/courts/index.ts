@@ -8,9 +8,9 @@ export const backgrounds__court: Record<Court, Background> = {
   "affliction's mark": {
     tag: "affliction's mark",
     type: 'court',
-    context: `A persistent, incurable illness is gnawing at the court. {{The principle leader|A beloved member} has been felled by it|It is a spreading curse within its circles}. This {acute disease has the sufferers desperate to find some cure|chronic illness requires regular infusions of some {costly|morally-dubious} remedy}.`,
+    context: `They are being ravaged by a persistent, terrible illness. It is {an acute disease that has the sufferers desperate to find a cure|a chronic illness that requires regular infusions of some {costly|morally-dubious} remedy}.`,
     enemies: [
-      { alias: `Manipulative quack` },
+      { alias: `Manipulative con-artist` },
       { alias: `Amorally desperate relative`, relative: true },
       { alias: `Secret spreader of plague` }
     ],
@@ -20,9 +20,9 @@ export const backgrounds__court: Record<Court, Background> = {
       { alias: `Worried spouse-to-be of a victim` }
     ],
     complications: [
-      `The sickness is a direct result of their choices`,
+      `A {beloved|respected} member has recently been felled by this disease`,
       `A faction would profit enormously if the current victims died`,
-      `The only known cure comes with a dire moral or material cost`
+      `The only known cure comes with a dire {moral|material} cost`
     ],
     things: [
       `a palliative that can {slow|ease} the disease`,
@@ -38,7 +38,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'ancestral obligation': {
     tag: 'ancestral obligation',
     type: 'court',
-    context: `The court was impressed with some great {task|duty|role} by its founder, and much of its influence or moral authority hinges on continuing to carry out that task. Its traditions and structure revolve around being able to carry out the work. Failure means disgrace and tangible penalties as old pacts are broken. Neglecting the duty will result in other negative consequences that could affect the entire community.`,
+    context: `They were impressed with a great {task|duty|role} by their founder, and much of their {influence|moral authority} hinges on continuing to carry out that task. Their traditions and structure revolve around being able to carry out the work. Failure means disgrace and tangible penalties as old pacts are broken. Neglecting the duty will result in other negative consequences that could affect the entire community.`,
     enemies: [
       { alias: `Schemer who'd profit by the duty's disruption` },
       { alias: `Rebel who hates the duty and care nothing for the consequences` },
@@ -68,7 +68,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'awesome legitimacy': {
     tag: 'awesome legitimacy',
     type: 'court',
-    context: `The things that are certain in life are death, taxes, and this court. They are important, they have always been important, and they will always be important. They may wax and wane, but no one in their society can imagine them ever ceasing to exist, and at most the locals can only think of {seizing control of the court|compelling its cooperation}. Its destruction is unthinkable. It {has {absolute control of some critical social function|members of legendary awe}|viewed as the personal property of some {divinity|godlike entity}}.`,
+    context: `They are important, they have always been important, and they will always be important. They may wax and wane, but no one in their society can imagine them ever ceasing to exist, and at most the locals can only think of {seizing control of its operations|compelling its cooperation}. Its destruction is unthinkable. It {has {absolute control of some critical social function|members of legendary awe}|viewed as the personal property of some {divinity|godlike entity}}.`,
     enemies: [
       { alias: `Implacable tyrant consecrated by custom` },
       { alias: `Manipulator who cloaks #possessive# will in the court's legitimacy` },
@@ -641,7 +641,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'inadequate tools': {
     tag: 'inadequate tools',
     type: 'court',
-    context: `The court's authority and power have been sustained for a long time by a particular set of tools and tactics ({violence|money|blackmail|legal rights|alliances with other powers}). {Recent events|Clumsy missteps by the court} have rendered these old tools no longer effective, but the leadership doesn't have any better idea than to use them again, but harder this time.`,
+    context: `Their authority and power have been sustained for a long time by a particular set of tools and tactics ({violence|money|blackmail|legal rights|alliances with other powers}). {Recent events|Clumsy missteps by the court} have rendered these old tools no longer effective, but the leadership doesn't have any better idea than to use them again, but harder this time.`,
     enemies: [
       { alias: `Manipulator goading the ruler to excesses` },
       { alias: `Frustrated ruler with no new ideas` },
@@ -671,7 +671,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'inept ruler': {
     tag: 'inept ruler',
     type: 'court',
-    context: `The court's ruler is {incompetent|debilitated}, but there's no practical way to remove them from power because {the alternative is utterly unacceptable|the ruler's mistakes might be very much to the benefit of a powerful faction in the court}. Rivals are doubtless making plans to take advantage of the situation, and internal factions may well be willing to take acceptable losses in order to profit by the chaos.`,
+    context: `The #court#'s ruler is {incompetent|debilitated}, but there's no practical way to remove them from power because {the alternative is utterly unacceptable|the ruler's mistakes might be very much to the benefit of a powerful faction in the #court#}. Rivals are doubtless making plans to take advantage of the situation, and internal factions may well be willing to take acceptable losses in order to profit by the chaos.`,
     enemies: [
       { alias: `Insane ruler` },
       { alias: `Sincere, but utterly unsuitable leader` },
@@ -684,7 +684,7 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     complications: [
       `The ruler seems like an idiot, but is actually trying to achieve a secret goal with their actions`,
-      `A rival court (#rival#) is vigorously backing the leader`,
+      `An external rival (#rival#) is vigorously backing the leader`,
       `The leader's deposition would result in a ruinous state of chaos for the court`
     ],
     things: [
@@ -694,14 +694,14 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     places: [
       `at a {damaged|decrepit} structure owing to the ruler's neglect`,
-      `in a chaotic and confused court hall`,
+      `in a chaotic and confused #court# hall`,
       `at a building erected as a folly by the ruler `
     ]
   },
   'iron law': {
     tag: 'iron law',
     type: 'court',
-    context: `There are {troublesome|problematic} laws within the court that its members simply cannot break. These laws are preventing them from resolving a problem that is currently growing worse.`,
+    context: `There are {troublesome|problematic} laws within the #court# that its members simply cannot break. These laws are preventing them from resolving a problem that is currently growing worse.`,
     enemies: [
       { alias: `Suicidally rigid ruler` },
       { alias: `Troublemaker who exploits the law` },
@@ -731,7 +731,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'lost purpose': {
     tag: 'lost purpose',
     type: 'court',
-    context: `The court's original formation revolved around a particular {duty|role} that has long since been {forgotten|lost}. This loss of purpose has left the court with {ancestral obligations they no longer understand|resources that they no longer use in the intended way}.`,
+    context: `The #court#'s original formation revolved around a particular {duty|role} that has long since been {forgotten|lost}. This loss of purpose has left the court with {ancestral obligations they no longer understand|resources that they no longer use in the intended way}.`,
     enemies: [
       { alias: `Leader wholly absorbed in their own ambitions` },
       { alias: `Outsider made hostile by the court's failure to do their duty` },
@@ -761,11 +761,11 @@ export const backgrounds__court: Record<Court, Background> = {
   'magical subversion': {
     tag: 'magical subversion',
     type: 'court',
-    context: `Some member of the court is under magical influence ({mind-bending sorcery|a persistent magical curse|an arcane blessing that will last only so long as they cooperate}) by an {outside enemy (#rival#)|internal rival}. The culprit ensures this subversion is not easily detected {through the use of occult arts|by ensuring that others never get curious enough to look for such things}.`,
+    context: `Some member of the #court# is under magical influence ({mind-bending sorcery|a persistent magical curse|an arcane blessing that will last only so long as they cooperate}) by an {outside enemy (#rival#)|internal rival}. The culprit ensures this subversion is not easily detected {through the use of occult arts|by ensuring that others never get curious enough to look for such things}.`,
     enemies: [
       { alias: `Harmless-seeming member who's secretly a sorcerer` },
       { alias: `Mercenary sorcerer hired by rivals (#rival#)` },
-      { alias: `Court favorite who induces that affection with magic` }
+      { alias: `#Court# favorite who induces that affection with magic` }
     ],
     friends: [
       { alias: `Suspicious local mage` },
@@ -791,10 +791,10 @@ export const backgrounds__court: Record<Court, Background> = {
   'ministerial capture': {
     tag: 'ministerial capture',
     type: 'court',
-    context: `The {upper functionaries|senior household servants} of the court have effectively taken control of it. {The members may be too distracted to realize what's been done|The servants have {irresistible blackmail on any members that could oppose them|the unjustified, but complete trust of the proper leadership}}. These functionaries are using the court's resources to pursue their own aggrandizement and profit.`,
+    context: `The {upper functionaries|senior household servants} of the #court# have effectively taken control of it. {The members may be too distracted to realize what's been done|The servants have {irresistible blackmail on any members that could oppose them|the unjustified, but complete trust of the proper leadership}}. These functionaries are using the #court#'s resources to pursue their own aggrandizement and profit.`,
     enemies: [{ alias: `Scheming functionary` }, { alias: `functionary turned kingmaker` }],
     friends: [
-      { alias: `Minor court member who realizes the problem` },
+      { alias: `Minor #court# member who realizes the problem` },
       { alias: `Lesser functionary upset by the corruption` },
       { alias: `Proper leader made helpless by the situation` }
     ],
@@ -805,7 +805,7 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     things: [
       `documentation proving ministerial malfeasance`,
-      `misappropriated court resources`,
+      `misappropriated #court# resources`,
       `blackmail evidence on the court leadership`
     ],
     places: [
@@ -817,7 +817,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'new generation': {
     tag: 'new generation',
     type: 'court',
-    context: `The court's prior leadership was recently decimated by {sickness|misadventure|political executions}, leaving many leadership posts in the hands of much younger, less experienced members. Few of them have a firm grasp on practicalities, and they're acting with a confidence and boldness that may not be justified by their actual skills.`,
+    context: `The #court#'s prior leadership was recently decimated by {sickness|misadventure|political executions}, leaving many leadership posts in the hands of much younger, less experienced members. Few of them have a firm grasp on practicalities, and they're acting with a confidence and boldness that may not be justified by their actual skills.`,
     enemies: [
       { alias: `Reckless spare heir turned ruler` },
       { alias: `Upstart using a role purely for their personal advantage` },
@@ -847,7 +847,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'new opportunity': {
     tag: 'new opportunity',
     type: 'court',
-    context: `Some special new opportunity has been presented to the court, one that offers a great deal of personal {wealth|glory}. Only some of the court can take advantage of it, however, and it can be easily spoiled by dissent from within; they argue now over who is to be allowed to exploit the opportunity.`,
+    context: `Some special new opportunity has been presented to the #court#, one that offers a great deal of personal {wealth|glory}. Only some of the #court# can take advantage of it, however, and it can be easily spoiled by dissent from within; they argue now over who is to be allowed to exploit the opportunity.`,
     enemies: [
       { alias: `Bitter enemy who had the opportunity taken from them and given to the court` },
       { alias: `Jealous internal spoiler who plots to ruin it` },
@@ -907,7 +907,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'overextended grasp': {
     tag: 'overextended grasp',
     type: 'court',
-    context: `The court has seized control of ({land|influence|titles}), but they do not hold it securely. Rival forces (#rival#) are {pressing on them for control over the prize|fighting to determine which of them is to overthrow the overextended court's grip}. The court has exhausted their resources in simply gaining the prize and have nothing left with which to keep it in the face of resistance.`,
+    context: `They have recently seized control of ({land|influence|titles}), but do not hold it securely. Rival forces (#rival#) are {pressing on them for control over the prize|fighting to determine which of them is to overthrow the overextended court's grip}. The #court# has exhausted their resources in simply gaining the prize and have nothing left with which to keep it in the face of resistance.`,
     enemies: [
       { alias: `Foolishly ambitious ruler` },
       { alias: `Schemer who has profited by the reach even if it fails` },
@@ -930,14 +930,14 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     places: [
       `at the seat of the prize's authority`,
-      `at a court holding that's understaffed and under-resourced`,
+      `at a #court# holding that's understaffed and under-resourced`,
       `at a marginal prize holding that's already been lost `
     ]
   },
   'poisonous cliques': {
     tag: 'poisonous cliques',
     type: 'court',
-    context: `The court is riven by two viciously hostile cliques, both of which are determined to {ruin|destroy} the other. Nonaligned members of the court are forced to submit to one or the other lest they be enemies to both and all normal business of the court is paralyzed by their incessant quarreling.{ This hostility is veiled behind venomous courtesies and cruelly heartless protocols.|}`,
+    context: `The #court# is riven by two viciously hostile cliques, both of which are determined to {ruin|destroy} the other. Nonaligned members are forced to submit to one or the other lest they be enemies to both and all normal business of the #court# is paralyzed by their incessant quarreling.{ This hostility is veiled behind venomous courtesies and cruelly heartless protocols.|}`,
     enemies: [
       { alias: `Outside rival (#rival#) who provoked the clique formation` },
       { alias: `Traitor seeking mutual destruction` },
@@ -967,7 +967,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'proxy speaker': {
     tag: 'proxy speaker',
     type: 'court',
-    context: `The court's leader communicates only through a particular proxy. The {leader is too {sick|enfeebled} to lead|proxy has systematically cut all their other lines of control}. The other members of the court may vie for influence over the proxy{|, while ignoring their ostensible real ruler}.`,
+    context: `Their leader communicates only through a particular proxy. The {leader is too {sick|enfeebled} to lead|proxy has systematically cut all their other lines of control}. The other members of the #court# may vie for influence over the proxy{|, while ignoring their ostensible real ruler}.`,
     enemies: [
       { alias: `Grasping favorite paramour` },
       { alias: `Impatient proxy heir` },
@@ -997,15 +997,15 @@ export const backgrounds__court: Record<Court, Background> = {
   'rampant corruption': {
     tag: 'rampant corruption',
     type: 'court',
-    context: `The court is so corrupt that it's crippling its ability to function. Even the most mundane exercises of authority require that the right people be bribed, and its members have little or no interest in the overall good of the group. The leadership is hanging together only because the court is profitable and they will defend it only insofar as it remains so.`,
+    context: `They are so corrupt that it's crippling their ability to function. Even the most mundane exercises of authority require that the right people be bribed, and its members have little or no interest in the overall good of the group. The leadership is hanging together only because the #court# is profitable and they will defend it only insofar as it remains so.`,
     enemies: [{ alias: `Hopelessly venal ruler` }, { alias: `Greedy kingmaker behind the scenes` }],
     friends: [
       { alias: `Member with an earnest loyalty to principle` },
-      { alias: `Court member cast out for not playing along` },
+      { alias: `#Court# member cast out for not playing along` },
       { alias: `Victim of some bribed crime the court committed` }
     ],
     complications: [
-      `The court's members actually desperately need the money`,
+      `The #court#'s members actually desperately need the money`,
       `All the corruption is going to only a few strong hands`,
       `Their enemies have multiple traitors on their payrolls`
     ],
@@ -1016,18 +1016,18 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     places: [
       `in a grimy back room where deals are made`,
-      `at a court salon made a market for favors`,
-      `at a court structure clearly starved of its supposed funds `
+      `at an important salon made a market for favors`,
+      `at an  important structure clearly starved of its supposed funds `
     ]
   },
   'recent brutality': {
     tag: 'recent brutality',
     type: 'court',
-    context: `Violence is an unfortunate commonplace in many courts, but something happened here recently that was beyond all usual bounds of polite assassination or genteel political execution. A {vast massacre of a whole family line|berserk slaughter of an unlucky gathering|humiliating and unthinkable execution of some grandee} has put everyone on edge and made many start thinking of some previously unthinkable courses of action.`,
+    context: `Violence is an unfortunate commonplace in many factions, but something happened here recently that was beyond all usual bounds of polite assassination or genteel political execution. A {vast massacre of a whole family line|berserk slaughter of an unlucky gathering|humiliating and unthinkable execution of some grandee} has put everyone on edge and made many start thinking of some previously unthinkable courses of action.`,
     enemies: [
       { alias: `Ruler with out-of-control bloodthirst` },
       { alias: `Spree-killing spymaster` },
-      { alias: `Brutal court member with no one daring to check them` }
+      { alias: `Brutal #court# member with no one daring to check them` }
     ],
     friends: [
       { alias: `Heir to a recent victim` },
@@ -1047,32 +1047,32 @@ export const backgrounds__court: Record<Court, Background> = {
     places: [
       `at the haunted site of the killing`,
       `at a secret memorial to the slain`,
-      `at an unbearably tense court ceremony `
+      `at an unbearably tense faction ceremony `
     ]
   },
   'priestly influence': {
     tag: 'priestly influence',
     type: 'court',
-    context: `The court's leadership is in the thrall of a particular {religion|holy figure} ({sincere|blackmail|services}), and their wishes are given an undue weight.`,
+    context: `Their leadership is in the thrall of a particular {religion|holy figure} ({sincere|blackmail|services}), and their wishes are given an undue weight.`,
     enemies: [
       { alias: `Charlatan holy figure` },
       { alias: `Zealously pious ruler` },
       { alias: `Spider-minded religious advisor with strings on everyone` }
     ],
     friends: [
-      { alias: `Court member who favors a different god` },
+      { alias: `#Court# member who favors a different god` },
       { alias: `Castoff former house priest` },
       { alias: `Client abandoned so that resources could go to the faith` }
     ],
     complications: [
-      `The faith is giving major help to the court`,
-      `The sect the court follows is considered heretical by the main faith`,
-      `The faith's opponents in the court are being backed by a hostile outside group`
+      `The faith is giving major help to the #court#`,
+      `The sect the #court# follows is considered heretical by the main faith`,
+      `The faith's opponents in the #court# are being backed by a hostile outside group`
     ],
     things: [
       `a sacred relic of the faith`,
       `a costly tithe sum to be offered to the faith`,
-      `a symbol of authority over the court's religious practice`
+      `a symbol of authority over the #court#'s religious practice`
     ],
     places: [
       `at a grand newly-built chapel`,
@@ -1083,7 +1083,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'restive lessers': {
     tag: 'restive lessers',
     type: 'court',
-    context: `The court's servants and lesser officials are angry with the leadership due to the {revocation of old privileges|curtailment of traditional rights and fees|sacrifices demanded of them}. The court is confident that their lessers can do nothing but obey, but the minions are very close to a dramatic response.`,
+    context: `The #court#'s servants and lesser officials are angry with the leadership due to the {revocation of old privileges|curtailment of traditional rights and fees|sacrifices demanded of them}. The #court#'s traditional leadership is confident that their lessers can do nothing but obey, but the minions are very close to a dramatic response.`,
     enemies: [
       { alias: `Ruler who cares nothing for their displeasure` },
       { alias: `Arrogant chief advisor` },
@@ -1097,7 +1097,7 @@ export const backgrounds__court: Record<Court, Background> = {
     complications: [
       `Traditional, but corrupt perquisites were reformed and the minions were deprived of them`,
       `A much loved {official|leader} was killed or deposed`,
-      `Other courts' minions are getting perks or benefits that this court can't afford to give`
+      `The minions of other rival factions are getting {perks|benefits} that this #court# can't afford to give`
     ],
     things: [
       `subverted wealth traditionally due to the minions`,
@@ -1113,7 +1113,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'rival dreams': {
     tag: 'rival dreams',
     type: 'court',
-    context: `The court has big dreams; unfortunately, they're contradictory. Two major factions each have a grand plan for the court's future success, but these plans are incompatible, and the factions are struggling to determine which of them the court will follow. The leader {is incapable of breaking the deadlock|supports one of the plans, but lacks sufficient allies to impose it on the unbelievers}.`,
+    context: `Two major factions each have a grand plan for the #court#'s future success, but these plans are incompatible, and the factions are struggling to determine which of them is the best path forward. The leader {is incapable of breaking the deadlock|supports one of the plans, but lacks sufficient allies to impose it on the unbelievers}.`,
     enemies: [
       { alias: `Charismatic, but wildly impractical dreamer lord` },
       { alias: `Selfish purveyor of a plan that will chiefly aid them` },
@@ -1143,16 +1143,16 @@ export const backgrounds__court: Record<Court, Background> = {
   'rival power': {
     tag: 'rival power',
     type: 'court',
-    context: `The official hierarchy of the court is being challenged by a second power source within the court ({a powerful lord|a charismatic religious faction|an intrusive consul of a superior power|an impatient heir with too many friends}), one strong enough to stymie its official lord. Neither power source can act freely while the other exists, but destroying the rival may bring down the court in the process.`,
+    context: `The official hierarchy of the #court# is being challenged by a second internal power source ({a powerful lord|a charismatic religious faction|an intrusive consul of a superior power|an impatient heir with too many friends}), one strong enough to stymie its official lord. Neither power source can act freely while the other exists, but destroying the rival may bring down the #court# in the process.`,
     enemies: [
       { alias: `Unofficial pretender to the rulership` },
       { alias: `Secretive kingmaker`, age: ['middle age', 'old'] },
       { alias: `Incompetent leader with strong help` }
     ],
     friends: [
-      { alias: `Court member trying to make peace` },
+      { alias: `#Court# member trying to make peace` },
       { alias: `Victim of the rival factions' infighting` },
-      { alias: `Disillusioned former backer of a faction` }
+      { alias: `Disillusioned former backer of the {ruler|rival power}` }
     ],
     complications: [
       `The rival power has a very good, but also very self-interested reason to seek control`,
@@ -1165,7 +1165,7 @@ export const backgrounds__court: Record<Court, Background> = {
       `resources suborned by a faction`
     ],
     places: [
-      `in an unofficial throne room of the rival faction`,
+      `in an unofficial throne room of the rival power`,
       `at court offices split into different groups`,
       `at an unnaturally well-fortified country estate of a faction `
     ]
@@ -1173,7 +1173,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'shining successor': {
     tag: 'shining successor',
     type: 'court',
-    context: `The impending heir to the court is a remarkable figure, gifted with tremendous {aptitudes|personal capability}. Everyone is convinced they will lead the court to new heights of glory, though existing powers may prefer that glory be postponed indefinitely rather than give up their current posts.`,
+    context: `The impending heir to the #court#'s leadership is a remarkable figure, gifted with tremendous {aptitudes|personal capability}. Everyone is convinced they will lead the court to new heights of glory, though existing powers may prefer that glory be postponed indefinitely rather than give up their current posts.`,
     enemies: [
       { alias: `Bitter mother of a rival heir`, gender: 'female', age: ['middle age', 'old'] },
       { alias: `Ruler who refuses to admit their capability` },
@@ -1186,7 +1186,7 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     complications: [
       `The successor is a genius, but has truly horrible traits as well`,
-      `The successor is being backed by a rival court (#rival#) who thinks to use them`,
+      `The successor is being backed by a rival faction (#rival#) who thinks to use them`,
       `The successor's talents are vast, but are precisely the wrong skills for the situation they will face`
     ],
     things: [
@@ -1203,7 +1203,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'splendid seat': {
     tag: 'splendid seat',
     type: 'court',
-    context: `This court operates from a seat of power far beyond the splendor of their peers. This seat {has an ancient enchantment full of magical powers and benefits|is an ancestral fortress famed in song and legend|is built around a source of valuable resources}. Much of the authority of the court derives from their control of this seat.`,
+    context: `They operate from a seat of power far beyond the splendor of their peers. This seat {has an ancient enchantment full of magical powers and benefits|is an ancestral fortress famed in song and legend|is built around a source of valuable resources}. Much of the authority of the #court# derives from their control of this seat.`,
     enemies: [
       { alias: `Ruler who is relying too heavily on the seat's benefits` },
       { alias: `Saboteur seeking to destroy the seat` },
@@ -1214,7 +1214,7 @@ export const backgrounds__court: Record<Court, Background> = {
     ],
     friends: [
       { alias: `Caretaker of the seat's benefits` },
-      { alias: `Court member fascinated with the seat's history and nature` },
+      { alias: `#Court# member fascinated with the seat's history and nature` },
       { alias: `Servant of a line with ancestral ties to the place` }
     ],
     complications: [
@@ -1236,13 +1236,13 @@ export const backgrounds__court: Record<Court, Background> = {
   'ruling regalia': {
     tag: 'ruling regalia',
     type: 'court',
-    context: `The court's rulership rests on an ancient and powerful relic. Quite aside from any practical use that the relic might have, it symbolizes the leader's right of rule, and its loss would throw the court into chaos. It's not unknown for the court's leadership to be suddenly changed when a new rival manages to seize it, whether by guile or brute force.`,
+    context: `The #court#'s leadership depends on an ancient and powerful relic. Quite aside from any practical use that the relic might have, it symbolizes the leader's right of rule, and its loss would throw the court into chaos. It's not unknown for the #court#'s leadership to be suddenly changed when a new rival manages to seize it, whether by guile or brute force.`,
     enemies: [
       {
-        alias: `Master thief in the employ of a rival court (#rival#)`,
+        alias: `Master thief in the employ of a rival faction (#rival#)`,
         age: ['adult', 'middle age']
       },
-      { alias: `Strong-arm court member plotting their chance` },
+      { alias: `Strong-arm #court# member plotting their chance` },
       { alias: `Outside figure who just wants the relics' power` }
     ],
     friends: [
@@ -1263,13 +1263,13 @@ export const backgrounds__court: Record<Court, Background> = {
     places: [
       `at a tightly-guarded repository for the relic`,
       `at a ceremonial procession showing the relic`,
-      `at a court {structure|edifice} powered by the relic`
+      `at an important {structure|edifice} powered by the relic`
     ]
   },
   'runaway rule': {
     tag: 'runaway rule',
     type: 'court',
-    context: `Out of {overwork|sloth|carelessness}, the court has devolved much of its authority on some subsidiary {group|power}, leaving it to do the dirty work of a critical function. That group has seized control of that authority, however, and now bids fair to claim leadership of the court itself using its newfound leverage.`,
+    context: `Out of {overwork|sloth|carelessness}, the #court# has devolved much of its authority on a subsidiary {group|power}, leaving it to do the dirty work of a critical function. That group has seized control of that authority and now bids to claim leadership of the #court# itself using this newfound leverage.`,
     enemies: [
       { alias: `Ambitious leader of the lesser group` },
       { alias: `Indolent and careless ruler` },
@@ -1299,21 +1299,21 @@ export const backgrounds__court: Record<Court, Background> = {
   'sublime skill': {
     tag: 'sublime skill',
     type: 'court',
-    context: `The court is tremendously good at a particular role ({economic|military|religious|political|diplomatic}) that their society finds important due to a {venerable tradition of instruction|magical bloodline}.`,
+    context: `They are tremendously good at a particular role ({economic|military|religious|political|diplomatic}) that their society finds important due to a {venerable tradition of instruction|magical bloodline}.`,
     enemies: [
       { alias: `Ruler who takes the trait much too far in a bad direction` },
       { alias: `Renegade who uses the skill against the court` },
       { alias: `Outside power trying to manipulate the skill for their own benefits` }
     ],
     friends: [
-      { alias: `Unworldly, but extremely talented court member` },
+      { alias: `Unworldly, but extremely talented #court# member` },
       { alias: `Outsider curious about the nature of the skill` },
       { alias: `Friendly rival seeking to test their skill` }
     ],
     complications: [
       `The skill comes at some compensating cost`,
-      `The court is fairly useless for anything, but that skill`,
-      `The court is abusing its skill for its own benefit`
+      `The #court# is fairly useless for anything, but that skill`,
+      `The #court# is abusing its skill for its own benefit`
     ],
     things: [
       `a relic that can confer the skill`,
@@ -1329,7 +1329,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'sudden strength': {
     tag: 'sudden strength',
     type: 'court',
-    context: `A {grand stroke of luck|brilliant plan|feat of sublime diplomacy} have resulted in a great influx of {wealth|support} from outside the court. The group now has access to a newfound strength that may be fleeting, and not all members may have equal access to the benefits. The existing structure of authority is unlikely to be well-equipped to exert this new influence in delicate or well-considered ways.`,
+    context: `A {grand stroke of luck|brilliant plan|feat of sublime diplomacy} have resulted in a great influx of {wealth|support} from outside the #court#. The group now has access to a newfound strength that may be fleeting, and not all members may have equal access to the benefits. The existing structure of authority is unlikely to be well-equipped to exert this new influence in delicate or well-considered ways.`,
     enemies: [
       { alias: `Power-drunk ruler pushing things to excess` },
       { alias: `Desperate rival (#rival#) trying to sabotage the court before it's too late` },
@@ -1359,7 +1359,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'threatened violence': {
     tag: 'threatened violence',
     type: 'court',
-    context: `The shadow of impending death hangs over the court. {The ruler may be ordering capricious executions|A particularly bloody custom may be in full effect|The court's superiors may be hunting for traitors}. The court members are on edge and willing to do desperate things in order to avoid death or direct the killing toward their enemies.`,
+    context: `The shadow of impending death hangs over the them. {The ruler is ordering capricious executions|A particularly bloody custom is in full effect|The #court#'s leaders are hunting for traitors}. Members are on edge and willing to do desperate things in order to avoid death or direct the killing toward their enemies.`,
     enemies: [
       { alias: `Paranoid ruler seeing knives in every shadow` },
       { alias: `Master assassin with a grudge`, age: ['adult', 'middle age'] },
@@ -1389,7 +1389,7 @@ export const backgrounds__court: Record<Court, Background> = {
   'waning wealth': {
     tag: 'waning wealth',
     type: 'court',
-    context: `The court is heading towards poverty, and its members know it. The source of their wealth is under attack by {a rival court (#rival#)|a greedy superior|an outside enemy|sheer misfortune}. If things continue as they are the court will be unable to maintain its place, and its members are contemplating desperate measures to shore up existing holdings or acquire new ones.`,
+    context: `They are heading towards poverty, and its members know it. The source of their wealth is under attack by {a rival faction (#rival#)|a greedy superior|an outside enemy|sheer misfortune}. If things continue as they are the #court# will be unable to maintain its place, and its members are contemplating desperate measures to shore up existing holdings or acquire new ones.`,
     enemies: [
       { alias: `Ruler who's making unreasonable demands for member sacrifices` },
       { alias: `Sinister creditor who demands repayment` },
@@ -1464,3 +1464,26 @@ export const courts__spawn = (loc: Loc) => {
 }
 
 export const courts__rival = (loc: Loc) => window.dice.weightedChoice(valid(loc))
+
+const courts: Record<Thread['court'], string> = {
+  aristocratic: `a {minor|major} aristocratic court:{family|clan|house}`,
+  residential: `{an influential|a respected|a scorned} extended court:{family|clan}`,
+  religious: `a {minor|major} religious court:{sect|cult|temple|order}`,
+  criminal: `a {minor|major} criminal court:{syndicate|cartel|brotherhood|gang}`,
+  mercantile: `a {minor|major} {banking|merchant} court:{house|guild|enterprise}`,
+  bureaucratic: `the bureaucracy that administers this #site#`,
+  royal: `the {royal court:court|court:council of oligarchs} that rules this region`
+}
+
+const hookTemplate = `{You are approached by|{A courier approaches you|You are approached by a courier} with a message from} {a {concerned|desperate} {citizen|local}} named #patron#.`
+export const court__finalize = (params: { thread: Thread; site: string }) => {
+  const { thread, site } = params
+  const hook = window.dice.spin(hookTemplate).replaceAll('#patron#', thread.patron.name)
+  const intro = `${
+    hook.includes('message')
+      ? 'The message speaks of'
+      : `${thread.patron.gender === 'male' ? 'He' : 'She'} begins to tell you about`
+  } ${window.dice.spin(courts[thread.court]).replaceAll('#site#', site)}.`
+
+  thread.text = `${hook} ${intro} ${thread.text}`
+}

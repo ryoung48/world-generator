@@ -1,6 +1,6 @@
 // https://gitlab.com/rayoung788/project-muse/-/blob/0d2b6286b758bbd81851ba2fa5c867a2908ee0f0/src/models/regions/locations/spawn.ts
 
-import { lang__uniqueName } from '../../../npcs/species/languages/words'
+import { lang__uniqueName } from '../../../npcs/languages/words'
 import { Point, point__distance } from '../../../utilities/math/points'
 import { cell__bfsNeighborhood, cell__moveToCoast } from '../../../world/cells'
 import { ExteriorCell } from '../../../world/cells/types'
@@ -157,7 +157,6 @@ export const location__spawn = (params: {
     region: point.cell.region,
     coastal: coastal !== undefined && point.cell.beach,
     hub,
-    actors: [],
     _threads: []
   }
   finalize?.(location)

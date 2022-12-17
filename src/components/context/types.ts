@@ -1,4 +1,3 @@
-import { Actor } from '../../models/npcs/actors/types'
 import { Codex, UpdateCodex } from '../../models/utilities/codex'
 
 export type ViewState = {
@@ -7,7 +6,6 @@ export type ViewState = {
   gps: { x: number; y: number; zoom: number }
   time: number
   borderChange: boolean
-  avatar: number
 }
 
 export type ViewActions =
@@ -17,6 +15,4 @@ export type ViewActions =
       type: 'update codex'
       payload: { target: UpdateCodex['target']; disableZoom?: boolean }
     }
-  | { type: 'tick'; payload: { duration: number } }
   | { type: 'back' }
-  | { type: 'set avatar'; payload: { avatar: Actor } }

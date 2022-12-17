@@ -18,14 +18,14 @@ const catchup = 500
 
 const generator = async (params: {
   seed: string
-  years: number
+  res: number
   update: Dispatch<SetStateAction<number>>
 }) => {
-  const { seed, years, update } = params
+  const { seed, res, update } = params
   window.dice = new Dice(seed)
   update(0)
   await delay(catchup)
-  window.world = world__spawn({ seed, res: 8, template: [...window.dice.choice(shapes)] })
+  window.world = world__spawn({ seed, res, template: [...window.dice.choice(shapes)] })
   profile({ label: 'Continents', f: () => new ContinentShaper().build() })
   update(1)
   await delay(catchup)
@@ -38,7 +38,7 @@ const generator = async (params: {
   profile({ label: 'Roads', f: () => new InfrastructureShaper().build() })
   update(4)
   await delay(catchup)
-  profile({ label: 'Lore', f: () => new LoreShaper(years).build() })
+  profile({ label: 'Lore', f: () => new LoreShaper().build() })
   profile({ label: 'Canvas', f: () => new DisplayShaper().build() })
   update(5)
   await delay(catchup)
@@ -47,7 +47,7 @@ const generator = async (params: {
 
 export function Landing() {
   const [seed, setSeed] = useState(generateId())
-  const [years, setYears] = useState(100)
+  const [res, setRes] = useState(8)
   const [active, setActive] = useState(-1)
   const { dispatch } = view__context()
   const generating = active >= 0
@@ -66,10 +66,10 @@ export function Landing() {
           </Grid>
           <Grid item xs={4}>
             <TextField
-              value={years}
+              value={res}
               disabled={generating}
-              onChange={event => setYears(parseInt(event.currentTarget.value))}
-              label='years'
+              onChange={event => setRes(parseInt(event.currentTarget.value))}
+              label='resolution'
             ></TextField>
           </Grid>
           <Grid item xs={12}>
@@ -78,7 +78,7 @@ export function Landing() {
               sx={{ width: '100%' }}
               disabled={generating}
               onClick={async () => {
-                await generator({ seed, years, update: setActive })
+                await generator({ seed, res, update: setActive })
                 dispatch({ type: 'init', payload: { id: seed } })
               }}
             >

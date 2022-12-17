@@ -1,9 +1,9 @@
 import { range } from 'd3'
 
-import { Gender, npc__randomGender } from '../npcs/actors/stats/appearance/gender'
-import { lang__first } from '../npcs/species/languages/words/actors'
+import { Gender, npc__randomGender } from '../npcs/gender'
+import { lang__first } from '../npcs/languages/words/actors'
 import { location__isSettlement } from '../regions/locations'
-import { location__demographics } from '../regions/locations/actors/demographics'
+import { location__demographics } from '../regions/locations/demographics'
 import { location__templates } from '../regions/locations/spawn/taxonomy'
 import { location__isCity, location__isTown } from '../regions/locations/spawn/taxonomy/settlements'
 import { Loc } from '../regions/locations/types'

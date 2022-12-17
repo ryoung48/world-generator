@@ -1,14 +1,13 @@
 import { range } from 'd3'
 
-import { culture__culturize } from '../../../../npcs/species/cultures'
+import { culture__culturize } from '../../../../npcs/cultures'
 import { region__population } from '../../../../regions'
-import { DevelopmentRank } from '../../../../regions/development'
-import { region__optimalWealth } from '../../../../regions/diplomacy/status'
 import { location__moveToCoast } from '../../../../regions/locations/spawn'
 import { location__setPopulation } from '../../../../regions/locations/spawn/taxonomy/settlements'
 import { province__cell, province__hub } from '../../../../regions/provinces'
 import { province__spawn } from '../../../../regions/provinces/spawn'
 import { Province } from '../../../../regions/provinces/types'
+import { Region } from '../../../../regions/types'
 import { point__distance } from '../../../../utilities/math/points'
 import { world__landFeatures } from '../../..'
 import { cell__isHub, cell__neighbors, cell__province } from '../../../cells'
@@ -16,7 +15,7 @@ import { ExteriorCell } from '../../../cells/types'
 import { climates } from '../../../climate/types'
 import { Shaper } from '..'
 
-const developmentPopulation = (dev: DevelopmentRank) => {
+const developmentPopulation = (dev: Region['development']) => {
   if (dev === 'civilized') return 1
   if (dev === 'frontier') return 0.75
   if (dev === 'tribal') return 0.5
@@ -128,13 +127,10 @@ const claimCell = (cell: ExteriorCell, city: Province) => {
   city.land += cell.isWater ? 0 : 1
   city.mountains += cell.isMountains ? 1 : 0
   if (!cell.isWater) {
-    if (!city.lands[cell.landmark]) city.lands[cell.landmark] = 0
-    city.lands[cell.landmark] += 1
+    if (!city.islands[cell.landmark]) city.islands[cell.landmark] = 0
+    city.islands[cell.landmark] += 1
   } else if (window.world.landmarks[cell.landmark].type === 'ocean') {
     city.ocean += cell.isWater ? 1 : 0
-  } else {
-    if (!city.lakes[cell.landmark]) city.lakes[cell.landmark] = 0
-    city.lakes[cell.landmark] += 1
   }
 }
 
@@ -196,9 +192,7 @@ const majorCities = (params: {
   Object.values(window.world.regions).forEach(region => {
     provinces[region.idx] = []
     // get all the towns in the region
-    const towns = window.world.provinces.filter(
-      city => city.currNation === region.idx && !city.capital
-    )
+    const towns = window.world.provinces.filter(city => city.nation === region.idx && !city.capital)
     // sort towns by score
     const cells = towns.map(town => province__cell(town)).sort((a, b) => b.score - a.score)
     // spread cities apart
@@ -245,12 +239,6 @@ const demographics = (provinces: Record<number, Province[]>) => {
       // make each city's population some fraction of the previous city's population
       pop = Math.round(pop * window.dice.norm(0.8, 0.05))
     })
-    // settlement wealth
-    window.dice.shuffle(region.provinces.map(t => window.world.provinces[t])).forEach(c => {
-      c.wealth = (30 * province__hub(c).population + c.population * 0.1) / 3000
-    })
-    region.maxWealth = region__optimalWealth(region)
-    region.wealth = region.maxWealth
   })
 }
 

@@ -1,4 +1,4 @@
-import { directions, Point } from '../../utilities/math/points'
+import { Directions, Point } from '../../utilities/math/points'
 
 export interface Cell extends Point {
   idx: number
@@ -12,7 +12,7 @@ export interface ExteriorCell extends Cell {
   coastalEdges?: [Point, Point][]
   isCoast?: boolean
   waterSources?: Set<number>
-  oceanCurrent?: directions
+  oceanCurrent?: Directions
   // mountains
   isMountains?: boolean
   mountain?: number

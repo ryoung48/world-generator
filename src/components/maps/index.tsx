@@ -2,7 +2,7 @@ import { Grid } from '@mui/material'
 import { pointer, select, zoom, ZoomTransform } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
-import { region__neighbors } from '../../models/regions'
+import { region__domains, region__neighbors } from '../../models/regions'
 import { Loc } from '../../models/regions/locations/types'
 import { province__hub, province__neighbors } from '../../models/regions/provinces'
 import { point__distance } from '../../models/utilities/math/points'
@@ -12,7 +12,7 @@ import { view__context } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
 import { map__drawRegions } from './canvas/borders'
-import { map__drawLakes, map__drawOceans } from './canvas/coasts'
+import { map__drawOceans } from './canvas/coasts'
 import { map__breakpoints } from './canvas/draw_styles'
 import {
   map__drawAvatarLocation,
@@ -60,17 +60,15 @@ const paint = (params: {
 }) => {
   const { scale, cachedImages, loc, ctx } = params
   const province = window.world.provinces[loc.province]
-  const nation = window.world.regions[province.currNation]
-  const borders = region__neighbors(nation).map(r => window.world.regions[r])
+  const nation = window.world.regions[province.nation]
+  const borders = region__neighbors(nation)
   const nations = [nation].concat(borders)
   const nationSet = new Set(nations.map(n => n.idx))
   const expanded = new Set(
     nations
       .map(r =>
-        r.regions
-          .map(p => {
-            const province = window.world.provinces[p]
-            const region = window.world.regions[province.region]
+        region__domains(r)
+          .map(region => {
             return [region.idx, ...region.borders]
           })
           .flat()
@@ -79,7 +77,6 @@ const paint = (params: {
   )
   const lands = map__drawOceans({ ctx, scale, nations })
   map__drawRegions({ ctx, scale, nations })
-  map__drawLakes({ ctx, scale, nations })
   map__drawRoads({ ctx, scale, nationSet })
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
   map__drawAvatarLocation({ ctx, loc, scale })

@@ -4,16 +4,16 @@ import { polygonCentroid } from 'd3-polygon'
 import { degrees, distance } from '.'
 import { dayMS } from './time'
 
-export type directions = 'N' | 'S' | 'E' | 'W'
+export type Directions = 'N' | 'S' | 'E' | 'W'
 
-export const direction__opposite: Record<directions, directions> = {
+export const direction__opposite: Record<Directions, Directions> = {
   N: 'S',
   S: 'N',
   E: 'W',
   W: 'E'
 }
 
-export const direction__random = () => window.dice.choice<directions>(['N', 'S', 'E', 'W'])
+export const direction__random = () => window.dice.choice<Directions>(['N', 'S', 'E', 'W'])
 
 export interface Point {
   x: number
@@ -34,7 +34,7 @@ export const point__degrees = (p1: Point, p2: Point) => {
   return degrees(rads < 0 ? Math.abs(rads) : 2 * Math.PI - rads)
 }
 
-export const point__direction = (p1: Point, p2: Point): directions => {
+export const point__direction = (p1: Point, p2: Point): Directions => {
   const deg = point__degrees(p1, p2)
   if (deg > 45 && deg <= 135) return 'N'
   else if (deg > 135 && deg <= 225) return 'W'

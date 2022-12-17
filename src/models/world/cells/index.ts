@@ -70,7 +70,7 @@ export const cell__neighbors = (cell: ExteriorCell) => {
   return cell.n.map(n => window.world.cells[n])
 }
 export const cell__province = (cell: ExteriorCell) => window.world.provinces[cell.province]
-export const cell__nation = (cell: ExteriorCell) => cell__province(cell).currNation
+export const cell__nation = (cell: ExteriorCell) => cell__province(cell).nation
 export const cell__isNationBorder = (cell: ExteriorCell) => {
   const nation = cell__nation(cell)
   return cell__neighbors(cell).some(n => {
