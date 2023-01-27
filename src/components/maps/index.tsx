@@ -3,9 +3,7 @@ import { pointer, select, zoom, ZoomTransform } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
 import { region__domains, region__neighbors } from '../../models/regions'
-import { Loc } from '../../models/regions/locations/types'
-import { province__hub, province__neighbors } from '../../models/regions/provinces'
-import { point__distance } from '../../models/utilities/math/points'
+import { Province } from '../../models/regions/provinces/types'
 import { delay } from '../../models/utilities/math/time'
 import { cell__nation } from '../../models/world/cells'
 import { view__context } from '../context'
@@ -16,12 +14,10 @@ import { map__drawOceans } from './canvas/coasts'
 import { map__breakpoints } from './canvas/draw_styles'
 import {
   map__drawAvatarLocation,
-  map__drawLocations,
   map__drawLocationsRegional,
   map__drawRoads
 } from './canvas/infrastructure'
 import { iconPath } from './icons'
-import { location__icons } from './icons/locations'
 import { map__drawTerrainIcons, terrain__icons } from './icons/terrain'
 
 type CachedImages = Record<string, HTMLImageElement>
@@ -41,10 +37,6 @@ const loadImages = async () =>
       ...Object.entries(terrain__icons).map(async ([k, v]) => ({
         img: await loadImage(iconPath + v.path),
         index: k
-      })),
-      ...Object.entries(location__icons).map(async ([k, v]) => ({
-        img: await loadImage(iconPath + v.path),
-        index: k
       }))
     ])
   ).reduce((dict: Record<string, HTMLImageElement>, { index, img }) => {
@@ -55,11 +47,10 @@ const loadImages = async () =>
 const paint = (params: {
   scale: number
   cachedImages: CachedImages
-  loc: Loc
+  province: Province
   ctx: CanvasRenderingContext2D
 }) => {
-  const { scale, cachedImages, loc, ctx } = params
-  const province = window.world.provinces[loc.province]
+  const { scale, cachedImages, province, ctx } = params
   const nation = window.world.regions[province.nation]
   const borders = region__neighbors(nation)
   const nations = [nation].concat(borders)
@@ -79,9 +70,8 @@ const paint = (params: {
   map__drawRegions({ ctx, scale, nations })
   map__drawRoads({ ctx, scale, nationSet })
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
-  map__drawAvatarLocation({ ctx, loc, scale })
+  map__drawAvatarLocation({ ctx, loc: province.hub, scale })
   map__drawLocationsRegional({ ctx, scale, nationSet, cachedImages })
-  map__drawLocations({ ctx, scale, province, cachedImages })
 }
 
 export function WorldMap() {
@@ -102,31 +92,15 @@ export function WorldMap() {
     const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
     const poly = window.world.cells[cell]
     const province = window.world.provinces[poly.province]
-    const provinces = [province].concat(province__neighbors(province))
-    const prospects = provinces
-      .map(prov => prov.locations.map(l => window.world.locations[l]))
-      .flat()
-    const hub = province__hub(province)
     const nation = cell__nation(poly)
     const localScale = transform.scale > map__breakpoints.regional
     const globalScale = transform.scale <= map__breakpoints.global
-    const local = (state.codex.current === 'location' && !globalScale) || localScale
-    const { loc } =
-      state.codex.current === 'location' && localScale
-        ? prospects.reduce(
-            (closest, curr) => {
-              const dist = point__distance({ points: [curr, { x: cursor.x, y: cursor.y }] })
-              return dist < closest.dist ? { loc: curr, dist } : closest
-            },
-            { loc: undefined, dist: Infinity }
-          )
-        : { loc: hub }
-
+    const local = (state.codex.current === 'province' && !globalScale) || localScale
     const current = local ? 'location' : 'nation'
     dispatch({
       type: 'update codex',
       payload: {
-        target: current === 'location' ? loc : window.world.regions[nation],
+        target: current === 'location' ? province : window.world.regions[nation],
         disableZoom: true
       }
     })
@@ -163,13 +137,12 @@ export function WorldMap() {
       // initial zoom
       const nation = window.world.regions[state.codex.nation]
       const capital = window.world.provinces[nation.capital]
-      const hub = province__hub(capital)
       dispatch({
         type: 'update gps',
         payload: {
           gps: {
-            y: hub.y,
-            x: hub.x,
+            y: capital.hub.y,
+            x: capital.hub.x,
             zoom: 10
           }
         }
@@ -198,11 +171,11 @@ export function WorldMap() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.translate(transform.dx, transform.dy)
       ctx.scale(transform.scale, transform.scale)
-      const loc = window.world.locations[state.codex.location]
+      const province = window.world.provinces[state.codex.province]
       paint({
         scale: transform.scale,
         cachedImages,
-        loc,
+        province,
         ctx
       })
       ctx.restore()

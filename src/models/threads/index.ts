@@ -1,115 +1,162 @@
-import { range } from 'd3'
+import { npc__spawn } from '../npcs'
+import { Province } from '../regions/provinces/types'
+import { background__spawn, background__text } from './backgrounds'
+import { Background } from './backgrounds/types'
+import { complication__spawn } from './complications'
+import { goal__spawn } from './goals'
+import { stage__current, stage__placeholder, stage__resolve, stage__spawn } from './stages'
+import { task__definition } from './tasks'
+import { Thread } from './types'
 
-import { Gender, npc__randomGender } from '../npcs/gender'
-import { lang__first } from '../npcs/languages/words/actors'
-import { location__isSettlement } from '../regions/locations'
-import { location__demographics } from '../regions/locations/demographics'
-import { location__templates } from '../regions/locations/spawn/taxonomy'
-import { location__isCity, location__isTown } from '../regions/locations/spawn/taxonomy/settlements'
-import { Loc } from '../regions/locations/types'
-import { decorateText } from '../utilities/text/decoration'
-import { location__weather } from '../world/climate/weather'
-import { backgrounds__community } from './communities'
-import { backgrounds__court, courts__rival, courts__spawn } from './courts'
-import { backgrounds__faith } from './faith'
-import { backgrounds__ruin } from './ruins'
-import { Background, BackgroundActor, BackgroundTag, Thread, ThreadActor } from './types'
-import { backgrounds__wilderness } from './wilderness'
-
-const thread__backgrounds: Record<BackgroundTag, Background> = {
-  ...backgrounds__community,
-  ...backgrounds__court,
-  ...backgrounds__faith,
-  ...backgrounds__ruin,
-  ...backgrounds__wilderness
-}
-
-const backgrounds = Object.values(thread__backgrounds)
-
-const spin = (params: { text: string; loc: Loc; gender?: Gender }) => {
-  const { text, loc, gender } = params
-  return window.dice
-    .spin(text)
-    .replaceAll('#site#', location__templates[loc.type].alias ?? loc.type)
-    .replaceAll('#rival#', courts__rival(loc))
-    .replaceAll('#possessive#', gender === 'female' ? 'her' : 'his')
-    .replaceAll('#child#', gender === 'female' ? 'daughter' : 'son')
-}
-
-const spawnActor = (params: { loc: Loc; actor: BackgroundActor }): ThreadActor => {
-  const { loc, actor } = params
-  const { common, native, foreign } = location__demographics(loc)
-  const { language, idx: culture } =
-    window.world.cultures[
-      window.dice.weightedChoice(
-        actor.culture === 'native' ? native : actor.culture === 'foreign' ? foreign : common
-      )
-    ]
-  const gender = actor.gender ?? npc__randomGender()
-  const alias = spin({ text: actor.alias, loc, gender })
-  return {
-    alias,
-    gender,
-    name: lang__first(language, gender),
-    culture,
-    age: actor.age
-      ? window.dice.choice(actor.age)
-      : window.dice.weightedChoice([
-          { v: 'young adult', w: 0.15 },
-          { v: 'adult', w: 0.5 },
-          { v: 'middle age', w: 0.35 }
-        ]),
-    monstrous: actor.monstrous
-  }
-}
-
-const settlementTags: Background['type'][] = ['community', 'court', 'faith']
-
-const thread__spawn = (loc: Loc) => {
-  const rural = loc.population < location__templates['large town'].population[0]
-  const { capital: regional } = window.world.provinces[loc.province]
-  const { civilized } = window.world.regions[loc.region]
-  const court = courts__spawn(loc)
-  const current = loc._threads.map(({ tag }) => tag)
-  const settlement = location__isSettlement(loc)
-  const candidates = backgrounds
-    .filter(background => settlementTags.includes(background.type) === settlement)
-    .map(({ tag, constraints, type }) => {
-      let weight = current.includes(tag) ? 0 : 1
-      weight *= constraints?.conflicts?.some(conflict => current.includes(conflict)) ? 0 : 1
-      weight *= constraints?.coastal && !loc.coastal ? 0 : 1
-      weight *= constraints?.regional && !regional ? 0 : 2
-      weight *= constraints?.rural && !rural ? 0 : 1
-      weight *= constraints?.urban && rural ? 0 : 1
-      weight *= constraints?.tribal && civilized ? 0 : 1
-      weight *= rural && type === 'court' ? 0.5 : 1
-      weight *= !court && type === 'court' ? 0 : 1
-      return { v: tag, w: weight }
-    })
-  const background = thread__backgrounds[window.dice.weightedChoice(candidates)]
-  const patron = window.dice.choice(background.friends)
-  const antagonist = window.dice.choice(background.enemies)
-  const { season, time, heat, conditions, variance } = location__weather(loc)
+export const thread__spawn = (params: {
+  loc: Province
+  parent?: Thread
+  background: Background
+}) => {
+  const { loc, parent, background } = params
+  const prev = parent?.goal
+  const patron = npc__spawn({ loc, context: { background, role: 'patron' } })
+  const rival = npc__spawn({ loc, context: { background, ref: patron, role: 'rival' } })
   const thread: Thread = {
-    tag: background.tag,
+    idx: window.world.threads.length,
+    status: 'perfection',
     difficulty: window.dice.choice(['deadly', 'hard', 'medium', 'easy']),
-    category: `${background.type}${background.type === 'court' ? ` (${courts__spawn(loc)})` : ''}`,
-    text: spin({ text: background.context, loc }),
-    complication: spin({ text: window.dice.choice(background.complications), loc }),
-    patron: spawnActor({ loc, actor: patron }),
-    antagonist: spawnActor({ loc, actor: antagonist }),
-    thing: spin({ text: window.dice.choice(background.things), loc }),
-    place: spin({ text: window.dice.choice(background.places), loc }),
-    weather: `${decorateText({
-      label: heat.desc,
-      tooltip: `${heat.degrees.toFixed(0)}°F`
-    })}${
-      variance === 'normal'
-        ? ''
-        : decorateText({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
-    }, ${season}, ${time}, ${conditions}`
+    complexity: window.dice.weightedChoice([
+      { w: 64, v: () => window.dice.randint(3, 7) },
+      { w: 32, v: () => window.dice.randint(8, 12) },
+      { w: 16, v: () => window.dice.randint(13, 17) },
+      { w: 8, v: () => window.dice.randint(18, 22) },
+      { w: 4, v: () => window.dice.randint(23, 27) },
+      { w: 2, v: () => window.dice.randint(28, 32) },
+      { w: 1, v: () => window.dice.randint(33, 37) }
+    ])(),
+    depth: 0,
+    progress: 0,
+    failures: 0,
+    clues: 0,
+    location: loc.idx,
+    origin: loc.idx,
+    stages: [],
+    parent: parent?.idx,
+    actors: [
+      { idx: patron.idx, tag: 'patron' },
+      { idx: rival.idx, tag: 'rival' }
+    ],
+    background: { tag: background, text: background__text({ background, loc }) }
   }
-  loc._threads.push(thread)
+  thread.goal = goal__spawn({ thread, blacklist: [prev?.tag] })
+  if (window.dice.random < 0.1) thread.complication = complication__spawn({ thread, type: 'goal' })
+  window.world.threads.push(thread)
+  stage__spawn({ thread })
+  return thread
+}
+
+const thread__spawnChild = (params: { thread: Thread }) => {
+  const { thread } = params
+  const stage = stage__current(thread)
+  if (stage.child !== stage__placeholder) return false
+  const loc = window.world.provinces[thread.location]
+  const child = thread__spawn({
+    loc,
+    parent: thread,
+    background: thread.background.tag
+  })
+  child.depth = thread.depth + 1
+  stage.child = child.idx
+  return true
+}
+
+const thread__unresolved = (thread: Thread) => {
+  const { failures, complexity, progress } = thread
+  return failures < complexity && progress < complexity
+}
+
+export const thread__abandoned = (thread: Thread) => {
+  const { closed } = thread
+  return thread__unresolved(thread) && closed
+}
+
+export const thread__ongoing = (thread: Thread) => {
+  const { closed } = thread
+  return thread__unresolved(thread) && !closed
+}
+
+export const thread__child = (thread: Thread) => {
+  const current = stage__current(thread)
+  return window.world.threads[current?.child]
+}
+
+export const thread__paused = (thread: Thread) => {
+  const child = thread__child(thread)
+  return child && thread__ongoing(child)
+}
+
+const thread__transition = (thread: Thread) => {
+  const location = window.world.provinces[thread.location]
+  if (thread.stages.length === 0 || window.dice.random > 0.1) return undefined
+  const transition = window.dice.choice(location.neighbors)
+  return { src: location.idx, dst: transition }
+}
+
+export const thread__advance = (params: { thread: Thread }) => {
+  const { thread } = params
+  const current = stage__current(thread)
+  const child = thread__child(thread)
+  // determine the result of the task
+  current.status = child?.status ?? stage__resolve()
+  // determine the resultant effect on the entire thread
+  if (current.status === 'pyrrhic') thread.failures += 1
+  else if (current.status === 'failure') thread.failures += 2
+  else {
+    thread.progress += current.status === 'success' ? 1 : 2
+    if (task__definition[current.task].type === 'investigation') thread.clues += 1
+  }
+  const ended = thread.progress >= thread.complexity
+  if (ended && task__definition[current.task].type !== 'action')
+    thread.progress = thread.complexity - 1
+  const leftover = thread.progress - thread.complexity
+  if (leftover > 0) {
+    thread.failures = Math.min(thread.failures - leftover, 0)
+    thread.progress -= leftover
+  }
+  // spawn the next task (if applicable)
+  if (thread__ongoing(thread)) {
+    const transition = thread__transition(thread)
+    if (transition) thread.location = transition.dst
+    stage__spawn({ thread, transition })
+    thread__spawnChild({ thread })
+  }
+  // update the status of the entire thread
+  const { failures, complexity } = thread
+  const grade = failures / complexity
+  thread.status =
+    grade < 0.1 ? 'perfection' : grade < 0.6 ? 'success' : grade < 1 ? 'pyrrhic' : 'failure'
+}
+
+export const thread__close = (params: { thread: Thread }) => {
+  const { thread } = params
+  thread.closed = true
+  if (thread__abandoned(thread)) {
+    thread.status = 'failure'
+    // close all child threads recursively
+    const child = thread__child(thread)
+    if (child && !child.closed) thread__close({ thread: child })
+  }
+  // update parent thread if applicable
+  const parent = window.world.threads[thread.parent]
+  if (parent && !parent.closed) thread__advance({ thread: parent })
+}
+
+export const thread__complexity = (thread: Thread) => {
+  const { complexity } = thread
+  let desc = 'epic'
+  if (complexity <= 5) desc = 'simple'
+  else if (complexity <= 10) desc = 'standard'
+  else if (complexity <= 15) desc = 'involved'
+  else if (complexity <= 20) desc = 'elaborate'
+  else if (complexity <= 25) desc = 'intricate'
+  else if (complexity <= 30) desc = 'byzantine'
+  return desc
 }
 
 /**
@@ -119,10 +166,12 @@ const thread__spawn = (loc: Loc) => {
  * @param params.avatar - PC character used to estimate thread difficulty
  * @returns list of threads for the location
  */
-export const location__threads = (loc: Loc) => {
-  const target = location__isCity(loc) ? 3 : location__isTown(loc) ? 2 : 1
-  if (loc._threads.length < target) {
-    range(target).forEach(() => thread__spawn(loc))
+export const location__threads = (loc: Province) => {
+  const curr = window.world.threads.filter(thread => thread.origin === loc.idx)
+  background__spawn(loc)
+  if (curr.length < loc.backgrounds.length) {
+    loc.backgrounds.forEach(background => thread__spawn({ loc, background }))
+    return true
   }
-  return loc._threads
+  return false
 }

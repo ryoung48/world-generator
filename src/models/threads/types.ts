@@ -1,62 +1,43 @@
-import { LifePhase } from '../npcs/age'
-import { Gender } from '../npcs/gender'
-import { Community } from './communities/types'
-import { Court, CourtGroup } from './courts/types'
+import { NPC } from '../npcs/types'
+import { Background } from './backgrounds/types'
 import { difficulty } from './difficulty'
-import { Faith } from './faith/types'
-import { Ruins } from './ruins/types'
-import { Wilderness } from './wilderness/types'
+import { Goal } from './goals/types'
+import { Stage } from './stages/types'
 
-export interface ThreadActor {
-  alias: string
-  name: string
-  culture: number
-  age?: LifePhase
-  gender?: Gender
-  monstrous?: boolean
-}
-
-export interface Thread {
-  tag: BackgroundTag
-  weather: string
-  text: string
-  complication: string
-  category: string
-  patron: ThreadActor
-  antagonist: ThreadActor
-  place: string
-  thing: string
-  court?: CourtGroup
+export interface Thread extends Omit<Stage, 'child' | 'task' | 'text' | 'setting'> {
+  // thread index (window.world.threads)
+  idx?: number
+  // relative difficulty
   difficulty: difficulty
+  // goal that defines the thread
+  goal?: { tag: Goal['tag']; text: string }
+  // location where the thread takes place
+  location: number
+  origin: number
+  // how deep is the ancestral tree? (max 3)
+  depth: number
+  // how many tasks must be completed to achieve the goal?
+  complexity: number
+  // how many tasks have been completed?
+  progress: number
+  // how many tasks have failed?
+  failures: number
+  // successful investigations
+  clues: number
+  // is this thread closed?
+  closed?: boolean
+  // list of child tasks
+  stages: Stage[]
+  // parent thread
+  parent?: number
+  // actors
+  actors: { idx: number; tag: 'patron' | 'rival' }[]
+  // background
+  background: { tag: Background; text: string }
 }
 
-export type BackgroundTag = Community | Court | Faith | Ruins | Wilderness
-
-export type BackgroundActor = {
-  alias: string
-  culture?: 'foreign' | 'native'
-  monstrous?: boolean
-  age?: LifePhase[]
-  relative?: boolean
-  gender?: Gender
-}
-
-export interface Background {
-  tag: BackgroundTag
-  type: 'community' | 'court' | 'faith' | 'ruins' | 'wilderness'
-  context: string
-  hostiles?: {}
-  enemies: BackgroundActor[]
-  friends: BackgroundActor[]
-  complications: string[]
-  things: string[]
-  places: string[]
-  constraints?: {
-    conflicts?: BackgroundTag[]
-    rural?: boolean
-    urban?: boolean
-    regional?: boolean
-    coastal?: boolean
-    tribal?: true
-  }
+export interface ThreadContext {
+  ref?: NPC
+  role: Thread['actors'][number]['tag']
+  background: Background
 }

@@ -1,7 +1,7 @@
 import { Box } from '@mui/material'
 
-import { LocationView } from '../codex/locations'
 import { NationView } from '../codex/nations'
+import { ProvinceView } from '../codex/provinces'
 import { view__context } from '../context'
 
 export function Codex() {
@@ -12,8 +12,8 @@ export function Codex() {
       <Box component='div' hidden={current !== 'nation'}>
         <NationView></NationView>
       </Box>
-      <Box component='div' hidden={current !== 'location'}>
-        <LocationView></LocationView>
+      <Box component='div' hidden={current !== 'province'}>
+        <ProvinceView></ProvinceView>
       </Box>
     </div>
   )

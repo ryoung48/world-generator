@@ -1,6 +1,6 @@
 import {
   culture__coastal,
-  culture__flavorize,
+  culture__finalize,
   culture__regions,
   culture__spawn,
   culture__subCulture
@@ -130,10 +130,10 @@ const assignDevelopment = () => {
   const allCultures = Object.values(cultures)
   const civil = allCultures.filter(c => window.world.regions[c.origin].civilized)
   const civilSpecies = speciesDist(civil.length, false)
-  civil.forEach(culture => culture__flavorize(culture, civilSpecies.pop()))
+  civil.forEach(culture => culture__finalize(culture, civilSpecies.pop()))
   const nonCivil = allCultures.filter(c => !window.world.regions[c.origin].civilized)
   const species = speciesDist(nonCivil.length)
-  nonCivil.forEach(culture => culture__flavorize(culture, species.pop()))
+  nonCivil.forEach(culture => culture__finalize(culture, species.pop()))
 }
 
 export const culturalSpheres = () => {

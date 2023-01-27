@@ -1,5 +1,5 @@
 import { css } from '@emotion/css'
-import { Tooltip } from '@mui/material'
+import Tippy from '@tippyjs/react'
 import { CSSProperties } from 'react'
 
 import { entity__tags, TaggedEntity } from '../../../../models/utilities/codex/entities'
@@ -16,11 +16,7 @@ const style__links = css`
     }
   }
 `
-/**
- * @component
- * @param props - test
- * @returns
- */
+
 export function StyledText(props: { text: string; color?: string }) {
   const { dispatch } = view__context()
   const { text } = props
@@ -29,7 +25,7 @@ export function StyledText(props: { text: string; color?: string }) {
     <span className={style__links}>
       {text.split(/@(.+?)@/g).map((text, j) => {
         if (text.match(/.+|.+|.+/)) {
-          const [label, i, cat, tooltip, color, italics, bold, underline] = text.split('|')
+          const [label, i, cat, tooltip, color, italics, bold, underline] = text.split('##')
           const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
           const onClick = entity__tags.includes(tag)
@@ -56,7 +52,17 @@ export function StyledText(props: { text: string; color?: string }) {
           ) : (
             <span style={style}>{label}</span>
           )
-          return <span key={j}>{tooltip ? <Tooltip title={tooltip}>{link}</Tooltip> : link}</span>
+          return (
+            <span key={j}>
+              {tooltip ? (
+                <Tippy arrow={false} animation='scale' content={tooltip}>
+                  {link}
+                </Tippy>
+              ) : (
+                link
+              )}
+            </span>
+          )
         }
         return (
           <span key={j} style={{ color: baseColor }}>

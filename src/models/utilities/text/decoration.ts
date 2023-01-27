@@ -23,6 +23,6 @@ export const decorateText = ({
   bold = false,
   underlineColor = ''
 }: CodexLinkParams) =>
-  `@${label ?? link.name}|${link?.idx ?? ''}|${link?.tag ?? ''}|${cleanDecoration(
+  `@${label ?? link.name}##${link?.idx ?? ''}##${link?.tag ?? ''}##${cleanDecoration(
     tooltip
-  )}|${color}|${italics}|${bold}|${underlineColor}@`
+  )}##${color}##${italics}##${bold}##${underlineColor}@`

@@ -101,9 +101,8 @@ export const cell__bfsNeighborhood = (params: {
 }
 
 export const cell__isHub = (cell: ExteriorCell) => {
-  const provinces = window.world.provinces[cell.province]
-  const hub = window.world.locations[provinces?.hub]
-  return hub?.cell === cell.idx
+  const province = window.world.provinces[cell.province]
+  return province?.hub?.cell === cell.idx
 }
 
 export const cell__moveToCoast = (params: { cell: ExteriorCell; distance: number }) => {

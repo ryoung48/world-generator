@@ -1,4 +1,4 @@
-import { Gender } from '../../gender'
+import { Gender } from '../../types'
 import { Language } from '../types'
 import { lang__word } from '.'
 

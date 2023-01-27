@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { WeightedDistribution } from '../../utilities/math'
-import { Gender } from '../gender'
+import { Gender } from '../types'
 
 export const enum PhonemeCatalog {
   START_CONSONANT = 'B',

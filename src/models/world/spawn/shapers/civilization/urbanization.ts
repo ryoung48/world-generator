@@ -2,10 +2,9 @@ import { range } from 'd3'
 
 import { culture__culturize } from '../../../../npcs/cultures'
 import { region__population } from '../../../../regions'
-import { location__moveToCoast } from '../../../../regions/locations/spawn'
-import { location__setPopulation } from '../../../../regions/locations/spawn/taxonomy/settlements'
-import { province__cell, province__hub } from '../../../../regions/provinces'
-import { province__spawn } from '../../../../regions/provinces/spawn'
+import { hub__moveToCoast, hub__setPopulation } from '../../../../regions/hubs'
+import { Hub } from '../../../../regions/hubs/types'
+import { province__cell, province__geography, province__spawn } from '../../../../regions/provinces'
 import { Province } from '../../../../regions/provinces/types'
 import { Region } from '../../../../regions/types'
 import { point__distance } from '../../../../utilities/math/points'
@@ -22,15 +21,14 @@ const developmentPopulation = (dev: Region['development']) => {
   return 0.25
 }
 
-const province__moveHub = (hub: number, cell: ExteriorCell) => {
-  const location = window.world.locations[hub]
-  location.cell = cell.idx
-  const oldCell = window.world.cells[location.cell]
+const province__moveHub = (hub: Hub, cell: ExteriorCell) => {
+  const oldCell = window.world.cells[hub.cell]
   const oldProvinceIdx = oldCell.province
+  hub.cell = cell.idx
   oldCell.province = cell.province
   cell.province = oldProvinceIdx
-  location.coastal = true
-  location__moveToCoast(location)
+  hub.coastal = true
+  hub__moveToCoast(hub)
 }
 
 const placeSettlements = () => {
@@ -139,7 +137,7 @@ const assignProvinces = (provinceNeighbors: Record<number, Set<number>>) => {
   // each city will be responsible for a "province" (collections of cells)
   // fill queue with all settlements to start
   const queue = window.world.provinces.map(province => {
-    const { cell } = province__hub(province)
+    const { cell } = province.hub
     claimCell(window.world.cells[cell], province)
     provinceNeighbors[province.idx] = new Set()
     return window.world.cells[cell]
@@ -230,12 +228,12 @@ const demographics = (provinces: Record<number, Province[]>) => {
     const capitalMod = window.dice.uniform(0.02, 0.03) - (region.civilized ? 0 : 0.005)
     let pop = region__population(region) * capitalMod
     if (region.civilized && pop < 10000) pop = window.dice.uniform(10000, 15000)
-    location__setPopulation(province__hub(capital), pop)
+    hub__setPopulation(capital.hub, pop)
     // set the next largest city
     pop = Math.round(pop * window.dice.norm(0.5, 0.1))
     major.concat(towns).forEach(province => {
       const urban = pop > 300 ? pop : window.dice.randint(50, 300)
-      location__setPopulation(province__hub(province), urban)
+      hub__setPopulation(province.hub, urban)
       // make each city's population some fraction of the previous city's population
       pop = Math.round(pop * window.dice.norm(0.8, 0.05))
     })
@@ -250,4 +248,5 @@ export const urbanization = () => {
   assignProvinces(provinceNeighbors)
   majorCities({ provinceNeighbors: provinceNeighbors, provinces })
   demographics(provinces)
+  window.world.provinces.forEach(province__geography)
 }

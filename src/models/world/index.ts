@@ -1,9 +1,5 @@
 import { lang__uniqueName } from '../npcs/languages/words'
-import {
-  lang__continent,
-  lang__island,
-  lang__mountain
-} from '../npcs/languages/words/places'
+import { lang__continent, lang__island, lang__mountain } from '../npcs/languages/words/places'
 import { degrees, radians, scale } from '../utilities/math'
 import { Point } from '../utilities/math/points'
 import { daysPerYear } from '../utilities/math/time'

@@ -3,10 +3,9 @@ import { region__borders, region__neighbors } from '../../../regions'
 import {
   province__cell,
   province__findClosest,
-  province__hub,
   province__sortClosest
 } from '../../../regions/provinces'
-import { province__attach, province__connected } from '../../../regions/provinces/arteries'
+import { province__attach, province__connected } from '../../../regions/provinces/network'
 import { Province } from '../../../regions/provinces/types'
 import { Region } from '../../../regions/types'
 import { addTradePath, routeBlacklist, shortestPath } from '../../travel/navigation'
@@ -45,8 +44,8 @@ export class InfrastructureShaper extends Shaper {
         .forEach(dst => {
           const path = shortestPath({
             type: roadType,
-            start: province__hub(src).cell,
-            end: province__hub(dst).cell,
+            start: src.hub.cell,
+            end: dst.hub.cell,
             limit: this.pathing[roadType]
           })
           addTradePath(src, dst, path, blacklist, roadType)
@@ -96,8 +95,8 @@ export class InfrastructureShaper extends Shaper {
           }
           const dist = shortestPath({
             type,
-            start: province__hub(province).cell,
-            end: province__hub(closest).cell,
+            start: province.hub.cell,
+            end: closest.hub.cell,
             limit: Infinity
           })
           addTradePath(province, closest, dist, blacklist, type)
@@ -129,8 +128,8 @@ export class InfrastructureShaper extends Shaper {
     if (!blacklist[foreign.idx].includes(guest.idx)) {
       const dist = shortestPath({
         type,
-        start: province__hub(foreign).cell,
-        end: province__hub(guest).cell,
+        start: foreign.hub.cell,
+        end: guest.hub.cell,
         limit: Infinity
       })
       addTradePath(foreign, guest, dist, blacklist, type)

@@ -18,6 +18,7 @@
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mui/material": "^5.9.3",
+    "@tippyjs/react": "^4.2.6",
     "d3": "^7.6.1",
     "dayjs": "^1.11.4",
     "js-priority-queue": "^0.1.5",

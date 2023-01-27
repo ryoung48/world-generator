@@ -33,7 +33,7 @@ export const buildDistribution = <T>(
   qty = 1
 ): WeightedDistribution<T> => {
   const total = map.reduce((sum, { w }) => sum + w, 0)
-  return map.map(({ w, v }) => ({ v, w: (w / total) * qty }))
+  return map.map(({ w, v }) => ({ v, w: total === 0 ? 0 : (w / total) * qty }))
 }
 type NestedDistribution<T> = (T | NestedDistribution<T>)[]
 export const buildNestedDistribution = <T>(dist: NestedDistribution<T>): WeightedDistribution<T> =>
@@ -100,3 +100,8 @@ export const findRanges = (params: {
 export const sorting = {
   descending: (a: number, b: number) => b - a
 }
+
+export const partition = <T>(array: T[], size: number) =>
+  Array(Math.ceil(array.length / size))
+    .fill(undefined)
+    .map((_, i) => array.slice(i * size, i * size + size))

@@ -125,7 +125,7 @@ export const shortestPath = ({
 }
 
 export const routeBlacklist = () => {
-  const locs = window.world.locations.map(city => window.world.cells[city.cell])
+  const locs = window.world.provinces.map(city => window.world.cells[city.hub.cell])
   return {
     blacklist: locs.reduce((org: Record<string, number[]>, town) => {
       org[town.province] = []

@@ -2,8 +2,7 @@ import { Box, Divider, Grid } from '@mui/material'
 
 import { culture__decorations } from '../../../models/npcs/cultures'
 import { region__population } from '../../../models/regions'
-import { location__isVillage } from '../../../models/regions/locations/spawn/taxonomy/settlements'
-import { province__hub } from '../../../models/regions/provinces'
+import { hub__isVillage } from '../../../models/regions/hubs'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
 import { climates } from '../../../models/world/climate/types'
@@ -23,8 +22,8 @@ export function NationView() {
   const native = window.world.cultures[nation.culture.native]
   const totalPop = region__population(nation)
   const urbanPop = nation.provinces
-    .map(i => province__hub(window.world.provinces[i]))
-    .filter(hub => !location__isVillage(hub))
+    .map(i => window.world.provinces[i].hub)
+    .filter(hub => !hub__isVillage(hub))
     .reduce((sum, hub) => sum + hub.population, 0)
   const overlord =
     window.world.regions[

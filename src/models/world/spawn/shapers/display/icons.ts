@@ -147,10 +147,6 @@ export const display__icons = () => {
     }
   })
   // forest
-  const swampIcons: TerrainIcon[] = ['swamp_1', 'swamp_2', 'swamp_3', 'swamp_4']
-  const isLake = (cell: ExteriorCell) => cell.isWater && !cell.ocean
-  const nearLake = (cell: ExteriorCell) =>
-    cell__neighbors(cell).some(n => isLake(n) || cell__neighbors(n).some(isLake))
   const deciduous: Climate['type'][] = [
     'mediterranean',
     'subtropical',
@@ -167,9 +163,7 @@ export const display__icons = () => {
         x: m.x,
         y: m.y,
         type: window.dice.choice(
-          nearLake(m)
-            ? swampIcons
-            : forestStyles[m.region] === 1
+          forestStyles[m.region] === 1
             ? ['temperate_1', 'temperate_2', 'temperate_3']
             : [
                 'temperate_4',
@@ -186,7 +180,6 @@ export const display__icons = () => {
   })
   // boreal
   const coniferous: Climate['type'][] = ['subarctic', 'oceanic', 'manchurian', 'siberian']
-  const coldSwampIcons: TerrainIcon[] = ['swamp_5', 'swamp_6', 'swamp_7', 'swamp_8']
   const borealStyles: Record<number, number> = {}
   const boreal = biomes.filter(p => coniferous.includes(window.world.regions[p.region].climate))
   boreal.forEach(m => {
@@ -197,9 +190,7 @@ export const display__icons = () => {
         x: m.x,
         y: m.y,
         type: window.dice.choice(
-          nearLake(m)
-            ? coldSwampIcons
-            : borealStyles[m.region] === 1
+          borealStyles[m.region] === 1
             ? ['boreal_1', 'boreal_2', 'boreal_3', 'boreal_4']
             : ['boreal_5', 'boreal_6', 'boreal_7', 'boreal_8']
         ),
@@ -219,9 +210,7 @@ export const display__icons = () => {
         x: m.x,
         y: m.y,
         type: window.dice.choice<TerrainIcon>(
-          nearLake(m)
-            ? swampIcons
-            : tropicalStyles[m.region] === 1
+          tropicalStyles[m.region] === 1
             ? ['tropical_1', 'tropical_2', 'tropical_3', 'tropical_4']
             : ['tropical_5', 'tropical_6', 'tropical_7', 'tropical_8']
         ),
@@ -229,6 +218,42 @@ export const display__icons = () => {
       })
     }
   })
+  const freeSpace = (n: ExteriorCell) => !used.has(n.idx) && !n.isCoast && !cell__hasRoads(n)
+  // tropical hills
+  tropical.forEach(m => {
+    if (valid(m) && cell__neighbors(m).every(freeSpace)) {
+      used.add(m.idx)
+      display.icons.push({
+        x: m.x,
+        y: m.y,
+        type: window.dice.choice<TerrainIcon>(['tropical_20', 'tropical_21', 'tropical_22']),
+        cell: m.idx
+      })
+    }
+  })
+  //swamps
+  forest
+    .concat(boreal)
+    .concat(tropical)
+    .forEach(m => {
+      if (valid(m) && cell__neighbors(m).every(freeSpace)) {
+        used.add(m.idx)
+        display.icons.push({
+          x: m.x,
+          y: m.y,
+          type: window.dice.choice([
+            'swamp_1',
+            'swamp_2',
+            'swamp_3',
+            'swamp_4',
+            'swamp_5',
+            'swamp_6',
+            'swamp_7'
+          ]),
+          cell: m.idx
+        })
+      }
+    })
   valid = m => !cell__hasRoads(m) && window.dice.random > 0.8 && m.n.every(i => !used.has(i))
   // desert
   const deserts: Climate['type'][] = ['hot desert', 'cold desert']

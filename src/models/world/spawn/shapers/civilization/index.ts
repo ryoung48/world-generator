@@ -1,4 +1,3 @@
-import { province__hub } from '../../../../regions/provinces'
 import { addPath, routeBlacklist, shortestPath } from '../../../travel/navigation'
 import { Shaper } from '..'
 import { culturalSpheres } from './cultures'
@@ -30,8 +29,8 @@ export class CivilizationShaper extends Shaper {
         cache[dst.idx][src.idx] = true
         const path = shortestPath({
           type: 'land',
-          start: province__hub(src).cell,
-          end: province__hub(dst).cell
+          start: src.hub.cell,
+          end: dst.hub.cell
         })
         addPath({ src, dst, path, blacklist, type: 'land', imperial: true })
       })

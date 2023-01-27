@@ -1,6 +1,5 @@
 import { curveCatmullRom, line, scaleLinear } from 'd3'
 
-import { province__hub } from '../../../../regions/provinces'
 import { cell__province } from '../../../cells'
 import { RouteTypes } from '../../../travel/types'
 
@@ -22,7 +21,7 @@ const display__roadSegment = (params: { route: RouteTypes; path: number[]; imper
     const points = path.map(i => {
       const cell = window.world.cells[i]
       const settlement = cell__province(cell)
-      const hub = province__hub(settlement)
+      const { hub } = settlement
       return cell.idx === hub.cell ? [hub.x, hub.y] : [cell.x, cell.y]
     }) as [number, number][]
     window.world.display.routes[route].push({

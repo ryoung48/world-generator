@@ -1,4 +1,4 @@
-import { location__moveToCoast } from '../../../../regions/locations/spawn'
+import { hub__moveToCoast } from '../../../../regions/hubs'
 import { world__waterFeatures } from '../../..'
 import { cell__commonEdge, cell__neighbors } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'
@@ -78,5 +78,5 @@ export const regional__coastalEdges = () => {
         })
     })
   // fix regional capitals
-  window.world.locations.forEach(loc => location__moveToCoast(loc))
+  window.world.provinces.forEach(loc => hub__moveToCoast(loc.hub))
 }

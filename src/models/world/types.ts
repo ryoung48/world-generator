@@ -2,9 +2,10 @@ import { Delaunay, Voronoi } from 'd3'
 
 import { Culture } from '../npcs/cultures/types'
 import { Religion } from '../npcs/religions/types'
-import { Loc } from '../regions/locations/types'
+import { NPC } from '../npcs/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
+import { Thread } from '../threads/types'
 import { Dimensions } from '../utilities/dimensions'
 import { ExteriorCell } from './cells/types'
 import { ContinentTemplate } from './spawn/shapers/continents/templates'
@@ -61,10 +62,11 @@ export interface World {
   regions: Region[]
   conflicts: { type: 'war' | 'rebellion'; provinces: number[]; regions: number[] }[]
   provinces: Province[]
-  locations: Loc[]
   cultures: Culture[]
   religions: Religion[]
+  actors: NPC[]
   uniqueNames: Record<string, boolean>
+  threads: Thread[]
   // planet info
   date: number
   firstNewMoon: number // first new moon on record

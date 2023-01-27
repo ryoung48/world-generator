@@ -1,5 +1,439 @@
 villages: fishing|farming|mining :: country estate :: military outpost :: reclaimed ruins :: trading posts :: remote temple
-toxic economy: mining pollution
+
+descriptors:
+-- personality -- 
+* compassionate|altruistic|generous :: arrogant|imperious|heartless|cruel|callous|sadistic|greedy|envious|grasping|rapacious
+* brave|reckless|trusting :: craven|cautious|paranoid
+* diplomatic|stoic :: wrathful|passionate
+* diligent|ambitious :: lazy|negligent
+* fickle :: stubborn
+* gregarious :: enigmatic
+* lawful|honest :: treacherous|deceptive|manipulative
+* forgiving :: vengeful|spiteful
+* zealous|pious :: skeptic :: heretic|atheistic
+* xenophilic|progressive :: traditional|xenophobic
+---
+* altruistic|greedy
+* gregarious|enigmatic
+* stoic|passionate
+* honest|devious
+* diligent|lazy
+* pious|irreverent
+* forgiving|vengeful
+* xenophilic|xenophobic
+* stubborn|capricious
+* fearless|cautious
+* humble|arrogant
+--- quirks ---
+* seeking {redemption}
+* optimistic|melancholic ({death|betrayal|misfortune})
+* idealistic|pragmatic
+* {decadent|austere} lifestyle
+* lustful|gluttonous|alcoholic|drug addict|masochistic|sadistic|wrathful|paranoid
+* {homosexual}|multi-ethnic marriage
+* {adopted|orphaned} upbringing|twin sibling|bastard origins
+* {social outcast|black sheep}
+* {formal & clean|ragged & dirty|flamboyant & outlandish} outfit
+* {distinctive|gaudy} {necklace|amulet|ring|earrings|trinket|hat}
+* {colorful|intricate|runic} tattoos
+* facial piercings
+* aromatic scent
+* speaks {quickly|slowly|quietly|loudly|copiously|sparsely} :: {melodic|rough|sharp|deep} voice :: strong accent
+* {light|heavy} {scars|burns}
+* missing {right|left} {arm|leg|hand|eye} :: afflicted ({illness|curse})
+* {thin|fat} body
+* {tall|short} stature
+* {idiotic|dull|smart|genius} mind
+* {oblivious|{perceptive|insightful}}
+* {awkward|charismatic} persona
+* {unattractive|beautiful|muscular|frail} physique
+* {laborious|vigorous|clumsy|dexterous} movements
+* {meticulous & organized|chaotic & disorganized} presentation
+* animal companion
+* artistic|academic|musician|seafarer|huntsman|occultist|botanist|chef|duelist|brawler|gambler
+* humorous|sarcastic
+* storyteller
+* war veteran
+* underworld connections
+* professionally {despised|struggling|respected|prosperous} :: rags to riches|riches to rags
+--- misc ---
+* shrewd :: cheating :: charlatan (merchants|artisans|priests|scholars|sorcerers)
+* revanchist|usurper|despotic|rapacious|corrupt|imperious|pacifist|blackmailed|bribed
+* pallid & gaunt (ghoul|vampiric)
+* loyalist|rebel supporter
+* (former|mistreated employee|friend|associate|lover|mistress :: grandparent|uncle|cousin|parent|sibling|spouse|child) of the patron|rival
+* victim of recent (crime|oppression|cruelty|complication :: patron|rival)
+-- wants --
+* acquire|steal|transport|defend|destroy resources|supplies|contract|blackmail|key|artifact|relic (stolen|lost|illegal?)
+* defend|escort|rescue person
+* investigate|resolve mystery|crime|complication|intrigue|folly
+* bounty (monster|criminal ~ secret hater of ethnicity :: bloody cult priest :: (inhuman|eldritch) creature masquerading as a local :: methodical hired assassin)
+* explore|clear ruin|wilderness
+-- motivations --
+* wealth|fame|artifact
+* revenge|redemption|fear
+
+* {you {are approached by a courier with a message from {a {concerned|desperate} {citizen|local}|overhear {rumors|gossip} at {a local tavern|the local market} of a }|encounter a notice board with a note regarding|encounter a #settlement# {crier|herald} with news regarding}|stumble onto a group of {locals|citizens arguing about}
+** A shady figure approaches you with a message regarding. **They seem to have mistaken you for conspirators in their plot**.
+
+* supply shortage: #Patron# needs help gathering rare reagents from the nearby wilderness. The terrain is known to be {treacherous|inhabited by hostiles}.
+* missing supplies: #Patron# is worried about a shipment of supplies that should have arrived {days|weeks} ago. Hostiles have been scourging the road lately and might be responsible for the disappearance.
+* shipment escort: #Patron# is looking for guards to safeguard a shipment of goods in route to {#neighbor#|#remote#}. The road is known to be plagued by {fearsome beasts|hostiles in the employment of a rival}.
+* sabotage shipment: #Rival# is expecting an important shipment to {arrive|depart} soon and has hired hostiles to defend it. #Patron# wants to {destroy|steal} this shipment in transit to prevent #rival# from making use of it.
+* prevent sabotage: #Patron# is expecting a hostiles in the employ of a rival to make an attempt at {stealing|destroying} {a valuable {relic|artifact}|important {supplies|information}} and is looking for guards to defend against the threat.
+* planned heist: #Patron# is looking for associates to steal {a valuable {relic|artifact}|important {supplies|information}} from a rival.
+* destroy resources: #Patron# is looking for associates to destroy {a valuable {relic|artifact}|important {supplies|information}} that is in a rival's possession.
+* siege breaker: A #remote location# is under siege by hostiles. #Patron# wants to help support the denizens in lifting the siege.
+* terrible beast: #Patron# is looking for assistance slaying a monstrous beast that is terrorizing the #site#.
+* wanted outlaw: #Patron# is looking for assistance {slaying|apprehending} {an infamous|a nefarious} criminal.
+* awful folly: An actor important to the patron has suffered a major defeat|setback :: broken an important local custom (romance|ethnic|religious) :: fallen to vice (vengeance|lust|greed|paranoia|alcohol|drugs|gambling|debts). Help the patron conceal|fix this error.
+* venomous intrigue: the patron suspects an actor of a fault (corruption|adultery|seduction|treachery|theft|incompetence|heresy). Find evidence to expose them.
+* curious mystery: {locate | determine the fate of} a missing ({friendly|hostile|neutral}) {actor|object|shipment}
+
+* prepare|investigate|research|negotiate|favor|assault|ambushed|stealth|explore
+
+towns: 
+    * government: the settlement is {run|ruled} by the {ruler} and {his|her} personal guards. {Minor power struggles occur with local business leaders}.
+    * defense: beyond the #site# guards, there is a small volunteer militia of {fishers|farmers} and ex-military locals. {an x-foot-high {stone|wooden} wall surrounds the #site#}
+    * commerce: basic supplies are available, though sources are limited to a few inns and places of trade. [coastal] {Some merchant sailors bring rarer goods on occasion}.
+
+
+* occupations
+--- lower ---
+* slave|peasant|laborer|beggar (itinerant)
+* refugee (poor|modest)
+* butler|servant (enslaved|indentured|ordinary|master)
+* sailor|dock worker
+* actor|actress|singer|poet|artist|musician (ordinary|famous)
+* courtesan (ordinary|elite)
+* criminal|thug|bandit|slaver|raider ~ (boss|chief|warlord)
+* foreign|local spy
+* mercenary|solder|templar|deserter|rebel (novice|veteran)
+* guard|constable
+* monster hunter (itinerant|famous|retired)
+* innkeeper|bartender|waiter
+* grave keeper
+* fortune teller
+--- middle ---
+* (military|templar|rebel) officer
+* guard|mercenary captain
+* scholar|sorcerer
+* clergy (monastic|worldy|leader, heretic|syncretic|purist)
+* artisan :: herbalist|alchemist :: artificer :: engineer|architect
+* merchant (caravan?)|shopkeeper
+* bureaucrat (minor|major|itinerant)
+* ship|pirate captain|dock master
+* landlord|gentry (poor|modest|wealthy)
+* refugee (wealthy|leader)
+--- upper ---
+* grandmaster (templar)
+* general|admiral (military|rebel)
+* merchant prince|caravan master
+* guild master (artisan)
+* ethnarch (minority|nomadic)
+* archmage
+* magistrate|lawyer
+* ambassador|diplomat|emissary|envoy (foreign)
+* courtiers (statesman|spymaster|kingmaker|marshal|chancellor|steward|majordomo) (deposed?)
+* royal (crown, prince|princess)
+* aristocrat|gentry maiden|gentleman :: lord|lady :: patriarch|matriarch :: scion|heir (minor|major clan|house)
+* aristocrat|gentry (black sheep|fallen|disgraced|exiled|hostage)
+* mistress|gentleman (cast-off|aristocratic|gentry)
+* regional|city|town|village lord|oligarch|regent
+
+^  [a-z'].*?:
+
+
+
+* {influential|prominent|prestigious|powerful|minor|fading|nascent} royal|noble|gentry|communal family|house|clan :: religious temple|monastery|sect|order :: criminal syndicate|cartel|brotherhood|gang :: mercantile|banking house :: influential|gentry family|clan|tribe :: town|city bureaucracy :: sorcerous cabal|coven|circle :: mercenary company|knightly order
+
+* wilders: ogres|centaur|swine|goat|ape|ursine|lizardfolk|serpentine|harpy|giants|insectoid|arachnid|gnoll|troll :: merfolk|piscine|crustacean :: etheric|construct
+* aberrations: (humanoid|beast|primordial) infested|crystalline|corrupted|warped|scorched|brine|feral|chimera|shapeshifter|mimic ~ undead
+* undead: (kith|wilder) vampiric|abomination|lich :: beast|primordial
+* construct: animated|golem|eldritch|relic
+* beast: mammal|reptilian|draconic|avian|arachnid|insect :: piscine|crustacean|mollusc
+* primordial: plant|fungal|hybrid
+* spirits: elemental|celestial|fiend|fey|wraith
+
+* community: rural|market|docks|noble|craftsman|slums|shantytown ~ luxurious|wealthy|comfortable|modest|poor|derelict
+* ruins: palace|residential|military|prison|vault|production|religious|crypt|artistic|academic
+* wilderness: glacier|tundra|fjord|volcanic|caldera|mountains|hills|beach|desert|badlands|oasis|plains|woods|forest|jungle|marsh
+
+-- leaders -- (nascent|rising|fading) ~ (respected|wise|charitable|optimistic|despotic|neglectful|paranoid|corrupt|decadent|treacherous|capricious|imperious|pious|zealous|xenophobic|supremacist|isolationist|xenophilic|progressive|traditional|afflicted|enchanted|melancholic|occult|proxy|puppet|overextended) :: weak|strong
+* tribal: (hereditary|elected) chieftain|warlord :: council (elders|chiefs) :: resident (sorcerer|priest)
+* villages: (hereditary|elected|appointed) headman|reave|lord :: council (elders) :: resident (sorcerer|priest)
+* towns|cities: (hereditary|elected|colonial) aristocrat|bureaucrat|warlord|bishop :: council (nobles|merchants|oligarchs|sorcerers|priests|warlords|syndicate|regents) :: viceroy|king|emperor|imperator|archbishop :: regent (general|consort|relative|official)
+* courtiers: consort (foreigner?)|crown prince|sibling|parent :: general|admiral|guard :: artist|scholar|writer|explorer :: priest|inquisitor|sorcerer :: spymaster|statesman|treasurer|merchant|diplomat  (foreigner|criminal)
+-- location traits --
+* enslaved workforce (slaves|serfs|indentured) ~ (mines|plantations|logging|construction|domestic|soldiers)
+* slave markets: {settlement} frequently hosts slave auctions; slavers raid neighbors
+* abolitionist movement: freedom fighters are active in this province helping slaves escape captivity
+* prosperous land (bountiful harvests | lucrative mines)
+* toxic economy: this settlement is reliant on a rare {industry|product} ({metallurgy|alchemy|arcana}) that is extremely valuable due to its use in the creation of powerful arcane {potions|enchantments|implements|artifacts|constructs}, but {{has harmful side-effects for|requires blood sacrifices from} those {handling|collecting} the raw materials | is slowly {destroying|polluting} the land with its extraction|extraction requires traversing extremely dangerous terrain}.
+* iron law (strict|elaborate laws :: harsh punishments :: strong enforcers)
+* lawless (activities scorned elsewhere are permitted here :: weak enforcers)
+* foreign enclave (wealthy|poor): 
+* war conscripts (war|rebellion)
+* court eunuchs: this {{nation}} makes great use of eunuchs as domestic servants and bureaucratic administrators.
+* slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society.
+* venal offices: {{nation}} is selling government offices to wealthy citizens in order to overcome mounting debts.
+* meritocracy: {{nation}} uses an merit-based examination system to identify the most able bureaucratic officials.
+* police state: the ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents.
+* banned sorcery: this nation distrusts the arcane arts and greatly restricts its use.
+* dueling warlords: the provinces of {x} & {y} are engaged in limited warfare over disputed territory.
+* raider scourge: {bandits|raiders|pirates|slavers} frequently raid this settlement and the surrounding area
+* monstrous tribute: the locals of this {settlement} have cut a deal with some unspeakable entity {spirit|undead|aberration|beast|primordial} and make regular sacrifices in hopes of continued {forbearance|protection}.
+* aristocratic rivalry :: assassins for hire :: artistic|academic|imperious|mercantile|decadent|industrious|traditional|progressive|criminal|charitable|despotic|pious|occult :: rising|established|waning|disgraced|paranoid
+* colonial warfare
+* gang wars
+* underground arena: this {settlement} hosts a popular underground arena where combatants fight for the entertainment of the locals.
+---
+* bounty:
+    * The target has escaped, the trail is gone, and they succeeded with their intended crime.
+    * The target has escaped and the trail is gone, but at least the crime that they sought to commit was prevented.
+    * The target has been {slain|apprehended}, but at a great cost in collateral damage (civilians|infrastructure)
+    * The target has been {slain|apprehended} with minimal collateral damage. 
+* blackmail:
+    * The opportunity to remove this leverage has passed and the foe is furious with the {patron|ally} in light of this transgression.
+    * The opportunity to remove this leverage has passed, but at least the foe's hold was not strengthened by this endeavor.
+    * The {patron's ally is now free of the foe's influence, but it is only temporary | leverage has been partially removed, but more work needs to be done to fully expel the foe's influence}.
+    * The patron's ally is now free of the foe's influence for good.
+* crime:
+    * The investigation hit a dead end without any satisfying conclusions.
+    * The truth of the crime has been revealed, but the evidence needed to act on it was destroyed.
+    * The truth of the crime has been revealed and the evidence is in hand, but there are pieces that still don't make sense.
+    * The truth of the crime has been revealed and the evidence has been delivered to those who seek resolution.
+* conflict (diplomacy):
+    * The diplomatic action has failed and hostilities are worse than before.
+    * The diplomatic action has failed, but at least hostilities are not worse than before.
+    * The diplomatic action has succeeded with a temporary end of hostilities.
+    * The diplomatic action has succeeded with a permanent end of hostilities.
+* conflict (support):
+    * The side whom the patron sought to support has suffered a major setback as a result of this endeavor.
+    * The endeavor neither helped nor hindered the patron's preferred side.
+    * The side whom the patron sought to support has acquired a minor boon as a result of this endeavor.
+    * The side whom the patron sought to support has acquired a major boon as a result of this endeavor.
+* conflict (annihilation):
+    * Both sides are emboldened and united against the patron's interests.
+    * The endeavor failed to weaken either side.
+    * The power of one side was greatly reduced, but the other side remains strong.
+    * Both sides have been greatly weakened as a result of this endeavor.
+* cursed:
+    * The curse could not be lifted and it's negative effects have been bolstered.
+    * The curse could not be lifted, but it's negative effects have been weakened.
+    * The curse was lifted, but at the cost of great collateral damage (civilians|infrastructure).
+    * The curse was lifted with minimal collateral damage.
+* folly:
+    * The patron's ally is now worse off after the failed attempt to correct their folly.
+    * The patron's ally continues to suffer the consequences of their folly.
+    * The consequences of the folly have been abated, but more work needs to be done for full negation.
+    * The consequences of the folly have been completely negated.
+* heist (infiltration):
+    * The heist was thwarted and the team barely managed to escape.
+    * The heist was thwarted, but the team managed to escape without being noticed.
+    * The heist was successful, but {the item was damaged in the process | at the cost of great collateral damage}.
+    * The heist was successful and the item is now in the patron's possession.
+* heist (prevention):
+    * The heist was successful and the item is now in the foe's possession.
+    * The heist was successful, but the item was damaged in the process.
+    * The heist was thwarted, but the enemy team managed to escape.
+    * The heist was thwarted and the enemy team was captured.
+* intrigue:
+    * The evidence {is no longer relevant | was destroyed} and the foe was strengthened by this failure.
+    * The evidence {is no longer relevant | was destroyed}, but the foe was weakened by this failure.
+    * The evidence was acquired, but is incomplete and not as condemning as it was thought to be.
+    * The evidence was acquired and will be a great setback for the foe.
+* mystery:
+    * The trail has gone cold and actor's location remains unknown. There are no major insights to deliver to the patron.
+    * The trail has gone cold and actor's location remains unknown, but critical information was discovered that the patron will want to know.
+    * The actor has been located, but has sustained heavy damage.
+    * The actor has been located and is in good condition.
+* negotiate:
+    * The actor could not be convinced and stands firmly against the interests of the patron.
+    * The actor was convinced to cede only a couple minor points of the agreement.
+    * The actor was convinced to cede most major points of the agreement.
+    * The actor was convinced to cede all points of the agreement.
+
+-- defenses --- ::
+* law enforcement:  professional army | mercenaries | guards | militia
+* walls: stone|wooden|none (pristine|well-kept|worn|derelict|shattered)
+
+-- locations -- luxurious|wealthy|comfortable|modest|poor|derelict :: ruined|overgrown|haunted|cursed
+* office (government|banking|mercantile :: guild ~ arcana|artisan|mercenary)
+* asylum|prison|orphanage
+* cemetary|crypts|tombs|catacombs (small|large)
+* shrine|temple|monastery
+* well|cistern|granary|livestock|stables
+* inn|tavern|brothel|bathhouse ~ combined|docks
+* monument|statue (battle|leader|religious|cultural ~ political|religious|military|academic|arcana)
+* residence|estate|manor|palace|tenement|shantytown|slums
+* museum|library|archive|laboratory|observatory|university
+* plaza|market|warehouse ~ combined|docks|slaves
+* shipyard|harbor|lighthouse
+* barracks|stronghold|keep|fortress ~ (military|templar|mercenary|bandit|rebels|exiled noble)
+* arena|coliseum|theatre
+* workshop (artisan|surgeon|artist) :: shop (mercantile)
+* gardens|park
+* vineyard|orchard|farmstead|plantation|brewery
+* gates
+* underground (market|arena|sewer|slums|criminal den)
+-- outskirts ---
+* road (high|low|cobbled|dirt|path|trail)
+* ruins (ancient|old|recent, village|town|city|road)
+* battlefield (ancient|old|recent)
+* village|compound (savage|feral|scorched|destroyed|warped, cultists|bandits)
+* cave|lair|cavern ~ (volcanic|coastal)
+* mining|logging camp (abandoned|cursed|remote)
+* unusual biome (wasteland|verdant|primordial|arctic|tropical|storms|volcanic|crystalline)
+* camp (aberrant|vampiric|raiders|deserters|rebels|criminal|bandit|refugees|caravan|performers|nomadic|tribal, small|large)
+* river|lake|waterfalls
+* hills (gentle|rugged)
+* forest|jungle (dense|fungal|petrified|cursed|scorched|aquatic)
+* desert (sand|rocky|canyon|dunes|oasis|scorched)
+* badlands (canyons|ravine|wastes|scorched)
+* plains (grass|scrub|plateau|mesa|aquatic)
+* marsh|swamp|bog|fens (dense|fungal|cursed|aquatic)
+* glacier|tundra|iceberg|fjord
+* mountains (volcanic|caldera|hot springs) ~ pass (low|high) ~ forest (cloud|montane)
+* beach (sandy|rocky, shipwreck)
+* splinter|breach (elemental|celestial|fey|fiend)
+--- settings ---
+* weather
+* temperature
+* humidity: humid|damp|dry|parched
+* time: dawn|morning|afternoon|evening|dusk|twilight|night
+* lighting: blinding|dazzling|bright|dim|gloomy|dark|atmospheric
+* spacing: cramped|narrow|tangled|spacious
+* sound: boisterous|loud|echoing|grinding|muffled|musical|unnerving|hushed|inaudible|quiet|silent
+* smell: perfumed|aromatic|floral|pungent|musty|earthy|acrid|moldy|putrid|rancid
+
+------------ ruins ------------
+* motivations: wealth|resources|lore|exploration|danger|rescue|key|artifacts|secrets
+-- enigmas (intellect|wisdom|charisma) --
+* {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|writing|archive|scrolls}
+* {{altered|augmented} gravity|arcana {nullifier|dampener|amplifier}|temporal distortion {slow|fast}}
+* benign enchantment ({healing|blessing|visions})
+* {mutated|enchanted} {vermin|flora|fungi}
+* locked {room|container} ({enchanted|mechanical})
+* {cryptic|warped|withered|defiled|mundane} {books|records|maps|debris|equipment} from past {inhabitants|intruders}
+* corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
+* signs of recent {bloodshed|battle|destruction|ritual|experimentation}
+* empty {cabinets|containers}
+* {discharged|broken} trap
+* {hidden|illusory} {ingress|egress}
+* treasure ({petty|minor|major|great})
+* labyrinthine {pathways|structure|corridors}
+ -- hazards (strength|dexterity|constitution) --
+* {unstable|crumbling} structures ({floors|ceilings|walls})
+* {dangerous|chaotic} {radiation|miasma|flames|arcana}
+* noxious {pools|flora|fungi}
+* infestation ({mammal|arthropod|reptile})
+* trapped {containers|interior} ({hidden|alluring}, {harmful|alarming|sealing|delaying})
+* explosive {dust|gases}
+* {contagious|virulent} disease
+* treacherous terrain ({flooded|verticality|footing})
+* obscuring {darkness|fog}
+* malign enchantment ({despair|madness|decay|transformation})
+* the way forward is blocked by {heavy|dangerous} {debris|rubble|overgrowth}
+* {broken|shattered} {corridors|egress|ingress} 
+* {warded|sealed|bound} entity
+* {auditory|visual|spatial} {distortions|illusions}
+ -- encounters --
+* combat
+* survivor {prisoner|victim} (wounded)
+* (friendly|neutral|injured|fleeing|fallen) allies (militia|guards|military|mercenaries|templars|sorcerers)
+* negotiations (neutrals)
+* inhabitant (traitor|non-combatant)
+* stealth: the {intruders|defenders} in this area are very strong and should be avoided at all costs
+-- inhabitants --
+* single adversary
+* civil war ({2|3|4} adversaries)
+* failed|successful|ongoing incursion (invaders|hosts slain|scattered|wounded)
+* environmental (freshly looted)
+* rival party
+* allied assault|rescue
+-- adversaries --
+* outsider: etheric|automata|anima
+* aberrations: aberrant|infested|fungal|verdant|chimeric|dire|hivemind (humanoid|beast) (medium|large|huge)
+* humanoid: (vagrant|common|professional|veteran|elite) cultists|bandits|mercenaries|pirates|raiders|deserters
+    * bandits: thug|brute|marksman|scout|rogue|sorcerer|skirmisher|lurker|defender|tactician
+    * raiders: warrior|barbarian|berserker|archer|scout|sorcerer
+    * cultist: (acolyte|adherent|adept|veteran|master) brute|zealot|sorcerer|monk|templar|knight|assassin|marksman
+    * sorcerers:  wizard|warlock|necromancer|witch
+* beasts: {pack|lone} (sickly|feral|ravenous|frenzied|vicious) (vermin|medium|large|huge) mammal|reptile|avian|arthropod|mollusc|piscine (aquatic)
+* primordials: {cluster|lone} (vermin|medium|large|huge) plants|fungi (aquatic)
+* undead: withered|feral|soldier|lord|lich (skeletal|ghoul|vampire|beast|primordial) :: scorched|brine|infested|diseased :: aberrant
+* constructs: (rusted|fair|fine|exquisite|masterwork|titan, small|medium|large|huge, hivemind) :: animated|eldritch|relic|flesh
+* spirits: (sprite|remnant|revenant|lord|ascendent :: bound|chained)
+    * elemental: fire|lava|magma|ash :: water|mist|steam|ice :: earth|mud|sand|dust :: air|wind|cloud|storm (corrupted)
+    * fiend: greed|envy|desire|lust|gluttony|pride|wrath|sloth|fear|despair|misery|anguish|spite (redeemed)
+    * celestial: austerity|mercy|harmony|compassion|humility|justice|valor|wisdom|knowledge|hope|honor|law (fallen)
+    * fey: seasons|harvest|builder|cultivation|dreams|omens :: forest|plains|arctic|desert|aquatic|sky|peak (withered)
+    * wraiths: gloom|vile|vengeance|devotion|guardian|chained|lost|cursed (aberrant)
+-- groups --
+* humanoids + beast?
+* sorcerers|vampires + (constructs|undead|spirits)
+* beast|primordial {pack|lone}
+-- abilities --
+* illusions: can masquerade as something harmless
+* vicious: can easily slice through even the heaviest armor
+* frenzied: more aggressive when wounded
+* poisonous: attacks poison victims
+* unyielding: can shrug off mortal wounds
+* warded: resistant to magic
+* stealthy: very good at sneaking around unnoticed
+* invisibility
+* armored
+* domination
+* teleportation
+* keen {senses|sight|smell|hearing}
+* packs|swarms|hivemind
+* quills
+* petrification
+* diseased
+* aquatic|scorched
+* shapeshift
+* blurred image
+
+Generic Dungeon Rooms
+. Give your dungeon a theme before anything else. "Orc Fortress", "Ice Dragon's Glacier Cave", "Wizard's Laboratory."
+. Only roll when it's not obvious what comes next, if you have a cool idea you should use it immediately.
+. Besides the entrance, add d4-1 exits to each room. You don't need to complete the whole map at once, 5 rooms is fine.
+. 1-in-3 times add OSHA-violating hazards to the room. This is a dungeon, not a theme park.
+
+| d30 | Room                                                                                                         |
+| --- | ------------------------------------------------------------------------------------------------------------ |
+|  1  | A misleading dead-end with a hidden deathtrap                                                                |
+|  2  | Has some appealing food that is spoiled/poisoned/cursed (d3)                                                 |
+|  3  | An altar to a chaotic deity, well-kept/in-use/recently-used/broken (d4)                                      |
+|  4  | A monster's dwelling, they are relaxing/socializing/meditating/injured/celebrating/sleeping (d6)             |
+|  5  | A monster's kitchen/larder/trophies/workshop (d4), vermin-infested/recently-used/in-use (d3)                 |
+|  6  | A monster's territory, empty/trapped/watched/eating-messily/hunt-in-progress/fight-in-progress (d6)          |
+|  7  | A haunted place, has poltergists/curses/disembodied-voices/deathly-chill/lingering-souls/undead (d6)         |
+|  8  | A narrow passage full of traps, they are active/misbehaving/broken/disabled (d4)                             |
+|  9  | A refuse pit, empty/recently-used/fly-ridden/rodent-infested/slime-infested/monster-infested (d6)            |
+| 10  | A room dangerously close to a monster's lair, where the party can see/be-seen/hear/be-heard (d4)             |
+| 11  | A large connecting area with interesting scenery and verticality                                             |
+| 12  | A large connecting area with some old artwork, statues/tapestries/books/murals/paintings/furniture (d6)      |
+| 13  | The abandoned site of a battle, recent/old/very-old (d3)                                                     |
+| 14  | A sealed chokepoint                                                                                          |
+| 15  | A large liquid feature                                                                                       |
+| 16  | Has suffered structural collapse                                                                             |
+| 17  | Someone/something (d2) has been excavating here, 1d3-1 tools and/or a 1-in-6 chance of something valuable    |
+| 18  | A harmless but interesting magical effect relating to light/heat/mind/gravity/friction/electromagnetism (d6) |
+| 19  | Overgrown with vegetation, it is tangled/thorny/flammable/toxic/intoxicating/supernatural (d6)               |
+| 20  | A mechanical/magical contrivance that might no longer serve its original purpose                             |
+| 21  | A low dark passage                                                                                           |
+| 22  | An overlook that has a good view of the surrounding area                                                     |
+| 23  | A welcoming room, long-abandoned/recently-used/in-use (d3)                                                   |
+| 24  | An old dusty storage room, it would take a while to search it for anything useful                            |
+| 25  | Has some edible plants that are musty/bitter/sour/dry/medicinal/tasty (d6)                                   |
+| 26  | The corpse of a monster is here, long-dead/vermin-infested/slain-recently/almost-dead (d4)                   |
+| 27  | An abandoned armory, still has d3-1 weapons/armor in poor condition                                          |
+| 28  | An altar to a lawful/neutral (d2) deity, abandoned/profaned/broken (d3)                                      |
+| 29  | A supply stash, perhaps left by a previous adventuring party, obvious/hidden/sealed/poisoned (d4)            |
+| 30  | A very nice treasure, hidden/guarded/obviously-trapped/puzzle-sealed (d4)    
+
 
 bugs: lb7nkxl3al
 
@@ -9,7 +443,6 @@ bugs: lb7nkxl3al
 * conflict: there is an ongoing conflict between two actors. The patron wants help (supporting one side against the other)|(prolonging the conflict for as long as possible)|(finding a diplomatic solution to the conflict)|(destroying both sides of the conflict).
 * crime: investigate an old|recent crime (theft|murder|abduction|assault|blackmail|fraud|vandalism) that has affected the patron :: the patron has been framed for a crime and needs help proving their innocence :: frame foe for a crime
 * cursed: lift a curse that is affecting a place|actor that the patron cares about.
-* customs: challenge|change|circumvent a custom|law that is displeasing to the patron ({persecution|immigration|taxes|debts|slavery|romance|gender roles})
 * event: a precipitous|portentous event (violent|diplomatic|chaotic|stabilizing|marriage|religious) is about to happen and needs to be prevented|protected.
 * folly: an actor important to the patron has suffered a major defeat|setback :: broken an important local custom (romance|ethnic|religious) :: fallen to vice (vengeance|lust|greed|paranoia|alcohol|drugs|gambling|debts). Help the patron conceal|fix this error.
 * heist: acquire information|items for the patron without being noticed (replace with replica) :: prevent important information|items from being stolen.
@@ -42,7 +475,7 @@ bugs: lb7nkxl3al
 * anonymity (goal): the objective must be completed without revealing the patron's identity
 * appeal (task): the foe appeals to the PCs and makes them an offer to switch sides against the interests of the patron.
 * blackmail (goal): the patron has strong leverage (secrets|threats|debts) on the PCs and is using this blackmail to force cooperation
-* chaos (task|goal): unrelated third party intervention (guards|military|criminal|religious|mercantile|artisans|peasants) complicates the issue
+* chaos (task|goal): unrelated third party involvement (guards|military|criminal|religious|mercantile|artisans|peasants) complicates the issue
 * competition (goal): the objective must be completed while competing with a rival group
 * conflict (task): there is disagreement between the patron|allies|PCs on how to best complete this task.
 * cooperation (task): the PCs is forced to work with the foe temporarily to {complete this objective | overcome a greater threat}
@@ -50,7 +483,7 @@ bugs: lb7nkxl3al
 * diplomatic (goal|task): this objective must be completed with as little {violence | collateral damage} as possible
 * duplicates (goal|task :: object): there are many examples of a key {object|actor} needed to complete the objective, all but one fake
 * hostile (task): a {potential ally | neutral actor} does not like the {patron|PCs} :: was a former foe :: is bad|unpleasant :: might be working for the foe and cannot be trusted
-* morality (goal|task): the objective has an easy, but morally repugnant, solution (cruel|bloody|deceptive|greedy|illegal|taboo) :: helps a morally repugnant actor ({neutral|paton|foe})
+* morality (goal|task): the objective has an easy, but morally repugnant, solution (cruel|bloody|destructive|deceptive|greedy|illegal|taboo) :: helps a morally repugnant actor ({neutral|paton|foe})
 * obscure (goal): the identity of the foe is unknown
 * scattered (goal|task): the map or lead to the objective is in widely-scattered parts
 * solitude (goal): the locals are {unhelpful in regards to | hostile to |afraid to help with} the patron's cause; this will make allies hard to come by
@@ -88,130 +521,9 @@ bugs: lb7nkxl3al
 * patron (direct|messenger)
 * anonymous (notes|messenger)
 
-humanoids
-beasts
-primordials (symbiotic + beast)
-spirits (spirit + spirit)
-vessels (undead + construct) :: hosts (humanoid|beast|primordial)
-aberrations (spirit + other)
-
-1-3: 
-    * small (6-10)|tiny (12-20)|diminutive (24-40)|fine (48-80) :: swarms
-    * medium beasts/primordial (3-5)
-    * large beasts/primordials (1-2)
-    * bandits (3-5) + ?boss
-    * skeletons|zombies (3-5)
-    * small spirits (3-6)
-4-6
-    * huge beasts/primordials (1)
-    * medium aberrations (3-5)
-    * large aberrations (1-2)
-    * pirates/mercenaries/cultists/deserters/raiders/soldiers (3-5)
-    * wizards/constructs (3-5)
-    * medium spirits (2-3)
-    * large spirits (1)
-    * ghouls|wraiths|gargoyles|flesh golems
-7-9
-    * gargantuan beasts/primordials (1)
-    * huge aberrations (1)
-    * vampires|abominations
-    * huge spirits (1)
-    * archmages + large constructs
-
-10-12
-    * gargantuan aberrations
-    * gargantuan spirits
-    * lich|high vampire
-
-ruins:
------------------------------------------------
-* combat encounters
-* (friendly|neutral|injured|fleeing|fallen) allies
-* puzzles (intellect|wisdom|charisma)
-* hazards (strength|dexterity|constitution)
----
-ruins
----
-* affixes: abandoned|haunted|cursed|overgrown|forgotten|feral
-* ruins (village|town|city):
-    * remnant road
-    * military {stronghold|fortress|keep|watchtower}
-    * production {farmstead|plantation|mine|granary|brewery}
-    * religious {temple|monastery|shrine|crypt|tomb}
-    * {academic|arcane} {library|archive|laboratory|observatory}
-    * aristocratic {estate|residence|gardens}
-    * residential {slums|rural|urban|plaza}
-* wilderness (treacherous|labyrinthine)
-    * unusual biome (wasteland|verdant|primordial|arctic|tropical|storms|volcanic|crystalline)
-    * cavern
-    * trackless wilderness
-    * perilous path
-    * camp
-    * savage hamlet
-    * lost battlefield
-* enigmas:
-    * {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|maps|writing|scrolls}
-    * {altered|augmented} gravity
-    * arcane {dampener|amplifier}
-    * temporal distortion {slow|fast}
-    * benign enchantment ({healing|blessing|visions})
-    * {mutated|enchanted} {vermin|flora|fungi}
-    * locked {room|container} ({enchanted|mechanical})
-    * {cryptic|warped|withered|defiled|mundane} {books|records|debris} from past {inhabitants|intruders}
-    * corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
-    * signs of recent {bloodshed|battle|destruction}
-    * signs of a recent arcane {ritual|experiment}
-    * empty {cabinets|containers}
-    * {discharged|broken} trap
-    * {hidden|illusory} {ingress|egress}
-* hazards:
-    * {unstable|crumbling} structures ({floors|ceilings|walls})
-    * {dangerous|chaotic} {radiation|miasma|flames|arcana}
-    * noxious {pools|flora|fungi}
-    * infestation ({mammal|arthropod|reptile})
-    * trapped {containers|interior} ({hidden|alluring}, {harmful|alarming|sealing})
-    * explosive {dust|gases}
-    * {contagious|virulent} disease
-    * treacherous terrain ({flooded|verticality|footing})
-    * obscuring {darkness|fog}
-    * malign enchantment ({despair|madness|decay|transformation})
-    * the way forward is blocked by {heavy|dangerous} {debris|rubble|overgrowth}
-    * {broken|shattered} {corridors|egress|ingress} 
-    * {warded|sealed|bound} entity
-    * {auditory|visual|spatial} {distortions|illusions}
-* encounters:
-    * combat
-    * survivor {prisoner|victim} (wounded)
-    * inhabitant (traitor|non-combatant)
-* treasure:
-    * {worthless|ruined|cursed}
-    * wealth|lore|secrets|maps|keys|artifacts
-* abilities
-    * illusions: can masquerade as something harmless
-    * vicious: can easily slice through even the heaviest armor
-    * frenzied: more aggressive when wounded
-    * poisonous: attacks poison victims
-    * unyielding: can shrug off mortal wounds
-    * warded: resistant to magic
-    * stealthy: very good at sneaking around unnoticed
-    * invisibility
-    * armored
-    * domination
-    * teleportation
-    * keen {senses|sight|smell|hearing}
-    * packs|swarms|hivemind
-    * quills
-    * petrification
-    * diseased
-    * aquatic|scorched
-    * shapeshift
-    * blurred image
-
-
-
 * nations:
     * government: autocratic|feudal|confederation|anarchic (plutocratic|stratocracy|theocratic|sorcerous)
-    * leadership: elected|hereditary :: regency|respected|despotic|corrupt|incompetent :: coups (failed|successful) : :diplomatic marriages
+    * leadership: elected|hereditary :: regency|respected|despotic|corrupt|incompetent :: coups (failed|successful) :: diplomatic marriages
     * administration: merit|inherited|wealth|eunuchs :: cutthroat|byzantine|efficient
     * economy: prosperous|struggling|mercantilism|controlled
     * tolerance: isolationist|xenophobic|xenophilic
@@ -336,24 +648,151 @@ ruins
     * tradition: submission to the cultural norms; assimilation of foreign cultures
     * vengeance: vengeance and execution of just vendettas
     * wealth: prosperity and accruing material wealth
-    * zeal: piety and devotion to religious doctrine and tenets
+    * zeal: piety and devotion to religious ideals
+    -- traditions --
+    * Astute Diplomats: It is a common idea in this culture that the purest expression of superiority is the ability to subdue your enemy without fighting them.
+    * Collective Lands: The idea that individuals personally own land is alien to this culture; land belongs to all people, for the common good.
+    * Esteemed Hospitality: In this culture rulers are known, and expected, to welcome anyone who might come to their court with open arms. Hosting guests and visitors in a spectacular fashion.
+    * Garden Architects: This culture has a long tradition of constructing and maintaining various types of gardens, building themselves a small paradise.
+    * Isolationist: This culture prefers to keep to itself, and doesn't often look outside its own sphere.
+    * Marital Ceremonies: For this culture, the union of two people in marriage is considered a highly public and ritualistic affair.
+    * Metalworkers: This culture has enjoyed easy access to iron for centuries. Over time they have developed their understanding of metal to such a degree that their name has become a byword for durable and high quality arms and armor.
+    * Ruling Caste: Rulers of this culture are used to lording over subjects that are not their own culture. They know how to effectively suppress revolts, though at the cost of public perception.
+    * Agrarian: This culture is distinctly agrarian, their lands producing ample crops for hungry armies. While not having to struggle for food means many peasants for the levy, it also means that each soldier is not as motivated as those from harsher regions.
+    * Castle Architects: Offense is not a good defense. A good defense is having the most castles on the face of the known world.
+    * City Builders: Cities are the beating urban heart of this culture, and they wish for every one of their metropolises to become enviable gems known across the world.
+    * Court Eunuchs: This culture makes extensive use of eunuchs at court, occupying positions ranging from domestic servants to bureaucratic administrators and even military commanders. Men with no desire are easy to trust.
+    * Arid Dwellers: This culture is accustomed to living in dry climates, and know where to find water and how to work the lands.
+    * Family Business: This culture encourages businesses to develop along familial lines, each generation picking up the tools and techniques of their trade from the last, building a strong tradition of ancestral professionalism.
+    * Ancient Traditions: The military organization of an ancient fallen empire is still in living memory within this culture.
+    * Grand Temples: This culture finds constructing temples the most direct path to the divine. Fervent rulers are expected to build many great temples.
+    * Forest Folk: This culture lives close to vast forests, and knows how to forage its bounties.
+    * Hidden Cities: Whether they are up in the jungle trees, or protected by the organic maze, foreigners may not even know this culture's cities exist, let alone have a clue how to besiege them.
+    * Hill Dwellers: This culture is at home in hills, and know how to work its lands effectively.
+    * Jungle Dwellers: This culture lives close to the jungle, and knows how to harvest its riches.
+    * Legalistic: This culture regards the rule of law and its codification as being the most important parameter of a civilized society.
+    * Maritime Mercantilism: The world may be ruled by armies, but this culture knows that it is truly controlled by whoever dominates the flow of gold across the seas.
+    * Matriarchal: This culture enforces a matriarchal hierarchy, where the ruling class is overwhelmingly comprised of women.
+    * Mountain Homes: This culture knows how to live and thrive on plateaus near the harsh slopes of mountains.
+    * Pastoralists: This culture is at home in wide and open terrain, where they herd large groups of animals.
+    * Marsh Dwellers: This culture has mastered the bogs and marshes. Though life is at times a battle against mold, they have learned to use the peat to their advantage.
+    * Ancient Miners: This culture has always been surrounded by raw materials, ore, and uncut gems. They have an affinity for finding sites for mining excavations.
+    * Coastal Warriors: We have always been drawn to the shoreline. The sting of sea air, the crying gulls, the scent of smoked fish... what warrior would ever opt to live far from the water and its freedoms?
+    * Culture Blending: Members of this culture have often lived alongside people of other cultures. Through exposure, they have become adept at incorporating foreign languages, traditions and customs into their own lives.
+    * Adaptive Skirmishers: This culture knows how to effectively field skirmishers in any environment.
+    * Battlefield Looters: In this culture battles are not fought for prestige, but for profit. Who cares about one's standing if you're unable to pay for the war?
+    * Formation Fighting Experts: This culture knows how to create synergy between different types of units by use of efficient protective formations.
+    * Frugal Armorsmiths: While a set of high-quality armor might save one life, having ten decent sets might win a battle.
+    * Recognition of Talent: "Kill me if you wish, but if you let me live, I shall serve you loyally."
+    * Reverence for Veterans: This culture doesn't look down upon those who can no longer fight due to injury, instead they are celebrated as heroes and used as teachers.
+    * Stalwart Defenders: Defending that which is one's own is of paramount importance to this culture.
+    * Strength in Numbers: This culture forsakes having elite troops, and instead favors massed armies.
+    * Swords for Hire: This culture views mercenary work favorably and encourages warriors to seek glory as mercenaries in-between wars.
+    * Warrior Priests: This culture believes that if you choose to pursue theological studies, you must also be able to defend your faith.
+    * Warriors by Merit: This culture believes that if you've proven yourself capable as a warrior, you should be allowed to fight — no matter who you are.
+    * Forest Fighters: This culture is well-versed at fighting in forests.
+    * Highland Warriors: Warriors of this culture fight well in the slopes and valleys of their hilly homes.
+    * Hit-and-Run Tacticians: This culture has mastered the use of lightly-armored units to hit the enemy hard, and then fall back.
+    * Horse Breeders: This culture has painstakingly accumulated knowledge and experience in the fine art and science of horse breeding. Whether destriers or coursers, the horses of these people are renowned for their superiority.
+    * Jungle Warriors: Warriors of this culture know well how to traverse treacherous jungles.
+    * Expert Marksman: This culture favors ranged weaponry, and practicing with them once a week is as dear as any ritual of worship everywhere from the most rural villages to the largest urban metropoles.
+    * Mountaineers: Soldiers of this culture carry all they need to traverse mountains.
+    * Only the Strong: This culture places a strong emphasis on having a few, well-trained warriors. If you're not the best-of-the-best, you're not welcome to serve.
+    * Stand and Fight!: Warriors from this culture are unyielding and unshakable. They do not fall back - even in the face of overwhelming odds, for better or for worse.
+    * Arid Warriors: This culture has mastered the art of fighting in very dry climates.
+    * Winter Warriors: This culture is used to the reality that harsh winds and bitter cold brings.
+    * Charismatic: The people of this culture excel in diplomatic matters, and social etiquette is valued above all else.
+    * Charitable: Regardless of faith, people of this culture are motivated to support those less fortunate.
+    * Equitable: In this culture truth and impartial justice is valued highly.
+    * Eye for an Eye: In this culture slights are not to be forgotten, nor forgiven. Its people can carry grudges for long, and vengeance is carried out with a passion.
+    * Forbearing: In this culture being patient and restrained in the face of adversity is common.
+    * Industrious: This culture teaches and enshrines ideas of industriousness and hard work on behalf of one's community.
+    * Loyal Subjects: For this culture, serving one's liege and country is both noble and just - a duty and a privilege, rather than an avaricious arrangement or an unwanted burden.
+    * Mendicant Mystics: The holy people of this culture believe strongly that the faith should be ministered in the field, and their most devout frequently wander the world.
+    * Modest: This culture values modesty, one should not take up too much space or think oneself better than others.
+    * Strong Believers: The people of this culture are particularly zealous and dedicated to their faith.
+    * Chivalry: This culture has embraced chivalry and chivalric codes of conduct as a social method of regulating behavior. Martial prowess, duty, honor and morality are prized, as is bad poetry and romantic literature.
+    * Dexterous Fishermen: Anyone can fish, but to do so with such skill that any catch is bountiful, regardless of tide or wind, is a rarer talent. No one knows the coast, land or sea, better than these fishermen.
+    * Martial Admiration: Those who are willing to take up sword and fight for their culture are worthy of admiration. No matter the odds.
+    * Pacifists: For this culture, the use of force can never be justified. Only by pursuing a path of non-violence can people truly live in peace.
+    * Philosopher Culture: This culture promotes thought and self-reflection.
+    * Practiced Pirates: Storming a port, setting it ablaze, and taking everything that isn't nailed down may not be noble, but it is profitable.
+    * Prolific Hunters: Driven by economic necessity, or perhaps social expectation, this culture has refined their hunting practices to precise and almost beautiful art.
+    * Refined Poetry: Poetry is considered a noble art in this culture, and many spend their time piecing words together with meaning and thought.
+    * Seafarers: For this culture, the call of the sea is too strong to resist, and they live to sail like a dream on a crystal clear ocean, or ride on the crest of a wild raging storm.
+    * Storytellers: This culture has a strong and persistent oral tradition. The past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations.
+    * Warrior Culture: This culture values martial prowess and strength above everything else. Children are brought up knowing how to fight, and are discouraged from scholarly pursuits. Weakness is not tolerated.
+    * Xenophilic: This culture embraces everyone and is genuinely fascinated by all cultures.
+    * Vegetarians: This culture has developed a strong aversion to consuming the flesh of animals, and practices vegetarianism throughout their society.
+    * Trials-by-Combat: Words are a coward's substitute for weapons. Why leave justice to decrepit laws and corrupt magistrates when disputes can be settled faster and fairer with the blade?
+    * Musical Theorists: This culture treats music almost as the language of the divine, and thus many individuals take up the noble and celebrated pursuit of musical study from a young age.
+    * Frequent Festivities: The frequency and exuberance with which this culture throws festivities would be considered vulgar to others, but a party is a party!
+    * Linguists: To learn the words of a neighbor brings you one step closer to the language of the Divine.
+    * Medicinal Herbalists: This culture long ago developed knowledge of the medicinal properties of the plants and trees; to them most ailments are treatable with the right poultice, salve or stew.
+    * Culinary Artists: Food isn't just sustenance for this culture; it is both an art and a ritual, a focal point for family and community alike.
+    * Merciful Blinding: No matter how far beyond forgiveness one has gone, this culture thinks it is better to gouge out an eye than run through a heart.
+    * Religion Blending: Members of this culture often live together with those sharing different faiths and beliefs, and do well in adopting foreign elements into their own worship.
+    * Religious Patronage: For the salvation of the soul, one must commit to works of religious significance. You cannot purchase redemption, but having a temple of priests sing your praises helps!
+    * Runestone Raisers: Death, conquest, the acquisition of rank — are these not the things that define life in the nobility? Where our people go, so go the markers of our lives' worth.
+    * Sacred Groves: Trees are considered sacred by this culture. The forest is a living being that ought to be cared for—not destroyed.
+    * Sacred Hunts: Hunting is neither a sport nor a pastime, it is nothing less than the purest expression of the human experience, where one may connect with the divine by demonstrating their mastery over nature.
+    * Sacred Mountains: This culture considers mountains to be connections to the divine, and treats them with reverence and respect.
+    * Mystical Ancestors: Lineage is very important to this culture, to the point where ancestors have become mythical and legendary beings with many who claim to be their descendants.
+    * Royal Army: We have a long tradition of a standing army made to protect the capital. This has given us access to tough soldiers that work exceedingly well with supporting troops.
+    * Honor Bound: Honor is not only important, it is paramount. Duels may take place to resolve issues that pertain to it.
+    * sorcerer-kings: our culture places great emphasis on arcana; it is only fair that the strongest mages should rule.
 
-    * gardens: this culture has a long tradition of constructing and maintaining various types of gardens, building themselves a small paradise.
-    * marriage: for this culture, the union of two people in marriage is considered a highly public and ritualistic affair.
-    * metalworkers: smiths of this culture are highly respected and are well known for creating high quality and durable products.
-    * pastoralist: this culture is at home in wide and open terrain, where they herd large groups of animals.
-    * architecture: this culture is famed for its impressive feats of engineering.
-    * seafarers: this culture is at home on the ocean and sails to every corner of the known world.
-    * storytellers: this culture has a strong and persistent oral tradition. The past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations.
-    * warriors: children are brought up knowing how to fight and disputes are settled with trails-by-combat.
-    * culinary artists: food isn't just sustenance for this culture; it is both an art and a ritual, a focal point for family and community alike.
-    * fortified monasteries: This culture has a tradition of fortified monastic retreats. This lifestyle breeds able and pious warriors and attracts mystics.
-    * strong kinship: this culture has a strong tradition of kinship within the extended family, or clan.
-    * ancestor veneration: lineage is very important to this culture, to the point where ancestors have become mythical and legendary beings with many who claim to be their descendants.
 
 
-
-    * arid: this culture is accustomed to living in dry climates, knowing where to find hidden water sources and valuable minerals.
-    * forests: this culture lives close to vast forests, and knows how to forage its bounties.
-
-
+-- religion leadership --
+* temporal: Secular and spiritual powers are inextricably bound. It is pointless to divide them between two offices.
+* hierocratic: A High Priest should be given complete control over all spiritual matters, so that the gods may be pleased with the proper rituals.
+* autocephalous: Every realm shall have its High Priest, working alongside its ruler and fulfilling the needs of the gods and their followers.
+* autonomous: Every priest will be given the chance to give his proper interpretation of the new holy text, free from any centralized authority.
+-- religious tenets --
+* Adaptive: Dogmatic adherence to old restrictions only harms the faithful. As long as we stay true to the core beliefs of our faith, we may adapt our laws to the world around us.
+* Asceticism: Materialistic pursuits blind us to the divine truth. Only by devoting ourselves to live simple lives without luxury can we achieve spiritual enlightenment.
+* Astrology: The night sky is our window into the realm of the divine. The great secrets and mysteries of the world are written there, open for all to learn if they know where to look.
+* Carnal Exaltation: The pleasures of the flesh are sublime in a way that transcends other earthly experiences, bringing us closer to the divine. We should glorify our sexual desires and seek out opportunities for us to fulfill them.
+* Communal Identity: Our faith and our culture are intrinsically linked together. This practice strengthens the bonds of our community, though it tends to exclude foreigners.
+* Communion: Our rituals are not merely symbolic — they invoke the very presence of the divine itself. Those who cannot or do not join us in their practice cannot be true believers.
+* Divine Marriage: The blood of the divine runs through the veins of our kings and queens. Keeping our bloodlines pure is the best way to ensure our family's reign continues for centuries to come.
+* Ecclesiarchy: Our holy sites are more than just sacred places — they are the very seats of power from which our religious leaders rule.
+* Esotericism: The great mysteries of the divine may be beyond mortal comprehension, but that is not an excuse for ignorance. Their very existence compels us to seek knowledge and understanding of the world around us.
+* Gnosticism: Through knowledge, the divine spark that rests inside all humans may be liberated and returned to its heavenly source in the spirit-realm.
+* Legalism: Our laws are the result of generations of wisdom and devoutness, and adhering to them is by its very nature pious. A sinner, no matter who, will never be above the law.
+* Literalism: Our holy texts clearly state divine intent, and human interpretation is of limited value.
+* Mendicant Preachers: Our missionaries travel far and wide with nothing but the clothes they wear on their back. They live off the generosity of those they visit, and share the knowledge of the true faith in return.
+* Monasticism: The pleasures of fine food and drink only serve to distract us from service to the divine. Isolating ourselves in remote monasteries is the best way to avoid these temptations.
+* Polyamory: Our love for each other should be as unconditional. We must cast away the outdated notions of one person owning the affections of another.
+* Religious Law: The border between theological and legal arguments is thin, and spiritual qualities can and should be considered in secular settlements.
+* Ritual Cannibalism: Mankind is blessed to have been bestowed with the spark of the divine. Human flesh is therefore sacred, its presence something to be savored, not buried or burned.
+* Ritual Celebrations: The worship of the divine is something to be exalted in and shared with our community. Organizing great festivals to honor and praise the divine brings us all together.
+* Sanctity of Nature: The natural world is the creation of the divine, and we are merely guests in it. We must respect and honor every tree, every animal, and even the ground itself.
+* Tax Nonbelievers: Military service is for the faithful only, while a tax is levied on all nonbelievers for the protection they are offered.
+* Adorcism: The spirits of the world can do great works of both good and evil. By honoring and respecting them we can only hope that they will do their good to us and their evil to our foes.
+* Ancestor Worship: Our ancestors watch over us from beyond the grave, guiding us and showing us the way forward. For this we must respect and honor them.
+* Aniconism: The worship of graven images has blinded far too many to the divine truth. We will cast all icons out of our holy places so that our faithful will not fall into that trap.
+* Armed Pilgrimages: Our pilgrims travel across the world to visit our sacred holy sites — we will gladly take up the sword to keep them safe from any who would harm them.
+* Patron Gods: Mortals cannot live up to the full glory of the divine, but by selecting a single aspect of divinity to emulate, worship and devote oneself to, we can come closer to them than otherwise would be possible.
+* Pacifism: Violence is an abhorrent act that only leads to suffering, pain and regret. By working to avoid it whenever possible we can build stronger, more secure societies for the faithful to live in.
+* Hedonistic: The divine filled this world with a bounty of pleasures for us to indulge in and enjoy — to not partake of such things is to snub the very work of creation itself.
+* Human Sacrifice: The best way to prove our devotion is through the act of sacrifice. The most valuable sacrifice we can offer is the sacrifice of human life.
+* Inner Journey: Only by understanding one's self can we understand the world. The journey of self-discovery is important as it is long and difficult.
+* Reincarnation: We have lived many lives before this one, and will continue to live many lives after it. Every death is only the beginning of something new.
+* Ritual Hospitality: Hospitality is one of the greatest virtues mankind can exhibit. Guests in our home, be they mortal or divine, should always be treated with the utmost honor and respect.
+* Sacred Childbirth: The bathhouses where mothers give birth must be cleansed and prepared with the proper rituals, in order to encourage the divine to grant us their blessing during childbirth.
+* Sacrificial Ceremonies: Human sacrifice both voluntary and involuntary bring us closer to the divine. It is customary and virtuous for one to volunteer to sacrifice oneself in ceremony, just as it is virtuous to sacrifice those who have committed unforgivable crimes against the Gods.
+* Sky Burials: The dead should not be imprisoned underground — it is far better to allow them to be consumed by scavenging birds, where in a final act of generosity they can feed the world that fed them.
+* Warmonger: Faith and war go hand in hand. One who refuses to fight in the name of the divine cannot be called a true believer.
+* Sun Worship: 	The light-bringer, the live-giver, the ever-burning flame — It reigns high in the sky as the true sovereign of the world.
+* Oracles: Only through the proper use of divination can we discern the will of the gods and lead our armies to victory.
+* Syncretism: The wisest amongst us should be allowed to study other faiths and learn more about the people around us.
+* War Worship: the gods are in eternal wars and conflicts with each other. If we are to emulate them and worship them as they deserve, we have to be ready to fight.
+* Veneration of knowledge: Knowledge is the source of all power. We should always seek more, even if onyl for its own sake.
+* Mastery over Undeath: We have been blessed with the powers of necromancy. These powers should be considered sacred, and part of our bound with the divine.
+* Contempt for the Weak: The world that we live in is harsh and unforgiving. In order to survive, we must ensure that only the strongest can rule, ousting the weaker rulers when needed.
+* Daedric Bargains
+* moon worship: the moons are divine forces that exert a tremendous, yet incomprehensibly subtle influence on the world. from the rising of tides, to the grow of plants, to the cycle of waking and dreaming
+* living gods: most faith revere the dead or immaterial beings, but our gods walk this very earth and their day-to-day actions shape our core beliefs.
+* sanctity of life: the cycle of life and death cannot be broken under any condition. Anyone,  mortal or divine, or defies it must be vanquished alongside their undead minions.

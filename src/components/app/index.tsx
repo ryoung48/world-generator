@@ -1,3 +1,6 @@
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/animations/scale.css'
+
 import { Grid, ThemeProvider } from '@mui/material'
 import { Container } from '@mui/system'
 import { useReducer, useState } from 'react'

@@ -1,5 +1,6 @@
 import { range } from 'd3'
 
+import { parseOutermostBrackets } from '../../text'
 import { percentageScale, WeightedDistribution } from '..'
 
 export function generateId(seed = Math.random()) {
@@ -151,9 +152,11 @@ export class Dice {
     return generateId(this.random)
   }
   public spin(text: string): string {
-    return text.replace(/\{((?:[^{}]*\{[^{}]*\})*[^{}]*?)\}/g, match => {
-      const spun = this.choice(match.substring(1, match.length - 1).split(/\|(?![^{]*\})/))
-      return this.spin(spun)
-    })
+    return parseOutermostBrackets(text).reduce((spun, match) => {
+      return spun.replace(
+        match,
+        this.choice(this.spin(match.substring(1, match.length - 1)).split('|'))
+      )
+    }, text)
   }
 }

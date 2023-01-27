@@ -101,6 +101,13 @@ export const theme = createTheme({
           paddingTop: 0
         }
       }
+    },
+    MuiPaginationItem: {
+      styleOverrides: {
+        rounded: {
+          borderRadius: 0
+        }
+      }
     }
   }
 })

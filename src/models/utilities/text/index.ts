@@ -37,3 +37,20 @@ export const romanize = (num: number) => {
   }
   return roman
 }
+
+export const parseOutermostBrackets = (text: string) => {
+  const groups: string[] = []
+  let depth = 0
+  let curr = ''
+  for (const c of text) {
+    const former = depth
+    if (c === '{') depth++
+    if (depth > 0) curr += c
+    if (c === '}') depth--
+    if (former > 0 && depth === 0) {
+      groups.push(curr)
+      curr = ''
+    }
+  }
+  return groups
+}

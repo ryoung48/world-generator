@@ -1,6 +1,5 @@
 import { region__spawn } from '../../../../regions'
-import { province__cell } from '../../../../regions/provinces'
-import { province__spawn } from '../../../../regions/provinces/spawn'
+import { province__cell, province__spawn } from '../../../../regions/provinces'
 import { Region } from '../../../../regions/types'
 import { cell__neighbors } from '../../../cells'
 import { mountainsCutoff } from '../../../types'
