@@ -57,9 +57,7 @@ const hobbyist: Quirk[] = [
   'seafarer',
   'huntsman',
   'chef',
-  'poet',
-  'brawler',
-  'gambler'
+  'poet'
 ]
 const relations: Quirk[] = [
   'troubled romance',
@@ -68,7 +66,9 @@ const relations: Quirk[] = [
   'misplaced trust',
   'troublesome relationship'
 ]
-const perspective: Quirk[] = ['victim', 'supporter', 'adversary']
+const talent: Quirk[] = ['well-off', 'despised', 'struggling', 'respected', 'delusional self-image']
+const connections: Quirk[] = ['connections', 'secret sectarian', 'foreign agent']
+const perspective: Quirk[] = ['victim', 'supporting', 'against']
 const vice: Quirk[] = ['alcoholic', 'drug addict', 'gluttonous', 'masochistic']
 const quirks: Record<Quirk, QuirkDetails> = {
   'seeking redemption': { conflicts: seekers, spawn: () => 0.5 },
@@ -162,40 +162,42 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   huntsman: { conflicts: hobbyist, spawn: () => 0.5 },
   chef: { conflicts: hobbyist, spawn: ({ profession }) => (profession.includes('chef') ? 0 : 0.5) },
-  poet: { conflicts: hobbyist, spawn: ({ profession }) => (profession.includes('chef') ? 0 : 0.5) },
-  brawler: { conflicts: hobbyist, spawn: () => 0.5 },
-  gambler: { conflicts: hobbyist, spawn: () => 0.5 },
+  poet: { conflicts: hobbyist, spawn: ({ profession }) => (profession.includes('poet') ? 0 : 0.5) },
+  gambler: { spawn: () => 0.5 },
   funny: { text: '{humorous|sarcastic|whimsical}', spawn: () => 1 },
   storyteller: { spawn: ({ youngAdult }) => (youngAdult ? 0 : 0.5) },
   'war veteran': { spawn: ({ youngAdult }) => (youngAdult ? 0 : 1) },
-  'veiled backers': {
-    text: ({ xenophobic }) =>
+  connections: {
+    text: ({ profession }) =>
       decorateText({
-        label: 'veiled backers',
-        tooltip: `{${
-          xenophobic ? '' : 'foreign|foreign|foreign|foreign|foreign|foreign|'
-        }religious|criminal|aristocratic|bureaucratic|mercantile}`
+        label: 'connections',
+        tooltip: `{${profession.includes('clergy') ? '' : 'religious|'}${
+          profession.includes('criminal') ? '' : 'criminal|'
+        }${profession.includes('aristocrat') ? '' : 'aristocratic|'}${
+          profession.includes('bureaucrat') ? '' : 'bureaucratic|'
+        }${profession.includes('merchant') ? '' : 'mercantile'}}`
       }),
+    conflicts: connections,
     spawn: () => 0.5
   },
-  'secret sectarian': { spawn: () => 0.5 },
+  'foreign agent': { conflicts: connections, spawn: ({ xenophobic }) => (xenophobic ? 0 : 0.5) },
+  'secret sectarian': { conflicts: connections, spawn: () => 0.5 },
   'local leader': { conflicts: ['charisma'], spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
   'magical gift': { spawn: ({ sorcerer }) => (sorcerer ? 0 : 0.5) },
-  'underworld connections': {
-    spawn: ({ profession }) => (profession.includes('criminal') ? 0 : 0.5)
-  },
-  talent: {
-    text: `{despised|struggling|respected|talented|${decorateText({
+  'well-off': { conflicts: talent, spawn: () => 1 },
+  struggling: { conflicts: talent, spawn: () => 1 },
+  respected: { conflicts: talent, spawn: () => 1 },
+  despised: { conflicts: talent, spawn: () => 1 },
+  'delusional self-image': {
+    text: decorateText({
       label: 'delusional self-image',
-      tooltip: '{despised|respected|talented}'
-    })}}`,
+      tooltip: '{despised|respected}'
+    }),
+    conflicts: talent,
     spawn: () => 1
   },
   'brash overconfidence': { spawn: ({ respectful }) => (respectful ? 0 : 1) },
-  'fatal extravagance': {
-    text: decorateText({ label: 'fatal extravagance', tooltip: '{sickness|threatened}' }),
-    spawn: ({ austere }) => (austere ? 0 : 0.5)
-  },
+  'fatal extravagance': { spawn: ({ austere }) => (austere ? 0 : 0.5) },
   'concealed sin': {
     text: decorateText({
       label: 'concealed sin',
@@ -263,19 +265,19 @@ const quirks: Record<Quirk, QuirkDetails> = {
     conflicts: perspective,
     spawn: () => 0.5
   },
-  supporter: {
+  supporting: {
     text: ({ backgrounds }) =>
       decorateText({
-        label: 'supporter',
+        label: 'supporting',
         tooltip: window.dice.choice(backgrounds)
       }),
     conflicts: perspective,
     spawn: () => 0.5
   },
-  adversary: {
+  against: {
     text: ({ backgrounds }) =>
       decorateText({
-        label: 'adversary',
+        label: 'against',
         tooltip: window.dice.choice(backgrounds)
       }),
     conflicts: perspective,

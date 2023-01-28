@@ -1,4 +1,5 @@
 import type { Profession } from '../../npcs/professions/types'
+import { Gender, LifePhase } from '../../npcs/types'
 import type { Thread } from '../types'
 
 export type Background =
@@ -11,8 +12,8 @@ export type Background =
   | 'brilliant innovation'
   | 'broken spirits'
   | 'buried ruins'
-  | 'decaying enchantment'
   | 'cheating merchant'
+  | 'corrupt laws'
   | 'corrupt officials'
   | 'corvee demand'
   | "coup d'état"
@@ -32,7 +33,7 @@ export type Background =
   | 'fallen prosperity'
   | 'foreign enclave'
   | 'foreign spies'
-  | 'grasping aristocrat'
+  | 'grasping authority'
   | 'great famine'
   | 'guild oligarchy'
   | 'heavy fortification'
@@ -46,7 +47,6 @@ export type Background =
   | 'malignant slum'
   | 'martial tradition'
   | 'master artisan'
-  | 'meritocratic exams'
   | 'monstrous tribute'
   | 'murderous savage'
   | 'natural disaster'
@@ -62,7 +62,6 @@ export type Background =
   | 'raider scourge'
   | 'rebel stronghold'
   | 'regency council'
-  | 'restrictive laws'
   | 'revanchism'
   | 'rich land'
   | 'ritual combat'
@@ -84,15 +83,24 @@ export type Background =
   | 'upstart faith'
   | 'wanted outlaw'
   | 'warring council'
-  | 'wilder enclave'
   | 'witch hunts'
   | 'xenophobic locals'
   | 'zealous builder'
 
+type BackgroundActor = {
+  alias: string
+  culture?: 'foreign' | 'native'
+  monstrous?: boolean
+  age?: LifePhase[]
+  relative?: boolean
+  gender?: Gender
+}
 export interface BackgroundDetails {
   context: string
   complications: string[]
   actors?: Partial<Record<Thread['actors'][number]['tag'], Profession[]>>
+  friends: BackgroundActor[]
+  enemies: BackgroundActor[]
   professions?: Partial<Record<Profession, number>>
   things: string[]
   places: string[]

@@ -9,12 +9,6 @@ import { Profession, ProfessionDetails } from './types'
 export const professions: Record<Profession, ProfessionDetails> = {
   // lower class
   peasant: { strata: 'lower', urban: false, weight: 10 },
-  'clan head': {
-    title: { male: 'clan patriarch', female: 'clan matriarch' },
-    strata: 'lower',
-    age: 'master',
-    weight: 0.2
-  },
   'village elder': { strata: 'lower', urban: false, age: 'master', culture: 'native' },
   laborer: { strata: 'lower', urban: true },
   beggar: { strata: 'lower', urban: true },
@@ -26,24 +20,15 @@ export const professions: Record<Profession, ProfessionDetails> = {
     urban: true
   },
   'dock worker': { strata: 'lower', coastal: true, urban: true },
-  actor: {
-    title: { male: 'actor', female: 'actress' },
-    strata: 'lower',
-    urban: true,
-    weight: 0.2
-  },
+  actor: { title: { male: 'actor', female: 'actress' }, strata: 'lower', urban: true, weight: 0.2 },
   singer: { strata: 'lower', urban: true, weight: 0.2 },
   poet: { strata: 'lower', urban: true, weight: 0.2 },
   artist: { strata: 'lower', urban: true, weight: 0.2 },
   musician: { strata: 'lower', urban: true, weight: 0.2 },
   courtesan: { strata: 'lower', urban: true },
-  criminal: { strata: 'lower' },
-  'bandit warlord': { strata: 'lower', urban: false, villain: true, age: 'veteran' },
-  'tomb robber': {
-    title: '{tomb|grave} robber',
-    strata: 'lower',
-    weight: 0
-  },
+  bandit: { strata: 'lower', urban: false, villain: true },
+  criminal: { strata: 'lower', urban: true },
+  'tomb robber': { title: '{tomb|grave} robber', strata: 'lower', urban: true, weight: 0.2 },
   'ruins explorer': { strata: 'lower', weight: 0 },
   guard: { title: `guard (${hub__site})`, strata: 'lower', urban: true, official: true },
   'monster hunter': {
@@ -54,48 +39,19 @@ export const professions: Record<Profession, ProfessionDetails> = {
   chef: { strata: 'lower' },
   waiter: { title: { male: 'waiter', female: 'waitress' }, strata: 'lower' },
   bartender: { strata: 'lower' },
-  'grave keeper': {
-    title: '{grave|cemetary} keeper',
-    strata: 'lower',
-    urban: true
-  },
+  'grave keeper': { title: '{grave|cemetary} keeper', strata: 'lower', urban: true },
   'sorcerer (petty)': { strata: 'lower', urban: false },
   'clergy (petty)': { strata: 'lower', official: true },
   missionary: { strata: 'lower', culture: 'foreign', urban: true },
   'merchant (petty)': { strata: 'lower' },
-  'bureaucrat (petty)': {
-    strata: 'lower',
-    urban: false,
-    official: true
-  },
+  'bureaucrat (petty)': { strata: 'lower', urban: false, official: true },
   coachman: { strata: 'lower', urban: true },
   archivist: { strata: 'lower', urban: true },
   beastmaster: { strata: 'lower', age: 'veteran', urban: true, weight: 0.5 },
   // middle class
-  'ruler (rural)': {
-    title: 'ruler (village)',
-    strata: 'middle',
-    urban: false,
-    unique: true,
-    age: 'veteran',
-    culture: 'native'
-  },
-  gentry: { title: '{gentry|landlord}', strata: 'middle', urban: true },
-  'visiting gentry': {
-    strata: 'middle',
-    urban: false,
-    age: 'veteran'
-  },
-  'bureaucrat (minor)': {
-    strata: 'middle',
-    urban: true,
-    official: true
-  },
-  'bureaucrat (major)': {
-    strata: 'middle',
-    urban: true,
-    official: true
-  },
+  gentry: { title: '{gentry|landlord} ({minor|minor|major})', strata: 'middle' },
+  'bureaucrat (minor)': { strata: 'middle', urban: true, official: true },
+  'bureaucrat (major)': { strata: 'middle', urban: true, official: true },
   'guard captain': {
     title: `guard captain (${hub__site})`,
     strata: 'middle',
@@ -109,17 +65,17 @@ export const professions: Record<Profession, ProfessionDetails> = {
     urban: true,
     official: true
   },
-  'criminal (boss, minor)': { strata: 'middle', age: 'veteran' },
-  'criminal (boss, major)': { strata: 'middle', age: 'veteran', urban: true },
+  'bandit warlord': { strata: 'middle', urban: false, villain: true, age: 'veteran' },
+  'criminal boss': {
+    title: 'criminal boss ({minor|minor|major})',
+    strata: 'middle',
+    age: 'veteran',
+    urban: true
+  },
   'stable master': { strata: 'middle', age: 'veteran', urban: true },
   innkeeper: { strata: 'middle' },
   'clergy (minor)': { strata: 'middle', official: true },
-  'clergy (major)': {
-    strata: 'middle',
-    urban: true,
-    official: true,
-    age: 'veteran'
-  },
+  'clergy (major)': { strata: 'middle', urban: true, official: true, age: 'veteran' },
   lawyer: { strata: 'middle', urban: true, official: true },
   scholar: { strata: 'middle', urban: true },
   'sorcerer (minor)': { strata: 'middle' },
@@ -128,11 +84,7 @@ export const professions: Record<Profession, ProfessionDetails> = {
   'poet (famous)': { strata: 'middle', urban: true, weight: 0.25 },
   'artist (famous)': { strata: 'middle', urban: true, weight: 0.25 },
   'musician (famous)': { strata: 'middle', urban: true, weight: 0.25 },
-  'courtesan (famous)': {
-    title: 'courtesan ({famous|madame})',
-    strata: 'middle',
-    urban: true
-  },
+  'courtesan (famous)': { strata: 'middle', urban: true },
   baker: { strata: 'middle', urban: true, weight: 0.1 },
   butcher: { strata: 'middle', urban: true, weight: 0.1 },
   brewer: { strata: 'middle', urban: true, weight: 0.1 },
@@ -156,22 +108,15 @@ export const professions: Record<Profession, ProfessionDetails> = {
   surgeon: { strata: 'middle', weight: 0.1 },
   artificer: { strata: 'middle', urban: true, weight: 0.1 },
   'merchant (minor)': { strata: 'middle' },
-  'merchant (major)': {
-    strata: 'middle',
-    urban: true,
-    age: 'veteran'
-  },
+  'merchant (major)': { strata: 'middle', urban: true, age: 'veteran' },
   'caravan trader': { strata: 'middle', urban: true, culture: 'foreign' },
-  'caravan master': {
-    strata: 'middle',
-    urban: true,
-    culture: 'foreign',
-    age: 'veteran'
-  },
-  'ship captain': {
+  'caravan master': { strata: 'middle', urban: true, culture: 'foreign', age: 'veteran' },
+  'ship captain (merchant)': { strata: 'middle', coastal: true, urban: true, age: 'veteran' },
+  'ship captain (pirate)': {
     strata: 'middle',
     coastal: true,
     urban: true,
+    villain: true,
     age: 'veteran'
   },
   'dock master': {
@@ -182,14 +127,6 @@ export const professions: Record<Profession, ProfessionDetails> = {
     age: 'veteran'
   },
   // upper class
-  'ruler (urban)': {
-    title: `ruler (${hub__site})`,
-    strata: 'upper',
-    urban: true,
-    unique: true,
-    culture: 'native',
-    age: 'master'
-  },
   'guild master': {
     title: 'guild master (artisan)',
     strata: 'upper',
@@ -198,18 +135,9 @@ export const professions: Record<Profession, ProfessionDetails> = {
     official: true,
     age: 'master'
   },
-  'sorcerer (great)': {
-    title: 'archmage',
-    strata: 'upper',
-    urban: true,
-    age: 'master'
-  },
-  'clergy (great)': {
-    strata: 'upper',
-    urban: true,
-    official: true,
-    age: 'master'
-  },
+  'merchant (prince)': { strata: 'upper', urban: true, age: 'veteran' },
+  'sorcerer (great)': { title: 'archmage', strata: 'upper', urban: true, age: 'master' },
+  'clergy (great)': { strata: 'upper', urban: true, official: true, age: 'master' },
   'templar (grandmaster)': {
     strata: 'upper',
     urban: true,
@@ -222,26 +150,11 @@ export const professions: Record<Profession, ProfessionDetails> = {
     age: 'master',
     culture: 'foreign'
   },
-  'merchant (prince)': { strata: 'upper', urban: true, age: 'veteran' },
-  'aristocrat (lord)': {
-    title: {
-      male: 'aristocrat ({minor|minor|major}, lord)',
-      female: 'aristocrat ({minor|minor|major}, lady)'
-    },
+  aristocrat: {
+    title: 'aristocrat ({minor|minor|major})',
     strata: 'upper',
     urban: true,
-    age: 'veteran',
-    weight: 3
-  },
-  'aristocrat (heir)': {
-    title: {
-      male: 'aristocrat ({minor|minor|major}, {gentleman|scion})',
-      female: 'aristocrat ({minor|minor|major}, {maiden|scion})'
-    },
-    strata: 'upper',
-    urban: true,
-    age: 'novice',
-    weight: 3
+    weight: 6
   },
   diplomat: {
     title: 'courtier ({diplomat|ambassador})',
