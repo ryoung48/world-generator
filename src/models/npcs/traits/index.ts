@@ -7,7 +7,7 @@ import { decorateText } from '../../utilities/text/decoration'
 import { professions } from '../professions'
 import { species__map } from '../species'
 import { NPC } from '../types'
-import { Personality, Quirk, QuirkDetails } from './types'
+import { Personality, Quirk, QuirkDetails, QuirkParams } from './types'
 
 const rollPersonality = (params: { count: number; role?: ThreadContext['role'] }) => {
   const { count, role } = params
@@ -64,12 +64,40 @@ const relations: Quirk[] = [
   'lovesick fool',
   'load-bearing relationship',
   'misplaced trust',
-  'troublesome relationship'
+  'troublesome relationship',
+  '{romantic|family} entanglement'
 ]
-const talent: Quirk[] = ['well-off', 'despised', 'struggling', 'respected', 'delusional self-image']
+const talent: Quirk[] = [
+  'well-off',
+  'despised',
+  'struggling',
+  'respected',
+  'delusional self-image',
+  'negligent'
+]
 const connections: Quirk[] = ['connections', 'secret sectarian', 'foreign agent']
-const perspective: Quirk[] = ['victim', 'supporting', 'against']
+const perspective: Quirk[] = [
+  'victim of',
+  'benefits from',
+  'threatened by',
+  'distressed',
+  'blaming rivals',
+  'unjustly blamed',
+  'ruined plans',
+  'reliant on',
+  'responsible for',
+  'feels guilty',
+  'investigating',
+  'misunderstood animosity',
+  '{romantic|family} entanglement'
+]
 const vice: Quirk[] = ['alcoholic', 'drug addict', 'gluttonous', 'masochistic']
+
+const backgroundWrapper =
+  (label: string) =>
+  ({ background, backgrounds }: QuirkParams) =>
+    decorateText({ label, tooltip: background ?? window.dice.choice(backgrounds) })
+
 const quirks: Record<Quirk, QuirkDetails> = {
   'seeking redemption': { conflicts: seekers, spawn: () => 0.5 },
   optimistic: { conflicts: ['melancholic'], spawn: () => 1 },
@@ -188,6 +216,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   struggling: { conflicts: talent, spawn: () => 1 },
   respected: { conflicts: talent, spawn: () => 1 },
   despised: { conflicts: talent, spawn: () => 1 },
+  negligent: { conflicts: talent, spawn: () => 1 },
   'delusional self-image': {
     text: decorateText({
       label: 'delusional self-image',
@@ -256,30 +285,70 @@ const quirks: Record<Quirk, QuirkDetails> = {
     text: decorateText({ label: 'wraith', color: 'indigo', bold: true }),
     spawn: () => 0.1
   },
-  victim: {
-    text: ({ backgrounds }) =>
-      decorateText({
-        label: 'victim',
-        tooltip: window.dice.choice(backgrounds)
-      }),
+  despotic: { spawn: () => 0 },
+  charlatan: { spawn: () => 0 },
+  'victim of': {
+    text: backgroundWrapper('victim of'),
     conflicts: perspective,
     spawn: () => 0.5
   },
-  supporting: {
-    text: ({ backgrounds }) =>
-      decorateText({
-        label: 'supporting',
-        tooltip: window.dice.choice(backgrounds)
-      }),
+  'benefits from': {
+    text: backgroundWrapper('benefits from'),
     conflicts: perspective,
     spawn: () => 0.5
   },
-  against: {
-    text: ({ backgrounds }) =>
-      decorateText({
-        label: 'against',
-        tooltip: window.dice.choice(backgrounds)
-      }),
+  distressed: {
+    text: backgroundWrapper('distressed'),
+    conflicts: perspective,
+    spawn: () => 0.5
+  },
+  'blaming rivals': {
+    text: backgroundWrapper('blaming rivals'),
+    conflicts: perspective,
+    spawn: ({ context }) => (context?.role === 'rival' ? 0.5 : 0)
+  },
+  'unjustly blamed': {
+    text: backgroundWrapper('unjustly blamed'),
+    conflicts: perspective,
+    spawn: () => 0.5
+  },
+  'ruined plans': {
+    text: backgroundWrapper('unjustly blamed'),
+    conflicts: perspective,
+    spawn: () => 0.5
+  },
+  'reliant on': {
+    text: backgroundWrapper('reliant on'),
+    conflicts: perspective,
+    spawn: () => 0.5
+  },
+  'responsible for': {
+    text: backgroundWrapper('responsible for'),
+    conflicts: perspective,
+    spawn: () => 0.5
+  },
+  'threatened by': {
+    text: backgroundWrapper('threatened by'),
+    conflicts: perspective,
+    spawn: () => 0.5
+  },
+  'feels guilty': {
+    text: backgroundWrapper('feels guilty'),
+    conflicts: perspective,
+    spawn: ({ context }) => (context?.role === 'patron' ? 0.5 : 0)
+  },
+  investigating: {
+    text: backgroundWrapper('investigating'),
+    conflicts: perspective,
+    spawn: ({ context }) => (context?.role === 'patron' ? 0.5 : 0)
+  },
+  'misunderstood animosity': {
+    text: backgroundWrapper('misunderstood animosity'),
+    conflicts: perspective,
+    spawn: ({ context }) => (context?.role === 'rival' ? 0.5 : 0)
+  },
+  '{romantic|family} entanglement': {
+    text: backgroundWrapper('{romantic|family} entanglement'),
     conflicts: perspective,
     spawn: () => 0.5
   }
@@ -324,6 +393,7 @@ const rollQuirks = ({
     comfortable: strata === 'middle',
     rich: strata === 'upper',
     backgrounds: loc.backgrounds,
+    background: context?.background,
     context
   }
   let count = 2

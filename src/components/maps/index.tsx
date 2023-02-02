@@ -12,8 +12,10 @@ import { fonts } from '../theme/fonts'
 import { map__drawRegions } from './canvas/borders'
 import { map__drawOceans } from './canvas/coasts'
 import { map__breakpoints } from './canvas/draw_styles'
+import { map__drawEmbellishments } from './canvas/embellishments'
 import {
   map__drawAvatarLocation,
+  map__drawLocationsLocal,
   map__drawLocationsRegional,
   map__drawRoads
 } from './canvas/infrastructure'
@@ -72,6 +74,8 @@ const paint = (params: {
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
   map__drawAvatarLocation({ ctx, loc: province.hub, scale })
   map__drawLocationsRegional({ ctx, scale, nationSet, cachedImages })
+  map__drawLocationsLocal({ ctx, scale, nationSet, cachedImages })
+  map__drawEmbellishments({ ctx, scale, cachedImages })
 }
 
 export function WorldMap() {

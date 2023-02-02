@@ -96,9 +96,7 @@ export function ThreadView(props: {
   useEffect(() => {
     setPage(pages)
   }, [state.journal])
-  const currentStages = partition([...stages].reverse(), stagesPerPage)
-    .map(group => group.reverse())
-    .reverse()
+  const currentStages = partition([...stages], stagesPerPage)
   return (
     <Grid container style={{ fontSize: 12 }}>
       <Grid item xs={12}>

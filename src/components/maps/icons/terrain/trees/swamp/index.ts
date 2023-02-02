@@ -2,7 +2,7 @@
 import { IconDef } from '../../../types'
 import { swamp_icon } from './types'
 
-const base_height = 4
+const base_height = 3
 
 export const swamp__icons: Record<swamp_icon, IconDef> = {
   swamp_1: {

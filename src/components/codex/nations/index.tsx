@@ -34,7 +34,7 @@ export function NationView() {
   const vassal = `${
     overlord
       ? `, ${decorateText({
-          label: 'vassal',
+          label: nation.government === 'trading company' ? 'colony' : 'vassal',
           link: overlord,
           tooltip: overlord?.name ?? undefined,
           color: cssColors.subtitle

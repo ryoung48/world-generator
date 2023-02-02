@@ -1,6 +1,5 @@
 import type { Profession } from '../../npcs/professions/types'
-import { Gender, LifePhase } from '../../npcs/types'
-import type { Thread } from '../types'
+import { Personality, Quirk } from '../../npcs/traits/types'
 
 export type Background =
   | 'ancient infrastructure'
@@ -89,16 +88,14 @@ export type Background =
 
 type BackgroundActor = {
   alias: string
+  profession?: Profession[] | { urban?: Profession[]; rural?: Profession[] }
+  quirks?: Quirk[]
+  persona?: Personality[]
   culture?: 'foreign' | 'native'
-  monstrous?: boolean
-  age?: LifePhase[]
-  relative?: boolean
-  gender?: Gender
 }
 export interface BackgroundDetails {
   context: string
   complications: string[]
-  actors?: Partial<Record<Thread['actors'][number]['tag'], Profession[]>>
   friends: BackgroundActor[]
   enemies: BackgroundActor[]
   professions?: Partial<Record<Profession, number>>

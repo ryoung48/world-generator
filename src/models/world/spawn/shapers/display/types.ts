@@ -38,4 +38,5 @@ export interface Display {
   regions: Record<string, RegionSegment[]>
   icons: Icon[]
   icebergs: { idx: number; path: string; penguins?: boolean }[]
+  runes: string[]
 }

@@ -94,6 +94,7 @@ export type Quirk =
   | 'magical gift'
   | 'well-off'
   | 'struggling'
+  | 'negligent'
   | 'respected'
   | 'despised'
   | 'delusional self-image'
@@ -109,11 +110,23 @@ export type Quirk =
   | 'rags to riches'
   | 'riches to rags'
   | 'wraith'
-  | 'victim'
-  | 'supporting'
-  | 'against'
+  | 'despotic'
+  | 'charlatan'
+  | 'victim of'
+  | 'benefits from'
+  | 'distressed'
+  | 'blaming rivals'
+  | 'unjustly blamed'
+  | 'ruined plans'
+  | 'reliant on'
+  | 'responsible for'
+  | 'threatened by'
+  | 'feels guilty'
+  | 'investigating'
+  | 'misunderstood animosity'
+  | '{romantic|family} entanglement'
 
-interface QuirkParams {
+export interface QuirkParams {
   sympathetic: boolean
   callous: boolean
   generous: boolean
@@ -137,6 +150,7 @@ interface QuirkParams {
   coastal: boolean
   piercings: boolean
   backgrounds: Background[]
+  background?: Background
   context: ThreadContext
 }
 

@@ -101,66 +101,101 @@ export const map__drawLocationsRegional = (params: {
   nationSet: Set<number>
   cachedImages: Record<string, HTMLImageElement>
 }) => {
-  const { ctx, nationSet } = params
-  ctx.textAlign = 'center'
-  ctx.shadowColor = 'white'
-  const settlements = window.world.provinces.filter(province => nationSet.has(province.nation))
-  const fontSize = baseFontSize()
-  const towns = settlements.filter(province => {
-    return (
-      province.idx !== window.world.regions[province.nation].capital &&
-      province.idx !== window.world.regions[province.region].capital
-    )
-  })
-  towns.forEach(province => {
-    const radius = locRadius(province.hub, fontSize)
-    const offset = 0.3 + radius
-    drawLocation({
-      ctx,
-      fill: { radius, color: 'black' },
-      text: { fontSize: locFont(province.hub, fontSize), offset },
-      location: province
+  const { ctx, scale, nationSet } = params
+  if (scale <= map__breakpoints.regional) {
+    ctx.textAlign = 'center'
+    ctx.shadowColor = 'white'
+    const settlements = window.world.provinces.filter(province => nationSet.has(province.nation))
+    const fontSize = baseFontSize()
+    const towns = settlements.filter(province => {
+      return (
+        province.idx !== window.world.regions[province.nation].capital &&
+        province.idx !== window.world.regions[province.region].capital
+      )
     })
-  })
-  const defunct = settlements.filter(province => {
-    return (
-      province.idx !== window.world.regions[province.nation].capital &&
-      province.idx === window.world.regions[province.region].capital
-    )
-  })
-  defunct.forEach(province => {
-    const { hub } = province
-    const radius = locRadius(hub, fontSize)
-    const offset = 0.5 + radius
-    drawLocation({
-      ctx,
-      fill: { radius, color: 'black' },
-      text: { fontSize: fontSize * 4, offset },
-      location: province
+    towns.forEach(province => {
+      const radius = locRadius(province.hub, fontSize)
+      const offset = 0.3 + radius
+      drawLocation({
+        ctx,
+        fill: { radius, color: 'black' },
+        text: { fontSize: locFont(province.hub, fontSize), offset },
+        location: province
+      })
     })
-    // region name
-    ctx.fillStyle = 'rgba(0,0,0,0.5)'
-    ctx.font = `${fontSize * 10}px ${fontFamily}`
-    ctx.fillText(window.world.regions[province.region].name, hub.x, hub.y + 4 + radius)
-  })
-  const capitals = settlements.filter(province => {
-    return province.idx === window.world.regions[province.nation].capital
-  })
-  capitals.forEach(province => {
-    const { hub } = province
-    const radius = locRadius(hub, fontSize)
-    const offset = 0.8 + radius
-    drawLocation({
-      ctx,
-      fill: { radius, color: 'white' },
-      border: { width: radius, color: 'black' },
-      text: { fontSize: fontSize * 6, offset },
-      location: province
+    const defunct = settlements.filter(province => {
+      return (
+        province.idx !== window.world.regions[province.nation].capital &&
+        province.idx === window.world.regions[province.region].capital
+      )
     })
-    // region name
-    ctx.font = `${fontSize * 12}px ${fontFamily}`
-    ctx.fillText(window.world.regions[province.region].name, hub.x, hub.y + 5 + radius)
-  })
+    defunct.forEach(province => {
+      const { hub } = province
+      const radius = locRadius(hub, fontSize)
+      const offset = 0.5 + radius
+      drawLocation({
+        ctx,
+        fill: { radius, color: 'black' },
+        text: { fontSize: fontSize * 4, offset },
+        location: province
+      })
+      // region name
+      ctx.fillStyle = 'rgba(0,0,0,0.5)'
+      ctx.font = `${fontSize * 10}px ${fontFamily}`
+      ctx.fillText(window.world.regions[province.region].name, hub.x, hub.y + 4 + radius)
+    })
+    const capitals = settlements.filter(province => {
+      return province.idx === window.world.regions[province.nation].capital
+    })
+    capitals.forEach(province => {
+      const { hub } = province
+      const radius = locRadius(hub, fontSize)
+      const offset = 0.8 + radius
+      drawLocation({
+        ctx,
+        fill: { radius, color: 'white' },
+        border: { width: radius, color: 'black' },
+        text: { fontSize: fontSize * 6, offset },
+        location: province
+      })
+      // region name
+      ctx.font = `${fontSize * 12}px ${fontFamily}`
+      ctx.fillText(window.world.regions[province.region].name, hub.x, hub.y + 5 + radius)
+    })
+  }
+}
+
+export const map__drawLocationsLocal = (params: {
+  ctx: CanvasRenderingContext2D
+  cachedImages: Record<string, HTMLImageElement>
+  scale: number
+  nationSet: Set<number>
+}) => {
+  const { scale, ctx, nationSet } = params
+  if (scale >= map__breakpoints.regional) {
+    ctx.save()
+    ctx.textAlign = 'center'
+    const radius = 0.1
+    const baseFont = baseFontSize()
+    window.world.provinces
+      .filter(province => nationSet.has(province.nation))
+      .forEach(loc => {
+        const capital = loc.idx === window.world.regions[loc.nation].capital
+        canvas__circle({
+          point: loc.hub,
+          radius,
+          fill: capital ? 'white' : 'black',
+          border: capital ? { width: radius, color: 'black' } : undefined,
+          ctx
+        })
+        ctx.fillStyle = 'black'
+        ctx.font = `${baseFont * 1.5}px ${fontFamily}`
+        ctx.fillText(loc.name, loc.hub.x, loc.hub.y - 0.55)
+        ctx.font = `${baseFont * 0.75}px ${fontFamily}`
+        ctx.fillText(loc.hub.type, loc.hub.x, loc.hub.y - 0.25)
+      })
+    ctx.restore()
+  }
 }
 
 export const map__drawAvatarLocation = (params: {

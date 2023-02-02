@@ -1,4 +1,3 @@
-import { region__domains, region__neighbors } from '../../../models/regions'
 import { province__decoration } from '../../../models/regions/provinces'
 import { DiplomaticRelation, Region } from '../../../models/regions/types'
 import { titleCase } from '../../../models/utilities/text'
@@ -56,8 +55,10 @@ const diplomaticColor: Record<DiplomaticRelation, string> = {
 export function Geography() {
   const { state } = view__context()
   const nation = window.world.regions[state.codex.nation]
-  const domains = region__domains(nation)
-  const neighbors = region__neighbors(nation)
+  const domains = Array.from(
+    new Set(nation.provinces.map(p => window.world.provinces[p].region))
+  ).map(r => window.world.regions[r])
+  const neighbors = Object.keys(nation.relations).map(k => window.world.regions[parseInt(k)])
   const provinces = nation.provinces.map(t => window.world.provinces[t])
   const relations = neighbors
     .map(neighbor => {
@@ -77,14 +78,17 @@ export function Geography() {
           content: <StyledText text={region__biomes(nation)}></StyledText>
         },
         {
-          label: `Borders (${neighbors.length})`,
+          label: `Relations (${neighbors.length})`,
           content: (
             <StyledText
               text={relations
                 .map(({ neighbor, opinion }) => {
                   return decorateText({
                     link: neighbor,
-                    tooltip: opinion,
+                    tooltip:
+                      neighbor.government === 'trading company' && opinion === 'vassal'
+                        ? 'colony'
+                        : opinion,
                     color: diplomaticColor[opinion],
                     bold: opinion === 'at war'
                   })

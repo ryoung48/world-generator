@@ -47,7 +47,8 @@ export const world__spawn = (params: {
       borders: {},
       regions: {},
       icons: [],
-      icebergs: []
+      icebergs: [],
+      runes: window.dice.sample('abcdefghijklmnopqrstuvwxyz'.split(''), 4)
     },
     template,
     coasts: [],

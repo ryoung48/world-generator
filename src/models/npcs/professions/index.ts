@@ -28,7 +28,6 @@ export const professions: Record<Profession, ProfessionDetails> = {
   courtesan: { strata: 'lower', urban: true },
   bandit: { strata: 'lower', urban: false, villain: true },
   criminal: { strata: 'lower', urban: true },
-  'tomb robber': { title: '{tomb|grave} robber', strata: 'lower', urban: true, weight: 0.2 },
   'ruins explorer': { strata: 'lower', weight: 0 },
   guard: { title: `guard (${hub__site})`, strata: 'lower', urban: true, official: true },
   'monster hunter': {
@@ -36,6 +35,7 @@ export const professions: Record<Profession, ProfessionDetails> = {
     strata: 'lower',
     age: 'veteran'
   },
+  'bounty hunter': { strata: 'lower', age: 'veteran' },
   chef: { strata: 'lower' },
   waiter: { title: { male: 'waiter', female: 'waitress' }, strata: 'lower' },
   bartender: { strata: 'lower' },
@@ -201,13 +201,9 @@ const distribution = (params: {
 }) => {
   const { strata, loc, context, target } = params
   const rural = hub__isVillage(loc.hub)
-  const cast = backgrounds[context?.background]?.actors?.[context?.role]
   return buildDistribution(
     Object.entries(professions)
-      .filter(
-        ([tag, profession]) =>
-          profession.strata === strata && (cast?.includes?.(tag as Profession) ?? true)
-      )
+      .filter(([_, profession]) => profession.strata === strata)
       .map(([_tag, profession]) => {
         const tag = _tag as Profession
         const urbanCheck = profession.urban === undefined || profession.urban === !rural
@@ -254,7 +250,16 @@ export const profession__spawn = (params: {
   }
   const rural = hub__isVillage(loc.hub)
   if (rural) social.lower += social.upper
-  const key = stratified({ loc, social, context })
+
+  let key = stratified({ loc, social, context })
+  const selection =
+    backgrounds[context?.background]?.[context?.role === 'patron' ? 'friends' : 'enemies']
+  if (selection) {
+    const selected = window.dice.choice(selection)?.profession
+    const inner = (selected as any)?.[rural ? 'rural' : 'urban']
+    if (Array.isArray(selected)) key = window.dice.choice(selected)
+    else if (Array.isArray(inner)) key = window.dice.choice(inner)
+  }
   const profession = professions[key]
   const title = hub__fillSite({
     text: !profession.title

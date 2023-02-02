@@ -12,6 +12,53 @@ const leadership = [
   'regency council'
 ] as Background[]
 
+type BackgroundProfessions = BackgroundDetails['friends'][number]['profession']
+
+const priests: BackgroundProfessions = {
+  rural: ['clergy (petty)', 'clergy (minor)'],
+  urban: ['clergy (minor)', 'clergy (major)']
+}
+const bureaucrats: BackgroundProfessions = {
+  rural: ['bureaucrat (petty)', 'bureaucrat (minor)'],
+  urban: ['bureaucrat (minor)', 'bureaucrat (major)']
+}
+const sorcerers: BackgroundProfessions = {
+  rural: ['sorcerer (petty)', 'sorcerer (minor)'],
+  urban: ['sorcerer (minor)', 'sorcerer (major)']
+}
+const rulers: BackgroundProfessions = {
+  rural: ['gentry'],
+  urban: ['aristocrat']
+}
+const criminals: BackgroundProfessions = {
+  rural: ['bandit', 'bandit warlord'],
+  urban: ['criminal', 'criminal boss']
+}
+const merchants: BackgroundProfessions = {
+  rural: ['merchant (petty)', 'merchant (minor)'],
+  urban: ['merchant (minor)', 'merchant (major)']
+}
+const leaders: BackgroundProfessions = {
+  rural: ['gentry', 'merchant (minor)', 'clergy (minor)', 'bureaucrat (minor)', 'sorcerer (minor)'],
+  urban: [
+    'aristocrat',
+    'merchant (major)',
+    'clergy (major)',
+    'bureaucrat (major)',
+    'sorcerer (major)'
+  ]
+}
+const cultists: BackgroundProfessions = {
+  rural: ['clergy (minor)', 'sorcerer (minor)'],
+  urban: ['clergy (major)', 'sorcerer (major)']
+}
+const officials: BackgroundProfessions = [
+  'bureaucrat (minor)',
+  'bureaucrat (major)',
+  'guard captain'
+]
+const charlatan: BackgroundProfessions = ['herbalist', 'alchemist', 'sorcerer (minor)']
+
 export const backgrounds: Record<Background, BackgroundDetails> = {
   'ancient infrastructure': {
     context:
@@ -20,15 +67,25 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     enemies: [
       {
         alias: 'Abusive {ruler|official|noble} overusing the infrastructure',
-        age: ['adult', 'middle age', 'old']
+        profession: ['bureaucrat (major)', 'gentry', 'aristocrat'],
+        persona: ['callous', 'greedy']
       },
-      { alias: 'Foreign agent seeking to cause havoc', culture: 'foreign' },
-      { alias: 'Reckless sorcerer seeking to steal its power' }
+      { alias: 'Foreign agent seeking to cause havoc', quirks: ['foreign agent'] },
+      {
+        alias: 'Reckless sorcerer seeking to steal its power',
+        profession: ['sorcerer (major)', 'sorcerer (major)', 'sorcerer (great)'],
+        persona: ['reckless'],
+        quirks: ['benefits from']
+      }
     ],
     friends: [
-      { alias: 'Harried chief of the maintainers' },
-      { alias: 'Fascinated foreign scholar', culture: 'foreign' },
-      { alias: 'Merchant reliant on its use' }
+      { alias: 'Harried chief of the maintainers', profession: ['sorcerer (major)', 'artificer'] },
+      { alias: 'Fascinated foreign scholar', profession: ['scholar'] },
+      {
+        alias: 'Merchant reliant on its use',
+        profession: ['merchant (minor)', 'merchant (major)'],
+        quirks: ['reliant on']
+      }
     ],
     complications: [
       "The infrastructure's cruelly-costly maintenance is coming up",
@@ -51,21 +108,21 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'The locals have done something to provoke the dead, leaving them to be plagued by furious undead and restless ghosts. Only by destroying the undead or resolving the offense can these wraiths find peace.',
     constraints: { conflicts: ['awful curse'] },
     enemies: [
-      { alias: 'Meddlesome necromancer' },
-      { alias: 'Vengeful wraith', monstrous: true },
-      { alias: 'Negligent priest' },
-      { alias: 'Grasping tomb-robber' }
+      { alias: 'Meddlesome necromancer', profession: ['sorcerer (minor)', 'sorcerer (major)'] },
+      { alias: 'Vengeful wraith', persona: ['vengeful'], quirks: ['wraith'] },
+      { alias: 'Negligent priest', profession: priests, quirks: ['negligent'] },
+      { alias: 'Grasping tomb-robber', persona: ['greedy'], quirks: ['responsible for'] }
     ],
     friends: [
-      { alias: "Ghost's surviving relative" },
-      { alias: 'Distressed cemetery keeper' },
-      { alias: 'Inquiring official' },
-      { alias: 'Local priest' },
-      { alias: 'Veteran undead-hunter' }
+      { alias: "Ghost's surviving relative", quirks: ['{romantic|family} entanglement'] },
+      { alias: 'Distressed cemetery keeper', profession: ['grave keeper'], quirks: ['distressed'] },
+      { alias: 'Inquiring official', profession: bureaucrats },
+      { alias: 'Local priest', profession: priests },
+      { alias: 'Veteran undead-hunter', profession: ['monster hunter'] }
     ],
     complications: [
       'The ghosts want something horrible',
-      'The ghosts are mistaken in their anger,',
+      'The ghosts are mistaken in their anger',
       'The locals blame the wrong cause',
       'Some worship the angry dead as gods'
     ],
@@ -92,23 +149,60 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "This #site# has been cursed with some blight that makes life difficult, albeit not impossible. The curse is the result of {an offended sorcerer's vengeful enchantment|the wrath of an eldritch spirit|anomalous arcane distortion}.",
     constraints: { conflicts: ['angry ghosts'] },
     enemies: [
-      { alias: 'Charlatan offering false hope' },
-      { alias: 'Local demagogue blaming a useful culprit' },
-      { alias: 'Employer of the mercenary wizard who laid it' },
-      { alias: 'Criminal whose vile act induced the curse' },
-      { alias: 'Enchanted beast that exudes the curse naturally', monstrous: true },
-      { alias: 'Local sorcerer acting out of spite and resentment' },
-      { alias: "Spiteful local who enjoys a rival's cursed suffering" },
-      { alias: 'Malign spirit possessing its victims', monstrous: true }
+      {
+        alias: 'Charlatan offering false hope',
+        profession: charlatan,
+        persona: ['deceptive'],
+        quirks: ['charlatan']
+      },
+      {
+        alias: 'Local demagogue blaming a useful culprit',
+        quirks: ['blaming rivals', 'local leader']
+      },
+      {
+        alias:
+          '{Criminal whose vile act induced the curse|Employer of the mercenary wizard who laid it}',
+        quirks: ['responsible for']
+      },
+      {
+        alias: 'Local sorcerer acting out of spite and resentment',
+        profession: sorcerers,
+        persona: ['vengeful']
+      },
+      {
+        alias: "Spiteful local who enjoys a rival's cursed suffering",
+        persona: ['vengeful'],
+        quirks: ['benefits from']
+      },
+      { alias: 'Malign spirit possessing its victims', persona: ['callous'], quirks: ['wraith'] }
     ],
     friends: [
-      { alias: 'Curious scholar seeking to study the curse' },
-      { alias: "{Stubborn curse survivor|Innocent victim of the curse's effects}" },
-      { alias: 'Brash outsider confident they can lift the curse' },
-      { alias: 'Desperate local trying to lift the magical blight' },
-      { alias: 'Guilty local who feels responsible for the malison' },
-      { alias: 'Local unjustly blamed by neighbors for the curse' },
-      { alias: 'Wretched soul who failed to lift the curse' }
+      { alias: 'Curious scholar seeking to study the curse', profession: ['scholar'] },
+      {
+        alias: "{Stubborn curse survivor|Innocent victim of the curse's effects}",
+        quirks: ['victim of']
+      },
+      {
+        alias: 'Brash outsider confident they can lift the curse',
+        profession: sorcerers,
+        quirks: ['brash overconfidence']
+      },
+      {
+        alias: 'Desperate local trying to lift the magical blight'
+      },
+      {
+        alias: 'Guilty local who feels responsible for the malison',
+        quirks: ['feels guilty']
+      },
+      {
+        alias: 'Local unjustly blamed by neighbors for the curse',
+        quirks: ['unjustly blamed']
+      },
+      {
+        alias: 'Wretched soul who failed to lift the curse',
+        profession: sorcerers,
+        quirks: ['ruined plans']
+      }
     ],
     complications: [
       'Failing to lift the curse will cause a disaster',
@@ -143,14 +237,18 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "The #site# has a grudge against one or more of its neighbors, and a steady low-level conflict is going on between them. This personal animosity stems from {past {suffering at their enemy's hands|conquests where the enemy was oppressed}|old wrongs long since lost in the mists of self-serving memory|fresh ambition on the part of {this #site#|the neighboring settlement}}.",
     constraints: { urban: false },
     enemies: [
-      { alias: 'Foreign lord profiting by the quarrel' },
-      { alias: 'Bitter zealot who demands violent action' },
+      {
+        alias: 'Foreign lord profiting by the quarrel',
+        profession: ['gentry', 'bureaucrat (minor)'],
+        quirks: ['benefits from']
+      },
+      { alias: 'Bitter zealot who demands violent action', persona: ['wrathful'] },
       { alias: 'Real culprit seeking to hide their offense' }
     ],
     friends: [
       { alias: 'Despairing peacemaker of a shared faith' },
-      { alias: 'Local with family from the rival' },
-      { alias: 'Frustrated but helpless ruler' }
+      { alias: 'Local with family from the rival', quirks: ['{romantic|family} entanglement'] },
+      { alias: 'Frustrated but helpless ruler', profession: ['gentry'], quirks: ['local leader'] }
     ],
     complications: [
       '{This #site#|The neighboring settlement} seems at fault, but is actually less blameworthy',
@@ -175,14 +273,14 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context: `There are problems with the local water supply ({peasants are fighting over irrigation rights|an outside power is interfering with the free flow of water|old wells are running dry|a malefactor is poisoning the locals' water supply at the source}).`,
     constraints: { urban: false },
     enemies: [
-      { alias: 'Hidden poisoner' },
-      { alias: 'Aspiring water baron' },
-      { alias: 'Desperate neighboring farmer' }
+      { alias: 'Hidden poisoner', persona: ['callous'] },
+      { alias: 'Aspiring water baron', quirks: ['benefits from'] },
+      { alias: 'Desperate neighboring farmer', quirks: ['victim of'] }
     ],
     friends: [
-      { alias: 'Water diviner' },
-      { alias: 'Local negotiator' },
-      { alias: 'Investigating official' }
+      { alias: 'Water diviner', profession: sorcerers },
+      { alias: 'Local negotiator', persona: ['sympathetic'] },
+      { alias: 'Investigating official', profession: bureaucrats }
     ],
     complications: [
       'The locals need to move as the land can no longer support their crops',
@@ -201,13 +299,26 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'Two important families have managed to bitterly offend each other, and a feud has racked the #site# as both struggle for influence.',
     constraints: { conflicts: ['troubled festival'] },
     enemies: [
-      { alias: 'Ambitious clan head', age: ['middle age', 'old'] },
-      { alias: 'Someone who mistakes a PC for a member of the enemy clan' },
-      { alias: 'Someone prospering from the violence and discord' }
+      {
+        alias: 'Ambitious clan head',
+        profession: { rural: ['village elder', 'gentry'], urban: ['gentry', 'aristocrat'] },
+        persona: ['ambitious']
+      },
+      {
+        alias: 'Someone who mistakes a PC for a member of the enemy clan',
+        quirks: ['misunderstood animosity']
+      },
+      {
+        alias: 'Someone prospering from the violence and discord',
+        quirks: ['benefits from']
+      }
     ],
     friends: [
-      { alias: 'Scion of one house in love with someone in the other', age: ['young adult'] },
-      { alias: 'Peacemaking {priest|official}' },
+      {
+        alias: 'Scion of one house in love with someone in the other',
+        quirks: ['{romantic|family} entanglement']
+      },
+      { alias: 'Peacemaking {priest|official}', persona: ['sympathetic'] },
       { alias: 'Local struggling to survive the fighting' }
     ],
     complications: [
@@ -239,17 +350,24 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'Some local has come up with a wonderful new idea (a {magical innovation|new industrial process|new agricultural product|new use for what was thought to be ancient garbage}). Everyone around them is fighting for the chance to exploit this clever new plan.',
     constraints: { urban: true },
     enemies: [
-      { alias: 'Grasping guild master', age: ['middle age', 'old'] },
-      { alias: 'Overbearing local ruler', age: ['middle age', 'old'] },
+      { alias: 'Grasping guild master', profession: ['guild master'], persona: ['greedy'] },
+      { alias: 'Overbearing local ruler', profession: ['aristocrat'], quirks: ['despotic'] },
       {
         alias: 'Local leader whose power is threatened by the innovation',
-        age: ['adult', 'middle age', 'old']
+        profession: leaders,
+        quirks: ['threatened by']
       }
     ],
     friends: [
       { alias: 'Visionary supporter of the innovator' },
-      { alias: 'Outside merchant seeking to profit by enabling the innovation' },
-      { alias: 'Local leader whose constituency would profit from it' }
+      {
+        alias: 'Outside merchant seeking to profit by enabling the innovation',
+        profession: ['merchant (minor)', 'merchant (major)']
+      },
+      {
+        alias: 'Local leader whose constituency would profit from it',
+        profession: leaders
+      }
     ],
     complications: [
       'The innovation requires ingredients only adventurers can get',
@@ -271,13 +389,13 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       "The locals are in a state of despair and dull apathy. They've lost the things that used to give them pride and hope, with the best among them carrying on out of habitual duty and the worst giving ready hands to shameful deeds and ignoble acts. No one really believes the future can be better, and most seek only to satisfy immediate appetites.",
     enemies: [
-      { alias: 'Cruel tyrant who broke them' },
-      { alias: 'Slaver trading on the hopeless' },
-      { alias: 'Merchant of despair and its costly escapes' }
+      { alias: 'Cruel tyrant who broke them', profession: rulers, persona: ['callous'] },
+      { alias: 'Slaver trading on the hopeless', profession: criminals },
+      { alias: 'Merchant of despair and its costly escapes', profession: merchants }
     ],
     friends: [
-      { alias: 'Determined local leader' },
-      { alias: 'Proud rememberer of better days', age: ['old'] },
+      { alias: 'Determined local leader', profession: leaders },
+      { alias: 'Proud rememberer of better days' },
       { alias: 'Furious rebel against the world' }
     ],
     complications: [
@@ -305,15 +423,19 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     constraints: { conflicts: ['inherited architecture'] },
     professions: { 'ruins explorer': 1 },
     enemies: [
-      { alias: `Reckless adventurer stirring up things beneath` },
+      {
+        alias: `Reckless adventurer stirring up things beneath`,
+        profession: ['ruins explorer'],
+        persona: ['reckless']
+      },
       { alias: `Person enslaved by a buried evil` },
-      { alias: 'Criminal lord of the undercity' },
-      { alias: '{Cult leader|Sorcerer} who uses the undercity for privacy' }
+      { alias: 'Criminal lord of the undercity', profession: criminals },
+      { alias: '{Cult leader|Sorcerer} who uses the undercity for privacy', profession: cultists }
     ],
     friends: [
-      { alias: `Passage-wise urchin`, age: ['childhood', 'adolescence'] },
+      { alias: `Passage-wise urchin` },
       { alias: `Architect with too much curiosity` },
-      { alias: `Itinerant monster hunter` }
+      { alias: `Itinerant monster hunter`, profession: ['monster hunter'] }
     ],
     complications: [
       `The structure's inhabitants have a secret deal with the ruin dwellers`,
@@ -337,15 +459,14 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
   'cheating merchant': {
     context: `There is an important local merchant at this #site# who cheats those who deal with them, yet is protected from the consequences by their power and servants. Something they sell is vital to the inhabitants, and they have no other source for the necessary commodity`,
     constraints: { urban: false },
-    actors: { rival: ['merchant (petty)', 'merchant (minor)'] },
     enemies: [
-      { alias: `Head bully of the merchant's guard` },
-      { alias: `Corrupt {ruler|merchant}` },
-      { alias: `Local collaborating with the merchant` }
+      { alias: `Head bully of the merchant's guard`, profession: merchants },
+      { alias: `Corrupt {ruler|merchant}`, profession: merchants, quirks: ['corruption'] },
+      { alias: `Local collaborating with the merchant`, profession: merchants }
     ],
     friends: [
-      { alias: `Local who has been cheated` },
-      { alias: `Merchant who wants to break the monopoly` },
+      { alias: `Local who has been cheated`, quirks: ['victim of'] },
+      { alias: `Merchant who wants to break the monopoly`, profession: merchants },
       { alias: `Former employee of the merchant in the past` }
     ],
     complications: [
@@ -371,14 +492,20 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'What law exists here {is for sale|does not apply to certain favored {groups|castes}}. While some degree of corruption and noble license exists almost everywhere, this #site# lacks any shred of impartiality. Strangers might be fleeced by local lawmen, evildoers can be absolved by a payment, and powerful gentry do as they please.',
     constraints: { urban: true, conflicts: ['corrupt officials'] },
     enemies: [
-      { alias: 'Immensely venal magistrate' },
-      { alias: 'Local lord who fails to see any problem with the "natural" order' },
-      { alias: 'Crime boss taking blatant advantage of the corruption' }
+      { alias: 'Immensely venal magistrate', profession: bureaucrats, quirks: ['corruption'] },
+      {
+        alias: 'Local lord who fails to see any problem with the "natural" order',
+        profession: rulers
+      },
+      { alias: 'Crime boss taking blatant advantage of the corruption', profession: criminals }
     ],
     friends: [
-      { alias: 'A crusading law enforcer' },
-      { alias: 'Royal investigating censor' },
-      { alias: 'Victim of a cruel injustice' }
+      {
+        alias: 'A crusading law enforcer',
+        profession: officials
+      },
+      { alias: 'Royal investigating censor', profession: bureaucrats },
+      { alias: 'Victim of a cruel injustice', quirks: ['victim of'] }
     ],
     complications: [
       "The favored class are vital to this #site#'s security",
@@ -400,17 +527,27 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       'Corrupt officials are {squeezing an innocent for protection money|targeting an innocent for "corrective adjustment" because of a personal grudge|framing an innocent for a crime in order to expropriate their belongings}.',
     constraints: { urban: true, conflicts: ['corrupt laws'] },
-    actors: { rival: ['bureaucrat (minor)', 'bureaucrat (major)'] },
     enemies: [
-      { alias: 'Corrupt {guard captain|bureaucrat}' },
-      { alias: 'Sinister {court wizard|courtier|minister}' },
-      { alias: 'Allied crime boss' }
+      {
+        alias: 'Corrupt {guard captain|bureaucrat}',
+        profession: officials,
+        quirks: ['corruption']
+      },
+      {
+        alias: 'Sinister {court wizard|courtier|minister}',
+        profession: ['courtier']
+      },
+      { alias: 'Allied crime boss', profession: ['criminal boss'] }
     ],
     friends: [
-      { alias: 'Honest priest' },
-      { alias: 'Struggling merchant' },
-      { alias: 'Talented artisan' },
-      { alias: 'Clean local official' }
+      { alias: 'Honest priest', profession: priests },
+      { alias: 'Struggling merchant', profession: merchants },
+      {
+        alias: 'Talented artisan',
+        profession: ['blacksmith', 'herbalist', 'alchemist', 'artificer', 'tailor'],
+        quirks: ['respected']
+      },
+      { alias: 'Clean local official', profession: officials }
     ],
     complications: [
       'The official has many local collaborators,',
@@ -436,14 +573,18 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "The #site#'s ruling authority demands that the locals perform some sort of labor for their rulers, crediting old customary laws {that have fallen into disuse|that are believed to be fabrications}. Peasants hate corvee labor, as it takes them from their fields and is unpaid work",
     constraints: { urban: false },
     enemies: [
-      { alias: 'Greedy local official' },
+      { alias: 'Greedy local official', profession: bureaucrats },
       { alias: 'Cruel, corvee taskmaster' },
-      { alias: 'Greedy merchant who misdirects the labor to #possessive# own profit' }
+      {
+        alias: 'Greedy merchant who misdirects the labor to #possessive# own profit',
+        profession: merchants,
+        quirks: ['benefits from']
+      }
     ],
     friends: [
-      { alias: 'Angry peasant elder', age: ['old'] },
-      { alias: 'Historian who remembers the old laws' },
-      { alias: 'Bureaucrat who feels the labor is being misused' }
+      { alias: 'Angry peasant elder', profession: ['village elder'] },
+      { alias: 'Historian who remembers the old laws', quirks: ['academic'] },
+      { alias: 'Bureaucrat who feels the labor is being misused', profession: bureaucrats }
     ],
     complications: [
       'The corvee is actually a legitimate demand',
@@ -462,12 +603,12 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "This #site# is in secret rebellion against their ostensible liege, {plotting a great betrayal for their own gain|seeking liberation from tyranny}. This #site#'s leadership is all in on this plot, and outside representatives are being kept carefully ignorant of the reality. The common folk may be oblivious to the truth, though they'll doubtless have felt the same motivations and promptings that convinced their leaders to turn traitor.",
     constraints: { conflicts: ['rebel stronghold', 'stolen authority'] },
     enemies: [
-      { alias: 'Suspicious investigator from the tyrant' },
-      { alias: 'Scheming local chief who plans to be the new lord' },
-      { alias: 'Monstrous thing that they made a pact with', monstrous: true }
+      { alias: 'Suspicious investigator from the tyrant', profession: bureaucrats },
+      { alias: 'Scheming local chief who plans to be the new lord', profession: leaders },
+      { alias: 'Monstrous thing that they made a pact with' }
     ],
     friends: [
-      { alias: 'Local being cruelly mistreated by the tyrant' },
+      { alias: 'Local being cruelly mistreated by the tyrant', quirks: ['victim of'] },
       { alias: 'Honest representative trying to resolve the tension' },
       { alias: 'Local grandee trying to stay out of it all' }
     ],
@@ -488,13 +629,13 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'Local law enforcement has implemented unusually strict measures and harsh punishments to discourage undesirable behavior. More guards patrol the streets than ever. All outsiders, foreign minorities, and criminal figures are looked to with suspicion.',
     constraints: { conflicts: ['xenophobic locals'], urban: true },
     enemies: [
-      { alias: 'Zealous guard captain' },
-      { alias: 'Ruthless official' },
-      { alias: 'Crime boss who triggered the crackdown' }
+      { alias: 'Zealous guard captain', profession: ['guard captain'] },
+      { alias: 'Ruthless official', profession: bureaucrats },
+      { alias: 'Crime boss who triggered the crackdown', profession: ['criminal boss'] }
     ],
     friends: [
       { alias: 'Fellow outsider trapped in the #site#' },
-      { alias: 'Sympathetic criminal' }
+      { alias: 'Sympathetic criminal', profession: ['criminal'], persona: ['sympathetic'] }
     ],
     complications: [
       'The locals are getting frustrated with all the new enforcement too',
@@ -516,14 +657,18 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       '{A single cohesive criminal network has|Multiple splintered criminal networks have} a powerful influence on this #site#. They {are said to control all crime within this #site#|use this #site# as a safe haven from which to direct their minions elsewhere}. Local law enforcement may know all about them, but lack the strength to confront them.',
     constraints: { urban: true },
     enemies: [
-      { alias: 'Blatantly overt criminal chief' },
-      { alias: 'Well-controlled head of law enforcement' },
-      { alias: 'Crime boss bent on using the PCs as tools' }
+      { alias: 'Blatantly overt criminal chief', profession: ['criminal boss'] },
+      { alias: 'Well-controlled head of law enforcement', profession: ['guard captain'] },
+      { alias: 'Crime boss bent on using the PCs as tools', profession: ['criminal boss'] }
     ],
     friends: [
-      { alias: 'Victim of an untouchable boss' },
-      { alias: 'Determined bounty hunter' },
-      { alias: 'Ambitious criminal seeking to make room above' }
+      { alias: 'Victim of an untouchable boss', quirks: ['victim of'] },
+      { alias: 'Determined bounty hunter', profession: ['bounty hunter'] },
+      {
+        alias: 'Ambitious criminal seeking to make room above',
+        profession: ['criminal'],
+        persona: ['ambitious']
+      }
     ],
     complications: [
       "The crime boss' support is what keeps this #site# prosperous",
@@ -547,14 +692,22 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context: "Someone or something has stolen much of the #site#'s food supply.",
     constraints: { urban: false, conflicts: ['great famine', 'plundered tribute'] },
     enemies: [
-      { alias: 'Greedy {noble|bureaucrat} using the law to take crops' },
-      { alias: 'Aspiring bandit warlord' },
-      { alias: 'Desperate leader of a famine-struck neighboring village' }
+      {
+        alias: 'Greedy {noble|bureaucrat} using the law to take crops',
+        profession: ['gentry', 'bureaucrat (minor)'],
+        persona: ['greedy']
+      },
+      { alias: 'Aspiring bandit warlord', profession: ['bandit warlord'], persona: ['ambitious'] },
+      {
+        alias: 'Desperate leader of a famine-struck neighboring village',
+        profession: leaders,
+        quirks: ['victim of']
+      }
     ],
     friends: [
-      { alias: 'Settlement leader in need of aid' },
-      { alias: 'Local merchant who needs crop surplus to sell' },
-      { alias: 'Plundered farmer' }
+      { alias: 'Settlement leader in need of aid', profession: leaders },
+      { alias: 'Local merchant who needs crop surplus to sell', profession: merchants },
+      { alias: 'Plundered farmer', profession: ['peasant'], quirks: ['victim of'] }
     ],
     complications: [
       'The thieves stole because they will starve otherwise',
@@ -577,14 +730,20 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'This #site# {produces a wonderful cultural artifact ({exceptional cloth|artistic luxury goods|scholarly literature})|trains famous artists ({painters|chefs|sculptors|musicians|scholars})}.',
     constraints: { urban: true },
     enemies: [
-      { alias: 'Master artist who suffers no rivals' },
-      { alias: '"Visionary" who wants to tear down the old art for their own new one' },
-      { alias: 'Merchant who is trying to control the production for profit' }
+      { alias: 'Master artist who suffers no rivals', profession: ['artist (famous)'] },
+      {
+        alias: '"Visionary" who wants to tear down the old art for their own new one',
+        profession: ['artist']
+      },
+      {
+        alias: 'Merchant who is trying to control the production for profit',
+        profession: merchants
+      }
     ],
     friends: [
-      { alias: 'Ambitious young artist of profound talent' },
-      { alias: 'Wild genius of very difficult temperament' },
-      { alias: 'Aged master proud of #possessive# tradition', age: ['old'] }
+      { alias: 'Ambitious young artist of profound talent', profession: ['artist'] },
+      { alias: 'Wild genius of very difficult temperament', profession: ['artist'] },
+      { alias: 'Aged master proud of #possessive# tradition', profession: ['artist (famous)'] }
     ],
     complications: [
       'The art requires resources that are running low',
@@ -606,25 +765,28 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context: `A hidden, dark cult resides within this #site#. What distinguishes this cult from the plethora of other local religious traditions is its bloody offerings and malign intentions.`,
     constraints: { conflicts: ['upstart faith'] },
     enemies: [
-      { alias: 'Amoral scholar experimenting with the divine' },
-      { alias: 'Decadent noble bored with more mundane perversions' },
+      { alias: 'Amoral scholar experimenting with the divine', profession: ['scholar'] },
+      { alias: 'Decadent noble bored with more mundane perversions', profession: rulers },
       { alias: 'Despised local who made a pact to avenge mistreatment' },
-      { alias: 'Heir to a family tradition of dark and bloody worship' },
-      { alias: "Local priest who's tapped into a new power" },
-      { alias: "Religious reformer who's bringing a bloody cleansing" },
+      { alias: 'Heir to a family tradition of dark and bloody worship', profession: rulers },
+      { alias: "Local priest who's tapped into a new power", profession: priests },
+      { alias: "Religious reformer who's bringing a bloody cleansing", profession: priests },
       {
         alias: 'Ruthless hierarch who leads the cult for #possessive# own aims',
-        age: ['middle age']
+        profession: priests
       }
     ],
     friends: [
-      { alias: 'Apostate from the cult who was shocked to revulsion' },
-      { alias: "Community elder who's seen this happen before", age: ['old'] },
-      { alias: 'Escapee from a hideous cult ritual' },
-      { alias: 'Ghost of a cult victim seeking revenge' },
-      { alias: 'Inquisitor serving the prominent local religion' },
-      { alias: 'Local official being pressured by the cult' },
-      { alias: "Relative of a cult victim who wouldn't submit to them" }
+      { alias: 'Apostate from the cult who was shocked to revulsion', profession: priests },
+      { alias: "Community elder who's seen this happen before" },
+      { alias: 'Escapee from a hideous cult ritual', quirks: ['victim of'] },
+      { alias: 'Ghost of a cult victim seeking revenge', quirks: ['wraith'] },
+      { alias: 'Inquisitor serving the prominent local religion', profession: ['templar'] },
+      { alias: 'Local official being pressured by the cult', profession: bureaucrats },
+      {
+        alias: "Relative of a cult victim who wouldn't submit to them",
+        quirks: ['{romantic|family} entanglement']
+      }
     ],
     complications: [
       'The cult has a blithely innocent outer membership',
@@ -662,16 +824,19 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       'There are always small outbreaks of disease going on in any major settlement, but recently a truly savage affliction has wracked this #site#.',
     enemies: [
-      { alias: 'Charlatan selling false hope' },
-      { alias: 'Merciless grandee gladly worsening the plague for profit' },
-      { alias: 'Dark sorcerer seeking to weaponize the sickness' },
-      { alias: 'Adept of a plague-worshipping cult' }
+      { alias: 'Charlatan selling false hope', profession: charlatan, quirks: ['charlatan'] },
+      {
+        alias: 'Merciless grandee gladly worsening the plague for profit',
+        quirks: ['benefits from']
+      },
+      { alias: 'Dark sorcerer seeking to weaponize the sickness', profession: sorcerers },
+      { alias: 'Adept of a plague-worshipping cult', profession: priests }
     ],
     friends: [
-      { alias: "Traditional healer wise in the plague's ways" },
-      { alias: 'Appealing local struck down by the illness' },
-      { alias: 'Impassioned healer seeking a real cure' },
-      { alias: 'Bureaucrat trying to keep order' }
+      { alias: "Traditional healer wise in the plague's ways", profession: priests },
+      { alias: 'Appealing local struck down by the illness', quirks: ['victim of'] },
+      { alias: 'Impassioned healer seeking a real cure', profession: ['herbalist'] },
+      { alias: 'Bureaucrat trying to keep order', profession: bureaucrats }
     ],
     complications: [
       '{The plague is magical in nature|The deceased reanimate if not burned immediately}',
@@ -695,14 +860,14 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'The locals enjoy repulsive vices and shameful appetites, which {are protected by religious sanction|they openly sell to neighboring communities}. Their {economic|social} organization is heavily reliant on such traffic, and to ensure its continuance they may have made bargains with things worse than humans.',
     constraints: { urban: true },
     enemies: [
-      { alias: 'Trader in hideous sins' },
-      { alias: 'Bored gentry in search of a cruel thrill' },
+      { alias: 'Trader in hideous sins', profession: merchants },
+      { alias: 'Bored gentry in search of a cruel thrill', profession: ['gentry'] },
       { alias: 'Once-prey that has become an even worse predator' }
     ],
     friends: [
       { alias: 'Local who has secret doubts about the vice' },
-      { alias: 'Crusader from outside' },
-      { alias: 'Escaped victim seeking vengeance' }
+      { alias: 'Crusader from outside', profession: officials },
+      { alias: 'Escaped victim seeking vengeance', quirks: ['victim of'] }
     ],
     complications: [
       "The victims of the vice are a class that their neighbors don't care about in the slightest",
@@ -726,13 +891,13 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     constraints: { conflicts: ['ancient infrastructure'] },
     enemies: [
       { alias: 'Saboteur who wants the enchantment to fail' },
-      { alias: 'Scavenger stealing critical components' },
-      { alias: 'Overconfident wizard attempting a ruinous repair' }
+      { alias: 'Scavenger stealing critical components', profession: ['artificer'] },
+      { alias: 'Overconfident wizard attempting a ruinous repair', profession: sorcerers }
     ],
     friends: [
-      { alias: "One of the enchantment's hereditary keepers" },
-      { alias: "Native dependent on the enchantment's effects" },
-      { alias: 'Desperate researcher of repairs' }
+      { alias: "One of the enchantment's hereditary keepers", profession: ['artificer'] },
+      { alias: "Native dependent on the enchantment's effects", quirks: ['benefits from'] },
+      { alias: 'Desperate researcher of repairs', profession: sorcerers }
     ],
     complications: [
       "Part of this #site# would greatly profit by the enchantment's failure",
@@ -754,23 +919,30 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       "Some brutal master lords over this #site#, crushing any hint of resistance and demanding extravagant service from the locals. The lord has not been deposed because {everyone is terrified of the lord's potential revenge|spies and informers are everywhere in the area|the greater government is firmly behind the lord|the last attempt ended in a horrible massacre|the lord is paying off vital persons in the community|the only good rebel leader is imprisoned by the lord}.",
     constraints: { conflicts: ['rebel stronghold', ...leadership], urban: false },
-    actors: { rival: ['gentry'] },
     enemies: [
-      { alias: 'Grossly decadent lord who taxes people unmercifully' },
-      { alias: 'Conqueror who rules their new lands like a pillager' },
-      { alias: 'Sadistic lord who simply delights in causing pain' },
-      { alias: 'Usurper of the true lord who rules with an iron fist' },
-      { alias: 'Depraved lord who seizes the young and fair' }
+      { alias: 'Grossly decadent lord who taxes people unmercifully', profession: rulers },
+      { alias: 'Conqueror who rules their new lands like a pillager', profession: rulers },
+      { alias: 'Sadistic lord who simply delights in causing pain', profession: rulers },
+      { alias: 'Usurper of the true lord who rules with an iron fist', profession: rulers },
+      { alias: 'Depraved lord who seizes the young and fair', profession: rulers }
     ],
     friends: [
       { alias: 'Cynical kingmaker who has no further use for them' },
-      { alias: 'Government official worried about the events here' },
-      { alias: "Noble relative who'd be the next in line to rule here" },
+      { alias: 'Government official worried about the events here', profession: bureaucrats },
+      {
+        alias: "Noble relative who'd be the next in line to rule here",
+        profession: rulers,
+        quirks: ['{romantic|family} entanglement']
+      },
       { alias: 'Rebel leader trying to depose the oppressor' },
-      { alias: 'Religious leader who wants to protect their flock' },
-      { alias: 'Rival lord who hates them for an old offense' },
-      { alias: 'Relative of the lord who hates them bitterly', relative: true },
-      { alias: 'Vengeful spirit of someone they unjustly slew', monstrous: true }
+      { alias: 'Religious leader who wants to protect their flock', profession: priests },
+      { alias: 'Rival lord who hates them for an old offense', profession: rulers },
+      {
+        alias: 'Relative of the lord who hates them bitterly',
+        profession: rulers,
+        quirks: ['{romantic|family} entanglement']
+      },
+      { alias: 'Vengeful spirit of someone they unjustly slew', quirks: ['wraith'] }
     ],
     complications: [
       "Rival successors threaten civil war at the lord's ouster",
@@ -803,14 +975,18 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       "The locals are convinced that there is some terrible threat against them working from within their society ({dark {sorcerers|cultists}|shapeshifting monsters}). This evil is {a very recent manifestation that the community has never seen before|an inherited peril they've always had to guard against}.{|Rumor has it that the danger is fabricated.|The steps taken to quell this threat would be considered extreme by most.}",
     enemies: [
-      { alias: 'Local inquisitor targeting #possessive# personal enemies' },
-      { alias: 'Leader of the sinister evil' },
+      {
+        alias: 'Local inquisitor targeting #possessive# personal enemies',
+        profession: leaders,
+        quirks: ['blaming rivals']
+      },
+      { alias: 'Leader of the sinister evil', profession: leaders },
       { alias: 'Traitorous local in service to the evil' }
     ],
     friends: [
-      { alias: 'Unjustly accused victim' },
-      { alias: 'Local ruler trying to restrain the mob' },
-      { alias: 'Skilled and discerning hunter of the evil' }
+      { alias: 'Unjustly accused victim', quirks: ['unjustly blamed'] },
+      { alias: 'Local ruler trying to restrain the mob', profession: leaders },
+      { alias: 'Skilled and discerning hunter of the evil', profession: ['monster hunter'] }
     ],
     complications: [
       'The evil is real but actually running the inquisition',
@@ -886,9 +1062,6 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
   },
   'evil sorcerer': {
     context: 'A malign sorcerer plagues this #site# ({necromantic|eldritch|druidic}).',
-    actors: {
-      rival: ['sorcerer (petty)', 'sorcerer (minor)', 'sorcerer (major)', 'sorcerer (great)']
-    },
     enemies: [
       { alias: 'Beast-breeding creator of magical abominations' },
       { alias: 'Bitter renegade thrown out of their magical academy' },
@@ -904,7 +1077,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       { alias: 'A lover who was {spurned|twisted} by the sorcerer' },
       { alias: "A victim of the wizard's favorite magical tricks" },
       { alias: 'A witch-hunter mercenary in need of extra help' },
-      { alias: "The wizard's old mentor who seeks to correct them", age: ['old'] },
+      { alias: "The wizard's old mentor who seeks to correct them" },
       { alias: 'A community priest who protests against the wizardry' },
       { alias: "A local hedge-wizard who can't hope to defeat them" },
       { alias: 'A bitter rival sorcerer who sees the PCs as useful pawns' }
@@ -979,7 +1152,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       { alias: 'Demagogue blaming everything on their enemy' }
     ],
     friends: [
-      { alias: 'Plucky local trying to make a new go of things', age: ['young adult'] },
+      { alias: 'Plucky local trying to make a new go of things' },
       { alias: 'Harried disburser of limited charity' },
       { alias: 'Riches-to-rags native trying to maintain their dignity' }
     ],
@@ -1063,7 +1236,6 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
   'grasping authority': {
     context: `A grasping lord seeks to seize control of the settlement against the wishes of its occupants through {legal tricks|{fabricated|real} debts|hired thugs}.`,
     constraints: { conflicts: ['uncertain title'], urban: false },
-    actors: { rival: ['gentry'] },
     enemies: [
       { alias: `Ruthless lieutenant of the aristocrat` },
       { alias: `Greedy aristocrat` },
@@ -1071,7 +1243,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     ],
     friends: [
       { alias: `Honest farmer` },
-      { alias: `Resolute #site# elder`, age: ['old'] },
+      { alias: `Resolute #site# elder` },
       { alias: `Scholar familiar with the real legal history of the land` }
     ],
     complications: [
@@ -1104,14 +1276,14 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       { alias: "Rich merchant who's legally seized the granaries" }
     ],
     friends: [
-      { alias: 'Wizened local priest praying for mercy from above', age: ['old'] },
+      { alias: 'Wizened local priest praying for mercy from above' },
       {
         alias: '{Itinerant bureaucrat offering aid|Local official struggling to help their charges}'
       },
       { alias: 'Merchant trying to bring in food supplies from afar' },
       { alias: 'Food smuggler with a sympathetic temperament' },
       { alias: 'Hedge wizard seeking a way around the famine' },
-      { alias: 'Orphaned child of a famine-stricken family', age: ['childhood'] },
+      { alias: 'Orphaned child of a famine-stricken family' },
       { alias: 'Starving peasant farmer in search of aid' },
       { alias: 'Philanthropic nobleman' }
     ],
@@ -1146,14 +1318,13 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     constraints: { urban: true },
     context:
       'While this #site# might ostensibly be ruled by some other power, real control lies with the senior members of the local craft and labor guilds. Their decisions have the practical weight of law, and much of their time and effort is spent squeezing out competitors and parceling out economic opportunities in this #site#. Some guilds might have little or nothing to do with their original trade, and now exist purely as shells for political influence.',
-    actors: { rival: ['guild master'] },
     enemies: [
-      { alias: 'Profoundly corrupt guild boss', age: ['old', 'middle age'] },
+      { alias: 'Profoundly corrupt guild boss' },
       { alias: 'Ambitious newcomer with brutal methods' },
-      { alias: 'Ruthless leader of a guild of criminals', age: ['old', 'middle age'] }
+      { alias: 'Ruthless leader of a guild of criminals' }
     ],
     friends: [
-      { alias: 'Hard-bitten elder among the workers', age: ['old'] },
+      { alias: 'Hard-bitten elder among the workers' },
       { alias: 'Outsider trying to make room here' },
       { alias: 'Reformer seeking to oust the corrupt guild heads' }
     ],
@@ -1235,7 +1406,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     constraints: { urban: false },
     enemies: [
       { alias: 'Bandit chief hiding in the terrain' },
-      { alias: 'Monstrous leader in the wilderness', monstrous: true },
+      { alias: 'Monstrous leader in the wilderness' },
       { alias: "Local who's made a secret deal with the terrain's vile inhabitants" }
     ],
     friends: [
@@ -1263,7 +1434,6 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       'This #site# is led by incompetents. While they must have been very good at something to have acquired the position, they are fundamentally incapable of leading and {are prone to {uncontrolled lust|profound laziness|pigheaded obstinacy in the face of failure}|are committed to a hopelessly impractical ideal|have a total lack of interpersonal skills}.',
     constraints: { conflicts: leadership, urban: true },
-    actors: { rival: ['aristocrat'] },
     enemies: [
       { alias: 'Heir who is totally unsuited to their new rule' },
       { alias: 'Disinterested ruler forced on them by their overlord' },
@@ -1274,7 +1444,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     ],
     friends: [
       { alias: 'Deposed former leader' },
-      { alias: 'Desperate local elder', age: ['old'] },
+      { alias: 'Desperate local elder' },
       { alias: 'Victim of one of their bungled plans' },
       { alias: 'Relative who wants to save the leader from themselves' },
       { alias: 'Itinerant bureaucratic official' }
@@ -1305,10 +1475,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "Many of this #site#'s structures date back to the ancient past and a long-vanished culture with unique architectural traits. The locals find them too {useful|durable} to destroy, but the buildings often have unpleasant little surprises in their under-explored corners, and there may be greater structures still buried by long ages beneath this #site#'s streets.",
     constraints: { conflicts: ['buried ruins'] },
     enemies: [
-      {
-        alias: 'A Thing from below',
-        monstrous: true
-      },
+      { alias: 'A Thing from below' },
       { alias: 'Outside pillager bent on sacking the structures' },
       { alias: 'Reckless explorer opening up things best left sealed' }
     ],
@@ -1397,7 +1564,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     friends: [
       { alias: 'Former guard now the last of #possessive# detachment' },
       { alias: 'Hard-pressed local official trying to keep order' },
-      { alias: 'Local elder desperate for a new source of stability', age: ['old'] },
+      { alias: 'Local elder desperate for a new source of stability' },
       { alias: 'Merchant looking for protection from the chaos' },
       { alias: "Retired official who's aghast at the situation" },
       { alias: "Rioter who now regrets what the situation's come to" },
@@ -1433,18 +1600,14 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
   'magical academy': {
     context:
       'While private tutelage of worthy apprentices can sometimes be had even in remote villages, this community is unusual in that it has an actual school dedicated to teaching magic. This shool typically has no more than a few dozen pupils in attendance at any time, most of whom will fail for lack of talent or discipline. The instructors are rarely first-rate, usually serving only for the pay and status, but sometimes a genius sorcerer will find a reason to observe likely apprentices here.',
-    actors: {
-      rival: ['sorcerer (major)', 'sorcerer (minor)', 'sorcerer (great)'],
-      patron: ['sorcerer (minor)', 'sorcerer (major)']
-    },
     enemies: [
-      { alias: 'Headmaster conducting forbidden research', age: ['middle age', 'old'] },
-      { alias: 'Secretly monstrous school patron', monstrous: true },
+      { alias: 'Headmaster conducting forbidden research' },
+      { alias: 'Secretly monstrous school patron' },
       { alias: 'Unpleasantly talented, yet vicious elite student' }
     ],
     friends: [
-      { alias: 'Courageous apprentice', age: ['young adult'] },
-      { alias: 'Concerned new instructor', age: ['adult', 'middle age'] },
+      { alias: 'Courageous apprentice' },
+      { alias: 'Concerned new instructor' },
       { alias: `Scholar wanting "field researcher" help` }
     ],
     complications: [
@@ -1531,7 +1694,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       { alias: 'Rapacious tax collector' }
     ],
     friends: [
-      { alias: 'Apprentice of the master', age: ['young adult'] },
+      { alias: 'Apprentice of the master' },
       { alias: 'Grateful past client' },
       { alias: 'Supplier in need of collectors for a valuable material' }
     ],
@@ -1552,14 +1715,14 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "The locals have cut a deal with some unspeakable entity, trading some vile tribute in exchange for the being's {forbearance|assistance}. Outsiders {are ignorant of the bargain|know that this #site# is in thrall but be too fearful of its master to take action against them}.",
     constraints: { conflicts: ['sinister alliance'], urban: false },
     enemies: [
-      { alias: 'Ancient artificial intellect-tyrant', monstrous: true },
+      { alias: 'Ancient artificial intellect-tyrant' },
       { alias: 'Cruel sorcerer-lord' },
-      { alias: 'Monstrous quasi-god', monstrous: true }
+      { alias: 'Monstrous quasi-god' }
     ],
     friends: [
       { alias: 'Secret rebel against the deal' },
       { alias: 'Investigator looking for evidence' },
-      { alias: 'Monstrous rival of the tyrant', monstrous: true }
+      { alias: 'Monstrous rival of the tyrant' }
     ],
     complications: [
       'They seize the tribute from their neighbors or enemies',
@@ -1630,7 +1793,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       { alias: 'Merchant trying to organize relief from the disaster' },
       { alias: 'Religious leader whose flock is scourged by it' },
       { alias: 'Someone whose {family|land} was ruined by it' },
-      { alias: 'Spirit of an unquiet, unburied victim of the calamity', monstrous: true }
+      { alias: 'Spirit of an unquiet, unburied victim of the calamity' }
     ],
     complications: [
       'An official is profiting cruelly on the suffering here',
@@ -1726,7 +1889,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       { alias: 'Heartless nomadic criminal' }
     ],
     friends: [
-      { alias: 'Diplomatic nomadic elder', age: ['old'] },
+      { alias: 'Diplomatic nomadic elder' },
       { alias: 'Struggling nomadic trader' },
       { alias: 'Local sympathetic to nomad treatment' }
     ],
@@ -1856,15 +2019,15 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'One of the locals has unusual personal power (retired {master swordsman|archmage|high priest|crime boss}).',
     constraints: { urban: false, conflicts: ['master artisan'] },
     enemies: [
-      { alias: 'Old foe seeking to even the score', age: ['old', 'middle age'] },
+      { alias: 'Old foe seeking to even the score' },
       {
         alias:
           "Local leader embittered by the powerful individual's refusal to do more for the settlement"
       }
     ],
     friends: [
-      { alias: 'Servant of the powerful individual', age: ['young adult', 'adult'] },
-      { alias: 'Local relative of the individual', relative: true },
+      { alias: 'Servant of the powerful individual' },
+      { alias: 'Local relative of the individual' },
       { alias: 'Petitioner come to ask the person for help' }
     ],
     complications: [
@@ -1992,7 +2155,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     constraints: { regional: true, conflicts: leadership },
     enemies: [
       { alias: `Abusive chief advisor` },
-      { alias: `Selfish relative regent`, relative: true },
+      { alias: `Selfish relative regent` },
       { alias: `Self-absorbed guardian` }
     ],
     friends: [
@@ -2027,7 +2190,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     ],
     friends: [
       { alias: 'Realist local clergy seeking peace' },
-      { alias: 'Sympathetic relative of the aristocrat', relative: true },
+      { alias: 'Sympathetic relative of the aristocrat' },
       { alias: 'Third-party diplomat trying to stamp out the fire', culture: 'foreign' }
     ],
     complications: [
@@ -2053,7 +2216,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     ],
     friends: [
       { alias: 'Local farmer being exploited for their wealth' },
-      { alias: "Elder attempting to defend the site's legal claim to the land", age: ['old'] },
+      { alias: "Elder attempting to defend the site's legal claim to the land" },
       { alias: 'Priest of a fertility deity' }
     ],
     complications: [
@@ -2108,12 +2271,12 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     ],
     friends: [
       { alias: 'Commoner who was an early victim of the power' },
-      { alias: "Community elder who's been shoved aside", age: ['old'] },
+      { alias: "Community elder who's been shoved aside" },
       { alias: 'Local wizard distressed at the sudden eruption' },
       { alias: "Merchant who fell victim to the power's depredations" },
       { alias: 'Overmatched {guard captain|local defender}' },
       { alias: 'Ruler who finds the situation spun out of control' },
-      { alias: "Worried relative of the runaway power's wielder", relative: true }
+      { alias: "Worried relative of the runaway power's wielder" }
     ],
     complications: [
       'Rivals lie in wait to snatch up the power if its user falls',
@@ -2148,7 +2311,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     constraints: { regional: true },
     enemies: [
       { alias: 'Gang boss whose vice trade depends on the custom' },
-      { alias: 'Harsh elder who has their position because of custom', age: ['old'] },
+      { alias: 'Harsh elder who has their position because of custom' },
       { alias: 'Heartless priest who profits from the custom' },
       { alias: 'Merchant whose profits hinge on the custom' },
       { alias: "Sorcerer with magic that relies on the custom's use" }
@@ -2200,7 +2363,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     friends: [
       { alias: 'Bedraggled survivor' },
       { alias: "Outsider who's come to help" },
-      { alias: 'Relative of someone lost in the battle', relative: true }
+      { alias: 'Relative of someone lost in the battle' }
     ],
     complications: [
       'The damage was mostly taken by one group',
@@ -2223,7 +2386,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'The ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents.',
     constraints: { regional: true },
     enemies: [
-      { alias: 'Secret police chief', age: ['old', 'middle age', 'adult'] },
+      { alias: 'Secret police chief' },
       { alias: 'Scapegoating official' },
       { alias: 'Treacherous native informer' }
     ],
@@ -2247,7 +2410,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     enemies: [
       { alias: 'Agent of the dark power' },
       { alias: 'Local magnate growing rich off the dark bargain' },
-      { alias: 'Elder who fears the secret will come out', age: ['old'] }
+      { alias: 'Elder who fears the secret will come out' }
     ],
     friends: [
       { alias: 'Conscience-wracked local' },
@@ -2273,10 +2436,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       "This #site# was built atop something unstable, and now that substrate is crumbling. {Denizens living in affected areas are frantically trying to relocate|New opportunities may be revealed even as this #site#'s present structure is ruined}.",
     enemies: [
-      {
-        alias: 'Unspeakable evil from below',
-        monstrous: true
-      },
+      { alias: 'Unspeakable evil from below' },
       { alias: 'Ruthless local causing damage for the sake of profit' },
       { alias: 'Outside exploiter preying on the displaced' }
     ],
@@ -2367,24 +2527,21 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       "This #site# is scourged by a monstrous beast. It {destroys property and possessions as well as lives|can infiltrate any place, leaving no home safe from it|inflicts some terrible post-death fate on the corpse|is cleverly sadistic, toying like a cat with its prey|is voracious, killing and eating incessantly|kills by an especially {hideous|lingering} method|It's so {armored|hardy} that it can scarce be hurt}",
     constraints: { conflicts: ['wanted outlaw'], urban: false },
     enemies: [
-      {
-        alias: 'Monstrous creature enslaved by a cruel sorcerer',
-        monstrous: true
-      },
-      { alias: 'Monstrous god-beast that demands bloody sacrifice', monstrous: true },
+      { alias: 'Monstrous creature enslaved by a cruel sorcerer' },
+      { alias: 'Monstrous god-beast that demands bloody sacrifice' },
       { alias: "Sadistic native who's pacted to become a shapeshifter" },
       { alias: 'Unlucky mortal transformed into an abomination' },
-      { alias: 'Vile abomination that transforms its victims into spawn', monstrous: true }
+      { alias: 'Vile abomination that transforms its victims into spawn' }
     ],
     friends: [
       { alias: 'Bitter refugee from a community the beast destroyed' },
       { alias: 'Envoy of the greater government looking for hunters' },
-      { alias: "Grizzled local hunter who's observed the beast", age: ['adult', 'middle age'] },
+      { alias: "Grizzled local hunter who's observed the beast" },
       { alias: 'Leader of a desperate local militia seeking to kill it' },
       { alias: 'Local leader trying to find someone to face the beast' },
       { alias: "Lone survivor of the beast's last attack" },
       { alias: "Scholar curious about the beast's nature and past" },
-      { alias: 'Veteran monster-hunter in need of assistance', age: ['adult', 'middle age'] }
+      { alias: 'Veteran monster-hunter in need of assistance' }
     ],
     complications: [
       'Killing the beast will cause a magical disaster',
@@ -2477,9 +2634,9 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'This #site# is a major trade hub, connecting several {important cities|resource production areas}. It {is located at an {important river juncture|ancient crossroads}|occupies the only safe path through perilous wilderness}.{ Its position is important enough that it can survive on trade alone, despite being unable to feed itself with the surrounding land.|}{ This #site# is heavily garrisoned by the lord who profits from their tariffs and taxes.|}',
     constraints: { urban: true },
     enemies: [
-      { alias: 'Cheating merchant prince', age: ['adult', 'middle age'] },
-      { alias: 'Corrupt {judge|trade official|caravan master}', age: ['adult', 'middle age'] },
-      { alias: 'Grasping ruler with heavy taxes', age: ['adult', 'middle age'] }
+      { alias: 'Cheating merchant prince' },
+      { alias: 'Corrupt {judge|trade official|caravan master}' },
+      { alias: 'Grasping ruler with heavy taxes' }
     ],
     friends: [
       { alias: 'Confused foreigner with strange ways', culture: 'foreign' },
@@ -2554,10 +2711,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       'This #site# {produces unique resource found nowhere else|contains masters a carefully-guarded craft|offers a special service that can only be provided by the locals} ({metal|textile|culinary|alchemical|artistic|scholarly|arcane}).',
     enemies: [
-      {
-        alias: 'Magnate forcing more production at a grim cost',
-        age: ['adult', 'middle age', 'old']
-      },
+      { alias: 'Magnate forcing more production at a grim cost' },
       { alias: 'Ruler demanding more tribute' },
       { alias: 'Rival saboteur planning to turn the product dangerous' },
       { alias: 'Tax collector seeking to squeeze further exactions' }
@@ -2628,15 +2782,12 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     enemies: [
       { alias: 'The outlaw in hiding' },
       { alias: "The #site#'s ruler" },
-      {
-        alias: 'Corrupt {noble|gentry|bureaucrat|merchant} in alliance with the outlaw',
-        age: ['adult', 'middle age']
-      }
+      { alias: 'Corrupt {noble|gentry|bureaucrat|merchant} in alliance with the outlaw' }
     ],
     friends: [
       { alias: 'Investigating bureaucrat' },
       { alias: 'Secret informer' },
-      { alias: 'Captain of the guard', age: ['adult', 'middle age'] },
+      { alias: 'Captain of the guard' },
       { alias: 'Embittered former minion of the outlaw' }
     ],
     complications: [
@@ -2656,7 +2807,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     context:
       "There is a {conflict between formal leadership and informal authorities|struggle among civil officials} due to {divergent interests|a personal grudge that's boiled over}. Outside threats and internal problems are being ignored until the power struggle is resolved.",
     enemies: [
-      { alias: 'Shadowy kingmaker bent on breaking resistance', age: ['middle age', 'old'] },
+      { alias: 'Shadowy kingmaker bent on breaking resistance' },
       { alias: 'Megalomaniacal new leader' },
       { alias: '"Owned" leader forced to fight for #possessive# backers' }
     ],
@@ -2690,7 +2841,7 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
     ],
     friends: [
       { alias: 'Sympathetic sorcerer trying to escape' },
-      { alias: 'Relative of an imprisoned sorcerer', relative: true },
+      { alias: 'Relative of an imprisoned sorcerer' },
       { alias: 'Stoic witch-hunter' },
       { alias: 'Outside official trying to calm the situation' }
     ],
@@ -2749,18 +2900,11 @@ export const backgrounds: Record<Background, BackgroundDetails> = {
       'An aristocrat is bent on constructing some costly and elaborate structure ({a higher tier of defensive walls|an ornate temple|an ostentatious palace|a grand citadel}). The exactions are impoverishing the locals, and some are being impressed as corvee labor on the work.',
     constraints: { urban: true },
     enemies: [
-      {
-        alias: 'The driven aristocrat who tolerates no protest',
-        age: ['adult', 'middle age', 'old']
-      },
-      {
-        alias: 'A master builder who wants to keep the project as expensive as possible',
-        age: ['middle age', 'old']
-      },
+      { alias: 'The driven aristocrat who tolerates no protest' },
+      { alias: 'A master builder who wants to keep the project as expensive as possible' },
       {
         alias:
-          'The secret occult puppet master who is compelling the aristocrat to build the structure',
-        age: ['adult', 'middle age', 'old']
+          'The secret occult puppet master who is compelling the aristocrat to build the structure'
       }
     ],
     friends: [
@@ -2793,13 +2937,15 @@ export const background__spawn = (loc: Province) => {
       window.dice.weightedChoice(
         Object.entries(backgrounds).map(([_key, background]) => {
           const urban = background?.constraints?.urban
+          const coastal = background?.constraints?.coastal
           const key = _key as Background
           let weight = 1
           weight *= urban !== undefined && urban === rural ? 0 : 1
+          weight *= coastal !== undefined && coastal !== loc.hub.coastal ? 0 : 1
           const conflict = loc.backgrounds.some(
             active => background?.constraints?.conflicts?.includes(active) || active === key
           )
-          return { v: key, w: conflict ? 0 : weight }
+          return { v: key, w: background?.constraints?.regional || conflict ? 0 : weight }
         })
       )
     )
@@ -2812,7 +2958,7 @@ export const background__text = (params: { background: Background; loc: Province
   const complication = window.dice.choice(details.complications)
   return hub__fillSite({
     text: `${window.dice.spin(details.context)} ${decorateText({
-      label: window.dice.spin(complication),
+      label: `${window.dice.spin(complication)}.`,
       italics: true
     })}`,
     hub: loc.hub
