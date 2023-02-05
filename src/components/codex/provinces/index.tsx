@@ -18,7 +18,7 @@ export function ProvinceView() {
   const province = window.world.provinces[state.codex.province]
   const region = window.world.regions[province.region]
   const climate = climates[region.climate]
-  const { elevation, terrain } = province
+  const { terrain } = province
   const demographics: Parameters<typeof SectionList>[0]['list'] = []
   const { common } = province__demographics(province)
   const other = common.slice(5).reduce((sum, { w }) => sum + w, 0)
@@ -72,9 +72,7 @@ export function ProvinceView() {
           </Grid>
           <Grid item xs={6} mt={1}>
             <Box pt={1}>
-              <SectionList
-                list={[{ label: 'Terrain', content: `${titleCase(terrain)} (${elevation})` }]}
-              ></SectionList>
+              <SectionList list={[{ label: 'Terrain', content: titleCase(terrain) }]}></SectionList>
             </Box>
           </Grid>
           {demographics.length > 0 && (

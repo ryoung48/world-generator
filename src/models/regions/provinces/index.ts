@@ -100,7 +100,6 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
     threads: [],
     actors: [],
     backgrounds: [],
-    elevation: 'flat',
     terrain: 'glacier'
   }
   if (capital) {
@@ -112,6 +111,8 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
 }
 
 const province__terrain = (province: Province): Province['terrain'] => {
+  const cell = window.world.cells[province.hub.cell]
+  const mountainous = province.mountains > 0
   const region = window.world.regions[province.region]
   const climate = climates[region.climate]
   const tropical = climate.zone === 'tropical'
@@ -119,28 +120,21 @@ const province__terrain = (province: Province): Province['terrain'] => {
   const { latitude } = world__gps(province.hub)
   const polarTerrain = Math.abs(latitude) > glacierLatitudeCutoff ? 'glacier' : 'tundra'
   let marshChance =
+    !cell.isMountains &&
     !city &&
-    province.elevation === 'flat' &&
-    (climate.terrain === 'forest' || polarTerrain === 'tundra')
+    (climate.terrain === 'forest' || (polarTerrain === 'tundra' && region.climate === 'polar'))
       ? 0.2
       : 0
-  if (marshChance > window.dice.random) return 'marsh'
+  if (cell.isMountains) return 'mountains'
+  if (mountainous && window.dice.random > 0.9) return 'highlands'
+  else if (!cell.beach && window.dice.random > 0.8) return 'hills'
+  else if (marshChance > window.dice.random) return 'marsh'
   else if (climate.terrain === 'forest') return tropical ? 'jungle' : 'forest'
   else if (climate.terrain === 'plains') return 'plains'
   else if (climate.terrain === 'desert') return 'desert'
   return polarTerrain
 }
 
-const province__elevation = (province: Province): Province['elevation'] => {
-  const cell = window.world.cells[province.hub.cell]
-  const mountainous = province.mountains > 0
-  if (cell.isMountains || (mountainous && window.dice.random > 0.6)) return 'mountainous'
-  if (mountainous && window.dice.random > 0.6) return 'highlands'
-  if (mountainous || (!cell.coastal && window.dice.random > 0.75)) return 'hills'
-  return 'flat'
-}
-
 export const province__geography = (province: Province) => {
-  province.elevation = province__elevation(province)
   province.terrain = province__terrain(province)
 }

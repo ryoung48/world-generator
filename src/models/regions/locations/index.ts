@@ -358,10 +358,10 @@ const places: Record<Loc['district'], Loc> = {
   wilderness: {
     district: 'wilderness',
     site: ({ loc }) => {
-      const { terrain, elevation } = loc
+      const { terrain } = loc
       const region = window.world.regions[loc.region]
       const climate = climates[region.climate]
-      const mountainous = elevation === 'mountainous' || elevation === 'highlands'
+      const mountainous = terrain === 'mountains' || terrain === 'highlands'
       const site = window.dice.weightedChoice([
         {
           v: `${window.dice.choice([

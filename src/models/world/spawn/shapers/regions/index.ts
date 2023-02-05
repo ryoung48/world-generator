@@ -25,7 +25,7 @@ const addBorder = (params: {
 
 export class RegionalShaper extends Shaper {
   // minimum space between capital cities
-  private capitalSpacing = 0.018
+  private capitalSpacing = 0.012
   private mountainProspects: Record<number, Record<number, Set<number>>> = {}
   private regionBorders: Record<number, Record<number, Set<number>>> = {}
   get pipeline() {
@@ -50,7 +50,7 @@ export class RegionalShaper extends Shaper {
     const spacing = (window.world.dim.w + window.world.dim.h) * this.capitalSpacing
     // place the regional capitals
     const capitals = Shaper.placeLocs({
-      count: 250,
+      count: 250 * 2,
       spacing,
       whitelist: Shaper.coreCells(Shaper.land, spacing)
         .filter(poly => poly.h < mountainsCutoff)

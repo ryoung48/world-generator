@@ -1,5 +1,5 @@
-import { Point } from '../../utilities/math/points'
-import { cell__moveToCoast } from '../../world/cells'
+import { point__distance } from '../../utilities/math/points'
+import { cell__bfsNeighborhood, cell__moveToCoast } from '../../world/cells'
 import { ExteriorCell } from '../../world/cells/types'
 import { Hub, Settlement } from './types'
 
@@ -49,45 +49,37 @@ const hubs: Record<Hub['type'], Settlement> = {
  */
 const placement = (params: { cell: ExteriorCell }) => {
   const { cell } = params
+  const { sw, sh } = window.world.dim
   const coastalPlacement = cell__moveToCoast({
     cell,
     distance: 0.5
   })
-  if (!coastalPlacement) return { x: cell.x, y: cell.y }
-  return coastalPlacement
-}
-
-/**
- * Find suitable coordinates to place location that are not
- * too close to other locations. If no location is found and
- * not sprawling, will default to current cell coordinates.
- * If sprawling and no location is found, will return false.
- * @param params.origin - origin cell to sprawl out from
- * @param params.coastal - coastal variation
- * @param params.sprawl - sprawl outwards? (select random cell within the same province)
- * @param params.attempts - attempts made thus far in the selection
- * @returns coordinates + the idx of the chosen cell
- */
-const place__location = (params: { origin: ExteriorCell }): Point & { cell: ExteriorCell } => {
-  const { origin } = params
-  const cell = origin
-  const point = placement({ cell })
-  const province = window.world.provinces[cell.province]
-  if (!province) return { x: cell.x, y: cell.y, cell }
-  return { ...point, cell }
+  const collision = coastalPlacement
+    ? Array.from(
+        new Set(
+          cell__bfsNeighborhood({ start: cell, maxDepth: 2 })
+            .map(cell => cell.province)
+            .filter(p => window.world.provinces[p])
+        )
+      )
+        .map(p => window.world.provinces[p].hub)
+        .some(hub => point__distance({ points: [hub, coastalPlacement], scale: [sw, sh] }) <= 10)
+    : false
+  if (!coastalPlacement || collision) return { point: { x: cell.x, y: cell.y }, coastal: false }
+  return { point: coastalPlacement, coastal: true }
 }
 
 export const hub__spawn = (params: { cell: ExteriorCell }): Hub => {
   const { cell } = params
-  const point = place__location({ origin: cell })
+  const { point, coastal } = placement({ cell })
   const { x, y } = point
   return {
     type: 'tiny village',
     population: 0,
     x,
     y,
-    cell: point.cell.idx,
-    coastal: point.cell.beach
+    cell: cell.idx,
+    coastal: coastal
   }
 }
 
@@ -96,11 +88,10 @@ export const hub__spawn = (params: { cell: ExteriorCell }): Hub => {
  * @param loc - location to move
  */
 export const hub__moveToCoast = (loc: Hub) => {
-  const point = place__location({ origin: window.world.cells[loc.cell] })
-  if (point) {
-    loc.x = point.x
-    loc.y = point.y
-  }
+  const { point, coastal } = placement({ cell: window.world.cells[loc.cell] })
+  loc.x = point.x
+  loc.y = point.y
+  loc.coastal = coastal
 }
 
 export const hub__setPopulation = (city: Hub, pop: number) => {

@@ -15,8 +15,8 @@ import { climates } from '../../../climate/types'
 import { Shaper } from '..'
 
 const developmentPopulation = (dev: Region['development']) => {
-  if (dev === 'civilized') return 1
-  if (dev === 'frontier') return 0.75
+  if (dev === 'civilized') return 1.2
+  if (dev === 'frontier') return 0.8
   if (dev === 'tribal') return 0.5
   return 0.25
 }
@@ -152,11 +152,16 @@ const assignProvinces = (provinceNeighbors: Record<number, Set<number>>) => {
         queue.push(n)
       } else if (n.province !== -1 && !n.isMountains && n.province !== poly.province) {
         const type = n.ocean || poly.ocean ? 'sea' : 'land'
-        const [n1, n2] = [cell__province(n), cell__province(poly)]
-        n1.trade[type][n2.idx] = -1
-        n2.trade[type][n1.idx] = -1
-        provinceNeighbors[n1.idx].add(n2.idx)
-        provinceNeighbors[n2.idx].add(n1.idx)
+        const [p1, p2] = [cell__province(n), cell__province(poly)]
+        const coastal = p1.hub.coastal && p2.hub.coastal
+        if (type !== 'sea' || coastal) {
+          p1.trade[type][p2.idx] = -1
+          p2.trade[type][p1.idx] = -1
+        }
+        if (type !== 'sea') {
+          provinceNeighbors[p1.idx].add(p2.idx)
+          provinceNeighbors[p2.idx].add(p1.idx)
+        }
       }
     })
   }
@@ -169,7 +174,7 @@ const assignProvinces = (provinceNeighbors: Record<number, Set<number>>) => {
     region.provinces
       .map(t => window.world.provinces[t])
       .forEach(province => {
-        province.population = Math.floor(climate.population * province.land * cellArea * dev) * 20
+        province.population = Math.floor(climate.population * province.land * cellArea * dev) * 35
       })
     culture__culturize(culture, region)
   })
@@ -199,9 +204,7 @@ const majorCities = (params: {
       // find towns that are not too close to other cities
       const prospect = cells.findIndex(cell => {
         const province = window.world.provinces[cell.province]
-        return (
-          !cell.isMountains && Array.from(provinceNeighbors[province.idx]).every(n => !majors[n])
-        )
+        return Array.from(provinceNeighbors[province.idx]).every(n => !majors[n])
       })
       // add them as major cities
       if (prospect !== -1) {
@@ -225,9 +228,10 @@ const demographics = (provinces: Record<number, Province[]>) => {
     // find all towns in the region
     const towns = cities.filter(town => !major.includes(town) && !town.capital)
     // set the capital's population
-    const capitalMod = window.dice.uniform(0.02, 0.03) - (region.civilized ? 0 : 0.005)
+    const capitalMod = window.dice.uniform(0.02, 0.03)
     let pop = region__population(region) * capitalMod
-    if (region.civilized && pop < 10000) pop = window.dice.uniform(10000, 15000)
+    if ((region.civilized && pop < 10000) || (!region.civilized && pop > 15000))
+      pop = window.dice.uniform(10000, 15000)
     hub__setPopulation(capital.hub, pop)
     // set the next largest city
     pop = Math.round(pop * window.dice.norm(0.5, 0.1))
@@ -235,7 +239,7 @@ const demographics = (provinces: Record<number, Province[]>) => {
       const urban = pop > 300 ? pop : window.dice.randint(50, 300)
       hub__setPopulation(province.hub, urban)
       // make each city's population some fraction of the previous city's population
-      pop = Math.round(pop * window.dice.norm(0.8, 0.05))
+      pop = Math.round(pop * (1 - window.dice.norm(0.25, 0.05)))
     })
   })
 }
@@ -246,7 +250,7 @@ export const urbanization = () => {
   placeSettlements()
   checkIslands()
   assignProvinces(provinceNeighbors)
-  majorCities({ provinceNeighbors: provinceNeighbors, provinces })
+  majorCities({ provinceNeighbors, provinces })
   demographics(provinces)
   window.world.provinces.forEach(province__geography)
 }

@@ -76,7 +76,7 @@ const setDevelopment = (region: Region, development: Region['development']) => {
 const assignCultures = () => {
   entity__partitionBFS({
     items: window.world.regions,
-    target: 4,
+    target: window.world.regions.length * 0.012,
     // regions in the same culture must have the same climate
     neighbors: region => region__borders(region).filter(n => n.climate === region.climate),
     relaxed: region__borders

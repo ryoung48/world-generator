@@ -103,7 +103,7 @@ const _demographics = (province: Province): Demographics => {
   const common: Record<string, number> = {}
   window.world.cultures.forEach(k => (common[k.idx] = 0))
   const { hub } = province
-  const popScale = scale([0, 100000], [40, 400], hub.population)
+  const popScale = scale([0, 100000], [20, 200], hub.population)
   const origins = scale([0, 100000], [0.9, 0.6], hub.population)
   const network = province__network(province)
   Object.entries(network)

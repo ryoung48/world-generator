@@ -85,16 +85,21 @@ export const cell__isRegionBorder = (cell: ExteriorCell) => {
 
 export const cell__bfsNeighborhood = (params: {
   start: ExteriorCell
-  spread: (_cell: ExteriorCell) => boolean
+  spread?: (_cell: ExteriorCell) => boolean
+  maxDepth?: number
 }) => {
-  const { start, spread } = params
-  const queue = [start]
+  const { start, spread, maxDepth = Infinity } = params
+  const queue = [{ cell: start, depth: 0 }]
   const visited = new Set([start.idx])
   while (queue.length > 0) {
-    const node = queue.shift()
-    const neighbors = cell__neighbors(node)
-    const valid = neighbors.filter(cell => !visited.has(cell.idx) && spread(cell))
-    valid.forEach(n => visited.add(n.idx))
+    const { cell, depth } = queue.shift()
+    const deeper = depth + 1
+    if (deeper >= maxDepth) break
+    const neighbors = cell__neighbors(cell)
+    const valid = neighbors
+      .filter(n => !visited.has(n.idx) && (spread?.(n) ?? true))
+      .map(n => ({ cell: n, depth: deeper }))
+    valid.forEach(n => visited.add(n.cell.idx))
     queue.push(...valid)
   }
   return Array.from(visited).map(i => window.world.cells[i])

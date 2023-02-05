@@ -15,7 +15,6 @@ export interface Region extends TaggedEntity {
   tag: 'nation'
   colors: string
   capital?: number
-  ruler?: number
   side: Directions
   provinces: number[] // owned provinces
   regional: {
@@ -24,12 +23,10 @@ export interface Region extends TaggedEntity {
     mountains?: number
     coastal?: boolean
   }
-  // cultural traits
   culture: { ruling: number; native: number }
-  // weather
+  // geography
   climate?: Climate['type']
   coastal: boolean
-  // geographic borders (regions)
   borders: number[]
   landBorders: number[]
   relations: Record<number, DiplomaticRelation>
@@ -37,7 +34,10 @@ export interface Region extends TaggedEntity {
   development?: 'civilized' | 'frontier' | 'tribal' | 'remote'
   civilized?: boolean
   government?:
-    | `${'autocratic' | 'feudal' | 'theocratic' | 'exiled'} ${'empire' | 'kingdom' | 'chiefdom'}`
+    | `${'autocratic' | 'oligarchic' | 'theocratic' | 'exiled'} ${
+        | 'empire'
+        | 'kingdom'
+        | 'chiefdom'}`
     | `steppe ${'nomads' | 'horde'}`
     | 'free city'
     | `${'city-state' | 'tribal'} confederacy`

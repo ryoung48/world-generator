@@ -58,8 +58,8 @@ export const world__spawn = (params: {
       // voronoi cell resolution
       cells: 16000 * res,
       // actual width / height (miles)
-      rh: 6000,
-      rw: 6000,
+      rh: 5000,
+      rw: 5000,
       // noise resolution
       res: 256,
       // scale + cell metrics

@@ -28,8 +28,18 @@ export interface Province extends TaggedEntity {
   land: number
   ocean: number
   mountains: number
-  elevation: 'mountainous' | 'highlands' | 'hills' | 'flat'
-  terrain: 'desert' | 'plains' | 'jungle' | 'forest' | 'marsh' | 'tundra' | 'glacier'
+  terrain:
+    | 'desert'
+    | 'plains'
+    | 'jungle'
+    | 'forest'
+    | 'marsh'
+    | 'tundra'
+    | 'glacier'
+    | 'mountains'
+    | 'highlands'
+    | 'hills'
+    | 'farmland'
   // threads
   threads: number[]
   backgrounds: Background[]

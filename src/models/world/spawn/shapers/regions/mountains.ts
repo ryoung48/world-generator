@@ -25,7 +25,7 @@ export const regional__mountainousBorders = (
 ) => {
   Shaper.land.filter(p => p.isMountains).forEach(p => (p.isMountains = false))
   const lakes = Shaper.water.filter(cell => !cell.ocean)
-  const total = Math.floor(Shaper.land.length * 0.35)
+  const total = Math.floor(Shaper.land.length * 0.4)
   let mounts = 0
   const prospects = window.dice.shuffle(
     window.world.regions.filter(r => Object.keys(mountainProspects[r.idx]).length > 0)
