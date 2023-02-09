@@ -12,7 +12,8 @@ export const professions: Record<Profession, ProfessionDetails> = {
   'village elder': { strata: 'lower', urban: false, age: 'master', culture: 'native' },
   laborer: { strata: 'lower', urban: true },
   beggar: { strata: 'lower', urban: true },
-  servant: { title: 'servant ({ordinary|indentured|master})', strata: 'lower' },
+  servant: { title: 'servant ({ordinary|indentured})', strata: 'lower' },
+  'servant (master)': { strata: 'lower', age: 'veteran', weight: 0.1 },
   sailor: {
     title: 'sailor ({deckhand|deckhand|deckhand|{cannoneer|navigator|helmsman}})',
     strata: 'lower',
@@ -20,38 +21,22 @@ export const professions: Record<Profession, ProfessionDetails> = {
     urban: true
   },
   'dock worker': { strata: 'lower', coastal: true, urban: true },
-  actor: { title: { male: 'actor', female: 'actress' }, strata: 'lower', urban: true, weight: 0.2 },
-  singer: { strata: 'lower', urban: true, weight: 0.2 },
-  poet: { strata: 'lower', urban: true, weight: 0.2 },
   artist: { strata: 'lower', urban: true, weight: 0.2 },
   musician: { strata: 'lower', urban: true, weight: 0.2 },
   courtesan: { strata: 'lower', urban: true },
-  bandit: { strata: 'lower', urban: false, villain: true },
   criminal: { strata: 'lower', urban: true },
-  'ruins explorer': { strata: 'lower', weight: 0 },
   guard: { title: `guard (${hub__site})`, strata: 'lower', urban: true, official: true },
   'monster hunter': {
     title: '{monster|witch|undead} hunter ({itinerant|itinerant|famous})',
     strata: 'lower',
     age: 'veteran'
   },
-  'bounty hunter': { strata: 'lower', age: 'veteran' },
-  chef: { strata: 'lower' },
-  waiter: { title: { male: 'waiter', female: 'waitress' }, strata: 'lower' },
-  bartender: { strata: 'lower' },
   'grave keeper': { title: '{grave|cemetary} keeper', strata: 'lower', urban: true },
-  'sorcerer (petty)': { strata: 'lower', urban: false },
-  'clergy (petty)': { strata: 'lower', official: true },
   missionary: { strata: 'lower', culture: 'foreign', urban: true },
-  'merchant (petty)': { strata: 'lower' },
-  'bureaucrat (petty)': { strata: 'lower', urban: false, official: true },
-  coachman: { strata: 'lower', urban: true },
-  archivist: { strata: 'lower', urban: true },
-  beastmaster: { strata: 'lower', age: 'veteran', urban: true, weight: 0.5 },
   // middle class
-  gentry: { title: '{gentry|landlord} ({minor|minor|major})', strata: 'middle' },
-  'bureaucrat (minor)': { strata: 'middle', urban: true, official: true },
-  'bureaucrat (major)': { strata: 'middle', urban: true, official: true },
+  gentry: { title: '{gentry|landlord} ({minor|minor|major|fallen})', strata: 'middle' },
+  investigator: { strata: 'middle', official: true },
+  'tax collector': { strata: 'middle', official: true },
   'guard captain': {
     title: `guard captain (${hub__site})`,
     strata: 'middle',
@@ -65,52 +50,35 @@ export const professions: Record<Profession, ProfessionDetails> = {
     urban: true,
     official: true
   },
-  'bandit warlord': { strata: 'middle', urban: false, villain: true, age: 'veteran' },
-  'criminal boss': {
-    title: 'criminal boss ({minor|minor|major})',
+  'master criminal': {
+    title: 'master {assassin|thief|forger|smuggler}',
     strata: 'middle',
     age: 'veteran',
     urban: true
   },
-  'stable master': { strata: 'middle', age: 'veteran', urban: true },
+  'criminal boss': { strata: 'middle', age: 'veteran' },
   innkeeper: { strata: 'middle' },
-  'clergy (minor)': { strata: 'middle', official: true },
-  'clergy (major)': { strata: 'middle', urban: true, official: true, age: 'veteran' },
+  priest: { strata: 'middle', official: true },
   lawyer: { strata: 'middle', urban: true, official: true },
   scholar: { strata: 'middle', urban: true },
-  'sorcerer (minor)': { strata: 'middle' },
-  'sorcerer (major)': { strata: 'middle', urban: true },
-  'singer (famous)': { strata: 'middle', urban: true, weight: 0.25 },
-  'poet (famous)': { strata: 'middle', urban: true, weight: 0.25 },
-  'artist (famous)': { strata: 'middle', urban: true, weight: 0.25 },
-  'musician (famous)': { strata: 'middle', urban: true, weight: 0.25 },
-  'courtesan (famous)': { strata: 'middle', urban: true },
-  baker: { strata: 'middle', urban: true, weight: 0.1 },
-  butcher: { strata: 'middle', urban: true, weight: 0.1 },
-  brewer: { strata: 'middle', urban: true, weight: 0.1 },
-  blacksmith: { strata: 'middle', weight: 0.5 },
-  silversmith: { strata: 'middle', urban: true, weight: 0.1 },
-  goldsmith: { strata: 'middle', weight: 0.1, urban: true },
-  glassblower: { strata: 'middle', urban: true, weight: 0.1 },
-  jeweler: { strata: 'middle', urban: true, weight: 0.5 },
-  leatherworker: { strata: 'middle', urban: true, weight: 0.5 },
-  woodcarver: { strata: 'middle', weight: 0.1 },
-  cobbler: { strata: 'middle', urban: true, weight: 0.1 },
-  weaver: { strata: 'middle', weight: 0.1 },
-  tailor: {
-    title: { male: 'tailor', female: 'seamstress' },
-    strata: 'middle',
-    weight: 0.5,
-    urban: true
-  },
-  herbalist: { strata: 'middle', weight: 0.5 },
+  sorcerer: { strata: 'middle' },
+  'artist (famous)': { strata: 'middle', urban: true, weight: 0.3 },
+  'musician (famous)': { strata: 'middle', urban: true, weight: 0.3 },
+  'courtesan (famous)': { strata: 'middle', urban: true, weight: 0.3 },
+  artisan: { strata: 'middle', urban: true },
+  herbalist: { title: '{herbalist|physician}', strata: 'middle', weight: 0.5 },
   alchemist: { strata: 'middle', urban: true, weight: 0.5 },
-  surgeon: { strata: 'middle', weight: 0.1 },
   artificer: { strata: 'middle', urban: true, weight: 0.1 },
-  'merchant (minor)': { strata: 'middle' },
-  'merchant (major)': { strata: 'middle', urban: true, age: 'veteran' },
-  'caravan trader': { strata: 'middle', urban: true, culture: 'foreign' },
-  'caravan master': { strata: 'middle', urban: true, culture: 'foreign', age: 'veteran' },
+  merchant: { strata: 'middle' },
+  banker: { strata: 'middle', age: 'veteran', urban: true, weight: 0.5 },
+  'caravan trader': { strata: 'middle', urban: true, culture: 'foreign', weight: 0.5 },
+  'caravan master': {
+    strata: 'middle',
+    urban: true,
+    culture: 'foreign',
+    age: 'veteran',
+    weight: 0.5
+  },
   'ship captain (merchant)': { strata: 'middle', coastal: true, urban: true, age: 'veteran' },
   'ship captain (pirate)': {
     strata: 'middle',
@@ -127,31 +95,28 @@ export const professions: Record<Profession, ProfessionDetails> = {
     age: 'veteran'
   },
   // upper class
-  'guild master': {
-    title: 'guild master (artisan)',
+  oligarch: { strata: 'upper', age: 'veteran', urban: true, official: true },
+  magistrate: {
+    title: `magistrate (${hub__site})`,
+    age: 'master',
     strata: 'upper',
     urban: true,
-    weight: 0.1,
-    official: true,
-    age: 'master'
+    official: true
   },
-  'merchant (prince)': { strata: 'upper', urban: true, age: 'veteran' },
-  'sorcerer (great)': { title: 'archmage', strata: 'upper', urban: true, age: 'master' },
-  'clergy (great)': { strata: 'upper', urban: true, official: true, age: 'master' },
-  'templar (grandmaster)': {
-    strata: 'upper',
-    urban: true,
-    weight: 0.1
-  },
-  ethnarch: {
-    title: 'ethnarch (minority)',
+  'merchant prince': { strata: 'upper', urban: true, age: 'master', weight: 0.1 },
+  archmage: { strata: 'upper', urban: true, age: 'master', weight: 0.1 },
+  'high priest': { strata: 'upper', urban: true, official: true, age: 'master', weight: 0.1 },
+  'templar (grandmaster)': { strata: 'upper', urban: true, age: 'master', weight: 0.1 },
+  'exiled pretender': { strata: 'upper', urban: true, culture: 'foreign', weight: 0.1 },
+  'ethnarch (minority)': {
     strata: 'upper',
     urban: true,
     age: 'master',
-    culture: 'foreign'
+    culture: 'foreign',
+    weight: 0.1
   },
   aristocrat: {
-    title: 'aristocrat ({minor|minor|major})',
+    title: 'aristocrat ({minor|minor|major|disgraced})',
     strata: 'upper',
     urban: true,
     weight: 6
@@ -214,7 +179,7 @@ const distribution = (params: {
           loc.actors.map(i => window.world.actors[i]).every(actor => actor.profession.key !== tag)
         const villainCheck = !profession.villain || context?.role === 'rival'
         const weight = Math.max(
-          ...loc.backgrounds.map(background => backgrounds[background].professions?.[tag] ?? 0),
+          ...loc.backgrounds.map(background => backgrounds[background.tag].professions?.[tag] ?? 0),
           profession.weight ?? 1
         )
         return { v: tag, w: urbanCheck && coastalCheck && uniqueCheck && villainCheck ? weight : 0 }
@@ -251,15 +216,7 @@ export const profession__spawn = (params: {
   const rural = hub__isVillage(loc.hub)
   if (rural) social.lower += social.upper
 
-  let key = stratified({ loc, social, context })
-  const selection =
-    backgrounds[context?.background]?.[context?.role === 'patron' ? 'friends' : 'enemies']
-  if (selection) {
-    const selected = window.dice.choice(selection)?.profession
-    const inner = (selected as any)?.[rural ? 'rural' : 'urban']
-    if (Array.isArray(selected)) key = window.dice.choice(selected)
-    else if (Array.isArray(inner)) key = window.dice.choice(inner)
-  }
+  const key = stratified({ loc, social, context })
   const profession = professions[key]
   const title = hub__fillSite({
     text: !profession.title

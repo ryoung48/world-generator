@@ -170,19 +170,19 @@ export const species__map: Record<Culture['species'], Species> = {
       if (zone === 'tropical') {
         return {
           skin: { colors: window.dice.sample(['blue', 'green', 'olive', 'light brown'], 3) },
-          facialHair: false
+          facialHair: 0
         }
       } else if (zone === 'temperate') {
         return {
           skin: {
             colors: window.dice.sample(['dark red', 'burgundy', 'magenta', 'red', 'orange'], 3),
-            facialHair: false
+            facialHair: 0
           }
         }
       } else {
         return {
           skin: { colors: window.dice.sample(['dark purple', 'indigo', 'purple', 'black'], 3) },
-          facialHair: false
+          facialHair: 0
         }
       }
     }
@@ -193,17 +193,17 @@ export const species__map: Record<Culture['species'], Species> = {
       if (zone === 'tropical') {
         return {
           skin: { colors: window.dice.sample(['vermilion', 'ochre', 'dark red', 'red'], 3) },
-          facialHair: false
+          facialHair: 0
         }
       } else if (zone === 'temperate') {
         return {
           skin: {
             colors: window.dice.sample(['green', 'olive', 'dark green', 'teal'], 3),
-            facialHair: false
+            facialHair: 0
           }
         }
       } else {
-        return { skin: { colors: ['greyish-purple', 'blue', 'greyish-blue'] }, facialHair: false }
+        return { skin: { colors: ['greyish-purple', 'blue', 'greyish-blue'] }, facialHair: 0 }
       }
     }
   }
@@ -264,6 +264,6 @@ export const species__appearance = (culture: Culture) => {
     skin,
     eyes: species__eyes(),
     hair: hair ? { ...hair, styles: species__hairStyles() } : undefined,
-    facialHair: facialHair === false ? undefined : species__facialHair(facialHair)
+    facialHair: species__facialHair(facialHair)
   }
 }

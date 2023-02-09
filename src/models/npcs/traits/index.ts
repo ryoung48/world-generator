@@ -122,12 +122,16 @@ const quirks: Record<Quirk, QuirkDetails> = {
   sadistic: {
     spawn: ({ sympathetic, context }) => (sympathetic || context?.role === 'patron' ? 0 : 1)
   },
-  gossiper: { spawn: ({ enigmatic }) => (enigmatic ? 0 : 1) },
+  blackmailed: { conflicts: ['blackmailer'], spawn: () => 1 },
+  blackmailer: {
+    conflicts: ['blackmailed'],
+    spawn: ({ sympathetic, honest }) => (sympathetic || honest ? 0 : 1)
+  },
+  'trades gossip': { spawn: ({ enigmatic }) => (enigmatic ? 0 : 1) },
   manipulative: {
     spawn: ({ honest, sympathetic, context }) =>
       honest || sympathetic || context?.role === 'patron' ? 0 : 1
   },
-  sexuality: { text: '{bisexual|homosexual}', spawn: () => 0.5 },
   childhood: { text: '{{adopted|orphaned} as a child|twin sibling|bastard}', spawn: () => 0.5 },
   'social outcast': { spawn: () => 0.5 },
   outfit: {
@@ -142,7 +146,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'facial piercings': { spawn: ({ piercings }) => (piercings ? 1 : 0) },
   'aromatic scent': { spawn: () => 1 },
   'strong accent': { spawn: ({ foreigner }) => (foreigner ? 1 : 0) },
-  'foreign visitor': { spawn: ({ foreigner, official }) => (foreigner && !official ? 1 : 0) },
+  traveler: { spawn: () => 1 },
   speech: {
     text: '{speaks {quickly|slowly|quietly|loudly|copiously|sparsely}|{melodic|rough|sharp|deep} voice}',
     spawn: () => 1
@@ -159,7 +163,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   height: { text: '{tall|short}', conflicts: ['weight'], spawn: () => 2 },
   weight: { text: '{thin|fat}', conflicts: ['height'], spawn: () => 2 },
-  intellect: { text: '{myopic|idiotic|smart|tactician}', spawn: () => 1 },
+  intellect: { text: '{idiotic|{brilliant|genius}}', spawn: () => 1 },
   wisdom: { text: '{oblivious|{perceptive|insightful}}', spawn: () => 1 },
   charisma: { text: '{awkward|charismatic}', conflicts: ['local leader'], spawn: () => 1 },
   aesthetic: { text: '{unattractive|beautiful}', spawn: () => 1 },
@@ -168,7 +172,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   constitution: { text: '{fatigued|vigorous}', spawn: () => 1 },
   organization: { text: '{meticulous & organized|chaotic & disorganized}', spawn: () => 1 },
   companion: { text: 'animal companion', spawn: () => 0.5 },
-  drifter: { text: '{drifter|wanderer}', spawn: () => 0.5 },
   botanist: { conflicts: hobbyist, spawn: () => 0.5 },
   artistic: {
     conflicts: hobbyist,
@@ -209,7 +212,11 @@ const quirks: Record<Quirk, QuirkDetails> = {
     spawn: () => 0.5
   },
   'foreign agent': { conflicts: connections, spawn: ({ xenophobic }) => (xenophobic ? 0 : 0.5) },
-  'secret sectarian': { conflicts: connections, spawn: () => 0.5 },
+  'secret sectarian': {
+    text: decorateText({ label: 'secret sectarian', tooltip: '{dark cult|heretic|syncretic}' }),
+    conflicts: connections,
+    spawn: () => 0.5
+  },
   'local leader': { conflicts: ['charisma'], spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
   'magical gift': { spawn: ({ sorcerer }) => (sorcerer ? 0 : 0.5) },
   'well-off': { conflicts: talent, spawn: () => 1 },
@@ -220,18 +227,18 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'delusional self-image': {
     text: decorateText({
       label: 'delusional self-image',
-      tooltip: '{despised|respected}'
+      tooltip: '{talented|respected}'
     }),
     conflicts: talent,
     spawn: () => 1
   },
   'brash overconfidence': { spawn: ({ respectful }) => (respectful ? 0 : 1) },
   'fatal extravagance': { spawn: ({ austere }) => (austere ? 0 : 0.5) },
+  'dark bargain': { spawn: () => 0.5 },
   'concealed sin': {
     text: decorateText({
       label: 'concealed sin',
-      tooltip:
-        '{adulterous|incestuous|treacherous|theft|incompetence|dark pact|murderous|kinslayer}'
+      tooltip: '{adulterous|incestuous|treacherous|theft|incompetence|murderous}'
     }),
     spawn: () => 0.5
   },
@@ -279,14 +286,10 @@ const quirks: Record<Quirk, QuirkDetails> = {
     }),
     spawn: () => 0.5
   },
-  'rags to riches': { text: 'rags to riches', spawn: ({ rich }) => (rich ? 0.5 : 0) },
-  'riches to rags': { text: 'riches to rags', spawn: ({ poor }) => (poor ? 0.5 : 0) },
   wraith: {
     text: decorateText({ label: 'wraith', color: 'indigo', bold: true }),
     spawn: () => 0.1
   },
-  despotic: { spawn: () => 0 },
-  charlatan: { spawn: () => 0 },
   'victim of': {
     text: backgroundWrapper('victim of'),
     conflicts: perspective,
@@ -392,7 +395,7 @@ const rollQuirks = ({
     poor: strata === 'lower',
     comfortable: strata === 'middle',
     rich: strata === 'upper',
-    backgrounds: loc.backgrounds,
+    backgrounds: loc.backgrounds.map(({ tag }) => tag),
     background: context?.background,
     context
   }

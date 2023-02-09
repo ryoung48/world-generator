@@ -13,7 +13,6 @@ export function StageView(props: { stage: Stage; goToThread: (_thread: Thread) =
     <Grid container alignContent='center'>
       <Grid item xs={12}>
         <StyledText text={stage.text}></StyledText>
-        {stage.complication && <i>{` ${stage?.complication?.text}`}</i>}
         {ref && (
           <span>
             {' '}

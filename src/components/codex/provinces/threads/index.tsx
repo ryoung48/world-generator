@@ -60,9 +60,9 @@ export function ThreadList() {
         {
           text: '',
           value: item => {
-            const transit = location.idx !== item.location
             const paused = thread__paused(item)
             const progress = thread__ongoing(item)
+            const transit = location.idx !== item.location && progress
             const abandoned = thread__abandoned(item)
             const { Icon, color } =
               thread__icons[
@@ -87,7 +87,7 @@ export function ThreadList() {
               <DetailedTableRow
                 title={
                   <span>
-                    {titleCase(item.background.tag)} (#{item.idx})
+                    {titleCase(item.goal.tag)} (#{item.idx})
                   </span>
                 }
                 subtitle={

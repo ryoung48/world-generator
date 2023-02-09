@@ -1,24 +1,16 @@
 import type { Profession } from '../../npcs/professions/types'
-import { Personality, Quirk } from '../../npcs/traits/types'
+import { Gender, LifePhase } from '../../npcs/types'
 
 export type Background =
   | 'ancient infrastructure'
-  | 'angry ghosts'
   | 'awful curse'
   | 'bad neighbors'
-  | 'bad water'
   | 'blood feud'
   | 'brilliant innovation'
   | 'broken spirits'
   | 'buried ruins'
-  | 'cheating merchant'
   | 'corrupt laws'
-  | 'corrupt officials'
-  | 'corvee demand'
-  | "coup d'état"
-  | 'crackdown'
   | 'criminal bosses'
-  | 'crop theft'
   | 'cultural center'
   | 'dark cult'
   | 'deadly plague'
@@ -31,8 +23,6 @@ export type Background =
   | 'faded remnant'
   | 'fallen prosperity'
   | 'foreign enclave'
-  | 'foreign spies'
-  | 'grasping authority'
   | 'great famine'
   | 'guild oligarchy'
   | 'heavy fortification'
@@ -45,53 +35,38 @@ export type Background =
   | 'magical academy'
   | 'malignant slum'
   | 'martial tradition'
-  | 'master artisan'
   | 'monstrous tribute'
-  | 'murderous savage'
   | 'natural disaster'
   | 'neglectful ruler'
   | 'new industry'
   | 'nomadic traders'
   | 'pilgrimage site'
-  | 'pirate scourge'
-  | 'plundered tribute'
   | 'population boom'
-  | 'powerful local'
-  | 'punishment post'
   | 'raider scourge'
   | 'rebel stronghold'
-  | 'regency council'
-  | 'revanchism'
   | 'rich land'
-  | 'ritual combat'
   | 'runaway power'
   | 'savage custom'
   | 'scars of war'
-  | 'secret police'
-  | 'sinister alliance'
+  | 'secret treachery'
   | 'sinking city'
-  | 'slave uprising'
-  | 'stolen authority'
   | 'terrible beast'
   | 'theocratic authorities'
   | 'toxic economy'
   | 'trade hub'
-  | 'troubled festival'
-  | 'uncertain title'
   | 'unique product'
   | 'upstart faith'
-  | 'wanted outlaw'
   | 'warring council'
   | 'witch hunts'
   | 'xenophobic locals'
-  | 'zealous builder'
 
 type BackgroundActor = {
   alias: string
-  profession?: Profession[] | { urban?: Profession[]; rural?: Profession[] }
-  quirks?: Quirk[]
-  persona?: Personality[]
   culture?: 'foreign' | 'native'
+  monstrous?: boolean
+  age?: LifePhase[]
+  relative?: boolean
+  gender?: Gender
 }
 export interface BackgroundDetails {
   context: string

@@ -86,7 +86,7 @@ const drawBox = (params: {
   ctx.globalAlpha = 1
   ctx.fillStyle = 'black'
   ctx.textAlign = 'center'
-  ctx.font = `${50}px ${fonts.arcane}`
+  ctx.font = `50px ${fonts.arcane}`
   ctx.fillText(rune, point.x + 3, point.y + 18)
   ctx.restore()
 }

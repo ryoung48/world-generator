@@ -32,12 +32,10 @@ export interface Thread extends Omit<Stage, 'child' | 'task' | 'text' | 'setting
   parent?: number
   // actors
   actors: { idx: number; tag: 'patron' | 'rival' }[]
-  // background
-  background: { tag: Background; text: string }
 }
 
 export interface ThreadContext {
   ref?: NPC
   role: Thread['actors'][number]['tag']
-  background: Background
+  background?: Background
 }

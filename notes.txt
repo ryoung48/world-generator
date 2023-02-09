@@ -615,38 +615,48 @@ bugs: lb7nkxl3al
     * imperial cult: this nation blends the state religion with reverence of the ruler as a living deity.
     --- values ---
     * adaptation: seeking fortune in new places or new roles
-    * aesthetic: beauty in material goods and architecture; complex designs; attention to details
-    * arcane: magical prowess and occult ability
+    * aesthetic: beauty in material goods and architecture
+    * arcana: magical prowess and occult ability
+    * austerity: ascetic unworldliness and pious poverty
     * bravery: courage and valiance in danger
-    * charisma: eloquence and social expertise 
     * charity: sharing wealth and goods with others
     * decadence: personal indulgence and luxuriant pleasure
+    * diplomacy: pacifism and peaceful resolution of problems
     * equality: justice and fairness between people
+    * etiquette: eloquence and social expertise 
     * exploration: exploring the unknown and discovering secrets
-    * forbearance: patience and restraint in the face of adversity
+    * family: filial devotion to family and parents
     * forgiveness: showing mercy to enemies
-    * freedom: individual rights and freedom of action; independence; slavery is viewed with disdain
+    * freedom: individual rights and freedom of action
     * guile: cunning and the ability to trick others
-    * history: remembrance of the past and memorializing history; strong oral traditions are used to pass stories to future generations
+    * hierarchy: membership in an elite bloodline or caste
+    * history: remembrance of the past and memorializing history
     * honor: honesty and truthfulness in speech and action
-    * idealistic: social progress toward some eventual utopia
-    * imperialism: conquest and domination of others 
-    * industrious: hard work and excellence in one’s profession
+    * immortality: building things in service of their posterity
+    * imperialism: conquest and domination of others
     * intrigue: scheming subtly against enemies or rivals
-    * loyalty: strong obligations to honoring family, friends, and fellow citizens
-    * naturalism: harmony with nature and existing life; vegetarian diets; constructing and maintaining various types of gardens
-    * order: discipline and obedience to the law; structure and uniformity
-    * pacifism: peaceful resolution of problems
-    * persevering: hardiness and endurance before woes; optimism
-    * purity: ethnic purity of blood and culture 
+    * logic: humanistic reason and “rational” religion
+    * loyalty: faithfulness towards one’s chosen friends
+    * lust: seductive charm and sexual license
+    * nature: harmony with nature and existing life
+    * order: discipline and obedience to the law
+    * perfection: social progress toward some eventual utopia
+    * progress: personal development and limit-pushing
+    * purity: ethnic purity of blood and culture
     * revanchism: restoring some real or imagined glorious past
     * sacrifice: personal sacrifice for one’s causes or purposes
-    * scholarship: education and knowledge-seeking 
-    * stewardship: zealous guardianship of their own land and holy sites
-    * strength: raw strength and martial prowess 
+    * scholars: education and knowledge-seeking 
+    * stewardship: guardianship of their own land and holy sites
+    * stoicism: patience and restraint in the face of adversity
+    * success: excellence in one’s profession or trade
+    * subterfuge: subtlety and indirectness of action
     * supremacy: societal or ethnic superiority over all outsiders
-    * tradition: submission to the cultural norms; assimilation of foreign cultures
-    * vengeance: vengeance and execution of just vendettas
+    * tenacity: hardiness and endurance before woes
+    * tradition: submission to the collective norms
+    * unity: elimination of group differences
+    * vengeance: execution of just vendettas
+    * vigor: industry and the ability to work tirelessly
+    * warriors: raw strength and martial prowess
     * wealth: prosperity and accruing material wealth
     * zeal: piety and devotion to religious ideals
     -- traditions --

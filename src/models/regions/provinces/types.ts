@@ -42,7 +42,15 @@ export interface Province extends TaggedEntity {
     | 'farmland'
   // threads
   threads: number[]
-  backgrounds: Background[]
+  backgrounds: {
+    tag: Background
+    text: string
+    complications: string[]
+    things: string[]
+    places: string[]
+    friends: string[]
+    enemies: string[]
+  }[]
   actors: number[]
   // memory
   weather?: number

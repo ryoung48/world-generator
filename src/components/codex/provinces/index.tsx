@@ -82,6 +82,26 @@ export function ProvinceView() {
               </Box>
             </Grid>
           )}
+          <Grid item xs={12} mt={0}>
+            <Box py={0}>
+              <SectionList
+                list={[
+                  {
+                    label: 'Issues',
+                    content: (
+                      <StyledText
+                        text={province.backgrounds
+                          .map(({ tag, text }) =>
+                            decorateText({ label: titleCase(tag), tooltip: text })
+                          )
+                          .join(', ')}
+                      ></StyledText>
+                    )
+                  }
+                ]}
+              ></SectionList>
+            </Box>
+          </Grid>
           {
             <Fragment>
               <Grid item xs={12} mt={1}>

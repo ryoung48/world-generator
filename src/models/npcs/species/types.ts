@@ -12,6 +12,6 @@ export interface Species {
   appearance: (_params: { latitude: number; eastern?: boolean; zone: Climate['zone'] }) => {
     skin: Culture['appearance']['skin']
     hair?: Omit<Culture['appearance']['hair'], 'styles'>
-    facialHair?: false | number
+    facialHair?: number
   }
 }

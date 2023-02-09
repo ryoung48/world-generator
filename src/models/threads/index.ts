@@ -1,22 +1,19 @@
+import { range } from 'd3'
+
 import { npc__spawn } from '../npcs'
 import { Province } from '../regions/provinces/types'
-import { background__spawn, background__text } from './backgrounds'
-import { Background } from './backgrounds/types'
+import { background__hook, background__spawn } from './backgrounds'
 import { complication__spawn } from './complications'
 import { goal__spawn } from './goals'
 import { stage__current, stage__placeholder, stage__resolve, stage__spawn } from './stages'
 import { task__definition } from './tasks'
 import { Thread } from './types'
 
-export const thread__spawn = (params: {
-  loc: Province
-  parent?: Thread
-  background: Background
-}) => {
-  const { loc, parent, background } = params
+export const thread__spawn = (params: { loc: Province; parent?: Thread }) => {
+  const { loc, parent } = params
   const prev = parent?.goal
-  const patron = npc__spawn({ loc, context: { background, role: 'patron' } })
-  const rival = npc__spawn({ loc, context: { background, ref: patron, role: 'rival' } })
+  const patron = npc__spawn({ loc, context: { role: 'patron' } })
+  const rival = npc__spawn({ loc, context: { ref: patron, role: 'rival' } })
   const thread: Thread = {
     idx: window.world.threads.length,
     status: 'perfection',
@@ -41,10 +38,10 @@ export const thread__spawn = (params: {
     actors: [
       { idx: patron.idx, tag: 'patron' },
       { idx: rival.idx, tag: 'rival' }
-    ],
-    background: { tag: background, text: background__text({ background, loc }) }
+    ]
   }
   thread.goal = goal__spawn({ thread, blacklist: [prev?.tag] })
+  thread.goal.text = background__hook({ loc })
   if (window.dice.random < 0.1) thread.complication = complication__spawn({ thread, type: 'goal' })
   window.world.threads.push(thread)
   stage__spawn({ thread })
@@ -58,8 +55,7 @@ const thread__spawnChild = (params: { thread: Thread }) => {
   const loc = window.world.provinces[thread.location]
   const child = thread__spawn({
     loc,
-    parent: thread,
-    background: thread.background.tag
+    parent: thread
   })
   child.depth = thread.depth + 1
   stage.child = child.idx
@@ -169,8 +165,8 @@ export const thread__complexity = (thread: Thread) => {
 export const location__threads = (loc: Province) => {
   const curr = window.world.threads.filter(thread => thread.origin === loc.idx)
   background__spawn(loc)
-  if (curr.length < loc.backgrounds.length) {
-    loc.backgrounds.forEach(background => thread__spawn({ loc, background }))
+  if (curr.length < 3) {
+    range(3).forEach(() => thread__spawn({ loc }))
     return true
   }
   return false

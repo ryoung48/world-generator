@@ -80,7 +80,7 @@ export function ThreadView(props: {
 }) {
   const { thread, goToThread, clearExpand } = props
   const { state, dispatch } = view__context()
-  const { goal, closed, stages, complication, actors, background } = thread
+  const { goal, closed, stages, complication, actors } = thread
   const pages = Math.ceil(thread.stages.length / stagesPerPage)
   const [page, setPage] = useState(pages)
   const ended = !thread__ongoing(thread)
@@ -99,12 +99,9 @@ export function ThreadView(props: {
   const currentStages = partition([...stages], stagesPerPage)
   return (
     <Grid container style={{ fontSize: 12 }}>
-      <Grid item xs={12}>
-        <StyledText text={background.text}></StyledText>
-      </Grid>
       <Grid item xs={12} mt={1}>
         <span>
-          {goal.text}
+          <StyledText text={goal.text}></StyledText>
           {complication && <i>{` ${complication.text}`}</i>}
         </span>
       </Grid>
