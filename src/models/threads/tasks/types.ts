@@ -1,3 +1,6 @@
+import type { Stage } from '../stages/types'
+import type { Thread } from '../types'
+
 const tasks = [
   'track',
   'infiltrate',
@@ -35,7 +38,8 @@ const tasks = [
 export type Task = {
   tag: typeof tasks[number]
   type: 'investigation' | 'conflict' | 'action'
-  text: string
+  text: string | (() => string)
   nested?: number
   combat?: boolean
+  resolve?: (_params: { thread: Thread; stage: Stage }) => void
 }

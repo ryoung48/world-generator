@@ -22,6 +22,7 @@ export function ProvinceView() {
   const demographics: Parameters<typeof SectionList>[0]['list'] = []
   const { common } = province__demographics(province)
   const other = common.slice(5).reduce((sum, { w }) => sum + w, 0)
+  const started = state.avatar.npcs.length > 0
   demographics.push(
     ...[
       {
@@ -82,27 +83,7 @@ export function ProvinceView() {
               </Box>
             </Grid>
           )}
-          <Grid item xs={12} mt={0}>
-            <Box py={0}>
-              <SectionList
-                list={[
-                  {
-                    label: 'Issues',
-                    content: (
-                      <StyledText
-                        text={province.backgrounds
-                          .map(({ tag, text }) =>
-                            decorateText({ label: titleCase(tag), tooltip: text })
-                          )
-                          .join(', ')}
-                      ></StyledText>
-                    )
-                  }
-                ]}
-              ></SectionList>
-            </Box>
-          </Grid>
-          {
+          {started && (
             <Fragment>
               <Grid item xs={12} mt={1}>
                 <Divider>Hooks</Divider>
@@ -113,7 +94,7 @@ export function ProvinceView() {
                 </Grid>
               )}
             </Fragment>
-          }
+          )}
         </Grid>
       }
     ></CodexPage>

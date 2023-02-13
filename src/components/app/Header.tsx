@@ -1,4 +1,5 @@
 import { AppBar, Box, Button, Grid, Toolbar, Typography } from '@mui/material'
+import dayjs from 'dayjs'
 import { Dispatch, SetStateAction } from 'react'
 
 import { view__context } from '../context'
@@ -6,7 +7,7 @@ import { cssColors } from '../theme/colors'
 
 export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAction<boolean>> }) {
   const { stats, toggleStats } = props
-  const { state } = view__context()
+  const { state, dispatch } = view__context()
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -29,11 +30,16 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
                 component='div'
                 sx={{ lineHeight: 0.2, color: cssColors.subtitle, fontSize: 10 }}
               >
-                {state?.id || '∞'}
+                {`${dayjs(state.time).format('MMMM D, YYYY')} (${state?.id || '∞'})`}
               </Typography>
             </Grid>
           </Grid>
           <Grid container spacing={0} justifyContent='end'>
+            <Grid item px={1}>
+              <Button onClick={() => dispatch({ type: 'start adventure' })} disabled={!state.id}>
+                start
+              </Button>
+            </Grid>
             <Grid item px={1}>
               <Button onClick={() => toggleStats(!stats)} disabled={!state.id}>
                 {stats ? 'world' : 'stats'}

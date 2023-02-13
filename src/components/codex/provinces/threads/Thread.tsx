@@ -4,99 +4,56 @@ import { Fragment, useEffect, useState } from 'react'
 import {
   thread__abandoned,
   thread__advance,
+  thread__blocked,
   thread__close,
   thread__ongoing,
-  thread__paused
+  thread__paused,
+  thread__xp
 } from '../../../../models/threads'
+import { stage__current, stage__weather } from '../../../../models/threads/stages'
 import { Thread } from '../../../../models/threads/types'
 import { partition } from '../../../../models/utilities/math'
 import { decorateText } from '../../../../models/utilities/text/decoration'
 import { view__context } from '../../../context'
 import { cssColors } from '../../../theme/colors'
-import { DetailedTableRow } from '../../common/DataTable'
-import { SectionList } from '../../common/text/SectionList'
 import { StyledText } from '../../common/text/StyledText'
 import { StageView } from './Stage'
 import { thread__icons } from './styles'
 
-const DescribeActor = (params: Thread['actors'][number]) => {
-  const { idx, tag } = params
-  const actor = window.world.actors[idx]
-  const culture = window.world.cultures[actor.culture]
-  return (
-    <Grid container style={{ fontSize: 14 }}>
-      <Grid item xs={12}>
-        <DetailedTableRow
-          title={actor.name}
-          subtitle={
-            <span>
-              <b>{tag}</b>{' '}
-              <StyledText
-                text={`(${`${actor.age}, ${actor.gender} ${decorateText({
-                  label: culture.species,
-                  tooltip: culture.name,
-                  color: cssColors.subtitle
-                })}`})`}
-              ></StyledText>
-              , {actor.profession.title}
-            </span>
-          }
-        ></DetailedTableRow>
-      </Grid>
-      <Grid item xs={12} style={{ fontSize: 10 }}>
-        <StyledText
-          text={`${decorateText({
-            label: 'appearance',
-            bold: true
-          })}: ${actor.appearance}`}
-        ></StyledText>
-      </Grid>
-      <Grid item xs={12} style={{ fontSize: 10 }}>
-        <StyledText
-          text={`${decorateText({
-            label: 'personality',
-            bold: true
-          })}: ${actor.personality.join(', ')}`}
-        ></StyledText>
-      </Grid>
-      <Grid item xs={12} style={{ fontSize: 10 }}>
-        <StyledText
-          text={`${decorateText({
-            label: 'quirks',
-            bold: true
-          })}: ${actor.quirks.map(({ text }) => text).join(', ')}`}
-        ></StyledText>
-      </Grid>
-    </Grid>
-  )
-}
-
 const stagesPerPage = 5
 
-export function ThreadView(props: {
-  thread: Thread
-  goToThread: (_thread: Thread) => void
-  clearExpand: () => void
-}) {
-  const { thread, goToThread, clearExpand } = props
+export function ThreadView(props: { thread: Thread; goToThread: (_thread: Thread) => void }) {
+  const { thread, goToThread } = props
   const { state, dispatch } = view__context()
-  const { goal, closed, stages, complication, actors } = thread
+  const { avatar, codex, journal } = state
+  const { goal, stages, complication } = thread
   const pages = Math.ceil(thread.stages.length / stagesPerPage)
   const [page, setPage] = useState(pages)
   const ended = !thread__ongoing(thread)
   const paused = thread__paused(thread)
-  const avatarAtLoc = state.codex.province === thread.location
+  const avatarAtLoc = codex.province === thread.location
   const parent = window.world.threads[thread.parent]
   const closeThread = () => {
-    thread__close({ thread })
+    const outcome = thread__close({ thread, avatar })
+    dispatch({ type: 'progress', payload: outcome })
     dispatch({ type: 'refresh journal' })
     if (parent) goToThread(parent)
-    else clearExpand()
   }
   useEffect(() => {
     setPage(pages)
-  }, [state.journal])
-  const currentStages = partition([...stages], stagesPerPage)
+  }, [journal])
+  const currentStages = partition([...stages].reverse(), stagesPerPage).reverse()
+  const actors = thread.actors.filter(
+    actor =>
+      actor.loc === thread.location ||
+      actor.role === 'patron' ||
+      actor.role === 'rival' ||
+      thread.closed
+  )
+  const neutral = actors
+    .filter(actor => actor.role === 'neutral')
+    .map(actor => decorateText({ link: window.world.actors[actor.idx] }))
+  const current = stage__current(thread)
   return (
     <Grid container style={{ fontSize: 12 }}>
       <Grid item xs={12} mt={1}>
@@ -105,36 +62,77 @@ export function ThreadView(props: {
           {complication && <i>{` ${complication.text}`}</i>}
         </span>
       </Grid>
+      <Grid item xs={12}>
+        <Divider style={{ marginTop: 5, marginBottom: 5 }}>Actors</Divider>
+      </Grid>
+      <Grid item container alignContent='start' xs={5.5}>
+        <Grid item xs={12}>
+          <StyledText
+            text={`Allies: ${actors
+              .filter(actor => actor.role === 'friend' || actor.role === 'patron')
+              .map(actor =>
+                decorateText({
+                  link: window.world.actors[actor.idx],
+                  bold: actor.role === 'patron'
+                })
+              )
+              .join(', ')}`}
+          ></StyledText>
+        </Grid>
+        <Grid item xs={12}>
+          <StyledText
+            text={`PCs: ${(thread.pcs ?? avatar.npcs)
+              .map(i => {
+                const actor = window.world.actors[i]
+                return `${decorateText({
+                  link: window.world.actors[actor.idx]
+                })}`
+              })
+              .join(', ')}`}
+          ></StyledText>
+        </Grid>
+      </Grid>
+      <Grid item container xs={1} justifyContent='center'>
+        <Divider orientation='vertical'></Divider>
+      </Grid>
+      <Grid item container alignContent='start' xs={5.5}>
+        <Grid item xs={12}>
+          <StyledText
+            text={`Enemies: ${actors
+              .filter(actor => actor.role === 'rival' || actor.role === 'enemy')
+              .map(actor =>
+                decorateText({ link: window.world.actors[actor.idx], bold: actor.role === 'rival' })
+              )
+              .join(', ')}`}
+          ></StyledText>
+        </Grid>
+        {neutral.length > 0 && (
+          <Grid item xs={12}>
+            <StyledText text={`Neutral: ${neutral.join(', ')}`}></StyledText>
+          </Grid>
+        )}
+      </Grid>
       <Fragment>
         <Grid item xs={12}>
-          <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
+          <Divider style={{ marginTop: 5, marginBottom: 5 }}>Stages</Divider>
         </Grid>
-        {actors.map((actor, i) => {
-          return (
-            <Fragment key={i}>
-              <Grid item xs={5.5}>
-                <DescribeActor {...actor}></DescribeActor>
-              </Grid>
-              {i < actors.length - 1 && (
-                <Grid item xs={1} display='flex' justifyContent='center'>
-                  <Divider orientation='vertical'></Divider>
-                </Grid>
-              )}
-            </Fragment>
-          )
-        })}
-        <Grid item xs={12}>
-          <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-        </Grid>
-        {currentStages[page - 1].map((stage, i) => {
+        {currentStages[page - 1].reverse().map((stage, i) => {
           if (!stage) return <span key={i}>placeholder</span>
           const ref = window.world.threads[stage.child]
           const paused = ref && thread__ongoing(ref)
           const abandoned = ref && thread__abandoned(ref)
-          const status = abandoned ? 'abandoned' : paused ? 'paused' : stage.status ?? 'in progress'
+          const blocked = stage === current && thread__blocked({ pc: avatar.cr, thread })
+          const status = abandoned
+            ? 'abandoned'
+            : blocked
+            ? 'blocked'
+            : paused
+            ? 'paused'
+            : stage.status ?? 'in progress'
           const { Icon, color } = thread__icons[status]
+          stage__weather({ stage, thread })
           return (
-            <Grid item xs={12} key={i} mt={1}>
+            <Grid item xs={12} key={i} mt={i === 0 ? 0 : 1}>
               <Grid container alignContent='top'>
                 <Grid item xs={1}>
                   <Icon style={{ color }}></Icon>
@@ -147,68 +145,57 @@ export function ThreadView(props: {
           )
         })}
       </Fragment>
-      {stages.length > stagesPerPage && (
-        <Fragment>
-          <Grid item xs={12}>
-            <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-          </Grid>
-          <Grid item xs={12} display='flex' justifyContent='center'>
-            <Pagination
-              count={pages}
-              variant='outlined'
-              color='primary'
-              shape='rounded'
-              page={page}
-              onChange={(_, value) => setPage(value)}
-            ></Pagination>
-          </Grid>
-        </Fragment>
-      )}
-      {ended && (
-        <Fragment>
-          <Grid item xs={12}>
-            <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-          </Grid>
-          <Grid item xs={12}>
-            <SectionList
-              list={[
-                {
-                  label: 'Outcome',
-                  content: (
-                    <span>Quest {thread.status === 'failure' ? 'failed' : 'completed'}.</span>
-                  )
-                }
-              ]}
-            ></SectionList>
-          </Grid>
-        </Fragment>
-      )}
-      {!closed && (
-        <Fragment>
-          <Grid item xs={12}>
-            <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
-          </Grid>
-          <Grid item xs={12}>
-            <Button
-              style={{ marginRight: 10 }}
-              disabled={!avatarAtLoc || paused}
-              onClick={() => {
-                if (ended) {
-                  closeThread()
-                } else {
-                  thread__advance({ thread })
+      <Grid item xs={12}>
+        <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
+      </Grid>
+      <Grid item container justifyContent='space-between' xs={12}>
+        <Grid item>
+          {ended ? (
+            <Fragment>
+              <Grid item xs={12}>
+                <span>Quest {thread.status === 'failure' ? 'failed' : 'completed'}.</span>
+              </Grid>
+              <Grid item xs={12} style={{ color: cssColors.subtitle, fontSize: 10 }}>
+                <span>
+                  <b>Reward:</b>
+                  {` ${thread__xp(thread.xp)}`}
+                </span>
+              </Grid>
+            </Fragment>
+          ) : (
+            <Fragment>
+              <Button
+                style={{ marginRight: 10 }}
+                disabled={!avatarAtLoc || paused || thread__blocked({ pc: avatar.cr, thread })}
+                onClick={() => {
+                  thread.accepted = true
+                  const outcome = thread__advance({ thread, avatar })
+                  dispatch({ type: 'progress', payload: outcome })
                   dispatch({ type: 'refresh journal' })
-                }
-              }}
-            >
-              {ended ? 'Complete' : 'Continue'}
-            </Button>
-            <Button disabled={ended} onClick={() => closeThread()}>
-              Abandon
-            </Button>
-          </Grid>
-        </Fragment>
-      )}
+                }}
+              >
+                {!thread.accepted ? 'Accept' : ended ? 'Complete' : 'Continue'}
+              </Button>
+              <Button disabled={ended} onClick={() => closeThread()}>
+                Abandon
+              </Button>
+            </Fragment>
+          )}
+        </Grid>
+        <Grid item>
+          {stages.length > stagesPerPage && (
+            <Grid item xs={12} display='flex' justifyContent='center'>
+              <Pagination
+                count={pages}
+                color='primary'
+                shape='rounded'
+                page={page}
+                onChange={(_, value) => setPage(value)}
+              ></Pagination>
+            </Grid>
+          )}
+        </Grid>
+      </Grid>
     </Grid>
   )
 }

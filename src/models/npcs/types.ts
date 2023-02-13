@@ -1,3 +1,4 @@
+import { TaggedEntity } from '../utilities/codex/entities'
 import { Profession } from './professions/types'
 import { Personality, Quirk } from './traits/types'
 
@@ -15,9 +16,8 @@ export type LifePhase = typeof lifeCycle[number]
 
 export type Gender = 'male' | 'female'
 
-export interface NPC {
-  idx: number
-  name: string
+export interface NPC extends TaggedEntity {
+  tag: 'actor'
   profession: { key: Profession; title: string }
   culture: number
   gender: Gender

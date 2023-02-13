@@ -97,9 +97,7 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
     neighbors: [],
     artery: [],
     nation: cell.region,
-    threads: [],
     actors: [],
-    backgrounds: [],
     terrain: 'glacier'
   }
   if (capital) {

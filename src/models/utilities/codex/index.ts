@@ -43,6 +43,11 @@ const updateTarget: Record<
     const old = codex.culture
     codex.culture = idx
     return old !== codex.culture
+  },
+  actor: ({ idx, codex }) => {
+    const old = codex.actor
+    codex.actor = idx
+    return old !== codex.actor
   }
 }
 

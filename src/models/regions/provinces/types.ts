@@ -1,4 +1,3 @@
-import { Background } from '../../threads/backgrounds/types'
 import { TaggedEntity } from '../../utilities/codex/entities'
 import { WeightedDistribution } from '../../utilities/math'
 import { RouteTypes } from '../../world/travel/types'
@@ -40,19 +39,8 @@ export interface Province extends TaggedEntity {
     | 'highlands'
     | 'hills'
     | 'farmland'
-  // threads
-  threads: number[]
-  backgrounds: {
-    tag: Background
-    text: string
-    complications: string[]
-    things: string[]
-    places: string[]
-    friends: string[]
-    enemies: string[]
-  }[]
-  actors: number[]
   // memory
+  actors: number[]
   weather?: number
   demographics?: number
 }

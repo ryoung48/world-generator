@@ -5,6 +5,7 @@ import { decorateText } from '../utilities/text/decoration'
 import { Culture } from './cultures/types'
 import { lang__first } from './languages/words/actors'
 import { profession__spawn } from './professions'
+import { Profession } from './professions/types'
 import { species__map } from './species'
 import { npc__traits } from './traits'
 import { Gender, LifePhase, NPC } from './types'
@@ -33,20 +34,27 @@ const npc__appearance = (params: { culture: Culture; age: LifePhase; gender: Gen
   }`
 }
 
-export const npc__spawn = (params: { loc: Province; context?: ThreadContext }) => {
-  const { loc, context } = params
+export const npc__spawn = (params: {
+  loc: Province
+  context?: ThreadContext
+  profession?: Profession
+  age?: NPC['age']
+  pc?: boolean
+}) => {
+  const { loc, context, pc } = params
   const gender = npc__randomGender()
-  const profession = profession__spawn({ loc, gender, context })
+  const profession = profession__spawn({ loc, gender, context, profession: params.profession })
   const { common, native, foreign } = province__demographics(loc)
   const cidx = window.dice.weightedChoice(
     profession.culture === 'native' ? native : profession.culture === 'foreign' ? foreign : common
   )
   const culture = window.world.cultures[cidx]
   const npc: NPC = {
+    tag: 'actor',
     idx: window.world.actors.length,
     name: lang__first(culture.language, gender),
     culture: culture.idx,
-    age: profession.age,
+    age: params.age ?? profession.age,
     gender,
     profession: { key: profession.key, title: profession.title },
     personality: [],
@@ -55,6 +63,6 @@ export const npc__spawn = (params: { loc: Province; context?: ThreadContext }) =
   }
   npc__traits({ loc, npc, context })
   window.world.actors.push(npc)
-  loc.actors.push(npc.idx)
+  if (!pc) loc.actors.push(npc.idx)
   return npc
 }

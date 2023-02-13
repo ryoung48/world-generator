@@ -1,4 +1,4 @@
-export const entity__tags = ['nation', 'province', 'culture'] as const
+export const entity__tags = ['nation', 'province', 'culture', 'actor'] as const
 
 // all things that have codex pages
 // and need to reference one of the world lists

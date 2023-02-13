@@ -1,4 +1,3 @@
-import { Background } from '../../threads/backgrounds/types'
 import { ThreadContext } from '../../threads/types'
 
 export type Personality =
@@ -62,7 +61,7 @@ export type Quirk =
   | 'speech'
   | 'scars'
   | 'maimed'
-  | 'afflicted (illness)'
+  | 'afflicted'
   | 'horns'
   | 'height'
   | 'weight'
@@ -108,20 +107,7 @@ export type Quirk =
   | 'misplaced trust'
   | 'troublesome relationship'
   | 'ticking bomb'
-  | 'wraith'
-  | 'victim of'
-  | 'benefits from'
-  | 'distressed'
-  | 'blaming rivals'
-  | 'unjustly blamed'
-  | 'ruined plans'
-  | 'reliant on'
-  | 'responsible for'
-  | 'threatened by'
-  | 'feels guilty'
-  | 'investigating'
-  | 'misunderstood animosity'
-  | '{romantic|family} entanglement'
+  | 'irrational hatred'
 
 export interface QuirkParams {
   sympathetic: boolean
@@ -146,8 +132,6 @@ export interface QuirkParams {
   profession: string
   coastal: boolean
   piercings: boolean
-  backgrounds: Background[]
-  background?: Background
   context: ThreadContext
 }
 

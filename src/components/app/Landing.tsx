@@ -79,7 +79,7 @@ export function Landing() {
               disabled={generating}
               onClick={async () => {
                 await generator({ seed, res, update: setActive })
-                dispatch({ type: 'init', payload: { id: seed } })
+                dispatch({ type: 'init world', payload: { id: seed } })
               }}
             >
               Generate World

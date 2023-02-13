@@ -1,14 +1,12 @@
 import { NPC } from '../npcs/types'
-import { Background } from './backgrounds/types'
-import { difficulty } from './difficulty'
+import { Actor } from './actors/types'
 import { Goal } from './goals/types'
 import { Stage } from './stages/types'
 
-export interface Thread extends Omit<Stage, 'child' | 'task' | 'text' | 'setting'> {
+export interface Thread
+  extends Omit<Stage, 'child' | 'task' | 'text' | 'result' | 'setting' | 'duration'> {
   // thread index (window.world.threads)
   idx?: number
-  // relative difficulty
-  difficulty: difficulty
   // goal that defines the thread
   goal?: { tag: Goal['tag']; text: string }
   // location where the thread takes place
@@ -26,16 +24,18 @@ export interface Thread extends Omit<Stage, 'child' | 'task' | 'text' | 'setting
   clues: number
   // is this thread closed?
   closed?: boolean
+  accepted?: boolean
   // list of child tasks
   stages: Stage[]
   // parent thread
   parent?: number
   // actors
-  actors: { idx: number; tag: 'patron' | 'rival' }[]
+  actors: Actor[]
+  subject?: number
+  pcs?: number[]
 }
 
 export interface ThreadContext {
   ref?: NPC
-  role: Thread['actors'][number]['tag']
-  background?: Background
+  role: Thread['actors'][number]['role']
 }

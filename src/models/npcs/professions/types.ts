@@ -12,6 +12,7 @@ const _professions = [
   'musician',
   'courtesan',
   'criminal',
+  'mercenary',
   'guard',
   'monster hunter',
   'grave keeper',

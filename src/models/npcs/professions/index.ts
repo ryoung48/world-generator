@@ -1,8 +1,9 @@
+import { cssColors } from '../../../components/theme/colors'
 import { hub__fillSite, hub__isVillage, hub__site } from '../../regions/hubs'
 import { Province } from '../../regions/provinces/types'
-import { backgrounds } from '../../threads/backgrounds'
 import { ThreadContext } from '../../threads/types'
 import { buildDistribution, WeightedDistribution } from '../../utilities/math'
+import { decorateText } from '../../utilities/text/decoration'
 import { Gender, LifePhase } from '../types'
 import { Profession, ProfessionDetails } from './types'
 
@@ -24,14 +25,65 @@ export const professions: Record<Profession, ProfessionDetails> = {
   artist: { strata: 'lower', urban: true, weight: 0.2 },
   musician: { strata: 'lower', urban: true, weight: 0.2 },
   courtesan: { strata: 'lower', urban: true },
-  criminal: { strata: 'lower', urban: true },
+  criminal: { strata: 'lower' },
+  mercenary: {
+    title: `mercenary ({${decorateText({
+      label: 'barbarian',
+      tooltip: '{berserker|tempest|fanatic}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'chanter',
+      tooltip: '{beckoner|skald|troubadour}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'cipher',
+      tooltip: '{witch|beguiler|soul blade|wild mind}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'druid',
+      tooltip: '{elements|rejuvenation|shifter|decay}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'fighter',
+      tooltip: '{mage-slayer|devoted|unbroken|tactician}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'monk',
+      tooltip: '{sage|shadowdancer|kensai|brewmaster}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'paladin',
+      tooltip: '{protection|compassion|justice|dread}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'cleric',
+      tooltip: '{death|life|war|knowledge|order}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'ranger',
+      tooltip: '{marksman|stalker|arcana|beast master}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'rogue',
+      tooltip: '{assassin|duelist|trickster|debonaire}',
+      color: cssColors.subtitle
+    })}|${decorateText({
+      label: 'wizard',
+      tooltip: '{conjuration|enchantment|evocation|illusion|transmutation}',
+      color: cssColors.subtitle
+    })}})`,
+    strata: 'lower',
+    weight: 0
+  },
   guard: { title: `guard (${hub__site})`, strata: 'lower', urban: true, official: true },
   'monster hunter': {
     title: '{monster|witch|undead} hunter ({itinerant|itinerant|famous})',
     strata: 'lower',
-    age: 'veteran'
+    age: 'veteran',
+    weight: 0.25,
+    unique: true
   },
-  'grave keeper': { title: '{grave|cemetary} keeper', strata: 'lower', urban: true },
+  'grave keeper': { title: '{grave|cemetary} keeper', strata: 'lower', urban: true, unique: true },
   missionary: { strata: 'lower', culture: 'foreign', urban: true },
   // middle class
   gentry: { title: '{gentry|landlord} ({minor|minor|major|fallen})', strata: 'middle' },
@@ -154,8 +206,8 @@ type StrataMap<T> = Record<ProfessionDetails['strata'], T>
 
 const relations: StrataMap<StrataMap<number>> = {
   lower: { lower: 0.4, middle: 0.6, upper: 0 },
-  middle: { lower: 0.1, middle: 0.5, upper: 0.4 },
-  upper: { lower: 0, middle: 0.2, upper: 0.8 }
+  middle: { lower: 0.3, middle: 0.4, upper: 0.3 },
+  upper: { lower: 0, middle: 0.4, upper: 0.6 }
 }
 
 const distribution = (params: {
@@ -178,10 +230,7 @@ const distribution = (params: {
           !profession.unique ||
           loc.actors.map(i => window.world.actors[i]).every(actor => actor.profession.key !== tag)
         const villainCheck = !profession.villain || context?.role === 'rival'
-        const weight = Math.max(
-          ...loc.backgrounds.map(background => backgrounds[background.tag].professions?.[tag] ?? 0),
-          profession.weight ?? 1
-        )
+        const weight = profession.weight ?? 1
         return { v: tag, w: urbanCheck && coastalCheck && uniqueCheck && villainCheck ? weight : 0 }
       }),
     target
@@ -205,6 +254,7 @@ export const profession__spawn = (params: {
   loc: Province
   gender: Gender
   context?: ThreadContext
+  profession?: Profession
 }) => {
   const { loc, gender, context } = params
   const strata = professions[context?.ref?.profession?.key]?.strata
@@ -216,7 +266,7 @@ export const profession__spawn = (params: {
   const rural = hub__isVillage(loc.hub)
   if (rural) social.lower += social.upper
 
-  const key = stratified({ loc, social, context })
+  const key = params.profession ?? stratified({ loc, social, context })
   const profession = professions[key]
   const title = hub__fillSite({
     text: !profession.title

@@ -7,7 +7,7 @@ import { decorateText } from '../../utilities/text/decoration'
 import { professions } from '../professions'
 import { species__map } from '../species'
 import { NPC } from '../types'
-import { Personality, Quirk, QuirkDetails, QuirkParams } from './types'
+import { Personality, Quirk, QuirkDetails } from './types'
 
 const rollPersonality = (params: { count: number; role?: ThreadContext['role'] }) => {
   const { count, role } = params
@@ -64,8 +64,7 @@ const relations: Quirk[] = [
   'lovesick fool',
   'load-bearing relationship',
   'misplaced trust',
-  'troublesome relationship',
-  '{romantic|family} entanglement'
+  'troublesome relationship'
 ]
 const talent: Quirk[] = [
   'well-off',
@@ -76,27 +75,7 @@ const talent: Quirk[] = [
   'negligent'
 ]
 const connections: Quirk[] = ['connections', 'secret sectarian', 'foreign agent']
-const perspective: Quirk[] = [
-  'victim of',
-  'benefits from',
-  'threatened by',
-  'distressed',
-  'blaming rivals',
-  'unjustly blamed',
-  'ruined plans',
-  'reliant on',
-  'responsible for',
-  'feels guilty',
-  'investigating',
-  'misunderstood animosity',
-  '{romantic|family} entanglement'
-]
 const vice: Quirk[] = ['alcoholic', 'drug addict', 'gluttonous', 'masochistic']
-
-const backgroundWrapper =
-  (label: string) =>
-  ({ background, backgrounds }: QuirkParams) =>
-    decorateText({ label, tooltip: background ?? window.dice.choice(backgrounds) })
 
 const quirks: Record<Quirk, QuirkDetails> = {
   'seeking redemption': { conflicts: seekers, spawn: () => 0.5 },
@@ -120,19 +99,20 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   lustful: { spawn: ({ austere }) => (austere ? 0 : 1) },
   sadistic: {
-    spawn: ({ sympathetic, context }) => (sympathetic || context?.role === 'patron' ? 0 : 1)
+    spawn: ({ sympathetic, context }) => (!sympathetic && context?.role === 'rival' ? 1 : 0)
   },
   blackmailed: { conflicts: ['blackmailer'], spawn: () => 1 },
   blackmailer: {
     conflicts: ['blackmailed'],
-    spawn: ({ sympathetic, honest }) => (sympathetic || honest ? 0 : 1)
+    spawn: ({ sympathetic, honest, context }) =>
+      sympathetic || honest || context?.role !== 'rival' ? 0 : 1
   },
   'trades gossip': { spawn: ({ enigmatic }) => (enigmatic ? 0 : 1) },
   manipulative: {
     spawn: ({ honest, sympathetic, context }) =>
       honest || sympathetic || context?.role === 'patron' ? 0 : 1
   },
-  childhood: { text: '{{adopted|orphaned} as a child|twin sibling|bastard}', spawn: () => 0.5 },
+  childhood: { text: '{{adopted|orphaned} as a child|twin sibling}', spawn: () => 0.5 },
   'social outcast': { spawn: () => 0.5 },
   outfit: {
     text: '{formal & clean|ragged & dirty|flamboyant & outlandish} outfit',
@@ -156,7 +136,10 @@ const quirks: Record<Quirk, QuirkDetails> = {
     spawn: () => 1
   },
   maimed: { text: 'missing {{arm|hand}|leg|eye}', spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
-  'afflicted (illness)': { spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
+  afflicted: {
+    text: 'afflicted ({illness|cursed})',
+    spawn: ({ youthful }) => (youthful ? 0 : 0.5)
+  },
   horns: {
     text: '{broken|cracked|ringed} horns',
     spawn: ({ youngAdult, horns }) => (youngAdult || !horns ? 0 : 0.5)
@@ -282,78 +265,16 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'ticking bomb': {
     text: decorateText({
       label: 'ticking bomb',
-      tooltip: '{self-destructive choices|impending {doom|treachery}|internal strife}'
+      tooltip: '{self-destructive choices|impending treachery|internal strife|escalating threats}'
     }),
     spawn: () => 0.5
   },
-  wraith: {
-    text: decorateText({ label: 'wraith', color: 'indigo', bold: true }),
-    spawn: () => 0.1
-  },
-  'victim of': {
-    text: backgroundWrapper('victim of'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'benefits from': {
-    text: backgroundWrapper('benefits from'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  distressed: {
-    text: backgroundWrapper('distressed'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'blaming rivals': {
-    text: backgroundWrapper('blaming rivals'),
-    conflicts: perspective,
+  'irrational hatred': {
+    text: decorateText({
+      label: 'irrational hatred',
+      tooltip: '{misunderstanding|past {crimes|affiliations}}'
+    }),
     spawn: ({ context }) => (context?.role === 'rival' ? 0.5 : 0)
-  },
-  'unjustly blamed': {
-    text: backgroundWrapper('unjustly blamed'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'ruined plans': {
-    text: backgroundWrapper('unjustly blamed'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'reliant on': {
-    text: backgroundWrapper('reliant on'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'responsible for': {
-    text: backgroundWrapper('responsible for'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'threatened by': {
-    text: backgroundWrapper('threatened by'),
-    conflicts: perspective,
-    spawn: () => 0.5
-  },
-  'feels guilty': {
-    text: backgroundWrapper('feels guilty'),
-    conflicts: perspective,
-    spawn: ({ context }) => (context?.role === 'patron' ? 0.5 : 0)
-  },
-  investigating: {
-    text: backgroundWrapper('investigating'),
-    conflicts: perspective,
-    spawn: ({ context }) => (context?.role === 'patron' ? 0.5 : 0)
-  },
-  'misunderstood animosity': {
-    text: backgroundWrapper('misunderstood animosity'),
-    conflicts: perspective,
-    spawn: ({ context }) => (context?.role === 'rival' ? 0.5 : 0)
-  },
-  '{romantic|family} entanglement': {
-    text: backgroundWrapper('{romantic|family} entanglement'),
-    conflicts: perspective,
-    spawn: () => 0.5
   }
 }
 
@@ -395,8 +316,6 @@ const rollQuirks = ({
     poor: strata === 'lower',
     comfortable: strata === 'middle',
     rich: strata === 'upper',
-    backgrounds: loc.backgrounds.map(({ tag }) => tag),
-    background: context?.background,
     context
   }
   let count = 2

@@ -1,6 +1,9 @@
+import { range } from 'd3'
 import { createContext, Dispatch, useContext } from 'react'
 
+import { npc__spawn } from '../../models/npcs'
 import { region__nation } from '../../models/regions'
+import { actor__cr } from '../../models/threads/actors'
 import {
   codex__restoreHistory,
   codex__spawn,
@@ -16,7 +19,8 @@ export const view__init: ViewState = {
   journal: [],
   gps: { x: 0, y: 0, zoom: 0 },
   time: Date.now(),
-  borderChange: true
+  borderChange: true,
+  avatar: { cr: 0, npcs: [] }
 }
 
 export const view__reducer = (state: ViewState, action: ViewActions): ViewState => {
@@ -35,7 +39,7 @@ export const view__reducer = (state: ViewState, action: ViewActions): ViewState 
       }
       return updated
     }
-    case 'init': {
+    case 'init world': {
       const updated = { ...state, id: action.payload.id }
       // always zoom to the same region on every load
       const dice = new Dice(updated.id)
@@ -44,7 +48,26 @@ export const view__reducer = (state: ViewState, action: ViewActions): ViewState 
       // set starting codex values
       updated.codex.province = region.capital
       updated.codex.culture = nation.culture.native
+      updated.time = window.world.date
       codex__update({ codex: updated.codex, target: nation })
+      return updated
+    }
+    case 'start adventure': {
+      const updated = {
+        ...state,
+        avatar: {
+          cr: actor__cr(1),
+          npcs: range(5).map(() => {
+            const npc = npc__spawn({
+              loc: window.world.provinces[state.codex.province],
+              profession: 'mercenary',
+              age: 'young adult',
+              pc: true
+            })
+            return npc.idx
+          })
+        }
+      }
       return updated
     }
     case 'update gps': {
@@ -62,6 +85,13 @@ export const view__reducer = (state: ViewState, action: ViewActions): ViewState 
       const zoom = codex__targetZoom(target)
       if (!disableZoom && zoom) updated.gps = zoom
       return updated
+    }
+    case 'progress': {
+      const { xp, duration } = action.payload
+      window.world.date += duration
+      const avatar = window.structuredClone(state.avatar)
+      avatar.cr += xp
+      return { ...state, avatar, time: window.world.date }
     }
   }
 }

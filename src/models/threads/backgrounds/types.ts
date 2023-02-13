@@ -1,66 +1,37 @@
-import type { Profession } from '../../npcs/professions/types'
 import { Gender, LifePhase } from '../../npcs/types'
+import { Difficulty } from '../difficulty'
+import { Community } from './communities/types'
+import { Court, CourtGroup } from './courts/types'
+import { Faith } from './faith/types'
+import { Ruins } from './ruins/types'
+import { Wilderness } from './wilderness/types'
 
-export type Background =
-  | 'ancient infrastructure'
-  | 'awful curse'
-  | 'bad neighbors'
-  | 'blood feud'
-  | 'brilliant innovation'
-  | 'broken spirits'
-  | 'buried ruins'
-  | 'corrupt laws'
-  | 'criminal bosses'
-  | 'cultural center'
-  | 'dark cult'
-  | 'deadly plague'
-  | 'decadent locals'
-  | 'decaying enchantment'
-  | 'despotic lord'
-  | 'enemy within'
-  | 'ethnic tensions'
-  | 'evil sorcerer'
-  | 'faded remnant'
-  | 'fallen prosperity'
-  | 'foreign enclave'
-  | 'great famine'
-  | 'guild oligarchy'
-  | 'heavy fortification'
-  | 'hidden ruler'
-  | 'hostile terrain'
-  | 'incompetent leaders'
-  | 'inherited architecture'
-  | 'invading army'
-  | 'lawless chaos'
-  | 'magical academy'
-  | 'malignant slum'
-  | 'martial tradition'
-  | 'monstrous tribute'
-  | 'natural disaster'
-  | 'neglectful ruler'
-  | 'new industry'
-  | 'nomadic traders'
-  | 'pilgrimage site'
-  | 'population boom'
-  | 'raider scourge'
-  | 'rebel stronghold'
-  | 'rich land'
-  | 'runaway power'
-  | 'savage custom'
-  | 'scars of war'
-  | 'secret treachery'
-  | 'sinking city'
-  | 'terrible beast'
-  | 'theocratic authorities'
-  | 'toxic economy'
-  | 'trade hub'
-  | 'unique product'
-  | 'upstart faith'
-  | 'warring council'
-  | 'witch hunts'
-  | 'xenophobic locals'
+export interface ThreadActor {
+  alias: string
+  name: string
+  culture: number
+  age?: LifePhase
+  gender?: Gender
+  monstrous?: boolean
+}
 
-type BackgroundActor = {
+export interface Thread {
+  tag: BackgroundTag
+  weather: string
+  text: string
+  complication: string
+  category: string
+  patron: ThreadActor
+  antagonist: ThreadActor
+  place: string
+  thing: string
+  court?: CourtGroup
+  difficulty: Difficulty
+}
+
+export type BackgroundTag = Community | Court | Faith | Ruins | Wilderness
+
+export type BackgroundActor = {
   alias: string
   culture?: 'foreign' | 'native'
   monstrous?: boolean
@@ -68,16 +39,20 @@ type BackgroundActor = {
   relative?: boolean
   gender?: Gender
 }
-export interface BackgroundDetails {
+
+export interface Background {
+  tag: BackgroundTag
+  type: 'community' | 'court' | 'faith' | 'ruins' | 'wilderness'
   context: string
-  complications: string[]
-  friends: BackgroundActor[]
+  hostiles?: {}
   enemies: BackgroundActor[]
-  professions?: Partial<Record<Profession, number>>
+  friends: BackgroundActor[]
+  complications: string[]
   things: string[]
   places: string[]
   constraints?: {
-    conflicts?: Background[]
+    conflicts?: BackgroundTag[]
+    rural?: boolean
     urban?: boolean
     regional?: boolean
     coastal?: boolean

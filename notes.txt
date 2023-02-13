@@ -437,6 +437,8 @@ Generic Dungeon Rooms
 
 bugs: lb7nkxl3al
 
+items: wealth|relic|evidence|mysterious shipment|supplies|secret plans
+
 -- goals --
 * blackmail: a foe is using strong leverage (secrets|threats|debts) to force support from an actor important to the patron. Help the patron remove this leverage.
 * bounty: a criminal|monster that is hazardous to the patron needs to be apprehended|slain.

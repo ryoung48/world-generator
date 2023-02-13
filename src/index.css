@@ -19,6 +19,12 @@ body {
   src: url('./components/theme/fonts/Daedra.otf');
 }
 
+.tippy-box[data-theme~='actor'] {
+  background-color: #474747;
+  color: white;
+}
+
+
 .paper {
   background-repeat: repeat;
   height: 100%;

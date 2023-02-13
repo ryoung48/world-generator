@@ -47,21 +47,6 @@ export const formatHours = (rawHours: number) => {
   return `${adjusted}:${extraZero}${minutes} ${rawHours < 12 ? 'AM' : 'PM'}`
 }
 
-export const describeCoarseDuration = (time: number) => {
-  const years = Math.floor(time / yearMS)
-  if (years >= 1) return `${years} year${years === 1 ? '' : 's'}`
-  const months = Math.floor(time / monthMS)
-  if (months >= 1) return `${months} month${months === 1 ? '' : 's'}`
-  const weeks = Math.floor(time / weekMS)
-  if (weeks >= 1) return `${weeks} week${weeks === 1 ? '' : 's'}`
-  const days = Math.floor(time / dayMS)
-  if (days >= 1) return `${days} day${days === 1 ? '' : 's'}`
-  const hours = Math.floor(time / hourMS)
-  if (hours >= 1) return `${hours} hour${hours === 1 ? '' : 's'}`
-  const minutes = Math.round(time / minuteMS)
-  return `${minutes} minute${minutes === 1 ? '' : 's'}`
-}
-
 export const describeDuration = (time: number) => {
   const rawDays = time / dayMS
   const days = Math.floor(rawDays)
