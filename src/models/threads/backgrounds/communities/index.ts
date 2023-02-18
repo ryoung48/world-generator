@@ -1,4 +1,4 @@
-import { Background } from '../types'
+import { BackgroundDetails } from '../types'
 import { Community } from './types'
 
 const leadership = [
@@ -10,7 +10,7 @@ const leadership = [
   'regency council'
 ] as Community[]
 
-export const backgrounds__community: Record<Community, Background> = {
+export const backgrounds__community: Record<Community, BackgroundDetails> = {
   'ancient infrastructure': {
     tag: 'ancient infrastructure',
     type: 'community',

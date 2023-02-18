@@ -53,7 +53,11 @@ export const province__connected = (city: Province) => {
   return city.artery.length > 0 || province__isCapital(city)
 }
 
-// All roads lead to Rome: attach to an arterial network
+/**
+ * All roads lead to Rome: attach to an arterial network
+ * @param city the city to attach to the network
+ * @param idx the index of the arterial network to attach to
+ */
 export const province__attach = (city: Province, idx: number) => {
   // attach myself
   city.artery = [idx]

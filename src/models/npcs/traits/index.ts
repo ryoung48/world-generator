@@ -37,7 +37,7 @@ const rollPersonality = (params: { count: number; role?: ThreadContext['role'] }
         ['xenophilic', 'xenophobic'],
         ['stubborn', 'capricious'],
         ['cautious', 'reckless'],
-        ['respectful', 'arrogant'],
+        ['courteous', 'arrogant'],
         ['content', 'ambitious'],
         ['austere', 'decadent'],
         ['patient', 'impatient'],
@@ -148,8 +148,11 @@ const quirks: Record<Quirk, QuirkDetails> = {
   weight: { text: '{thin|fat}', conflicts: ['height'], spawn: () => 2 },
   intellect: { text: '{idiotic|{brilliant|genius}}', spawn: () => 1 },
   wisdom: { text: '{oblivious|{perceptive|insightful}}', spawn: () => 1 },
-  charisma: { text: '{awkward|charismatic}', conflicts: ['local leader'], spawn: () => 1 },
-  aesthetic: { text: '{unattractive|beautiful}', spawn: () => 1 },
+  charisma: {
+    text: '{awkward|obnoxious|charismatic|beautiful}',
+    conflicts: ['local leader'],
+    spawn: () => 1
+  },
   strength: { text: '{muscular|frail}', spawn: () => 1 },
   dexterity: { text: '{clumsy|dexterous}', spawn: () => 1 },
   constitution: { text: '{fatigued|vigorous}', spawn: () => 1 },
@@ -215,7 +218,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
     conflicts: talent,
     spawn: () => 1
   },
-  'brash overconfidence': { spawn: ({ respectful }) => (respectful ? 0 : 1) },
+  'brash overconfidence': { spawn: ({ courteous }) => (courteous ? 0 : 1) },
   'fatal extravagance': { spawn: ({ austere }) => (austere ? 0 : 0.5) },
   'dark bargain': { spawn: () => 0.5 },
   'concealed sin': {
@@ -302,7 +305,7 @@ const rollQuirks = ({
     austere: personality.some(trait => trait === 'austere'),
     honest: personality.some(trait => trait === 'honest'),
     enigmatic: personality.some(trait => trait === 'enigmatic'),
-    respectful: personality.some(trait => trait === 'respectful'),
+    courteous: personality.some(trait => trait === 'courteous'),
     cautious: personality.some(trait => trait === 'cautious'),
     xenophobic: personality.some(trait => trait === 'xenophobic'),
     youthful: age === 'young adult' || age === 'adult',

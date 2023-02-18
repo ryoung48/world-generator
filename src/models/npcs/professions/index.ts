@@ -83,7 +83,13 @@ export const professions: Record<Profession, ProfessionDetails> = {
     weight: 0.25,
     unique: true
   },
-  'grave keeper': { title: '{grave|cemetary} keeper', strata: 'lower', urban: true, unique: true },
+  'grave keeper': {
+    title: '{grave|cemetary} keeper',
+    strata: 'lower',
+    urban: true,
+    unique: true,
+    weight: 0.2
+  },
   missionary: { strata: 'lower', culture: 'foreign', urban: true },
   // middle class
   gentry: { title: '{gentry|landlord} ({minor|minor|major|fallen})', strata: 'middle' },

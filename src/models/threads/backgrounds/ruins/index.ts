@@ -1,7 +1,7 @@
-import { Background } from '../types'
+import { BackgroundDetails } from '../types'
 import { Ruins } from './types'
 
-export const backgrounds__ruin: Record<Ruins, Background> = {
+export const backgrounds__ruin: Record<Ruins, BackgroundDetails> = {
   'abandoned traps': {
     tag: 'abandoned traps',
     type: 'ruins',

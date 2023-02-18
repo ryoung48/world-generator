@@ -23,7 +23,7 @@ export type Personality =
   | 'stubborn'
   | 'reckless'
   | 'cautious'
-  | 'respectful'
+  | 'courteous'
   | 'arrogant'
   | 'content'
   | 'ambitious'
@@ -68,7 +68,6 @@ export type Quirk =
   | 'intellect'
   | 'wisdom'
   | 'charisma'
-  | 'aesthetic'
   | 'strength'
   | 'dexterity'
   | 'constitution'
@@ -116,7 +115,7 @@ export interface QuirkParams {
   austere: boolean
   honest: boolean
   enigmatic: boolean
-  respectful: boolean
+  courteous: boolean
   cautious: boolean
   xenophobic: boolean
   foreigner: boolean

@@ -1,6 +1,8 @@
-import { TaggedEntity } from '../utilities/codex/entities'
-import { Profession } from './professions/types'
-import { Personality, Quirk } from './traits/types'
+import type { Province } from '../regions/provinces/types'
+import type { ThreadContext } from '../threads/types'
+import type { TaggedEntity } from '../utilities/codex/entities'
+import type { Profession } from './professions/types'
+import type { Personality, Quirk } from './traits/types'
 
 const lifeCycle = [
   'childhood',
@@ -25,4 +27,12 @@ export interface NPC extends TaggedEntity {
   personality: Personality[]
   quirks: { tag: Quirk; text: string }[]
   appearance: string
+}
+
+export interface NPCParams {
+  loc: Province
+  context?: ThreadContext
+  profession?: Profession
+  age?: NPC['age']
+  pc?: boolean
 }

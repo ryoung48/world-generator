@@ -12,7 +12,7 @@ export const task__definition: Record<Task['tag'], Task> = {
   track: {
     tag: 'track',
     type: 'investigation',
-    text: `Determine the location of an ${actors.neutral} who might have ${clue}.`
+    text: `Determine the location of an ${actors.neutral()} who might have ${clue}.`
   },
   infiltrate: {
     tag: 'infiltrate',
@@ -22,12 +22,12 @@ export const task__definition: Record<Task['tag'], Task> = {
   shadow: {
     tag: 'infiltrate',
     type: 'investigation',
-    text: `Shadow an ${actors.neutral} without being noticed to see if they reveal ${clue}.`
+    text: `Shadow an ${actors.neutral()} without being noticed to see if they reveal ${clue}.`
   },
   search: {
     tag: 'search',
     type: 'investigation',
-    text: `Search an area where the ${actors.patron} suspects ${clue} can be found.`
+    text: `Search an area where the ${actors.patron()} suspects ${clue} can be found.`
   },
   observe: {
     tag: 'observe',
@@ -43,7 +43,7 @@ export const task__definition: Record<Task['tag'], Task> = {
   trick: {
     tag: 'trick',
     type: 'investigation',
-    text: `Trick an ${actors.neutral} into revealing ${clue}.`
+    text: `Trick an ${actors.neutral()} into revealing ${clue}.`
   },
   assist: {
     tag: 'assist',
@@ -58,7 +58,7 @@ export const task__definition: Record<Task['tag'], Task> = {
   bribe: {
     tag: 'bribe',
     type: 'investigation',
-    text: `Bribe an ${actors.neutral} to reveal ${clue}.`
+    text: `Bribe an ${actors.neutral()} to reveal ${clue}.`
   },
   ambushed: {
     tag: 'ambushed',
@@ -85,9 +85,7 @@ export const task__definition: Record<Task['tag'], Task> = {
   support: {
     tag: 'support',
     type: 'conflict',
-    text: `Support an ${
-      actors.neutral
-    } who is working against the ${actors.rival()} for their own reasons.`
+    text: `Support an ${actors.neutral()} who is working against the ${actors.rival()} for their own reasons.`
   },
   steal: {
     tag: 'steal',
@@ -118,7 +116,7 @@ export const task__definition: Record<Task['tag'], Task> = {
       `Suffer a betrayal from an ${actors.friend({
         label: 'allied actor',
         betrayal: 'enemy',
-        spawn: false
+        spawn: 0
       })} and ${enemies__spawn(
         'face a fight'
       )} to {escape the ensuing chaos|avenge this injustice}.`
@@ -133,13 +131,13 @@ export const task__definition: Record<Task['tag'], Task> = {
     type: 'conflict',
     text: `Do a ${actors.friend({
       label: 'friendly actor'
-    })} a favor that will advance them into a position to help the ${actors.patron}.`
+    })} a favor that will advance them into a position to help the ${actors.patron()}.`
   },
   defend: {
     tag: 'defend',
     type: 'conflict',
     text: () =>
-      `Defend {the ${actors.patron}|an ${actors.friend({
+      `Defend {the ${actors.patron()}|an ${actors.friend({
         label: 'allied actor'
       })}} against ${enemies__spawn('hostile elements')}.`
   },
@@ -165,7 +163,7 @@ export const task__definition: Record<Task['tag'], Task> = {
   deliver: {
     tag: 'deliver',
     type: 'action',
-    text: `{Deliver|Pass} {incriminating|disgraceful} information to an ${actors.neutral} who can make sure that important people learn of the evidence.`
+    text: `{Deliver|Pass} {incriminating|disgraceful} information to an ${actors.neutral()} who can make sure that important people learn of the evidence.`
   },
   confrontation: {
     tag: 'deliver',
@@ -190,7 +188,7 @@ export const task__definition: Record<Task['tag'], Task> = {
   rally: {
     tag: 'rally',
     type: 'action',
-    text: `Rally an outside ${actors.neutral} and their allies to oppose the ${actors.rival()}.`
+    text: `Rally an outside ${actors.neutral()} and their allies to oppose the ${actors.rival()}.`
   },
   escort: {
     tag: 'escort',

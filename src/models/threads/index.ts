@@ -15,7 +15,11 @@ export const thread__spawn = (params: { loc: Province; parent?: Thread; pc: numb
   const { loc, parent, pc } = params
   const prev = parent?.goal
   const patron = npc__spawn({ loc, context: { role: 'patron' } })
-  const rival = npc__spawn({ loc, context: { ref: patron, role: 'rival' } })
+  const rival = npc__spawn({
+    loc,
+    context: { ref: patron, role: 'rival' },
+    profession: window.dice.random > 0.85 ? patron.profession.key : undefined
+  })
   const thread: Thread = {
     idx: window.world.threads.length,
     status: 'perfection',

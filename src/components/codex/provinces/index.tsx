@@ -1,6 +1,6 @@
 import { Box, Divider, Grid } from '@mui/material'
-import { Fragment } from 'react'
 
+// import { Fragment } from 'react'
 import { province__demographics } from '../../../models/regions/provinces/network'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
@@ -11,7 +11,8 @@ import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
-import { ThreadList } from './threads'
+import { BackgroundsView } from './Backgrounds'
+// import { ThreadList } from './threads'
 
 export function ProvinceView() {
   const { state } = view__context()
@@ -22,7 +23,7 @@ export function ProvinceView() {
   const demographics: Parameters<typeof SectionList>[0]['list'] = []
   const { common } = province__demographics(province)
   const other = common.slice(5).reduce((sum, { w }) => sum + w, 0)
-  const started = state.avatar.npcs.length > 0
+  // const started = state.avatar.npcs.length > 0
   demographics.push(
     ...[
       {
@@ -83,7 +84,7 @@ export function ProvinceView() {
               </Box>
             </Grid>
           )}
-          {started && (
+          {/* {started && (
             <Fragment>
               <Grid item xs={12} mt={1}>
                 <Divider>Hooks</Divider>
@@ -94,7 +95,13 @@ export function ProvinceView() {
                 </Grid>
               )}
             </Fragment>
-          )}
+          )} */}
+          <Grid item xs={12} mt={1}>
+            <Divider>Hooks</Divider>
+          </Grid>
+          <Grid item xs={12} mt={1}>
+            <BackgroundsView></BackgroundsView>
+          </Grid>
         </Grid>
       }
     ></CodexPage>

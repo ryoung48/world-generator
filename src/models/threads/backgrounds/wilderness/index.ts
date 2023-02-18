@@ -1,7 +1,7 @@
-import { Background } from '../types'
+import { BackgroundDetails } from '../types'
 import { Wilderness } from './types'
 
-export const backgrounds__wilderness: Record<Wilderness, Background> = {
+export const backgrounds__wilderness: Record<Wilderness, BackgroundDetails> = {
   'abandoned village': {
     tag: 'abandoned village',
     type: 'wilderness',

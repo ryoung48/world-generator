@@ -37,5 +37,5 @@ export interface Thread
 
 export interface ThreadContext {
   ref?: NPC
-  role: Thread['actors'][number]['role']
+  role?: Thread['actors'][number]['role']
 }

@@ -108,7 +108,14 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
   return province
 }
 
+/*
+
+Calculates the terrain in a given province, taking information such as region climate and province mounts into account.
+@param {Province} province - The province to calculate the terrain of
+@returns {Province['terrain']} The terrain type for the given province
+*/
 const province__terrain = (province: Province): Province['terrain'] => {
+  // Get the cell for the given province, along with other information needed
   const cell = window.world.cells[province.hub.cell]
   const mountainous = province.mountains > 0
   const region = window.world.regions[province.region]
@@ -116,7 +123,9 @@ const province__terrain = (province: Province): Province['terrain'] => {
   const tropical = climate.zone === 'tropical'
   const city = hub__isCity(province.hub)
   const { latitude } = world__gps(province.hub)
+  // Determine the terrain type, including glaciers for high latitudes
   const polarTerrain = Math.abs(latitude) > glacierLatitudeCutoff ? 'glacier' : 'tundra'
+  // Generate a chance of a marsh given certain criteria
   let marshChance =
     !cell.isMountains &&
     !city &&

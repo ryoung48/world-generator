@@ -308,13 +308,53 @@ towns:
 * smell: perfumed|aromatic|floral|pungent|musty|earthy|acrid|moldy|putrid|rancid
 
 ------------ ruins ------------
-* motivations: wealth|resources|lore|exploration|danger|rescue|key|artifacts|secrets
+-- locations --
+* {abandoned|ancient} mine
+* natural {cave|cavern}
+* savage hamlet
+* {crumbling|overgrown} {villa|manor|castle|fortress}
+* {abandoned|ruined} village
+* hostile {encampment|stronghold}
+* {occult|ruined|ancient} {laboratory|academy|archive}
+* ancient ruins ({urban|rural})
+* {isolated|ruined|ancient} {temple|monastery|crypt|necropolis|monument}
+* corrupt wilderness ({forest|marsh|plains|desert|mountains|hills|highlands|tundra|glacier})
+* magical disaster site
+* {ancient|military|merchant} shipwreck
+* ruined lighthouse
+* {ancient|occult|religious} vault
+-- complications --
+* abundant traps: the site is crusted over with dangerous snares and security measures.
+* crumbling structure: the site is falling apart and is actively dangerous to its inhabitants.
+* dungeon heart: The site will collapse if a particular {creature|object} is disturbed.
+* cyclical destruction: every so often, something happens to kill everything in the site ({energy blast|birthing cyst}).
+* hostile environment: the site is difficult to navigate due to {toxic pools|noxious fumes|feral magic|labyrinthine layout|contagious disease|flooding|shifting interiors}.
+* lethal surroundings: the site might not be so bad, but the area around it is murderously dangerous ({vicious creatures|perilous terrain}).
+* perpetual war zone: multiple factions within the site are constantly fighting each other.
+* failed intrusion: The site recently repelled a serious incursion of outsiders.
+* freshly looted: The site has been recently plundered by outsiders.
+* remote location: the site is exceedingly far away from anything else of importance, and its entrance is probably well-hidden.
+* sealed entrance: the site's entrance is bound shut by {magic|ancient technology}.
+* taboo wardens: entrance to the site is forbidden by {ancient law|local custom}.
+* buried beneath: this site is actually buried underneath the main settlement.
+* living dungeon: the site is {animated by an ancient construct|infused with the spirit of some arcane mind|made up of the tiny bodies of countless construction-organisms}.
+* sealed evil: the site serves as a prison for some terribly dangerous entity.
+-- inhabitants --
+* {sorcerous cabal|reclusive sorcerer} {elementals|treants|animated equipment|golems|abominations}
+* {raiders|degenerates|exiled noble}
+* dark cultists
+* {undead wraiths|vampiric spawn|necromancers|undead beasts} ++ {golems|abominations|husks}
+* monstrous beasts
+* relic automatons
+* aberrations ({fungal|infested|verdant|crystalline|corrupted|chimeric})
+* hivemind ({fungal|verdant|telepathic|networked})
+-- motivations: wealth|resources|lore|exploration|danger|rescue|key|artifacts|secrets
 -- enigmas (intellect|wisdom|charisma) --
 * {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|writing|archive|scrolls}
 * {{altered|augmented} gravity|arcana {nullifier|dampener|amplifier}|temporal distortion {slow|fast}}
 * benign enchantment ({healing|blessing|visions})
 * {mutated|enchanted} {vermin|flora|fungi}
-* locked {room|container} ({enchanted|mechanical})
+* locked {door|container} ({enchanted|mechanical})
 * {cryptic|warped|withered|defiled|mundane} {books|records|maps|debris|equipment} from past {inhabitants|intruders}
 * corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
 * signs of recent {bloodshed|battle|destruction|ritual|experimentation}
@@ -437,7 +477,41 @@ Generic Dungeon Rooms
 
 bugs: lb7nkxl3al
 
-items: wealth|relic|evidence|mysterious shipment|supplies|secret plans
+-- items --
+* generic: wealth|relic|evidence|mysterious shipment|supplies|secret plans
+* arcane {reagents|components|relic}
+* a {lost|treasured} family {heirloom|relic}
+* plundered tomb goods
+* treasure {of disputed ownership|needed to end a dispute}
+* lost symbol of peaceful unity
+* an ancestral tablet
+* bones of the restless dead
+* a maliciously cursed blade
+* {proof|evidence} of {foul deeds|crimes committed|outside agitation|fabrication} ~ {foreign allegiance|responsibility for a curse|illegitimacy}
+* blackmail material on important locals
+* hidden wealth of a {curse|plague} victim
+* {{artifact|relic} needed to lift a curse|map to the curse's focal item}
+* cache of weapons and armor
+* land ownership documents
+* plunder taken from blood feud victims
+* innovative {schematics|design documents}
+* {business contract|trade agreement}
+* {forbidden|confiscated} goods
+* missing bureaucratic report
+* {secret|hidden|lost|map leading to} {treasure|artifacts|relics}
+* stolen {crops|produce|food shipment}
+* {{famous|ancient} artwork|artwork with an encoded secret}
+* {sacred|holy|heretical} {book|scripture|idol|relic|offerings}
+* {medical supplies|alchemical reagents}
+* stolen {tribute|taxes}
+* {forbidden|ancient} grimoire
+* insidious profits
+* key needed to unlock {a vault|an artifact}
+* stolen trade goods
+* {controversial|alternate} history texts
+* prized book of martial techniques
+
+
 
 -- goals --
 * blackmail: a foe is using strong leverage (secrets|threats|debts) to force support from an actor important to the patron. Help the patron remove this leverage.
@@ -808,3 +882,14 @@ items: wealth|relic|evidence|mysterious shipment|supplies|secret plans
 * moon worship: the moons are divine forces that exert a tremendous, yet incomprehensibly subtle influence on the world. from the rising of tides, to the grow of plants, to the cycle of waking and dreaming
 * living gods: most faith revere the dead or immaterial beings, but our gods walk this very earth and their day-to-day actions shape our core beliefs.
 * sanctity of life: the cycle of life and death cannot be broken under any condition. Anyone,  mortal or divine, or defies it must be vanquished alongside their undead minions.
+
+athletics: climbing, swimming, endurance, overcoming obstacles with brute strength
+mobility: acrobatics, dodging hazards, moving quickly through difficult terrain
+stealth: hiding, moving quietly, pickpocketing, lockpicking, disguises
+investigation: searching locations, finding people, solving puzzles
+logistics: organization and execution of strategic and tactical plans
+knowledge: recalling facts about regional history, laws, myths, etiquette, & religions
+arcana: identifying and avoiding spells, enchantments, and other magical perils
+perception: notice fine details through sight, hearing, & smell; detecting lies, emotions, & intent 
+survival: recalling facts about nature, navigation, handling animals
+persuasion: influencing people through negotiation, charm, oration, deception, or intimidation

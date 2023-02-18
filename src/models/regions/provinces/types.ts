@@ -43,4 +43,5 @@ export interface Province extends TaggedEntity {
   actors: number[]
   weather?: number
   demographics?: number
+  hooks?: { goal: string; type: string; background: { tag: string; context: string }[] }[]
 }

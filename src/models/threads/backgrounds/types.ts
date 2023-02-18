@@ -15,21 +15,20 @@ export interface ThreadActor {
   monstrous?: boolean
 }
 
-export interface Thread {
-  tag: BackgroundTag
-  weather: string
+export interface Hook {
+  tag: Background
   text: string
   complication: string
   category: string
-  patron: ThreadActor
-  antagonist: ThreadActor
+  friend: ThreadActor
+  enemy: ThreadActor
   place: string
   thing: string
   court?: CourtGroup
   difficulty: Difficulty
 }
 
-export type BackgroundTag = Community | Court | Faith | Ruins | Wilderness
+export type Background = Community | Court | Faith | Ruins | Wilderness
 
 export type BackgroundActor = {
   alias: string
@@ -40,8 +39,8 @@ export type BackgroundActor = {
   gender?: Gender
 }
 
-export interface Background {
-  tag: BackgroundTag
+export interface BackgroundDetails {
+  tag: Background
   type: 'community' | 'court' | 'faith' | 'ruins' | 'wilderness'
   context: string
   hostiles?: {}
@@ -51,7 +50,7 @@ export interface Background {
   things: string[]
   places: string[]
   constraints?: {
-    conflicts?: BackgroundTag[]
+    conflicts?: Background[]
     rural?: boolean
     urban?: boolean
     regional?: boolean

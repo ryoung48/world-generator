@@ -1,21 +1,18 @@
+import type { Thread } from '../types'
+
 const goals = [
   'blackmail',
-  'conflict',
   'crime',
   'cursed',
-  'eldritch',
   'folly',
   'heist',
   'intrigue',
   'mystery',
   'negotiate',
-  'outlaw',
-  'rescue',
-  'resources',
-  'shipment'
+  'rescue'
 ] as const
 
 export interface Goal {
   tag: typeof goals[number]
-  text: () => string
+  text: (_params: { thread: Thread }) => string
 }

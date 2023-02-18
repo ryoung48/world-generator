@@ -1,10 +1,10 @@
 import { hub__isVillage } from '../../../regions/hubs'
 import { Province } from '../../../regions/provinces/types'
 import { WeightedDistribution } from '../../../utilities/math'
-import { Background, Thread } from '../types'
+import { BackgroundDetails } from '../types'
 import { Court } from './types'
 
-export const backgrounds__court: Record<Court, Background> = {
+export const backgrounds__court: Record<Court, BackgroundDetails> = {
   "affliction's mark": {
     tag: "affliction's mark",
     type: 'court',
@@ -1421,7 +1421,7 @@ export const backgrounds__court: Record<Court, Background> = {
   }
 }
 
-const valid = (loc: Province): WeightedDistribution<Thread['court']> => {
+const valid = (loc: Province): WeightedDistribution<string> => {
   const village = hub__isVillage(loc.hub)
   return [
     {
@@ -1459,29 +1459,4 @@ export const courts__spawn = (loc: Province) => {
   const courts = valid(loc)
   if (courts.length === 0) return false
   return window.dice.weightedChoice(courts)
-}
-
-export const courts__rival = (loc: Province) => window.dice.weightedChoice(valid(loc))
-
-const courts: Record<Thread['court'], string> = {
-  aristocratic: `a {minor|major} aristocratic court:{family|clan|house}`,
-  residential: `{an influential|a respected|a scorned} extended court:{family|clan}`,
-  religious: `a {minor|major} religious court:{sect|cult|temple|order}`,
-  criminal: `a {minor|major} criminal court:{syndicate|cartel|brotherhood|gang}`,
-  mercantile: `a {minor|major} {banking|merchant} court:{house|guild|enterprise}`,
-  bureaucratic: `the bureaucracy that administers this #site#`,
-  royal: `the {royal court:court|court:council of oligarchs} that rules this region`
-}
-
-const hookTemplate = `{You are approached by|{A courier approaches you|You are approached by a courier} with a message from} {a {concerned|desperate} {citizen|local}} named #patron#.`
-export const court__finalize = (params: { thread: Thread; site: string }) => {
-  const { thread, site } = params
-  const hook = window.dice.spin(hookTemplate).replaceAll('#patron#', thread.patron.name)
-  const intro = `${
-    hook.includes('message')
-      ? 'The message speaks of'
-      : `${thread.patron.gender === 'male' ? 'He' : 'She'} begins to tell you about`
-  } ${window.dice.spin(courts[thread.court]).replaceAll('#site#', site)}.`
-
-  thread.text = `${hook} ${intro} ${thread.text}`
 }

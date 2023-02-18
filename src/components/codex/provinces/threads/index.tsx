@@ -54,8 +54,14 @@ export function ThreadList() {
     if (selected !== threadType) setSelected(threadType)
     const threads = thread.closed ? closed : active
     const idx = threads.findIndex(({ idx }) => thread.idx === idx)
-    setPage(Math.floor(idx / itemsPerPage))
-    setExpanded(thread.idx)
+    if (idx === -1) {
+      setPage(0)
+      setExpanded(-1)
+      setSelected('available')
+    } else {
+      setPage(Math.floor(idx / itemsPerPage))
+      setExpanded(thread.idx)
+    }
   }
   const goToCurrent = () => {
     const thread = window.world.threads[expanded]

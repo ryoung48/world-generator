@@ -1,7 +1,7 @@
-import { Background } from '../types'
+import { BackgroundDetails } from '../types'
 import { Faith } from './types'
 
-export const backgrounds__faith: Record<Faith, Background> = {
+export const backgrounds__faith: Record<Faith, BackgroundDetails> = {
   'ancient ways': {
     tag: 'ancient ways',
     type: 'faith',

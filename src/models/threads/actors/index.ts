@@ -4,32 +4,39 @@ import { Optional } from 'utility-types'
 import { npc__spawn } from '../../npcs'
 import { decorateText } from '../../utilities/text/decoration'
 import { Thread } from '../types'
-import { DecorateActorParams, FindActorParams } from './types'
+import { ActorParams, DecorateActorParams, FindActorParams } from './types'
 
 export const actor__placeHolder = (params: Omit<DecorateActorParams, 'thread'>) => {
   const { label, role, betrayal, subject, spawn } = params
-  return `__${label}#{${role}}#${spawn ?? ''}#${betrayal ?? ''}#${subject ?? ''}__`
+  return `__${label}XXX${role}XXX${spawn ?? ''}XXX${betrayal ?? ''}XXX${subject ?? ''}__`
 }
 
 export const actors = {
-  patron: actor__placeHolder({ label: 'patron', role: 'patron' }),
-  rival: (label?: string) => actor__placeHolder({ label: label ?? 'rival', role: 'rival' }),
-  neutral: actor__placeHolder({ label: 'actor', role: 'neutral', spawn: true }),
+  patron: (label?: string) =>
+    actor__placeHolder({ label: label ?? 'patron', role: 'patron', spawn: 0 }),
+  rival: (label?: string) =>
+    actor__placeHolder({ label: label ?? 'rival', role: 'rival', spawn: 0 }),
+  neutral: (label?: string) => actor__placeHolder({ label: label ?? 'actor', role: 'neutral' }),
   friend: (params: Optional<Omit<DecorateActorParams, 'thread'>, 'role'>) =>
-    actor__placeHolder({ role: 'friend', spawn: true, ...params }),
+    actor__placeHolder({ role: 'friend', ...params }),
   enemy: (params: Optional<Omit<DecorateActorParams, 'thread'>, 'role'>) =>
-    actor__placeHolder({ role: 'enemy', spawn: true, ...params })
+    actor__placeHolder({ role: 'enemy', ...params })
 }
 
-const actor__spawn = (thread: Thread) => {
+const actor__spawn = (params: ActorParams) => {
+  const { thread, role, cast = 0.2 } = params
   const province = window.world.provinces[thread.location]
   const actors = new Set(thread.actors.map(actor => actor.idx))
   const prospects = province.actors
     .filter(actor => !actors.has(actor))
     .map(a => window.world.actors[a])
-  return prospects.length > 0 && window.dice.random > 0.8
-    ? window.dice.choice(prospects)
-    : npc__spawn({ loc: province })
+  const npc =
+    prospects.length > 0 && window.dice.random < cast
+      ? window.dice.choice(prospects)
+      : npc__spawn({ loc: province, ...params })
+  const actor = { idx: npc.idx, role, loc: thread.location }
+  thread.actors.push(actor)
+  return actor
 }
 
 export const actor__find = ({ thread, role, spawn, subject, betrayal }: FindActorParams) => {
@@ -38,12 +45,9 @@ export const actor__find = ({ thread, role, spawn, subject, betrayal }: FindActo
       actor.role === role &&
       (actor.loc === thread.location || actor.role === 'patron' || actor.role === 'rival')
   )
-  const chance = !spawn ? 0 : 1 / prospects.length
+  const chance = spawn ?? 1 / prospects.length
   const spawned = prospects.length === 0 || window.dice.random < chance
-  const actor = spawned
-    ? { idx: actor__spawn(thread).idx, role, loc: thread.location }
-    : window.dice.choice(prospects)
-  if (spawned) thread.actors.push(actor)
+  const actor = spawned ? actor__spawn({ thread, role }) : window.dice.choice(prospects)
   if (betrayal) actor.role = betrayal
   if (subject) thread.subject = actor.idx
   return actor
@@ -58,7 +62,7 @@ const actor__decorate = (params: DecorateActorParams) => {
 export const actor__fill = (params: { text: string; thread: Thread }) => {
   const { text, thread } = params
   return window.dice.spin(text).replace(/__.*?__/g, text => {
-    const [label, role, spawn, betrayal, subject] = text.replace(/__/g, '').split('#') as [
+    const [label, role, spawn, betrayal, subject] = text.replace(/__/g, '').split('XXX') as [
       string,
       Thread['actors'][number]['role'],
       string,
@@ -69,7 +73,7 @@ export const actor__fill = (params: { text: string; thread: Thread }) => {
       label,
       thread,
       role,
-      spawn: spawn === 'true',
+      spawn: spawn === '' ? undefined : parseFloat(spawn),
       subject: subject === 'true',
       betrayal
     })
