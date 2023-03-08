@@ -47,7 +47,7 @@ const generator = async (params: {
 
 export function Landing() {
   const [seed, setSeed] = useState(generateId())
-  const [res, setRes] = useState(8)
+  const [res, setRes] = useState(12)
   const [active, setActive] = useState(-1)
   const { dispatch } = view__context()
   const generating = active >= 0

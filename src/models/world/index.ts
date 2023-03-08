@@ -5,7 +5,6 @@ import { Point } from '../utilities/math/points'
 import { daysPerYear } from '../utilities/math/time'
 import { ExteriorCell } from './cells/types'
 import { Shaper } from './spawn/shapers'
-import { seaLevelCutoff } from './types'
 
 export const world__landFeatures = () => {
   return Object.entries(window.world.landmarks)
@@ -46,7 +45,7 @@ export const world__dayLength = (latitude: number, day?: number) => {
   return (hourAngle(latitude, day) * 2) / angularVelocity
 }
 
-export const world__heightToKM = (h: number) => scale([seaLevelCutoff, 1.5], [0, 6], h)
+export const world__heightToKM = (h: number) => scale([window.world.seaLevelCutoff, 1.5], [0, 6], h)
 export const world__heightToMI = (h: number) => world__heightToKM(h) / 1.609
 
 const world__findInfluence = (land: ExteriorCell[]) => {

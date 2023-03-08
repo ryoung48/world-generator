@@ -23,12 +23,12 @@ export const actors = {
     actor__placeHolder({ role: 'enemy', ...params })
 }
 
-const actor__spawn = (params: ActorParams) => {
+export const actor__spawn = (params: ActorParams) => {
   const { thread, role, cast = 0.2 } = params
   const province = window.world.provinces[thread.location]
   const actors = new Set(thread.actors.map(actor => actor.idx))
   const prospects = province.actors
-    .filter(actor => !actors.has(actor))
+    .filter(actor => !actors.has(actor) && window.world.actors[actor].profession.key !== 'custom')
     .map(a => window.world.actors[a])
   const npc =
     prospects.length > 0 && window.dice.random < cast

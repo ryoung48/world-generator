@@ -3,7 +3,7 @@ import { curveCatmullRom, line, scaleLinear } from 'd3'
 import { edge__sameEdge } from '../../../../utilities/math/points'
 import { profile } from '../../../../utilities/performance'
 import { world__landFeatures, world__waterFeatures } from '../../..'
-import { cell__isNationBorder, ocean } from '../../../cells'
+import { cell__isNationBorder } from '../../../cells'
 import { CoastalEdge } from '../../../types'
 import { Shaper } from '..'
 import { Display } from './types'
@@ -67,7 +67,7 @@ export const display__coasts = () => {
   // land (ocean)
   const islands = drawCoasts({
     landmarks: world__landFeatures(),
-    coastFilter: i => e => e.land === i && window.world.landmarks[e.water].name === ocean
+    coastFilter: i => e => e.land === i && e.water === 1
   })
   profile({
     label: 'curve',

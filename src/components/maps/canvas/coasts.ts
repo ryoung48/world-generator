@@ -72,3 +72,48 @@ export const map__drawOceans = (params: {
   ctx.restore()
   return new Set(landmarks)
 }
+
+const lakeStyle = {
+  border: { color: '#d5dde0', waves: '41, 74, 84' },
+  interior: { color: '#e6edef', waves: '41, 84, 94' }
+}
+
+export const map__drawLakes = (params: {
+  ctx: CanvasRenderingContext2D
+  scale: number
+  nations: Region[]
+}) => {
+  const { ctx, scale, nations } = params
+  const globalScale = scale <= map__breakpoints.global
+  const drawnLands = globalScale ? world__nations() : nations
+  const landmarks = Array.from(
+    new Set(
+      drawnLands
+        .map(r =>
+          r.provinces
+            .map(p => Object.keys(window.world.provinces[p].lakes).map(i => parseInt(i)))
+            .flat()
+        )
+        .flat()
+    )
+  )
+  const { lakes } = window.world.display
+  ctx.lineCap = 'round'
+  const mod = scale < map__breakpoints.regional ? 0.3 : 0.15
+  const { border, interior } = lakeStyle
+  waves.forEach(({ strokeWidth, opacity }, j) => {
+    landmarks.forEach(i => {
+      ctx.save()
+      const lake = lakes[i]
+      ctx.fillStyle = lake.border ? border.color : interior.color
+      const waves = lake.border ? border.waves : interior.waves
+      ctx.strokeStyle = `rgba(${waves},${opacity})`
+      ctx.lineWidth = strokeWidth * mod
+      const p = new Path2D(lake.d)
+      ctx.clip(p)
+      if (j === 0) ctx.fill(p)
+      ctx.stroke(p)
+      ctx.restore()
+    })
+  })
+}

@@ -307,7 +307,7 @@ export const display__icons = () => {
     p.ocean &&
     !used.has(p.idx) &&
     p.n.every(i => !used.has(i) && window.world.cells[i].isWater && !window.world.cells[i].shallow)
-  seaRoutes.slice(0, Math.floor(seaRoutes.length * 0.15)).forEach(route => {
+  seaRoutes.slice(0, Math.floor(seaRoutes.length * 0.05)).forEach(route => {
     const cells = route.path.map(p => window.world.cells[p]).filter(validSeaIcon)
     if (cells.length > 0) {
       const cell = window.dice.choice(cells)

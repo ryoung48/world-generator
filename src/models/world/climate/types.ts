@@ -78,8 +78,7 @@ export const climates: Record<Climate['type'], Climate> = {
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.4, 0.1],
     affixes: ['savanna'],
-    terrain: 'plains',
-    arid: true
+    terrain: 'plains'
   },
   'hot steppe': {
     type: 'hot steppe',
@@ -91,8 +90,7 @@ export const climates: Record<Climate['type'], Climate> = {
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.2, 0.05],
     affixes: ['steppe', 'plains'],
-    terrain: 'plains',
-    arid: true
+    terrain: 'plains'
   },
   'cold steppe': {
     type: 'cold steppe',
@@ -104,8 +102,7 @@ export const climates: Record<Climate['type'], Climate> = {
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.15, 0.05],
     affixes: ['steppe', 'plains'],
-    terrain: 'plains',
-    arid: true
+    terrain: 'plains'
   },
   'hot desert': {
     type: 'hot desert',
@@ -244,8 +241,7 @@ export const climates: Record<Climate['type'], Climate> = {
     diurnalHeat: diurnalVariation.standard,
     precipitation: [0.15, 0.05],
     affixes: ['glacial'],
-    terrain: 'arctic',
-    arid: true
+    terrain: 'arctic'
   }
 }
 

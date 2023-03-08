@@ -3,7 +3,6 @@ import { world__waterFeatures } from '../../..'
 import { cell__commonEdge, cell__neighbors } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'
 import { climates } from '../../../climate/types'
-import { seaLevelCutoff } from '../../../types'
 import { Shaper } from '..'
 
 export const removeLake = (params: { lakes: ExteriorCell[]; lake: number }) => {
@@ -15,7 +14,7 @@ export const removeLake = (params: { lakes: ExteriorCell[]; lake: number }) => {
     cell.landmark = landmark
     cell.isWater = false
     cell.shallow = false
-    cell.h = seaLevelCutoff
+    cell.h = window.world.seaLevelCutoff
     Shaper.regionLand[cell.region].push(cell)
     cell__neighbors(cell)
       .filter(n => !n.isWater)
@@ -26,6 +25,7 @@ export const removeLake = (params: { lakes: ExteriorCell[]; lake: number }) => {
   })
   delete window.world.landmarks[lake]
   window.world.landmarks[landmark].size += lakeCells.length
+  console.log('removed lake')
 }
 
 const cleanupLakes = () => {
@@ -78,5 +78,10 @@ export const regional__coastalEdges = () => {
         })
     })
   // fix regional capitals
-  window.world.provinces.forEach(loc => hub__moveToCoast(loc.hub))
+  window.world.provinces.forEach(loc => {
+    if (loc.idx === 52) {
+      console.log('debug')
+    }
+    hub__moveToCoast(loc.hub)
+  })
 }

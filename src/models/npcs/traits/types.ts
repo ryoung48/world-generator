@@ -101,7 +101,6 @@ export type Quirk =
   | 'dark bargain'
   | 'concealed sin'
   | 'troubled romance'
-  | 'lovesick fool'
   | 'load-bearing relationship'
   | 'misplaced trust'
   | 'troublesome relationship'

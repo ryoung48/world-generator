@@ -61,7 +61,6 @@ const hobbyist: Quirk[] = [
 ]
 const relations: Quirk[] = [
   'troubled romance',
-  'lovesick fool',
   'load-bearing relationship',
   'misplaced trust',
   'troublesome relationship'
@@ -224,7 +223,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'concealed sin': {
     text: decorateText({
       label: 'concealed sin',
-      tooltip: '{adulterous|incestuous|treacherous|theft|incompetence|murderous}'
+      tooltip: '{adulterous|treacherous|theft|incompetence}'
     }),
     spawn: () => 0.5
   },
@@ -234,10 +233,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
       tooltip:
         '{utterly unobtainable|wholly disinterested|profoundly unhealthy|socially unacceptable}'
     }),
-    conflicts: relations,
-    spawn: ({ youthful }) => (youthful ? 1 : 0)
-  },
-  'lovesick fool': {
     conflicts: relations,
     spawn: ({ youthful }) => (youthful ? 1 : 0)
   },

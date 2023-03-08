@@ -8,6 +8,7 @@ import { Gender, LifePhase } from '../types'
 import { Profession, ProfessionDetails } from './types'
 
 export const professions: Record<Profession, ProfessionDetails> = {
+  custom: { strata: 'middle', weight: 0 },
   // lower class
   peasant: { strata: 'lower', urban: false, weight: 10 },
   'village elder': { strata: 'lower', urban: false, age: 'master', culture: 'native' },

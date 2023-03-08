@@ -24,7 +24,7 @@ interface PathElement {
 
 const validPath: Record<RouteTypes, (_cell: ExteriorCell) => boolean> = {
   land: (cell: ExteriorCell) => !cell.isWater,
-  sea: (cell: ExteriorCell) => cell.ocean
+  sea: (cell: ExteriorCell) => cell.isWater
 }
 
 interface RestorePathArgs extends PathArgs {

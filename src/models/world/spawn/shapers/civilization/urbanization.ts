@@ -129,6 +129,9 @@ const claimCell = (cell: ExteriorCell, city: Province) => {
     city.islands[cell.landmark] += 1
   } else if (window.world.landmarks[cell.landmark].type === 'ocean') {
     city.ocean += cell.isWater ? 1 : 0
+  } else {
+    if (!city.lakes[cell.landmark]) city.lakes[cell.landmark] = 0
+    city.lakes[cell.landmark] += 1
   }
 }
 
@@ -151,7 +154,7 @@ const assignProvinces = (provinceNeighbors: Record<number, Set<number>>) => {
         claimCell(n, window.world.provinces[poly.province])
         queue.push(n)
       } else if (n.province !== -1 && !n.isMountains && n.province !== poly.province) {
-        const type = n.ocean || poly.ocean ? 'sea' : 'land'
+        const type = n.isCoast || poly.isCoast ? 'sea' : 'land'
         const [p1, p2] = [cell__province(n), cell__province(poly)]
         const coastal = p1.hub.coastal && p2.hub.coastal
         if (type !== 'sea' || coastal) {

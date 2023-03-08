@@ -9,7 +9,7 @@ export const element__icons: Record<element__icon, IconDef> = {
   ...ship__icons,
   ...penguin__icons,
   compass: {
-    height: 180,
+    height: 220,
     path: 'terrain/elements/compass.png',
     opacity: 0.7
   },
@@ -24,7 +24,7 @@ export const element__icons: Record<element__icon, IconDef> = {
     opacity: 1
   },
   box: {
-    height: 80,
+    height: 100,
     path: 'terrain/elements/box.png',
     opacity: 1
   }

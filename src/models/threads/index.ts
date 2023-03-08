@@ -1,25 +1,18 @@
 import { range } from 'd3'
 
 import { Avatar } from '../../components/context/types'
-import { npc__spawn } from '../npcs'
 import { Province } from '../regions/provinces/types'
 import { describeDuration } from '../utilities/math/time'
+import { background__spawn } from './backgrounds'
 import { complication__spawn } from './complications'
 import { difficulty__odds, difficulty__random } from './difficulty'
-import { goal__spawn } from './goals'
+import { thread__goal } from './goal'
 import { stage__current, stage__placeholder, stage__resolve, stage__spawn } from './stages'
 import { task__definition } from './tasks'
 import { Thread } from './types'
 
 export const thread__spawn = (params: { loc: Province; parent?: Thread; pc: number }) => {
   const { loc, parent, pc } = params
-  const prev = parent?.goal
-  const patron = npc__spawn({ loc, context: { role: 'patron' } })
-  const rival = npc__spawn({
-    loc,
-    context: { ref: patron, role: 'rival' },
-    profession: window.dice.random > 0.85 ? patron.profession.key : undefined
-  })
   const thread: Thread = {
     idx: window.world.threads.length,
     status: 'perfection',
@@ -41,12 +34,10 @@ export const thread__spawn = (params: { loc: Province; parent?: Thread; pc: numb
     origin: loc.idx,
     stages: [],
     parent: parent?.idx,
-    actors: [
-      { idx: patron.idx, role: 'patron', loc: loc.idx },
-      { idx: rival.idx, role: 'rival', loc: loc.idx }
-    ]
+    actors: []
   }
-  thread.goal = goal__spawn({ thread, blacklist: [prev?.tag] })
+  thread.background = background__spawn({ loc, category: 'community' })
+  thread.goal = thread__goal(thread)
   if (window.dice.random < 0.1) thread.complication = complication__spawn({ thread, type: 'goal' })
   window.world.threads.push(thread)
   stage__spawn({ thread })

@@ -6,7 +6,6 @@ import NoiseGenerator from '../../../../utilities/math/dice/noise'
 import { voronoi__relaxed } from '../../../../utilities/math/points'
 import { profile } from '../../../../utilities/performance'
 import { cell__mapEdge, cell__neighbors, cell__spawnExterior } from '../../../cells'
-import { mountainsCutoff, seaLevelCutoff } from '../../../types'
 import { Shaper } from '..'
 import { landmarks__islands, landmarks__water } from './landmarks'
 
@@ -21,7 +20,6 @@ export class ContinentShaper extends Shaper {
         action: () => (this.landmarkIdx = landmarks__water(this.landmarkIdx))
       },
       { name: 'Land Markers', action: () => landmarks__islands(this.landmarkIdx) },
-      { name: 'Mountain Generation', action: this.mountains },
       { name: 'Coastal Distances', action: this.coastalDistances }
     ]
   }
@@ -58,8 +56,8 @@ export class ContinentShaper extends Shaper {
     const res = 300
     const params = {
       octaves: 12,
-      frequency: 0.005,
-      persistence: 0.85
+      frequency: 0.001,
+      persistence: 0.7
     }
     const elev = profile({
       label: 'noise',
@@ -69,12 +67,9 @@ export class ContinentShaper extends Shaper {
     const convert = res / Math.max(window.world.dim.h, window.world.dim.w)
     const bound = res - 1
     // get the chosen map mold to use as a template
-    const centers = window.world.template.map(circle => ({
-      ...circle,
-      x: circle.x * canvasDims.w,
-      y: circle.y * canvasDims.h,
-      r: circle.r * canvasDims.hypot
-    }))
+    const centers = [
+      { x: 0.5 * canvasDims.w, y: 0.5 * canvasDims.h, r: 1.2 * canvasDims.hypot, w: 1 }
+    ]
     profile({
       label: 'distance assignment',
       f: () => {
@@ -96,34 +91,17 @@ export class ContinentShaper extends Shaper {
               return total + elev[x][y]
             }, 0) / poly.data.length
           // final height (edges should be below sea-level producing islands)
-          poly.h = d * e
+          poly.h = e * d
         })
       }
     })
+    const sorted = window.world.cells.concat().sort((a, b) => b.h - a.h)
+    window.world.seaLevelCutoff = sorted[Math.floor(sorted.length * 0.2)].h
     window.world.cells
-      .filter(c => c.h >= seaLevelCutoff && cell__mapEdge(c))
+      .filter(c => c.h >= window.world.seaLevelCutoff && cell__mapEdge(c))
       .forEach(c => {
-        c.h = seaLevelCutoff - 0.001
+        c.h = window.world.seaLevelCutoff - 0.001
       })
-  }
-  private mountains() {
-    // redistribute heights to create 25% mountains / total land
-    const sorted = Shaper.land.sort((a, b) => b.h - a.h)
-    const mounts = sorted.slice(0, Math.floor(sorted.length * 0.3))
-    const mHeights = mounts.map(m => m.h)
-    const mMin = Math.min(...mHeights)
-    const mMax = Math.max(...mHeights)
-    mounts.forEach(m => {
-      m.isMountains = true
-      m.h = scale([mMin, mMax], [mountainsCutoff, 1.4], m.h)
-    })
-    const land = Shaper.land.filter(p => !p.isMountains)
-    const lHeights = land.map(p => p.h)
-    const lMin = Math.min(...lHeights)
-    const lMax = Math.max(...lHeights)
-    land.forEach(l => {
-      l.h = scale([lMin, lMax], [seaLevelCutoff, mountainsCutoff], l.h)
-    })
   }
   // marks coastline distances
   private coastalDistances() {

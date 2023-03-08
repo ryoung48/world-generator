@@ -10,7 +10,7 @@ import { view__context } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
 import { map__drawRegions } from './canvas/borders'
-import { map__drawOceans } from './canvas/coasts'
+import { map__drawLakes, map__drawOceans } from './canvas/coasts'
 import { map__breakpoints } from './canvas/draw_styles'
 import { map__drawEmbellishments } from './canvas/embellishments'
 import {
@@ -70,6 +70,7 @@ const paint = (params: {
   )
   const lands = map__drawOceans({ ctx, scale, nations })
   map__drawRegions({ ctx, scale, nations })
+  map__drawLakes({ ctx, scale, nations })
   map__drawRoads({ ctx, scale, nationSet })
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
   map__drawAvatarLocation({ ctx, loc: province.hub, scale })
@@ -215,6 +216,8 @@ export function WorldMap() {
             const [clientX, clientY] = pointer(event)
             const nx = (clientX - transform.dx) / transform.scale
             const ny = (clientY - transform.dy) / transform.scale
+            // const cell = window.world.diagram.delaunay.find(nx, ny)
+            // console.log(window.world.cells[cell].province)
             setCursor({ x: nx, y: ny })
           }}
           onClick={transition}

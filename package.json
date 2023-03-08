@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "scripts": {
     "start": "vite",
-    "lint:cspell": "npx cspell \"**\"",
+    "lint:cspell": "npx cspell \"src/**/*.{ts,tsx}\"",
     "lint:eslint": " npx eslint ./src --ext .jsx,.js,.ts,.tsx --ignore-path ./.gitignore",
     "lint:cycles": "npx madge --extensions ts,tsx --ts-config ./tsconfig.json -c ./src",
     "lint": "npm run lint:cspell && npm run lint:eslint && npm run lint:cycles",

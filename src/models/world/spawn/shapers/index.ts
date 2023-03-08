@@ -2,7 +2,6 @@ import { quadtree } from 'd3'
 
 import { profile } from '../../../utilities/performance'
 import { Cell, ExteriorCell } from '../../cells/types'
-import { seaLevelCutoff } from '../../types'
 
 export class Shaper {
   private static _land: ExteriorCell[] = []
@@ -22,7 +21,7 @@ export class Shaper {
   public static get land() {
     if (Shaper._land.length <= 0) {
       Shaper._land = window.world.cells.filter(e => {
-        return e.h >= seaLevelCutoff && e.n.length > 0
+        return e.h >= window.world.seaLevelCutoff && e.n.length > 0
       })
     }
     return Shaper._land
@@ -40,7 +39,7 @@ export class Shaper {
   public static get water() {
     if (Shaper._water.length <= 0) {
       Shaper._water = window.world.cells.filter(e => {
-        return e.h < seaLevelCutoff
+        return e.h < window.world.seaLevelCutoff
       })
     }
     return Shaper._water

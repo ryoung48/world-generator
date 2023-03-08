@@ -6,10 +6,6 @@ import {
 } from '../../../../src/models/utilities/codex'
 import { test__world } from '../../../helpers/world'
 
-jest.mock('../../../../src/models/regions/locations/spawn/traits')
-jest.mock('../../../../src/models/regions/provinces/spawn/sprawl')
-jest.mock('../../../../src/models/npcs/actors/spawn/finalize')
-
 const codex = { ...codex__spawn }
 test__world()
 
@@ -26,7 +22,7 @@ test('codex alterations', () => {
   expect(codex.history.length).toEqual(1)
   // content change nation -> location
   codex__update({ target: window.world.provinces[0], codex })
-  expect(codex.current).toEqual('location')
+  expect(codex.current).toEqual('province')
   expect(codex.province).toEqual(0)
   expect(codex.history.length).toEqual(2)
   // content change location -> culture
@@ -36,9 +32,9 @@ test('codex alterations', () => {
   expect(codex.history.length).toEqual(3)
   // restore history
   codex__restoreHistory(codex)
-  expect(codex.current).toEqual('culture')
+  expect(codex.current).toEqual('province')
   expect(codex.province).toEqual(0)
-  expect(codex.history.length).toEqual(3)
+  expect(codex.history.length).toEqual(2)
 })
 test('codex target zoom: settlement', () => {
   window.world.provinces[0].population = 10

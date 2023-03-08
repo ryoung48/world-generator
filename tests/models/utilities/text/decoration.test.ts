@@ -5,7 +5,7 @@ test__world()
 
 test('decorators: text decoration - basic', () => {
   const result = decorateText({ link: window.world.regions[0] })
-  expect(result).toEqual('@|0|nation|||false|false@')
+  expect(result).toEqual('@##0##nation######false##false##@')
 })
 test('decorators: text decoration - complex without a link', () => {
   const result = decorateText({
@@ -15,7 +15,7 @@ test('decorators: text decoration - complex without a link', () => {
     italics: true,
     bold: true
   })
-  expect(result).toEqual('@test|||test|red|true|true@')
+  expect(result).toEqual('@test######test##red##true##true##@')
 })
 test('decorators: text decoration - nested decorations', () => {
   const result = decorateText({
@@ -39,6 +39,8 @@ test('decorators: text decoration - nested decorations', () => {
     italics: true,
     bold: true
   })
-  expect(result).toEqual('@test|0|nation|test (test) test|red|true|true@')
+  expect(result).toEqual(
+    '@test##0##nation##test##0##nation##test##red##true##true## test##0##nation####red##true##true####red##true##true##@'
+  )
 })
 export {}

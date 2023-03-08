@@ -33,7 +33,7 @@ const npc__appearance = (params: { culture: Culture; age: LifePhase; gender: Gen
 
 export const npc__spawn = (params: NPCParams) => {
   const { loc, context, pc } = params
-  const gender = npc__randomGender()
+  const gender = params?.gender ?? npc__randomGender()
   const profession = profession__spawn({ loc, gender, context, profession: params.profession })
   const { common, native, foreign } = province__demographics(loc)
   const cidx = window.dice.weightedChoice(

@@ -115,7 +115,7 @@ export function ThreadList() {
                     <DetailedTableRow
                       title={
                         <span>
-                          {titleCase(item.goal.tag)} (#{item.idx})
+                          {titleCase(item.background.category)} (#{item.idx})
                         </span>
                       }
                       subtitle={

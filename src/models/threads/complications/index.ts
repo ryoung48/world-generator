@@ -46,7 +46,6 @@ const complication__definition: Record<Complication['tag'], Complication> = {
   curse: {
     tag: 'cooperation',
     type: ['goal'],
-    valid: thread => thread.goal.tag === 'cursed',
     text: () =>
       `{The curse is tied to an innocent local's life|The locals have a badly wrong idea how to lift it|The curse is a fake, a cover for some dark crime}.`
   },
@@ -64,7 +63,6 @@ const complication__definition: Record<Complication['tag'], Complication> = {
   duplicates: {
     tag: 'duplicates',
     type: ['goal'],
-    valid: thread => thread.goal.tag === 'heist',
     text: () =>
       `There are many examples of a key object needed to complete the objective, all but one fake.`
   },
@@ -155,7 +153,6 @@ const complication__definition: Record<Complication['tag'], Complication> = {
   tainted: {
     tag: 'tainted',
     type: ['goal'],
-    valid: thread => thread.goal.tag === 'negotiate',
     text: () =>
       `{The rival is poisoning their mind against the patron|The actor is afraid of the consequences of cooperating}.`
   },
@@ -168,7 +165,6 @@ const complication__definition: Record<Complication['tag'], Complication> = {
   transient: {
     tag: 'transient',
     type: ['goal'],
-    valid: thread => thread.goal.tag === 'heist' || thread.goal.tag === 'rescue',
     text: () => `An essential {actor|object} moves constantly, so locations go stale rapidly.`
   },
   treachery: {

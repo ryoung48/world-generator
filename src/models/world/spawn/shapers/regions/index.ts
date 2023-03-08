@@ -2,7 +2,6 @@ import { region__spawn } from '../../../../regions'
 import { province__cell, province__spawn } from '../../../../regions/provinces'
 import { Region } from '../../../../regions/types'
 import { cell__neighbors } from '../../../cells'
-import { mountainsCutoff } from '../../../types'
 import { Shaper } from '..'
 import { regional__climates } from './climate'
 import { regional__coastalEdges } from './coasts'
@@ -52,9 +51,7 @@ export class RegionalShaper extends Shaper {
     const capitals = Shaper.placeLocs({
       count: 250 * 2,
       spacing,
-      whitelist: Shaper.coreCells(Shaper.land, spacing)
-        .filter(poly => poly.h < mountainsCutoff)
-        .sort((a, b) => b.score - a.score)
+      whitelist: Shaper.coreCells(Shaper.land, spacing).sort((a, b) => b.score - a.score)
     })
     capitals
       .filter(poly => window.world.landmarks[poly.landmark])
@@ -80,48 +77,44 @@ export class RegionalShaper extends Shaper {
       if (!region) continue
       // get the regional power
       let power = 0.75
-      if (poly.isMountains) {
-        power /= 15 // penalty for crossing mountains
-      }
       if (poly.shallow) {
         power /= 30 // penalty for crossing water
       }
-      // skip cell if power is insufficient
       if (window.dice.random < power) {
-        // otherwise process neighbors
-        poly.n
-          .map(n => window.world.cells[n])
-          .forEach(n => {
-            // claim neighbor if not claimed
-            if (n.region === -1) {
-              n.region = region.idx
-              if (!n.isWater) Shaper.regionLand[region.idx].push(n)
-              queue.push(n)
-            } else if (n.region !== poly.region) {
-              n.regionBorder = true
-              poly.regionBorder = true
-              const guest = window.world.regions[n.region]
+        queue.push(poly)
+        continue
+      }
+      // otherwise process neighbors
+      poly.n
+        .map(n => window.world.cells[n])
+        .forEach(n => {
+          // claim neighbor if not claimed
+          if (n.region === -1) {
+            n.region = region.idx
+            if (!n.isWater) Shaper.regionLand[region.idx].push(n)
+            queue.push(n)
+          } else if (n.region !== poly.region) {
+            n.regionBorder = true
+            poly.regionBorder = true
+            const guest = window.world.regions[n.region]
+            addBorder({
+              borders: this.regionBorders,
+              r1: region,
+              r2: guest,
+              c1: poly.idx,
+              c2: n.idx
+            })
+            if (!n.isWater && !n.isCoast) {
               addBorder({
-                borders: this.regionBorders,
+                borders: this.mountainProspects,
                 r1: region,
                 r2: guest,
                 c1: poly.idx,
                 c2: n.idx
               })
-              if (!n.ocean && !n.beach) {
-                addBorder({
-                  borders: this.mountainProspects,
-                  r1: region,
-                  r2: guest,
-                  c1: poly.idx,
-                  c2: n.idx
-                })
-              }
             }
-          })
-      } else {
-        queue.push(poly)
-      }
+          }
+        })
     }
   }
   private finalizeBorders() {

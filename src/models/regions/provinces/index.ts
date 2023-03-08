@@ -90,6 +90,7 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
     trade: { land: {}, sea: {} },
     hub: hub__spawn({ cell }),
     islands: {},
+    lakes: {},
     land: 0,
     ocean: 0,
     mountains: 0,

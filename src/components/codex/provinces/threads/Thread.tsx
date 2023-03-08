@@ -58,7 +58,7 @@ export function ThreadView(props: { thread: Thread; goToThread: (_thread: Thread
     <Grid container style={{ fontSize: 12 }}>
       <Grid item xs={12} mt={1}>
         <span>
-          <StyledText text={goal.text}></StyledText>
+          <StyledText text={goal}></StyledText>
           {complication && <i>{` ${complication.text}`}</i>}
         </span>
       </Grid>

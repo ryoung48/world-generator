@@ -24,7 +24,7 @@ export const cell__commonEdge = memoize(_cell__commonEdge, {
 
 export const cell__mapEdge = (cell: Cell) => {
   return cell.data.some(
-    ([x, y]) => x <= 0 || y <= 0 || x >= window.world.dim.h || y >= window.world.dim.h
+    ([x, y]) => x <= 0 || y <= 0 || x >= window.world.dim.w || y >= window.world.dim.h
   )
 }
 
@@ -114,10 +114,9 @@ export const cell__moveToCoast = (params: { cell: ExteriorCell; distance: number
   const { cell, distance } = params
   if (cell.coastalEdges?.length > 0) {
     // move location to the coast
-    const points = window.dice.choice(cell.coastalEdges)
-    return point__isOnEdge({ points, distance })
+    return cell.coastalEdges.map(points => point__isOnEdge({ points, distance }))
   }
-  return false
+  return []
 }
 
 export const cell__hasRoads = ({ roads }: ExteriorCell) => {

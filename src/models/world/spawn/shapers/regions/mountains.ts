@@ -1,8 +1,9 @@
 import { scaleExp } from '../../../../utilities/math'
 import { cell__neighbors } from '../../../cells'
-import { mountainsCutoff, seaLevelCutoff } from '../../../types'
 import { Shaper } from '..'
 import { removeLake } from './coasts'
+
+const mountainsCutoff = 0.5
 
 const mountainDistances = () => {
   const queue = Shaper.land.filter(p => p.isMountains)
@@ -64,7 +65,7 @@ export const regional__mountainousBorders = (
         mounts += 1
         queue.push(
           ...cell__neighbors(curr)
-            .filter(c => !c.isWater && !c.beach && !c.isMountains)
+            .filter(c => !c.isWater && !c.isCoast && !c.isMountains)
             .map(c => ({ cell: c, h: borders.has(c.idx) ? high : h - 0.1 }))
             .filter(c => c.h > mountainsCutoff)
         )
@@ -78,9 +79,14 @@ export const regional__mountainousBorders = (
     const { oceanDist, mountainDist } = l
     if (mountainDist > 0) {
       const total = oceanDist + mountainDist
-      l.h = scaleExp([0, total], [seaLevelCutoff, mountainsCutoff], total - mountainDist, 2)
+      l.h = scaleExp(
+        [0, total],
+        [window.world.seaLevelCutoff, mountainsCutoff],
+        total - mountainDist,
+        2
+      )
     } else {
-      l.h = scaleExp([0, islandScale], [seaLevelCutoff, mountainsCutoff], oceanDist, 2)
+      l.h = scaleExp([0, islandScale], [window.world.seaLevelCutoff, mountainsCutoff], oceanDist, 2)
     }
   })
   // mark mountains

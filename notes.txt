@@ -1,4 +1,27 @@
 villages: fishing|farming|mining :: country estate :: military outpost :: reclaimed ruins :: trading posts :: remote temple
+terrain:
+* taiga ({sparse|heavy})
+* forest ({sparse|heavy})
+* jungle ({sparse|heavy})
+* plains ({grass|dry|farms})
+* desert ({sandy|rocky|oasis})
+* mountains|highlands|hills
+* wetlands ({marsh|swamp|bog|fens})
+* glacier|tundra
+
+defenses:
+* {wooden|stone} walls ({pristine|well-maintained|crumbling|ruined})
+* volunteer militia ({untrained|trained})
+* private bodyguards
+* hired mercenaries
+* {town|city} {guards|enforcers}
+* standing army ({large|small})
+* docked navy ({large|small})
+
+commerce:
+* only basic supplies
+* basic supplies with rare goods on occasion
+* bustling markets with rare and exotic goods
 
 descriptors:
 -- personality -- 
@@ -165,28 +188,102 @@ towns:
 * towns|cities: (hereditary|elected|colonial) aristocrat|bureaucrat|warlord|bishop :: council (nobles|merchants|oligarchs|sorcerers|priests|warlords|syndicate|regents) :: viceroy|king|emperor|imperator|archbishop :: regent (general|consort|relative|official)
 * courtiers: consort (foreigner?)|crown prince|sibling|parent :: general|admiral|guard :: artist|scholar|writer|explorer :: priest|inquisitor|sorcerer :: spymaster|statesman|treasurer|merchant|diplomat  (foreigner|criminal)
 -- location traits --
+* ancient infrastructure: {settlement} still has access to a functioning ancient {teleportation nexus|arcane essence distillation|arcane guardian constructs|community-wide climate control|subterranean hydroponic gardens|water purification system}
+* abandoned structures: {settlement} is home to a number of abandoned palaces and temples, which have been taken over by squatters and criminals
+* ancestral seat: {settlement} is the ancestral seat of a powerful noble family
+* adapted terrain: {settlement} has reshaped its environment to suit its needs, creating {a vast underground network of tunnels|a series of floating islands|a series of artificial islands|a series of artificial lakes}
+* black market: {settlement} has a thriving underground economy where illegal goods and services can be bought and sold
+* blood feud: two powerful families in {settlement} are locked in a bitter vendetta, with violence and bloodshed a regular occurrence
+* buried ruins: {settlement} was built on top of old ruins ({built over accidentally|intentionally buried|excavation in progress})
+* labyrinthine: {settlement} is a sprawling maze of streets and buildings, making it difficult to navigate and easy to get lost
+* corrupt laws: {settlement} has a reputation for having a weak legal system and is a haven for corruption and vice
+* coup d'etat: a group of conspirators are plotting to overthrow the local leadership and seize control of {settlement}
+* cultural center: {settlement} is renowned for its art, music, and literature; it attracts scholars and artists from across the region
+* dangerous wildlife: {settlement} is home to a dangerous and aggressive species of wildlife, which is a constant threat to the locals
+* defiled land: the land around {settlement} has been poisoned by an ancient curse, leaving it {barren and desolate|corrupted and savage}
+* despotic lord: {settlement} is ruled with an iron fist, crushing any hint of resistance and demanding extravagant service from the locals
+* divine intervention: the people of {settlement} believe that their settlement has been blessed by a powerful deity, who watches over them and occasionally performs miracles
+* draconian laws: {settlement} is governed by a strict and oppressive legal system, enforced by a powerful and ruthless army of enforcers
+* dueling warlords: the provinces of {x} & {y} are engaged in limited warfare over disputed territory
+* dying forest: the once-vibrant forest that surrounds {settlement} is slowly dying, its trees and wildlife withering away under mysterious circumstances
+* ethnic tensions: tensions are rising between two rival ethnic groups and it seems like a violent conflict may be imminent
+* faded remnant: {settlement} is a decaying city of crumbling ruins and abandoned buildings, once a grand metropolis now reduced to a shadow of its former glory
+* foreign enclave (wealthy|poor): {settlement} is home to a large number of {migrants|exiles|refugees} who have settled here
+* fortress monastery: {settlement} is a remote fortress that houses a powerful monastic order dedicated to a particular {god|philosophy}
+* fungal garden: the locals of {settlement} have developed a thriving industry growing exotic and unusual plants and fungi
+* fungal infestation: a strange fungus has taken root in the buildings and tunnels of {settlement}, causing sickness and madness among the locals
+* gang warfare: this {settlement} is plagued by constant fighting between rival criminal {gangs|cartels|syndicates}
+* grand library: {settlement} is home to a vast library containing ancient texts and knowledge, drawing scholars and seekers of arcane knowledge from far and wide
+* great famine: multiple failed harvests have left {settlement} on the brink of starvation
+* guild oligarchy: the politics of {settlement} are dominated by the various craft guilds, each vying for power and influence
+* harsh occupation: {settlement} is under the control of a foreign army that is imposing harsh and oppressive rule
+* heavy fortification: {settlement} is a military bastion that is heavily fortified and protected by a {large|small} garrison of professional soldiers
+* heretical beliefs: {settlement} is home to a heretical sect of a major religion that is disrupting old patterns of authority and worship
+* hidden ruler: while {settlement} has a public leader, the real authority ({cultists|criminals|foreigners}) is hidden from outsiders
+* hostile terrain: {settlement} is surrounded by a harsh and inhospitable environment that makes travel to and from other provinces difficult
+* incompetent leaders: the leaders of {settlement} are incompetent and corrupt, and the locals are suffering as a result
+* invading army: there is an army in the area, and it has little inclination to be gentle with the locals
+* knightly order: {settlement} is home to a powerful order of knights that is dedicated to a particular {god|philosophy}
+* lawless chaos: local authority has broken down entirely in {settlement} with looters pillaging wealthier districts
+* magical academy: {settlement} is home to a prestigious magical academy that attracts students from across the region
+* merchant council: {settlement} is governed by a council of wealthy merchant princes who are dedicated to the prosperity of the city
+* monstrous tribute: the locals of this {settlement} have cut a deal with some unspeakable entity {spirit|undead|aberration|beast|primordial} and make regular sacrifices in hopes of continued {forbearance|protection}
+* mercenary companies: {settlement} is home to numerous mercenary companies that are often hired out to the highest bidder
+* natural disaster: a recent {flood|earthquake|landslide|volcanic eruption|tornado|drought} has devastated {settlement} and the surrounding area
+* neglectful ruler: the ruler of {settlement} has little interest in the affairs of the locals and is often absent
+* new industry: a new mining operation has recently been established in the area and is disrupting old patterns of authority
+* nomadic traders: {settlement} is frequently visited by a nomadic {clans|tribes} ({native|diaspora|seafaring}) seeking to exchange goods and services
+* opulent court: the local leadership of {settlement} lives a life of luxury and extravagance, surrounded by sycophantic courtiers and lavish displays of wealth
+* oppressed minority: a minority group within {settlement} is subject to discrimination, prejudice, and persecution by the ruling majority
+* old wounds: {settlement} was the site of a great conflict years ago, and the wounds of that conflict still run deep among the people here
+* pilgrimage site: {settlement} hosts a popular pilgrimage site ({religious|cultural|historic|ancient}) that draws visitors from all over the region
+* pirate haven: {settlement} is a popular port of call for {pirates|slavers|raiders} who use it as a base of operations
+* plague outbreak: a terrible contagion has broken out in {settlement} and is spreading rapidly
+* poacher problems: {settlement} is plagued by poachers who hunt the local wildlife for profit
+* population boom: a vast influx of {exiles|migrants|refugees} has recently rushed into {settlement} and is straining the local infrastructure
+* prison colony: {settlement} is a prison colony where criminals are sent to serve out their sentences in harsh conditions.
+* prosperous land: neighboring powers view {settlement} with envy as it is rich in natural resources
+* punishment post: the  leader of {settlement} once held a much higher station, but was demoted to this post due to some past transgression
+* raider scourge: {bandits|raiders|pirates|slavers} frequently raid this settlement and the surrounding area
+* rebel stronghold: {settlement} is a stronghold of a rebel {army|faction} that is fighting against the regional overlord
+* recent brutality: {settlement} has been ravaged by a recent conflict and the scars of battle are still visible throughout the settlement
+* reclusive hermit: a hermit has taken up residence in the wilderness outside of {settlement}, rumored to have vast knowledge and power
+* reformist struggle: {settlement} is the center of a religious reformation that seeks {a return to earlier practices|to purge corruption}
+* regime change: {settlement} was recently overthrown by a group of rebels, and the new government is still struggling to establish itself
+* remnant faith: {settlement} is home to the last worshipers of a dying religion, who are fiercely protective of their traditions and beliefs
+* resource depletion: a primary resource that {settlement} relies on has been over-exploited, leading to economic hardship and social unrest
+* revanchist exile: a powerful noble has been exiled from a neighboring region and is now plotting a return to power
+* ritual combat: locals of {settlement} are notorious for their use of stylized combat to settle disputes and provide entertainment
+* ruined castle: {settlement} is built around a ruined castle that is said to be haunted by the spirits of its former inhabitants
+* sacred grove: {settlement} is built around a sacred grove that is home to powerful nature spirits and is fiercely protected by the locals
+* secret police: the ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents
+* sectarian violence: multiple religious sects in {settlement} are engaged in violent conflict, leading to widespread destruction and casualties
+* sinking city: {settlement} was built atop something unstable, and now that substrate is crumbling; locals living in affected areas are frantically trying to relocate
+* slave markets: {settlement} is a popular destination for slave traders, and the local economy is heavily dependent on the slave trade
+* slave uprising: the slaves of {settlement} have risen up against their masters and are now fighting for their freedom
+* struggling colony: {settlement} is a newly established settlement that is struggling to survive in a harsh and inhospitable environment
+* sorcerous cabal: a secretive cabal of sorcerers in {settlement} is engaged in the study of forbidden and arcane knowledge, often at great risk to themselves and those around them
+* theocratic authority: {settlement} is home to various grand temples that wield great power over the local populace
+* toxic economy: {settlement} is reliant on a rare {industry|product} ({metallurgy|alchemy|arcana}) that is extremely valuable due to its use in the creation of powerful arcane {potions|enchantments|implements|artifacts|constructs}, but {{has harmful side-effects for|requires blood sacrifices from} those {handling|collecting} the raw materials | is slowly {destroying|polluting} the land with its extraction|extraction requires traversing extremely dangerous terrain}
+* trade dispute: {settlement} is embroiled in a trade dispute with a neighboring region that has led to a breakdown in diplomatic relations
+* trade hub: {settlement} is a popular stop along a major trade route that connects the region to the rest of the world
+* syncretic faith: a new religion has recently emerged in {settlement} that combines elements of multiple faiths
+* unique product: {settlement} {produces unique resource found nowhere else|contains masters a carefully-guarded craft}
+* upcoming festival: {settlement} is preparing for a major festival ({religious|cultural}) that draws visitors from across the region
+* war conscripts: the locals are being pressed into military service to fight in a regional conflict
+* vicious flora: the local flora is extremely dangerous and has claimed many lives over the years
+* witch hunts: magic users are being hunted and executed due to a recent transgression
+* xenophobic locals: the locals of {settlement} are distrustful and hostile towards outsiders, often resorting to violence to protect their territory and way of life
+-- subsistence -- :: foraging|horticulture|agriculture|pastoralism|fishing|mining|logging|whaling|trade|industry :: wasteland|raiding|toxic|unique
+-- region traits --
 * enslaved workforce (slaves|serfs|indentured) ~ (mines|plantations|logging|construction|domestic|soldiers)
-* slave markets: {settlement} frequently hosts slave auctions; slavers raid neighbors
-* abolitionist movement: freedom fighters are active in this province helping slaves escape captivity
-* prosperous land (bountiful harvests | lucrative mines)
-* toxic economy: this settlement is reliant on a rare {industry|product} ({metallurgy|alchemy|arcana}) that is extremely valuable due to its use in the creation of powerful arcane {potions|enchantments|implements|artifacts|constructs}, but {{has harmful side-effects for|requires blood sacrifices from} those {handling|collecting} the raw materials | is slowly {destroying|polluting} the land with its extraction|extraction requires traversing extremely dangerous terrain}.
-* iron law (strict|elaborate laws :: harsh punishments :: strong enforcers)
-* lawless (activities scorned elsewhere are permitted here :: weak enforcers)
-* foreign enclave (wealthy|poor): 
-* war conscripts (war|rebellion)
 * court eunuchs: this {{nation}} makes great use of eunuchs as domestic servants and bureaucratic administrators.
 * slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society.
 * venal offices: {{nation}} is selling government offices to wealthy citizens in order to overcome mounting debts.
 * meritocracy: {{nation}} uses an merit-based examination system to identify the most able bureaucratic officials.
 * police state: the ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents.
 * banned sorcery: this nation distrusts the arcane arts and greatly restricts its use.
-* dueling warlords: the provinces of {x} & {y} are engaged in limited warfare over disputed territory.
-* raider scourge: {bandits|raiders|pirates|slavers} frequently raid this settlement and the surrounding area
-* monstrous tribute: the locals of this {settlement} have cut a deal with some unspeakable entity {spirit|undead|aberration|beast|primordial} and make regular sacrifices in hopes of continued {forbearance|protection}.
-* aristocratic rivalry :: assassins for hire :: artistic|academic|imperious|mercantile|decadent|industrious|traditional|progressive|criminal|charitable|despotic|pious|occult :: rising|established|waning|disgraced|paranoid
-* colonial warfare
-* gang wars
-* underground arena: this {settlement} hosts a popular underground arena where combatants fight for the entertainment of the locals.
+
 ---
 * bounty:
     * The target has escaped, the trail is gone, and they succeeded with their intended crime.
@@ -493,7 +590,6 @@ bugs: lb7nkxl3al
 * {{artifact|relic} needed to lift a curse|map to the curse's focal item}
 * cache of weapons and armor
 * land ownership documents
-* plunder taken from blood feud victims
 * innovative {schematics|design documents}
 * {business contract|trade agreement}
 * {forbidden|confiscated} goods
@@ -505,11 +601,9 @@ bugs: lb7nkxl3al
 * {medical supplies|alchemical reagents}
 * stolen {tribute|taxes}
 * {forbidden|ancient} grimoire
-* insidious profits
 * key needed to unlock {a vault|an artifact}
 * stolen trade goods
 * {controversial|alternate} history texts
-* prized book of martial techniques
 
 
 
@@ -530,7 +624,7 @@ bugs: lb7nkxl3al
 -- tasks --
 * ambush: survive an ambush arranged by the foe :: prepare and execute an ambush on allies of the foe. (combat)
 * confrontation: confront the foe directly in effort to disrupt their plans. (combat?)
-* defend: an actor who is important to the patron needs to be defended from assassination|imprisonment|assault. (combat?)
+* defend: an actor who is important to the patron needs to be defended from assault. (combat?)
 * deliver: deliver resources|information to ally in order to {progress the objective | discredit the foe} :: spread disinformation that will disrupt|delay the foes plan.
 * distract: create a distraction while {the patron | an ally} progresses the objective. (combat?)
 * escort: the patron needs help transporting an important actor|item|resources through unsafe territory. (combat?)
@@ -883,13 +977,11 @@ bugs: lb7nkxl3al
 * living gods: most faith revere the dead or immaterial beings, but our gods walk this very earth and their day-to-day actions shape our core beliefs.
 * sanctity of life: the cycle of life and death cannot be broken under any condition. Anyone,  mortal or divine, or defies it must be vanquished alongside their undead minions.
 
-athletics: climbing, swimming, endurance, overcoming obstacles with brute strength
 mobility: acrobatics, dodging hazards, moving quickly through difficult terrain
 stealth: hiding, moving quietly, pickpocketing, lockpicking, disguises
 investigation: searching locations, finding people, solving puzzles
 logistics: organization and execution of strategic and tactical plans
-knowledge: recalling facts about regional history, laws, myths, etiquette, & religions
-arcana: identifying and avoiding spells, enchantments, and other magical perils
+knowledge: recalling facts about arcana, history, laws, myths, etiquette, & religions
 perception: notice fine details through sight, hearing, & smell; detecting lies, emotions, & intent 
-survival: recalling facts about nature, navigation, handling animals
+survival: recalling facts about nature, navigation, handling animals, athletics
 persuasion: influencing people through negotiation, charm, oration, deception, or intimidation

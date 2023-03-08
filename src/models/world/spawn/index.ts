@@ -32,6 +32,7 @@ export const world__spawn = (params: {
     id: seed,
     cells: [],
     landmarks: {},
+    seaLevelCutoff: 0.06,
     mountains: [],
     routes: {
       land: [],

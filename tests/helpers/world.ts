@@ -25,6 +25,7 @@ export const test__world = () => {
   window.world = world__spawn({ seed: 'test', res: 1, template: shapes[0] })
   window.world.cells.push(cell)
   const region = region__spawn(cell)
+  province__spawn({ cell, capital: true })
   region.climate = 'cold desert'
   region.regional = { provinces: [0] }
   window.world.cells.push(cell2)

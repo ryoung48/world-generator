@@ -24,6 +24,7 @@ export interface Province extends TaggedEntity {
   artery: number[]
   // geography
   islands: Record<number, number>
+  lakes: Record<number, number>
   land: number
   ocean: number
   mountains: number
@@ -43,5 +44,4 @@ export interface Province extends TaggedEntity {
   actors: number[]
   weather?: number
   demographics?: number
-  hooks?: { goal: string; type: string; background: { tag: string; context: string }[] }[]
 }

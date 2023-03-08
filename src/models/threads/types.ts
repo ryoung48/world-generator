@@ -1,6 +1,6 @@
 import { NPC } from '../npcs/types'
 import { Actor } from './actors/types'
-import { Goal } from './goals/types'
+import { Background } from './backgrounds/types'
 import { Stage } from './stages/types'
 
 export interface Thread
@@ -8,7 +8,8 @@ export interface Thread
   // thread index (window.world.threads)
   idx?: number
   // goal that defines the thread
-  goal?: { tag: Goal['tag']; text: string }
+  goal?: string
+  background?: Background
   // location where the thread takes place
   location: number
   origin: number

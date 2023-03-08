@@ -77,13 +77,14 @@ export function StyledText(props: { text: string; color?: string }) {
           const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
           const isActor = cat === 'actor'
-          const onClick = entity__tags.includes(tag)
-            ? () => dispatch({ type: 'update codex', payload: { target: { tag, idx } } })
-            : false
+          const onClick =
+            entity__tags.includes(tag) && tag !== 'actor'
+              ? () => dispatch({ type: 'update codex', payload: { target: { tag, idx } } })
+              : false
           const textColor = color !== '' ? color : baseColor
           const underlineColor = underline || textColor
           const style: CSSProperties = {
-            cursor: onClick || tooltip ? 'pointer' : undefined,
+            cursor: onClick || tooltip || tag === 'actor' ? 'pointer' : undefined,
             color: textColor,
             fontStyle: italics === 'true' ? 'italic' : undefined,
             fontWeight: bold === 'true' ? 'bold' : undefined,

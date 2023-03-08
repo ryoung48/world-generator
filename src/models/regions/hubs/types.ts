@@ -1,4 +1,5 @@
 import { Point } from '../../utilities/math/points'
+import { HubTrait } from './traits/types'
 
 export interface Hub extends Point {
   type:
@@ -12,8 +13,17 @@ export interface Hub extends Point {
     | 'small village'
     | 'tiny village'
   population: number
+  description?: {
+    Introduction: string
+    History: string
+    Economy: string
+    Government: string
+    Defenses: string
+  }
   coastal: boolean
+  province: number
   cell: number
+  _traits?: { key: HubTrait; text: string }[]
 }
 
 export interface Settlement {

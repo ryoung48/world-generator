@@ -1,4 +1,5 @@
 const _professions = [
+  'custom',
   // lower
   'peasant',
   'village elder',

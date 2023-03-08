@@ -8,6 +8,8 @@ import {
 import { province__attach, province__connected } from '../../../regions/provinces/network'
 import { Province } from '../../../regions/provinces/types'
 import { Region } from '../../../regions/types'
+import { world__waterFeatures } from '../..'
+import { cell__neighbors } from '../../cells'
 import { addTradePath, routeBlacklist, shortestPath } from '../../travel/navigation'
 import { RouteTypes } from '../../travel/types'
 import { Shaper } from '.'
@@ -29,6 +31,7 @@ export class InfrastructureShaper extends Shaper {
     return [
       { name: 'Land Routes', action: () => this.roads('land') },
       { name: 'Sea Routes', action: () => this.roads('sea') },
+      { name: 'Extended Voyages', action: this.extendedVoyages },
       { name: 'Network Connections', action: this.networks },
       { name: 'Island Networks', action: this.connectIslandNations },
       { name: 'Finalize Borders', action: this.finalizeBorders }
@@ -50,6 +53,47 @@ export class InfrastructureShaper extends Shaper {
           })
           addTradePath(src, dst, path, blacklist, roadType)
         })
+    })
+  }
+
+  private extendedVoyages() {
+    // iterate through all water bodies
+    const allPorts = window.world.provinces
+      .filter(city => city.hub.coastal)
+      .map(city => window.world.cells[city.hub.cell])
+    const { blacklist } = routeBlacklist()
+    world__waterFeatures().forEach(i => {
+      // get all ports on the water body
+      const ports = allPorts.filter(poly => {
+        return cell__neighbors(poly)
+          .filter(n => n.isWater)
+          .some(n => n.landmark === i)
+      })
+      if (ports.length > 1) {
+        const sight = window.world.dim.w * 0.04
+        for (const start of ports) {
+          const src = window.world.provinces[start.province]
+          // find all nearby ports
+          ports
+            .filter(city => {
+              const dist = Math.hypot(start.x - city.x, start.y - city.y)
+              return dist < sight && city.idx !== start.idx
+            })
+            .forEach(city => {
+              // generate ocean routes between nearby ports
+              const dst = window.world.provinces[city.province]
+              if (!src.trade.sea[dst.idx] && !blacklist[src.idx].includes(dst.idx)) {
+                const path = shortestPath({
+                  type: 'sea',
+                  start: src.hub.cell,
+                  end: dst.hub.cell,
+                  limit: this.pathing.sea
+                })
+                addTradePath(src, dst, path, blacklist, 'sea')
+              }
+            })
+        }
+      }
     })
   }
 

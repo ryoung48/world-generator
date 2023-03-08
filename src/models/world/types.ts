@@ -12,9 +12,6 @@ import { ContinentTemplate } from './spawn/shapers/continents/templates'
 import { Display } from './spawn/shapers/display/types'
 import { RouteTypes } from './travel/types'
 
-export const seaLevelCutoff = 0.06
-export const mountainsCutoff = 0.5
-
 export interface CoastalEdge {
   water: number
   land: number
@@ -49,6 +46,7 @@ export interface World {
       size: number
     }
   >
+  seaLevelCutoff: number
   mountains: string[]
   coasts: CoastalEdge[]
   routes: Record<

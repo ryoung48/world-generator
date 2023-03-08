@@ -54,19 +54,19 @@ const placement = (params: { cell: ExteriorCell }) => {
     cell,
     distance: 0.5
   })
-  const collision = coastalPlacement
-    ? Array.from(
-        new Set(
-          cell__bfsNeighborhood({ start: cell, maxDepth: 2 })
-            .map(cell => cell.province)
-            .filter(p => window.world.provinces[p])
-        )
+  for (const point of coastalPlacement) {
+    const collision = Array.from(
+      new Set(
+        cell__bfsNeighborhood({ start: cell, maxDepth: 2 })
+          .map(cell => cell.province)
+          .filter(p => window.world.provinces[p] && p !== cell.province)
       )
-        .map(p => window.world.provinces[p].hub)
-        .some(hub => point__distance({ points: [hub, coastalPlacement], scale: [sw, sh] }) <= 10)
-    : false
-  if (!coastalPlacement || collision) return { point: { x: cell.x, y: cell.y }, coastal: false }
-  return { point: coastalPlacement, coastal: true }
+    )
+      .map(p => window.world.provinces[p].hub)
+      .some(hub => point__distance({ points: [hub, point], scale: [sw, sh] }) <= 10)
+    if (!collision) return { point, coastal: true }
+  }
+  return { point: { x: cell.x, y: cell.y }, coastal: false }
 }
 
 export const hub__spawn = (params: { cell: ExteriorCell }): Hub => {
@@ -75,6 +75,7 @@ export const hub__spawn = (params: { cell: ExteriorCell }): Hub => {
   const { x, y } = point
   return {
     type: 'tiny village',
+    province: cell.province,
     population: 0,
     x,
     y,

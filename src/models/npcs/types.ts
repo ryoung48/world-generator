@@ -34,5 +34,6 @@ export interface NPCParams {
   context?: ThreadContext
   profession?: Profession
   age?: NPC['age']
+  gender?: Gender
   pc?: boolean
 }
