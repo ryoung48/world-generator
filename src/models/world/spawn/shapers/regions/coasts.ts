@@ -25,7 +25,6 @@ export const removeLake = (params: { lakes: ExteriorCell[]; lake: number }) => {
   })
   delete window.world.landmarks[lake]
   window.world.landmarks[landmark].size += lakeCells.length
-  console.log('removed lake')
 }
 
 const cleanupLakes = () => {
@@ -79,9 +78,6 @@ export const regional__coastalEdges = () => {
     })
   // fix regional capitals
   window.world.provinces.forEach(loc => {
-    if (loc.idx === 52) {
-      console.log('debug')
-    }
     hub__moveToCoast(loc.hub)
   })
 }
