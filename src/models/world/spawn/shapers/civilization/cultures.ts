@@ -24,7 +24,8 @@ const speciesDist = (count: number, tribal = true): Culture['species'][] => {
         { v: 'bovine', w: 1 },
         { v: 'feline', w: 1 },
         { v: 'avian', w: 1 },
-        { v: 'draconic', w: 1 }
+        { v: 'draconic', w: 1 },
+        { v: 'gnoll', w: 1 }
       ]
     : [
         { v: 'human', w: 8 },

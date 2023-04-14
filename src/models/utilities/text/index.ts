@@ -4,6 +4,9 @@ export const titleCase = (str: string) => {
   })
 }
 
+export const capitalize = ([firstLetter, ...restOfWord]: string) =>
+  firstLetter.toUpperCase() + restOfWord.join('')
+
 export const properSentences = (str: string) => {
   const matches = str.match(/.+?[.!?]( |$)/g)
   return matches?.map(txt => txt.charAt(0).toUpperCase() + txt.substr(1))?.join('') ?? str

@@ -98,8 +98,7 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
     neighbors: [],
     artery: [],
     nation: cell.region,
-    actors: [],
-    terrain: 'glacier'
+    actors: []
   }
   if (capital) {
     region.capital = province.idx
@@ -115,7 +114,7 @@ Calculates the terrain in a given province, taking information such as region cl
 @param {Province} province - The province to calculate the terrain of
 @returns {Province['terrain']} The terrain type for the given province
 */
-const province__terrain = (province: Province): Province['terrain'] => {
+export const province__terrain = (province: Province): string => {
   // Get the cell for the given province, along with other information needed
   const cell = window.world.cells[province.hub.cell]
   const mountainous = province.mountains > 0
@@ -133,16 +132,14 @@ const province__terrain = (province: Province): Province['terrain'] => {
     (climate.terrain === 'forest' || (polarTerrain === 'tundra' && region.climate === 'polar'))
       ? 0.2
       : 0
-  if (cell.isMountains) return 'mountains'
-  if (mountainous && window.dice.random > 0.9) return 'highlands'
-  else if (!cell.beach && window.dice.random > 0.8) return 'hills'
-  else if (marshChance > window.dice.random) return 'marsh'
-  else if (climate.terrain === 'forest') return tropical ? 'jungle' : 'forest'
-  else if (climate.terrain === 'plains') return 'plains'
-  else if (climate.terrain === 'desert') return 'desert'
-  return polarTerrain
-}
-
-export const province__geography = (province: Province) => {
-  province.terrain = province__terrain(province)
+  const mountains = `mountains ({jagged|weathered|volcanic})`
+  if (cell.isMountains) return mountains
+  if (mountainous && window.dice.random > 0.8) return mountains
+  else if (!cell.beach && window.dice.random > 0.8) return `hills ({rolling|rocky})`
+  else if (cell.beach && window.dice.random > 0.8) return `beach ({rocky|sandy})`
+  else if (marshChance > window.dice.random) return `wetlands ({marsh|swamp|bog|fens})`
+  else if (climate.terrain === 'forest') return `${tropical ? 'jungle' : 'forest'} ({light|heavy})`
+  else if (climate.terrain === 'plains') return 'plains ({grassland|scrubland})'
+  else if (climate.terrain === 'desert') return `desert ({sand dunes|badlands|wasteland|oasis})`
+  return `arctic (${polarTerrain})`
 }

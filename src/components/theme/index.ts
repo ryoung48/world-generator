@@ -13,7 +13,8 @@ export const theme = createTheme({
     }
   },
   typography: {
-    fontFamily: ['Josefin Sans'].join(',')
+    fontFamily: ['Josefin Sans'].join(','),
+    fontSize: 12
   },
   components: {
     MuiButton: {
@@ -34,7 +35,7 @@ export const theme = createTheme({
       },
       styleOverrides: {
         tooltip: {
-          fontSize: 14,
+          fontSize: 12,
           padding: `5px 16px 5px 16px`,
           backgroundColor: 'rgba(0, 0, 0, 0.75)',
           lineHeight: 1.5
@@ -106,6 +107,13 @@ export const theme = createTheme({
       styleOverrides: {
         rounded: {
           borderRadius: 0
+        }
+      }
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          fontSize: 12
         }
       }
     }

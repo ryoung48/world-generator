@@ -1,50 +1,27 @@
-import { Gender, LifePhase } from '../../npcs/types'
-import { Community } from './communities/types'
-import { Court } from './courts/types'
-import { Faith } from './faith/types'
-import { Ruins } from './ruins/types'
-import { Wilderness } from './wilderness/types'
+import { Province } from '../../regions/provinces/types'
 
-export type BackgroundActor = {
-  alias: string
-  culture?: 'foreign' | 'native'
+export interface Actor {
+  title: string
   monstrous?: boolean
-  age?: LifePhase[]
-  relative?: boolean
-  gender?: Gender
+  foreign?: boolean
+  elder?: boolean
+  veteran?: boolean
+  youth?: boolean
+  child?: boolean
 }
 
-type Tag = Community | Court | Faith | Ruins | Wilderness
-
-export interface BackgroundDetails {
-  tag: Tag
-  type: 'community' | 'court' | 'faith' | 'ruins' | 'wilderness'
-  context: string
-  hostiles?: {}
-  enemies: BackgroundActor[]
-  friends: BackgroundActor[]
-  complications: string[]
-  things: string[]
-  places: string[]
-  constraints?: {
-    conflicts?: Tag[]
-    rural?: boolean
-    urban?: boolean
-    regional?: boolean
-    coastal?: boolean
-    tribal?: true
-  }
-}
-
-export type Background = {
-  category: BackgroundDetails['type']
-  context: {
-    tag: BackgroundDetails['tag']
-    text: string
-    friend: BackgroundActor
-    enemy: BackgroundActor
-    complication: string
-    place: string
-    thing: string
-  }[]
+export interface Hook {
+  hooks: Record<
+    string,
+    {
+      text: string
+      enemies: Actor[]
+      friends: Actor[]
+      complications: string
+      things: string
+      places: string
+      constraints?: { urban?: boolean }
+    }
+  >
+  subtype: (_params: { loc: Province }) => string
 }

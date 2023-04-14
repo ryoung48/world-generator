@@ -1,23 +1,23 @@
 import { css } from '@emotion/css'
 import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { Dispatch, ReactNode, SetStateAction, SyntheticEvent, useState } from 'react'
+import { ReactNode, SyntheticEvent, useState } from 'react'
 
 const classes = {
   tabs: css`
-    margin-bottom: 20px;
+    margin-bottom: 5px;
+    margin-top: 5px;
   `
 }
 
 export function ToggleButtons<T extends string>(props: {
   selection: T[]
-  content: (_selected: T) => ReactNode
-  selected?: [T, Dispatch<SetStateAction<T>>]
+  content: (_selected: T, _i: number) => ReactNode
 }) {
   const { selection, content } = props
-  const [value, setValue] = props.selected ?? useState(selection[0])
+  const [value, setValue] = useState(0)
 
-  const handleChange = (_: SyntheticEvent, newValue: T) => {
-    if (newValue) setValue(newValue)
+  const handleChange = (_: SyntheticEvent, newValue: number) => {
+    if (newValue !== null) setValue(newValue)
   }
   return (
     <Grid container justifyContent='center'>
@@ -31,14 +31,14 @@ export function ToggleButtons<T extends string>(props: {
           className={classes.tabs}
         >
           {selection.map((label, i) => (
-            <ToggleButton key={i} value={label}>
+            <ToggleButton key={i} value={i}>
               {label}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
       </Grid>
       <Grid item xs={12}>
-        {content(value)}
+        {content(selection[value], value)}
       </Grid>
     </Grid>
   )

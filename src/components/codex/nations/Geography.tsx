@@ -85,10 +85,7 @@ export function Geography() {
                 .map(({ neighbor, opinion }) => {
                   return decorateText({
                     link: neighbor,
-                    tooltip:
-                      neighbor.government === 'trading company' && opinion === 'vassal'
-                        ? 'colony'
-                        : opinion,
+                    tooltip: opinion,
                     color: diplomaticColor[opinion],
                     bold: opinion === 'at war'
                   })

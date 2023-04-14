@@ -4,7 +4,7 @@ import { culture__culturize } from '../../../../npcs/cultures'
 import { region__population } from '../../../../regions'
 import { hub__moveToCoast, hub__setPopulation } from '../../../../regions/hubs'
 import { Hub } from '../../../../regions/hubs/types'
-import { province__cell, province__geography, province__spawn } from '../../../../regions/provinces'
+import { province__cell, province__spawn } from '../../../../regions/provinces'
 import { Province } from '../../../../regions/provinces/types'
 import { Region } from '../../../../regions/types'
 import { point__distance } from '../../../../utilities/math/points'
@@ -255,5 +255,4 @@ export const urbanization = () => {
   assignProvinces(provinceNeighbors)
   majorCities({ provinceNeighbors, provinces })
   demographics(provinces)
-  window.world.provinces.forEach(province__geography)
 }

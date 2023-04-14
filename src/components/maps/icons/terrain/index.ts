@@ -1,5 +1,3 @@
-import { polygonCentroid } from 'd3'
-
 import { cell__isHub } from '../../../../models/world/cells'
 import { map__breakpoints } from '../../canvas/draw_styles'
 import { canvas__drawIcon, icon__scaling } from '..'
@@ -57,24 +55,16 @@ export const map__drawTerrainIcons = (params: {
   ctx.fillStyle = 'white'
   ctx.strokeStyle = 'rgba(88, 103, 117, 0.2)'
   ctx.lineWidth = scale < 20 ? 1 : 0.5
-  const penguins: TerrainIcon = 'penguin_1'
-  const penguinsImg = cachedImages[penguins]
-  const penguinsIcon = terrain__icons[penguins]
   window.world.display.icebergs
     .filter(({ idx }) => {
       const cell = window.world.cells[idx]
       const contained = regions.has(cell.region)
       return contained || globalScale
     })
-    .forEach(({ path, idx, penguins }) => {
+    .forEach(({ path }) => {
       const p = new Path2D(path)
       ctx.fill(p)
       ctx.stroke(p)
-      if (penguins) {
-        const cell = window.world.cells[idx]
-        const [x, y] = polygonCentroid(cell.data)
-        canvas__drawIcon({ ctx, img: penguinsImg, icon: penguinsIcon, sw, sh, point: { x, y } })
-      }
     })
   ctx.restore()
 }

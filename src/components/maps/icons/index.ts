@@ -1,4 +1,5 @@
 import { Point } from '../../../models/utilities/math/points'
+import { BasicCache, memoize } from '../../../models/utilities/performance/memoization'
 import { IconDef } from './types'
 
 export const iconPath = `${window.location.href}assets/`
@@ -28,9 +29,15 @@ export const canvas__drawIcon = (params: {
   return { width: width * sw, height: height * sh }
 }
 
-export const icon__scaling = () => {
+const _icon__scaling = () => {
   const { h, w } = window.world.dim
   const av = (h + w) / 2
   const s = (window.world.dim.cells / 16000) * 100 + 300
   return { sh: av / s, sw: av / s }
 }
+
+export const icon__scaling = memoize(_icon__scaling, {
+  store: (): BasicCache<ReturnType<typeof _icon__scaling>> => ({}),
+  get: cache => cache.result,
+  set: (cache, res) => (cache.result = res)
+})

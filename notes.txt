@@ -5,7 +5,9 @@ terrain:
 * jungle ({sparse|heavy})
 * plains ({grass|dry|farms})
 * desert ({sandy|rocky|oasis})
-* mountains|highlands|hills
+* mountains ({jagged|weathered})
+* highlands
+* hills ({gentle|rough})
 * wetlands ({marsh|swamp|bog|fens})
 * glacier|tundra
 
@@ -188,14 +190,15 @@ towns:
 * towns|cities: (hereditary|elected|colonial) aristocrat|bureaucrat|warlord|bishop :: council (nobles|merchants|oligarchs|sorcerers|priests|warlords|syndicate|regents) :: viceroy|king|emperor|imperator|archbishop :: regent (general|consort|relative|official)
 * courtiers: consort (foreigner?)|crown prince|sibling|parent :: general|admiral|guard :: artist|scholar|writer|explorer :: priest|inquisitor|sorcerer :: spymaster|statesman|treasurer|merchant|diplomat  (foreigner|criminal)
 -- location traits --
-* ancient infrastructure: {settlement} still has access to a functioning ancient {teleportation nexus|arcane essence distillation|arcane guardian constructs|community-wide climate control|subterranean hydroponic gardens|water purification system}
 * abandoned structures: {settlement} is home to a number of abandoned palaces and temples, which have been taken over by squatters and criminals
-* ancestral seat: {settlement} is the ancestral seat of a powerful noble family
 * adapted terrain: {settlement} has reshaped its environment to suit its needs, creating {a vast underground network of tunnels|a series of floating islands|a series of artificial islands|a series of artificial lakes}
+* ancestral seat: {settlement} is the ancestral seat of a powerful noble family
+* ancient infrastructure: {settlement} still has access to a functioning ancient {teleportation nexus|arcane essence distillation|arcane guardian constructs|community-wide climate control|subterranean hydroponic gardens|water purification system}
 * black market: {settlement} has a thriving underground economy where illegal goods and services can be bought and sold
 * blood feud: two powerful families in {settlement} are locked in a bitter vendetta, with violence and bloodshed a regular occurrence
 * buried ruins: {settlement} was built on top of old ruins ({built over accidentally|intentionally buried|excavation in progress})
 * labyrinthine: {settlement} is a sprawling maze of streets and buildings, making it difficult to navigate and easy to get lost
+* canal streets: {settlement} is built on a network of canals, which are used for transportation and trade
 * corrupt laws: {settlement} has a reputation for having a weak legal system and is a haven for corruption and vice
 * coup d'etat: a group of conspirators are plotting to overthrow the local leadership and seize control of {settlement}
 * cultural center: {settlement} is renowned for its art, music, and literature; it attracts scholars and artists from across the region
@@ -384,15 +387,14 @@ towns:
 * unusual biome (wasteland|verdant|primordial|arctic|tropical|storms|volcanic|crystalline)
 * camp (aberrant|vampiric|raiders|deserters|rebels|criminal|bandit|refugees|caravan|performers|nomadic|tribal, small|large)
 * river|lake|waterfalls
-* hills (gentle|rugged)
-* forest|jungle (dense|fungal|petrified|cursed|scorched|aquatic)
-* desert (sand|rocky|canyon|dunes|oasis|scorched)
-* badlands (canyons|ravine|wastes|scorched)
-* plains (grass|scrub|plateau|mesa|aquatic)
-* marsh|swamp|bog|fens (dense|fungal|cursed|aquatic)
-* glacier|tundra|iceberg|fjord
-* mountains (volcanic|caldera|hot springs) ~ pass (low|high) ~ forest (cloud|montane)
-* beach (sandy|rocky, shipwreck)
+* hills (gentle|rocky)
+* forest|jungle (sparse|medium|dense)
+* desert ~ (oasis|badlands|sand dunes)
+* plains (grassland|scrubland)
+* wetlands (marsh|swamp|bog|fens)
+* arctic (glacier|tundra|iceberg|fjord)
+* mountains (weathered|jagged)
+* beach (sandy|rocky)
 * splinter|breach (elemental|celestial|fey|fiend)
 --- settings ---
 * weather
@@ -404,77 +406,7 @@ towns:
 * sound: boisterous|loud|echoing|grinding|muffled|musical|unnerving|hushed|inaudible|quiet|silent
 * smell: perfumed|aromatic|floral|pungent|musty|earthy|acrid|moldy|putrid|rancid
 
------------- ruins ------------
--- locations --
-* {abandoned|ancient} mine
-* natural {cave|cavern}
-* savage hamlet
-* {crumbling|overgrown} {villa|manor|castle|fortress}
-* {abandoned|ruined} village
-* hostile {encampment|stronghold}
-* {occult|ruined|ancient} {laboratory|academy|archive}
-* ancient ruins ({urban|rural})
-* {isolated|ruined|ancient} {temple|monastery|crypt|necropolis|monument}
-* corrupt wilderness ({forest|marsh|plains|desert|mountains|hills|highlands|tundra|glacier})
-* magical disaster site
-* {ancient|military|merchant} shipwreck
-* ruined lighthouse
-* {ancient|occult|religious} vault
--- complications --
-* abundant traps: the site is crusted over with dangerous snares and security measures.
-* crumbling structure: the site is falling apart and is actively dangerous to its inhabitants.
-* dungeon heart: The site will collapse if a particular {creature|object} is disturbed.
-* cyclical destruction: every so often, something happens to kill everything in the site ({energy blast|birthing cyst}).
-* hostile environment: the site is difficult to navigate due to {toxic pools|noxious fumes|feral magic|labyrinthine layout|contagious disease|flooding|shifting interiors}.
-* lethal surroundings: the site might not be so bad, but the area around it is murderously dangerous ({vicious creatures|perilous terrain}).
-* perpetual war zone: multiple factions within the site are constantly fighting each other.
-* failed intrusion: The site recently repelled a serious incursion of outsiders.
-* freshly looted: The site has been recently plundered by outsiders.
-* remote location: the site is exceedingly far away from anything else of importance, and its entrance is probably well-hidden.
-* sealed entrance: the site's entrance is bound shut by {magic|ancient technology}.
-* taboo wardens: entrance to the site is forbidden by {ancient law|local custom}.
-* buried beneath: this site is actually buried underneath the main settlement.
-* living dungeon: the site is {animated by an ancient construct|infused with the spirit of some arcane mind|made up of the tiny bodies of countless construction-organisms}.
-* sealed evil: the site serves as a prison for some terribly dangerous entity.
--- inhabitants --
-* {sorcerous cabal|reclusive sorcerer} {elementals|treants|animated equipment|golems|abominations}
-* {raiders|degenerates|exiled noble}
-* dark cultists
-* {undead wraiths|vampiric spawn|necromancers|undead beasts} ++ {golems|abominations|husks}
-* monstrous beasts
-* relic automatons
-* aberrations ({fungal|infested|verdant|crystalline|corrupted|chimeric})
-* hivemind ({fungal|verdant|telepathic|networked})
--- motivations: wealth|resources|lore|exploration|danger|rescue|key|artifacts|secrets
--- enigmas (intellect|wisdom|charisma) --
-* {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|writing|archive|scrolls}
-* {{altered|augmented} gravity|arcana {nullifier|dampener|amplifier}|temporal distortion {slow|fast}}
-* benign enchantment ({healing|blessing|visions})
-* {mutated|enchanted} {vermin|flora|fungi}
-* locked {door|container} ({enchanted|mechanical})
-* {cryptic|warped|withered|defiled|mundane} {books|records|maps|debris|equipment} from past {inhabitants|intruders}
-* corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
-* signs of recent {bloodshed|battle|destruction|ritual|experimentation}
-* empty {cabinets|containers}
-* {discharged|broken} trap
-* {hidden|illusory} {ingress|egress}
-* treasure ({petty|minor|major|great})
-* labyrinthine {pathways|structure|corridors}
- -- hazards (strength|dexterity|constitution) --
-* {unstable|crumbling} structures ({floors|ceilings|walls})
-* {dangerous|chaotic} {radiation|miasma|flames|arcana}
-* noxious {pools|flora|fungi}
-* infestation ({mammal|arthropod|reptile})
-* trapped {containers|interior} ({hidden|alluring}, {harmful|alarming|sealing|delaying})
-* explosive {dust|gases}
-* {contagious|virulent} disease
-* treacherous terrain ({flooded|verticality|footing})
-* obscuring {darkness|fog}
-* malign enchantment ({despair|madness|decay|transformation})
-* the way forward is blocked by {heavy|dangerous} {debris|rubble|overgrowth}
-* {broken|shattered} {corridors|egress|ingress} 
-* {warded|sealed|bound} entity
-* {auditory|visual|spatial} {distortions|illusions}
+
  -- encounters --
 * combat
 * survivor {prisoner|victim} (wounded)
@@ -780,147 +712,6 @@ bugs: lb7nkxl3al
         * foreigners are distrusted and excluded; minority religions and customs are suppressed; refugees are always turned away.
         * foreign customs and people are welcomed; minority religions and customs are protected; refugees are always accepted
         * the disposition of the ruling authority has been shifting towards isolationism and traditionalism in recent years; edicts have been passed severely limiting foreign relations and trade; strict border controls limiting immigration and emigration
-    --- religion ---
-    * theocratic economy: the faith has established themselves has prominent {bankers|landowners|artisans|merchants} and exerts great economic influence within this nation.
-    * imperial cult: this nation blends the state religion with reverence of the ruler as a living deity.
-    --- values ---
-    * adaptation: seeking fortune in new places or new roles
-    * aesthetic: beauty in material goods and architecture
-    * arcana: magical prowess and occult ability
-    * austerity: ascetic unworldliness and pious poverty
-    * bravery: courage and valiance in danger
-    * charity: sharing wealth and goods with others
-    * decadence: personal indulgence and luxuriant pleasure
-    * diplomacy: pacifism and peaceful resolution of problems
-    * equality: justice and fairness between people
-    * etiquette: eloquence and social expertise 
-    * exploration: exploring the unknown and discovering secrets
-    * family: filial devotion to family and parents
-    * forgiveness: showing mercy to enemies
-    * freedom: individual rights and freedom of action
-    * guile: cunning and the ability to trick others
-    * hierarchy: membership in an elite bloodline or caste
-    * history: remembrance of the past and memorializing history
-    * honor: honesty and truthfulness in speech and action
-    * immortality: building things in service of their posterity
-    * imperialism: conquest and domination of others
-    * intrigue: scheming subtly against enemies or rivals
-    * logic: humanistic reason and “rational” religion
-    * loyalty: faithfulness towards one’s chosen friends
-    * lust: seductive charm and sexual license
-    * nature: harmony with nature and existing life
-    * order: discipline and obedience to the law
-    * perfection: social progress toward some eventual utopia
-    * progress: personal development and limit-pushing
-    * purity: ethnic purity of blood and culture
-    * revanchism: restoring some real or imagined glorious past
-    * sacrifice: personal sacrifice for one’s causes or purposes
-    * scholars: education and knowledge-seeking 
-    * stewardship: guardianship of their own land and holy sites
-    * stoicism: patience and restraint in the face of adversity
-    * success: excellence in one’s profession or trade
-    * subterfuge: subtlety and indirectness of action
-    * supremacy: societal or ethnic superiority over all outsiders
-    * tenacity: hardiness and endurance before woes
-    * tradition: submission to the collective norms
-    * unity: elimination of group differences
-    * vengeance: execution of just vendettas
-    * vigor: industry and the ability to work tirelessly
-    * warriors: raw strength and martial prowess
-    * wealth: prosperity and accruing material wealth
-    * zeal: piety and devotion to religious ideals
-    -- traditions --
-    * Astute Diplomats: It is a common idea in this culture that the purest expression of superiority is the ability to subdue your enemy without fighting them.
-    * Collective Lands: The idea that individuals personally own land is alien to this culture; land belongs to all people, for the common good.
-    * Esteemed Hospitality: In this culture rulers are known, and expected, to welcome anyone who might come to their court with open arms. Hosting guests and visitors in a spectacular fashion.
-    * Garden Architects: This culture has a long tradition of constructing and maintaining various types of gardens, building themselves a small paradise.
-    * Isolationist: This culture prefers to keep to itself, and doesn't often look outside its own sphere.
-    * Marital Ceremonies: For this culture, the union of two people in marriage is considered a highly public and ritualistic affair.
-    * Metalworkers: This culture has enjoyed easy access to iron for centuries. Over time they have developed their understanding of metal to such a degree that their name has become a byword for durable and high quality arms and armor.
-    * Ruling Caste: Rulers of this culture are used to lording over subjects that are not their own culture. They know how to effectively suppress revolts, though at the cost of public perception.
-    * Agrarian: This culture is distinctly agrarian, their lands producing ample crops for hungry armies. While not having to struggle for food means many peasants for the levy, it also means that each soldier is not as motivated as those from harsher regions.
-    * Castle Architects: Offense is not a good defense. A good defense is having the most castles on the face of the known world.
-    * City Builders: Cities are the beating urban heart of this culture, and they wish for every one of their metropolises to become enviable gems known across the world.
-    * Court Eunuchs: This culture makes extensive use of eunuchs at court, occupying positions ranging from domestic servants to bureaucratic administrators and even military commanders. Men with no desire are easy to trust.
-    * Arid Dwellers: This culture is accustomed to living in dry climates, and know where to find water and how to work the lands.
-    * Family Business: This culture encourages businesses to develop along familial lines, each generation picking up the tools and techniques of their trade from the last, building a strong tradition of ancestral professionalism.
-    * Ancient Traditions: The military organization of an ancient fallen empire is still in living memory within this culture.
-    * Grand Temples: This culture finds constructing temples the most direct path to the divine. Fervent rulers are expected to build many great temples.
-    * Forest Folk: This culture lives close to vast forests, and knows how to forage its bounties.
-    * Hidden Cities: Whether they are up in the jungle trees, or protected by the organic maze, foreigners may not even know this culture's cities exist, let alone have a clue how to besiege them.
-    * Hill Dwellers: This culture is at home in hills, and know how to work its lands effectively.
-    * Jungle Dwellers: This culture lives close to the jungle, and knows how to harvest its riches.
-    * Legalistic: This culture regards the rule of law and its codification as being the most important parameter of a civilized society.
-    * Maritime Mercantilism: The world may be ruled by armies, but this culture knows that it is truly controlled by whoever dominates the flow of gold across the seas.
-    * Matriarchal: This culture enforces a matriarchal hierarchy, where the ruling class is overwhelmingly comprised of women.
-    * Mountain Homes: This culture knows how to live and thrive on plateaus near the harsh slopes of mountains.
-    * Pastoralists: This culture is at home in wide and open terrain, where they herd large groups of animals.
-    * Marsh Dwellers: This culture has mastered the bogs and marshes. Though life is at times a battle against mold, they have learned to use the peat to their advantage.
-    * Ancient Miners: This culture has always been surrounded by raw materials, ore, and uncut gems. They have an affinity for finding sites for mining excavations.
-    * Coastal Warriors: We have always been drawn to the shoreline. The sting of sea air, the crying gulls, the scent of smoked fish... what warrior would ever opt to live far from the water and its freedoms?
-    * Culture Blending: Members of this culture have often lived alongside people of other cultures. Through exposure, they have become adept at incorporating foreign languages, traditions and customs into their own lives.
-    * Adaptive Skirmishers: This culture knows how to effectively field skirmishers in any environment.
-    * Battlefield Looters: In this culture battles are not fought for prestige, but for profit. Who cares about one's standing if you're unable to pay for the war?
-    * Formation Fighting Experts: This culture knows how to create synergy between different types of units by use of efficient protective formations.
-    * Frugal Armorsmiths: While a set of high-quality armor might save one life, having ten decent sets might win a battle.
-    * Recognition of Talent: "Kill me if you wish, but if you let me live, I shall serve you loyally."
-    * Reverence for Veterans: This culture doesn't look down upon those who can no longer fight due to injury, instead they are celebrated as heroes and used as teachers.
-    * Stalwart Defenders: Defending that which is one's own is of paramount importance to this culture.
-    * Strength in Numbers: This culture forsakes having elite troops, and instead favors massed armies.
-    * Swords for Hire: This culture views mercenary work favorably and encourages warriors to seek glory as mercenaries in-between wars.
-    * Warrior Priests: This culture believes that if you choose to pursue theological studies, you must also be able to defend your faith.
-    * Warriors by Merit: This culture believes that if you've proven yourself capable as a warrior, you should be allowed to fight — no matter who you are.
-    * Forest Fighters: This culture is well-versed at fighting in forests.
-    * Highland Warriors: Warriors of this culture fight well in the slopes and valleys of their hilly homes.
-    * Hit-and-Run Tacticians: This culture has mastered the use of lightly-armored units to hit the enemy hard, and then fall back.
-    * Horse Breeders: This culture has painstakingly accumulated knowledge and experience in the fine art and science of horse breeding. Whether destriers or coursers, the horses of these people are renowned for their superiority.
-    * Jungle Warriors: Warriors of this culture know well how to traverse treacherous jungles.
-    * Expert Marksman: This culture favors ranged weaponry, and practicing with them once a week is as dear as any ritual of worship everywhere from the most rural villages to the largest urban metropoles.
-    * Mountaineers: Soldiers of this culture carry all they need to traverse mountains.
-    * Only the Strong: This culture places a strong emphasis on having a few, well-trained warriors. If you're not the best-of-the-best, you're not welcome to serve.
-    * Stand and Fight!: Warriors from this culture are unyielding and unshakable. They do not fall back - even in the face of overwhelming odds, for better or for worse.
-    * Arid Warriors: This culture has mastered the art of fighting in very dry climates.
-    * Winter Warriors: This culture is used to the reality that harsh winds and bitter cold brings.
-    * Charismatic: The people of this culture excel in diplomatic matters, and social etiquette is valued above all else.
-    * Charitable: Regardless of faith, people of this culture are motivated to support those less fortunate.
-    * Equitable: In this culture truth and impartial justice is valued highly.
-    * Eye for an Eye: In this culture slights are not to be forgotten, nor forgiven. Its people can carry grudges for long, and vengeance is carried out with a passion.
-    * Forbearing: In this culture being patient and restrained in the face of adversity is common.
-    * Industrious: This culture teaches and enshrines ideas of industriousness and hard work on behalf of one's community.
-    * Loyal Subjects: For this culture, serving one's liege and country is both noble and just - a duty and a privilege, rather than an avaricious arrangement or an unwanted burden.
-    * Mendicant Mystics: The holy people of this culture believe strongly that the faith should be ministered in the field, and their most devout frequently wander the world.
-    * Modest: This culture values modesty, one should not take up too much space or think oneself better than others.
-    * Strong Believers: The people of this culture are particularly zealous and dedicated to their faith.
-    * Chivalry: This culture has embraced chivalry and chivalric codes of conduct as a social method of regulating behavior. Martial prowess, duty, honor and morality are prized, as is bad poetry and romantic literature.
-    * Dexterous Fishermen: Anyone can fish, but to do so with such skill that any catch is bountiful, regardless of tide or wind, is a rarer talent. No one knows the coast, land or sea, better than these fishermen.
-    * Martial Admiration: Those who are willing to take up sword and fight for their culture are worthy of admiration. No matter the odds.
-    * Pacifists: For this culture, the use of force can never be justified. Only by pursuing a path of non-violence can people truly live in peace.
-    * Philosopher Culture: This culture promotes thought and self-reflection.
-    * Practiced Pirates: Storming a port, setting it ablaze, and taking everything that isn't nailed down may not be noble, but it is profitable.
-    * Prolific Hunters: Driven by economic necessity, or perhaps social expectation, this culture has refined their hunting practices to precise and almost beautiful art.
-    * Refined Poetry: Poetry is considered a noble art in this culture, and many spend their time piecing words together with meaning and thought.
-    * Seafarers: For this culture, the call of the sea is too strong to resist, and they live to sail like a dream on a crystal clear ocean, or ride on the crest of a wild raging storm.
-    * Storytellers: This culture has a strong and persistent oral tradition. The past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations.
-    * Warrior Culture: This culture values martial prowess and strength above everything else. Children are brought up knowing how to fight, and are discouraged from scholarly pursuits. Weakness is not tolerated.
-    * Xenophilic: This culture embraces everyone and is genuinely fascinated by all cultures.
-    * Vegetarians: This culture has developed a strong aversion to consuming the flesh of animals, and practices vegetarianism throughout their society.
-    * Trials-by-Combat: Words are a coward's substitute for weapons. Why leave justice to decrepit laws and corrupt magistrates when disputes can be settled faster and fairer with the blade?
-    * Musical Theorists: This culture treats music almost as the language of the divine, and thus many individuals take up the noble and celebrated pursuit of musical study from a young age.
-    * Frequent Festivities: The frequency and exuberance with which this culture throws festivities would be considered vulgar to others, but a party is a party!
-    * Linguists: To learn the words of a neighbor brings you one step closer to the language of the Divine.
-    * Medicinal Herbalists: This culture long ago developed knowledge of the medicinal properties of the plants and trees; to them most ailments are treatable with the right poultice, salve or stew.
-    * Culinary Artists: Food isn't just sustenance for this culture; it is both an art and a ritual, a focal point for family and community alike.
-    * Merciful Blinding: No matter how far beyond forgiveness one has gone, this culture thinks it is better to gouge out an eye than run through a heart.
-    * Religion Blending: Members of this culture often live together with those sharing different faiths and beliefs, and do well in adopting foreign elements into their own worship.
-    * Religious Patronage: For the salvation of the soul, one must commit to works of religious significance. You cannot purchase redemption, but having a temple of priests sing your praises helps!
-    * Runestone Raisers: Death, conquest, the acquisition of rank — are these not the things that define life in the nobility? Where our people go, so go the markers of our lives' worth.
-    * Sacred Groves: Trees are considered sacred by this culture. The forest is a living being that ought to be cared for—not destroyed.
-    * Sacred Hunts: Hunting is neither a sport nor a pastime, it is nothing less than the purest expression of the human experience, where one may connect with the divine by demonstrating their mastery over nature.
-    * Sacred Mountains: This culture considers mountains to be connections to the divine, and treats them with reverence and respect.
-    * Mystical Ancestors: Lineage is very important to this culture, to the point where ancestors have become mythical and legendary beings with many who claim to be their descendants.
-    * Royal Army: We have a long tradition of a standing army made to protect the capital. This has given us access to tough soldiers that work exceedingly well with supporting troops.
-    * Honor Bound: Honor is not only important, it is paramount. Duels may take place to resolve issues that pertain to it.
-    * sorcerer-kings: our culture places great emphasis on arcana; it is only fair that the strongest mages should rule.
 
 
 
@@ -982,6 +773,271 @@ stealth: hiding, moving quietly, pickpocketing, lockpicking, disguises
 investigation: searching locations, finding people, solving puzzles
 logistics: organization and execution of strategic and tactical plans
 knowledge: recalling facts about arcana, history, laws, myths, etiquette, & religions
-perception: notice fine details through sight, hearing, & smell; detecting lies, emotions, & intent 
-survival: recalling facts about nature, navigation, handling animals, athletics
+perception: notice fine details through sight, hearing, & smell
+insight: detecting lies, emotions, & intent of others
+survival: recalling facts about nature, navigation, handling animals, tracking, & medicine
 persuasion: influencing people through negotiation, charm, oration, deception, or intimidation
+athletics: running, jumping, climbing, swimming, lifting, throwing, and overcoming obstacles with brute force
+combat: {ambush|confront|survive an ambush from} hostile forces
+favor: complete a task for an NPC in exchange for their support 
+
+* smuggling: moving a {thing} across dangerous territory unnoticed
+* rescue: freeing a {friend|neutral} from captivity
+* bounty: capturing a wanted criminal
+* heist: {stealing an item of value|preventing a theft}
+* escort: deliver {a friend|the patron} to a safe location
+* intrigue: gathering information about {the rival|an enemy|a neutral}
+* sabotage: {destroying an object|disrupting a service} important to the rival
+* defense: protecting {a friend|the patron} from attack
+* negotiate: resolving a conflict between two or more parties
+* curse: removing a curse from {a friend|the patron|a thing|a place}
+* monster: defeating a dangerous {monster|group of monsters} ({avian|reptilian|mammal|arthropod|aquatic|plant|fungal})
+* disappearance: finding a missing {friend|thing}
+---
+------------ ruins ------------
+-- locations --
+* {abandoned|ancient} mine
+* natural {cave|cavern}
+* savage {hamlet|encampment|stronghold}
+* {crumbling|overgrown} {villa|manor|castle|fortress}
+* {abandoned|ruined} village
+* hostile {encampment|stronghold}
+* {occult|ruined|ancient} {laboratory|academy|archive}
+* ancient ruins ({urban|rural})
+* {isolated|ruined|ancient} {temple|monastery|crypt|necropolis|monument}
+* {corrupt|untamed} wilds ({forest|marsh|plains|desert|mountains|hills|highlands|tundra|glacier})
+* magical disaster site
+* {ancient|military|merchant} shipwreck
+* ruined lighthouse
+* {ancient|occult|religious} vault
+-- complications --
+* abundant traps: the site is crusted over with dangerous snares and security measures.
+* {unstable|crumbling} structure: the site is falling apart and is actively dangerous to its inhabitants.
+* dungeon heart: The site will collapse if a particular {creature|object} is disturbed.
+* {energy blasts|birthing cyst}: The site periodically becomes extremely dangerous.
+* labyrinthine: the site is a maze of twisting passages and dead ends.
+* feral magic: the site is infused with {rotting|berserk} magic that taints the area and the occupants.
+* shifting interiors: the site's interior is constantly changing due to {spatial distortion|reconstruction|ancient relics}.
+* toxic miasma: the site is filled with {noxious fumes|a contagious disease|arcane radiation} that slowly kills intruders.
+* flooded halls: this site is largely flooded and is difficult to navigate.
+* civil war: multiple factions within the site are constantly fighting each other.
+* remote location: the site is exceedingly far away from anything else of importance, and its entrance is probably well-hidden.
+* sealed entrance: the site's entrance is bound shut by ancient {magic|technology}.
+* taboo wardens: entrance to the site is forbidden by {ancient law|local custom}.
+* living dungeon: the site is {animated by an ancient construct|infused with the spirit of some arcane mind|made up of the tiny bodies of countless construction-organisms}.
+* sealed evil: the site serves as a prison for a dangerous entity.
+* titanic beast: the site is the lair of some gargantuan beast that must be avoided at all costs.
+* infestation: {mutated|enchanted} {vermin|flora|fungi} have overrun the site.
+* lethal treasure: the site is filled with {toxic|cursed} {artifacts|relics|treasure}.
+-- inhabitants --
+* {sorcerous cabal|reclusive sorcerer} {elementals|treants|animated equipment|golems|abominations}
+* {raiders|degenerates|exiled noble}
+* dark cultists
+* {undead wraiths|vampiric spawn|necromancers|undead beasts} ++ {golems|abominations|husks}
+* monstrous beasts
+* relic automatons
+* aberrations ({fungal|infested|verdant|crystalline|corrupted|chimeric})
+* hivemind ({fungal|verdant|telepathic|networked})
+-- motivations: wealth|resources|lore|exploration|danger|rescue|key|artifacts|secrets
+-- enigmas (intellect|wisdom|charisma) --
+* {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|writing|archive|scrolls}
+* {{altered|augmented} gravity|arcana {nullifier|dampener|amplifier}|temporal distortion {slow|fast}}
+* benign enchantment ({healing|blessing|visions})
+* {mutated|enchanted} {vermin|flora|fungi}
+* locked {door|container} ({enchanted|mechanical})
+* {cryptic|warped|withered|defiled|mundane} {books|records|maps|debris|equipment} from past {inhabitants|intruders}
+* corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
+* signs of recent {bloodshed|battle|destruction|ritual|experimentation}
+* empty {cabinets|containers}
+* {discharged|broken} trap
+* {hidden|illusory} {ingress|egress}
+* treasure ({petty|minor|major|great})
+* labyrinthine {pathways|structure|corridors}
+ -- hazards (strength|dexterity|constitution) --
+* {unstable|crumbling} structures ({floors|ceilings|walls})
+* {dangerous|chaotic} {radiation|miasma|flames|arcana}
+* noxious {pools|flora|fungi}
+* infestation ({mammal|arthropod|reptile})
+* trapped {containers|interior} ({hidden|alluring}, {harmful|alarming|sealing|delaying})
+* explosive {dust|gases}
+* {contagious|virulent} disease
+* treacherous terrain ({flooded|verticality|footing})
+* obscuring {darkness|fog}
+* malign enchantment ({despair|madness|decay|transformation})
+* the way forward is blocked by {heavy|dangerous} {debris|rubble|overgrowth}
+* {broken|shattered} {corridors|egress|ingress} 
+* {warded|sealed|bound} entity
+* {auditory|visual|spatial} {distortions|illusions}
+
+* aristocratic: noble household|bureaucratic council
+* business: artisan guild|merchant consortium|{merchant|banking} house
+* temple: religious {sect|order}|sacred {temple|monastery}
+* criminal: criminal {syndicate|gang|brotherhood|cartel}
+* sorcerous: {sorcerous|occult} {cabal|conclave}
+* military: {chivalric|templar} order|mercenary company
+
+
+
+* ruthless assassins
+* rival mercenaries
+* angry mob
+* disguised warriors
+* paid guardsman
+* elite bodyguards
+* city guards
+* veteran witch-hunters
+* skilled sorcerer
+* mad alchemist
+* rebel soldiers
+* foreign agents
+* grizzled veterans
+* ethnic supremacists
+
+* bandit raiders
+* criminal thugs
+* religious zealots
+* dark cultists
+* inhuman aberrations
+
+* blighted raiders|degenerate cannibals
+* {mutated|enchanted|alien|corrupted} {beasts|flora|fungi}
+* {pack of wild beasts|lone predator}
+* undead {husks|abomination}|{vengeful|lost} wraiths
+* reclusive archmage|sorcerous cabal|vampiric spawn|necromantic cult
+* relic automatons|golem sentinels
+
+* defense: protect {a friend|the thing|a place} against an impending threat
+* espionage: acquire sensitive information that will benefit a friend
+* sabotage: destroy a {thing|place} that is important to the enemy
+* smuggling: transport a thing across a restricted zone
+* theft: {steal a thing from enemy forces|prevent a theft}
+* rescue: retrieve a friend from a dangerous situation
+* bounty: defeat a dangerous enemy
+* retrieval: recover a lost thing
+* explore: gather information about a place
+
+* accessories: {enchanted} {belt|bracers|ring|necklace|cloak|hood|cowl|mask|scarf|sash|amulet|talisman|trinket}
+* alchemy: {healing|stoneskin|invisibility|night vision|frenzy} {potion|elixir}
+* plate: helm|gauntlets|greaves
+* cloth|leather: gloves|boots
+* fighter: plate + {{sword|axe|mace} + shield|{greatsword|warhammer|greataxe}}
+* paladin: plate + {{sword|axe|mace} + shield|{greatsword|warhammer|greataxe}}
+* battlemage: plate + {{sword|axe|mace} + grimoire}
+* berserker: {plate|leather} + {{greatsword|warhammer|greataxe}|dual-wielded {sword|axe|mace}}
+* ranger: leather + {{longbow|shortbow|crossbow}|dual-wielded axes}
+* rogue: leather + {dual-wielded {daggers|swords}}
+* monk: {leather|cloth} + {unarmed|quarterstaff}
+* wizard: cloth + {staff|dagger|wand|scepter} + grimoire
+* druid: {leather|cloth} + {staff|dagger|wand|scepter} + grimoire
+* cleric: cloth + {staff|mace|dagger} + holy symbol
+
+-- political --
+* autocratic monarchy: {region} is ruled by a single {hereditary|elected} monarch who holds absolute power over the government and society
+* colonial overlord: {region} is ruled by a foreign power that is exploiting its resources and suppressing its people
+* feudal monarchy: region is ruled by a {hereditary|elected} monarch with lords and vassals owing him or her loyalty and military service
+* fragmented warlords: {region} is ruled by numerous warlords who each control a small area of the region
+* free cities: {region} is a collection of independent city-states that have banded together for mutual protection and trade, often with their own unique systems of government and laws
+* merchant republic: {region} is ruled by a council of oligarchs that is focused on promoting trade and commerce
+* holy orders: {region} is ruled by several orders of devout knights who serve the gods and protect the faithful
+* pirate haven: {region} has no centralized authority, but is a popular port of call for {pirates|slavers|raiders} who use it as a base of operations.
+* sorcerous cabal: {region} is ruled by a council of occult academies and independent archmages who seek to promote research and knowledge
+* tribal confederacy: {region} is a loose alliance of various tribes and clans that each have their own leaders, but come together to make important decisions through a council of elders
+* tribal monarchy: {region} is ruled by a {hereditary|elected} chieftain who is recognized as the leader of all the tribes in the region
+* undead remnants: {region} is ruled by powerful undead oligarchs who maintain their power through necromantic magic and a vast army of undead soldier
+-- society --
+* abolished slavery: {region} has declared slavery illegal and looks upon all those who still permit this practice with disdain
+* artisan guilds: {region} is renowned for its skilled artisans and craftsmen, who have banded together into powerful guilds that wield great influence
+* banned sorcery: locals of {region} distrusts the arcane arts and greatly restricts its use
+* beast lords: the locals of {region} are peerless animal breeders and beast tamers
+* blood feuds: {region} has a long-standing tradition of revenge killings and blood feuds between rival clans and families
+* blood oaths: the locals of {region} place great value on blood oaths and loyalty, often forming strong alliances with other clans or individuals
+* bureaucratic corruption: {region} suffers from rampant corruption within its bureaucratic system, leading to injustice and unrest among the populace
+* condottiere: {region} is home to a large population of mercenaries who fight both locally and abroad
+* corrupt laws: {region} has a reputation for having a weak legal system and is a haven for corruption and vice
+* court eunuchs: {region} makes great use of eunuchs as domestic servants and bureaucratic administrators
+* culled nobility: the traditional aristocracy has been culled in a series of political executions intended to curb their growing influence
+* despotic lord: {region} is ruled with an iron fist, crushing any hint of resistance and demanding extravagant service from the locals
+* divination rituals: {region} has a secretive order of oracles who are consulted for divination and prophetic visions
+* drug trade: a potent drug has become a major source of revenue for {region}, but has also led to widespread addiction and social decay
+* encroaching corruption: {region} is plagued by magical abominations emerging from a neighboring region
+* enslaved workforce: {region} is home to a large population of {serfs|slaves|indentured laborers} that work the land
+* famines and droughts: {region} is regularly plagued by devastating droughts and famines, causing widespread suffering and death
+* fabled library: {region} is home to a fabled library that contains countless tomes of ancient knowledge and arcane secrets
+* forbidden city: The {palace|fortress} of {region}'s ruler is a vast complex surrounded by high walls and moats, accessible only to the most trusted officials and servants
+* grand architecture: {region} boasts some of the most impressive and intricate buildings and monuments in the world, showcasing their wealth and power
+* great houses: {region} is dominated by a handful of powerful noble families who are locked in a perpetual struggle for power and influence
+* great wall: {region} is home to a massive wall that stretches for thousands of miles, built to protect against invading forces from the north
+* harem politics: {region}'s rulers maintain large harems of concubines, leading to fierce competition and intrigue among the women and their supporters
+* isolationist regime: {region} is a closed society with heavily restricted entry; their culture and traditions are closely guarded secrets
+* lawless frontier: the frontier regions of {region} are lawless and dangerous, controlled by bandits and outlaws
+* legislative assembly: {region} has a governing body composed of representatives from different regions and social classes, who debate and vote on legislation
+* meritocratic exams: {region} uses an merit-based examination system to identify the most able bureaucratic officials
+* necromantic cult: necromancy flourishes in {region} with countless undead thralls serving as solder and laborers
+* nomadic diaspora: {region} is home to numerous nomadic clans who have been exiled from there homeland and are forced to wander; they are often persecuted by the locals
+* opulent court: the aristocracy of {region} live a life of luxury and extravagance, crushing the peasants beneath them
+* plague outbreak: a terrible contagion has broken out in {region} and is spreading rapidly
+* population boom: a vast influx of {exiles|migrants|refugees} has recently rushed into {settlement} and is straining the local infrastructure
+* prosperous land: neighboring powers view {region} with envy as it is rich in natural resources
+* regency council: {region} is ruled by a regency council due to the {youth|incapacity|sickness} of the legitimate ruler
+* resource poor: the locals of {region} struggle to survive in a land that can barely support the populace as it is
+* revanchist exile: {region} is ruled by a dynasty that was exiled from a distant nation and is now plotting a return to power
+* ritual combat: locals of {region} are notorious for their use of stylized combat to settle disputes and provide entertainment
+* ritual scarification: the locals of {region} practice ritual scarification to honor their ancestors and mark important life events.
+* secret police: the ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents
+* slave markets: {region} is a popular destination for slave traders, and the local economy is heavily dependent on the slave trade
+* slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society; they are well-trained and loyal, but are often resented by the locals
+* sorcerous eugenics: the aristocracy of {region} are obsessed with eugenic breeding programs to produce superhuman paragons, many of whom suffer crippling mental or physical infirmities due to extensive inbreeding
+* toxic economy: {region} is reliant on a rare {industry|product} ({metallurgy|alchemy|arcana}) that is extremely valuable due to its use in the creation of powerful arcane {potions|enchantments|implements|artifacts|constructs}, but {{has harmful side-effects for|requires blood sacrifices from} those {handling|collecting} the raw materials | is slowly {destroying|polluting} the land with its extraction|extraction requires traversing extremely dangerous terrain}
+* tributary system: a powerful neighbor of {region} demand regular tribute in exchange for protection and forbearance
+* venal offices: {region} is selling bureaucratic offices to wealthy citizens in order to overcome mounting debts
+* wandering mystics: the locals of {region} revere a group of wandering mystics who possess great spiritual power and are sought out for their guidance
+* warrior aristocracy: most aristocrats are skilled warriors who maintain their position through military prowess and martial tradition
+-- religion --
+* ancestor worship: the locals of {region} revere the spirits of their ancestors and seek their guidance through regular offerings and rituals
+* aristocratic faith: the local religion is {largely|exclusively} practiced by the elite of the society; believers from lesser classes are {unable to carry out the obligations of the faith|prohibited from participating}
+* caste system: the local religion divides the local populace into castes with strict roles and no social mobility; the caste system is enforced by the local clergy
+* decadent clergy: the religious hierarchy has been corrupted by money, influence, and material comforts, leading to widespread discontent among the faithful
+* dire sacrifices: the local religion requires regular blood sacrifices in exchange for divine favor; the sacrifices are often performed by {the poorest and most vulnerable members of society|captives taken from neighboring regions}
+* ethnic creed: the religion is considered to be specific to a particular ethnic group; entry is extremely restricted to outsiders
+* fortress monasteries: {region} is home to a number of monasteries that are built around fortified strongholds and are heavily armed
+* heathen tax: practitioners of minority religions are required to pay a special tax, leading to tensions and discrimination against minorities
+* holy grounds: the locals of {region} believe that certain locations are sacred and must be protected at all costs; these locations are often heavily fortified
+* imperial cult: the ruler of {region} is worshipped as a living deity; the ruling class and military leaders all adhere to the cult, with those who don't often facing severe consequences; the common people may be more skeptical, but still feel pressure to conform to the cult's teachings
+* localized variation: the faith has substantially different manifestations in different locations, each branch harmonized with local cultures and habits
+* missionary zeal: a powerful religious organization has dispatched zealous missionaries to {region} in an effort to convert the locals to their faith
+* moon worship: the locals of {region} worship the moons and have complex religious rituals tied to the phases of the lunar cycle
+* monastic clergy: the clergy of the local religion are required to live in isolated monasteries and devote their lives to prayer and contemplation; they are often credited with being holier than the secular clergy who work in the world
+* mutilated clergy: clergy of the faith are required to undergo some grievous mutilation or physical scarring as a sign of their devotion.
+* reincarnation: the locals of {region} believe that each soul is reborn after death based on their actions in life
+* religious laws: the local religion has a developed a complex and sophisticated legal system that is used to adjudicate disputes and settle conflicts
+* remnant faith: {region} is home to the last worshipers of a dying religion, who are fiercely protective of their traditions and beliefs
+* sea gods: the ocean is a recurring theme in this religion; priests exert significant influence from their salt-lapped island monasteries and well-attended village shrines
+* sacred pilgrimage: the faithful of {region} undertake a dangerous pilgrimage to a holy site, enduring great hardship and risking their lives in the process
+* shamanic traditions: the locals of {region} have a rich tradition of shamanism, with practitioners acting as mediators between the human and spirit worlds
+* sky burials: the locals of {region} practice a form of sky burial, where the dead are left to be consumed by carrion birds and scavengers
+* state faith: the local religion is the official state religion and the clergy wield significant political power; the practice of other religions is discouraged and possibly even outlawed
+* syncretic faith: this religion cheerfully absorbs other faiths and gods, either casting them as servitors of their deity or different aspects of their chosen divinity
+* temple cults: there are numerous cults that are devoted to specific temples or shrines, and compete with each other for power and influence within the local religion
+* theocratic authority: the local religion is the official state religion and the clergy wield significant political power
+* underclass faith: there exists a local religion that is mostly practiced by poor, oppressed, marginalized, and unimportant; it serves {to comfort and console the downtrodden|as a weapon of revolt and change}
+-- conflict --
+* border dispute: {region} is at war with a neighboring region over a contested border containing valuable resources
+* dynastic rebels: an exiled pretender and their loyal supporters seek to reclaim the throne of {region}
+* forced migration: {region} is being attacked by exiles fleeing {a more powerful conqueror|environmental degradation}             
+* holy crusade: {region} is embroiled in a holy war with a neighboring region seeking to {support co-religionists|destroy a rival faith|reclaim sacred sites|purge poor interpretations of the faith}
+* ideological rebels: a growing revolutionary movement seeks to overthrow the current government and replace it with a more just system
+* imperial conquest: {region} is expanding its borders and influence at the expense of its neighbors
+* interregnum: {region} is in a state of political turmoil due to the death of the previous ruler and the lack of a clear successor
+* political restoration: {region} seeks to forcibly bring a former subject back into it's sphere of influence
+* praetorian coup: a rogue general seeks to break away from the current regime and establish a new dynasty
+* proxy battleground: {region} is embroiled in a shadow war between two powerful neighbors, with one side supporting the rebels and the other side supporting the current regime
+* raider scourge: {bandits|raiders|pirates|slavers} frequently raid this {region} and are a constant threat to the locals
+* reformist struggle: {region} is the center of a religious reformation that seeks {a return to earlier practices|to purge corruption}
+* revolutionary war: {region} seeks to spread its ideals to a region that supports conflicting ideas concerning governance and society
+* sectarian violence: multiple religious sects in {region} are engaged in violent conflict, leading to widespread destruction and casualties
+* separatist movement: a separatist movement has emerged in {region} that seeks to break away from the current regime
+* slave uprising: the slaves of {region} have risen up against their masters and are now fighting for their freedom
+* supremacist dominion: {region} seeks to conqueror and subjugate a neighboring region that they consider inferior
+* trade dispute: {region} is embroiled in a trade dispute with a neighboring region that has led to a breakdown in diplomatic relations
+* unification war: a charismatic leader attempts to unify a fractured state by subduing all rival claimants
+* witch hunts: magic users are being hunted and executed due to a recent transgression

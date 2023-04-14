@@ -1,15 +1,11 @@
-import { Complication } from '../complications/types'
-import { Task } from '../tasks/types'
+import { Challenge } from '../challenges/types'
 
 export type Stage = {
   setting: { place: string; weather: string; duration: string; memory: number }
   // the specific objective of this stage
-  task: Task['tag']
+  challenge: Challenge
   // text describing the goal
   text: string
-  result: string
-  // complication (flavor)
-  complication?: { tag: Complication['tag']; text: string }
   // did this stage change location?
   transition?: { src: number; dst: number }
   // status of the task
@@ -19,7 +15,6 @@ export type Stage = {
   // relative difficulty
   // PC cr upon completing the thread
   difficulty: { cr: number; pc?: number }
-  xp?: number
   // how long the task will take to attempt
   duration: number
 }

@@ -10,48 +10,72 @@ const furColoration: Species['appearance'] = () => ({
     colors: window.dice.sample(
       ['mahogany', 'dark brown', 'light brown', 'pale grey', 'greyish-blue', 'dark grey'],
       3
-    ),
-    facialHair: false
+    )
   }
 })
 
-export const species__map: Record<Culture['species'], Species> = {
-  human: {
-    traits: { skin: 'skin', height: 'average', age: 'average' },
-    appearance: ({ latitude: lat, eastern }) => {
-      if (lat <= 18) {
-        return {
-          skin: { colors: ['light brown', 'dark brown'] },
-          hair: { colors: ['brown', 'black'], textures: ['wavy', 'curly', 'kinky'] }
-        }
-      } else if (lat > 18 && lat <= 32) {
-        return {
-          skin: { colors: ['dark tan', 'light brown'] },
-          hair: { colors: ['brown', 'black'], textures: ['straight', 'wavy', 'curly'] }
-        }
-      } else if (lat > 32 && lat <= 50) {
-        return {
-          skin: { colors: ['light tan', 'dark tan'] },
-          hair: { colors: ['auburn', 'brown', 'black'], textures: ['straight', 'wavy', 'curly'] }
-        }
-      } else if (lat > 50 && lat <= 72) {
-        return {
-          skin: { colors: ['fair', 'light tan'] },
-          hair: { colors: ['blond', 'red', 'brown', 'black'], textures: ['straight', 'wavy'] }
-        }
-      } else {
-        return {
-          skin: { colors: eastern ? ['light tan', 'dark tan'] : ['fair', 'light tan'] },
-          hair: {
-            colors: eastern ? ['auburn', 'brown', 'black'] : ['blond', 'red', 'brown'],
-            textures: ['straight']
-          }
-        }
+const orcColoration: Species['appearance'] = ({ zone }) => {
+  const textures: HairTextures = window.dice.choice([
+    ['straight', 'wavy'],
+    ['wavy', 'curly']
+  ])
+  if (zone === 'tropical') {
+    return {
+      skin: { colors: ['mahogany', 'copper', 'ochre'] },
+      hair: { colors: ['brown', 'black'], textures }
+    }
+  } else if (zone === 'temperate') {
+    return {
+      skin: { colors: ['greyish-green', 'olive', 'dark green'] },
+      hair: { colors: ['auburn', 'brown', 'black'], textures }
+    }
+  } else {
+    return {
+      skin: { colors: ['dark grey', 'greyish-blue', 'pale grey'] },
+      hair: { colors: ['auburn', 'brown', 'black'], textures }
+    }
+  }
+}
+
+const humanTones: Species['appearance'] = ({ latitude: lat, eastern }) => {
+  if (lat <= 18) {
+    return {
+      skin: { colors: ['light brown', 'dark brown'] },
+      hair: { colors: ['brown', 'black'], textures: ['wavy', 'curly', 'kinky'] }
+    }
+  } else if (lat > 18 && lat <= 32) {
+    return {
+      skin: { colors: ['dark tan', 'light brown'] },
+      hair: { colors: ['brown', 'black'], textures: ['straight', 'wavy', 'curly'] }
+    }
+  } else if (lat > 32 && lat <= 50) {
+    return {
+      skin: { colors: ['light tan', 'dark tan'] },
+      hair: { colors: ['auburn', 'brown', 'black'], textures: ['straight', 'wavy', 'curly'] }
+    }
+  } else if (lat > 50 && lat <= 72) {
+    return {
+      skin: { colors: ['fair', 'light tan'] },
+      hair: { colors: ['blond', 'red', 'brown', 'black'], textures: ['straight', 'wavy'] }
+    }
+  } else {
+    return {
+      skin: { colors: eastern ? ['light tan', 'dark tan'] : ['fair', 'light tan'] },
+      hair: {
+        colors: eastern ? ['auburn', 'brown', 'black'] : ['blond', 'red', 'brown'],
+        textures: ['straight']
       }
     }
+  }
+}
+
+export const species__map: Record<Culture['species'], Species> = {
+  human: {
+    traits: { skin: 'skin', height: 'average', bmi: 22, age: 'average' },
+    appearance: humanTones
   },
   elf: {
-    traits: { skin: 'skin', height: 'average', age: 'ancient' },
+    traits: { skin: 'skin', height: 'average', bmi: 21, age: 'ancient' },
     appearance: ({ zone }) => {
       const textures: HairTextures = ['straight', 'wavy']
       if (zone === 'tropical') {
@@ -73,7 +97,7 @@ export const species__map: Record<Culture['species'], Species> = {
     }
   },
   dwarf: {
-    traits: { skin: 'skin', height: 'short', age: 'venerable' },
+    traits: { skin: 'skin', height: 'short', bmi: 25, age: 'venerable', facialHair: 1 },
     appearance: ({ latitude: lat }) => {
       const textures: HairTextures = ['straight', 'wavy', 'curly']
       if (lat <= 18) {
@@ -109,33 +133,8 @@ export const species__map: Record<Culture['species'], Species> = {
       }
     }
   },
-  orc: {
-    traits: { skin: 'skin', height: 'tall', age: 'fleeting' },
-    appearance: ({ zone }) => {
-      const textures: HairTextures = window.dice.choice([
-        ['straight', 'wavy'],
-        ['wavy', 'curly']
-      ])
-      if (zone === 'tropical') {
-        return {
-          skin: { colors: ['mahogany', 'copper', 'ochre'] },
-          hair: { colors: ['brown', 'black'], textures }
-        }
-      } else if (zone === 'temperate') {
-        return {
-          skin: { colors: ['greyish-green', 'olive', 'dark green'] },
-          hair: { colors: ['auburn', 'brown', 'black'], textures }
-        }
-      } else {
-        return {
-          skin: { colors: ['dark grey', 'greyish-blue', 'pale grey'] },
-          hair: { colors: ['auburn', 'brown', 'black'], textures }
-        }
-      }
-    }
-  },
   orlan: {
-    traits: { skin: 'skin', height: 'small', age: 'fleeting' },
+    traits: { skin: 'skin', height: 'small', bmi: 22, age: 'fleeting' },
     appearance: ({ zone }) => {
       const textures: HairTextures = ['straight', 'wavy', 'curly']
       if (zone === 'tropical') {
@@ -156,54 +155,126 @@ export const species__map: Record<Culture['species'], Species> = {
       }
     }
   },
-  bovine: {
-    traits: { skin: 'fur', height: 'large', age: 'average', horns: true },
-    appearance: furColoration
+  orc: {
+    traits: { skin: 'skin', height: 'tall', bmi: 25, age: 'fleeting' },
+    appearance: orcColoration
   },
-  feline: {
-    traits: { skin: 'fur', height: 'average', age: 'average' },
-    appearance: furColoration
+  goblin: {
+    traits: { skin: 'skin', height: 'small', bmi: 22, age: 'fleeting', facialHair: 0 },
+    appearance: orcColoration
   },
-  avian: {
-    traits: { skin: 'feathers', height: 'average', age: 'enduring', piercings: false },
-    appearance: ({ zone }) => {
-      if (zone === 'tropical') {
+  hobgoblin: {
+    traits: { skin: 'skin', height: 'average', bmi: 22, age: 'average' },
+    appearance: () => {
+      return {
+        skin: { colors: ['mahogany', 'red', 'orange'] }
+      }
+    }
+  },
+  ogre: {
+    traits: { skin: 'skin', height: 'large', bmi: 22, age: 'fleeting' },
+    appearance: ({ latitude: lat }) => {
+      if (lat <= 18) {
         return {
-          skin: { colors: window.dice.sample(['blue', 'green', 'olive', 'light brown'], 3) },
-          facialHair: 0
+          skin: { colors: ['light brown', 'dark brown'] },
+          hair: { colors: ['brown', 'black'], textures: ['wavy', 'curly'] }
         }
-      } else if (zone === 'temperate') {
+      } else if (lat > 18 && lat <= 32) {
         return {
-          skin: {
-            colors: window.dice.sample(['dark red', 'burgundy', 'magenta', 'red', 'orange'], 3),
-            facialHair: 0
+          skin: { colors: ['dark tan', 'light tan'] },
+          hair: { colors: ['brown', 'black'], textures: ['straight', 'wavy', 'curly'] }
+        }
+      } else if (lat > 32 && lat <= 50) {
+        return {
+          skin: { colors: ['pale grey', 'light tan'] },
+          hair: { colors: ['auburn', 'brown', 'black'], textures: ['straight', 'wavy', 'curly'] }
+        }
+      } else if (lat > 50 && lat <= 72) {
+        return {
+          skin: { colors: ['greyish-blue', 'dark grey'] },
+          hair: {
+            colors: ['blond', 'red', 'auburn', 'brown'],
+            textures: ['straight', 'wavy', 'curly']
           }
         }
       } else {
         return {
-          skin: { colors: window.dice.sample(['dark purple', 'indigo', 'purple', 'black'], 3) },
-          facialHair: 0
+          skin: { colors: ['pale', 'pale grey'] },
+          hair: {
+            colors: ['blond', 'red', 'auburn'],
+            textures: ['straight', 'wavy', 'curly']
+          }
+        }
+      }
+    }
+  },
+  bovine: {
+    traits: { skin: 'fur', height: 'large', bmi: 25, age: 'average', horns: true },
+    appearance: furColoration
+  },
+  feline: {
+    traits: { skin: 'fur', height: 'average', bmi: 22, age: 'average' },
+    appearance: furColoration
+  },
+  gnoll: {
+    traits: { skin: 'fur', height: 'average', bmi: 25, age: 'fleeting' },
+    appearance: furColoration
+  },
+  vulpine: {
+    traits: { skin: 'fur', height: 'small', bmi: 22, age: 'fleeting' },
+    appearance: () => {
+      return {
+        skin: { colors: ['mahogany', 'red', 'orange', 'light brown'] }
+      }
+    }
+  },
+  avian: {
+    traits: {
+      skin: 'feathers',
+      height: 'average',
+      bmi: 23,
+      age: 'enduring',
+      piercings: false,
+      facialHair: 0
+    },
+    appearance: ({ zone }) => {
+      if (zone === 'tropical') {
+        return {
+          skin: { colors: window.dice.sample(['blue', 'green', 'olive', 'light brown'], 3) }
+        }
+      } else if (zone === 'temperate') {
+        return {
+          skin: {
+            colors: window.dice.sample(['dark red', 'burgundy', 'magenta', 'red', 'orange'], 3)
+          }
+        }
+      } else {
+        return {
+          skin: { colors: window.dice.sample(['dark purple', 'indigo', 'purple', 'black'], 3) }
         }
       }
     }
   },
   draconic: {
-    traits: { skin: 'scales', height: 'average', age: 'enduring', piercings: false },
+    traits: {
+      skin: 'scales',
+      height: 'tall',
+      bmi: 25,
+      age: 'enduring',
+      piercings: false,
+      facialHair: 0
+    },
     appearance: ({ zone }) => {
       if (zone === 'tropical') {
         return {
-          skin: { colors: window.dice.sample(['vermilion', 'ochre', 'dark red', 'red'], 3) },
-          facialHair: 0
+          skin: { colors: window.dice.sample(['vermilion', 'ochre', 'dark red', 'red'], 3) }
         }
       } else if (zone === 'temperate') {
         return {
-          skin: {
-            colors: window.dice.sample(['green', 'olive', 'dark green', 'teal'], 3),
-            facialHair: 0
-          }
+          skin: { colors: window.dice.sample(['green', 'olive', 'dark green', 'teal'], 3) }
         }
       } else {
-        return { skin: { colors: ['greyish-purple', 'blue', 'greyish-blue'] }, facialHair: 0 }
+        return { skin: { colors: ['greyish-purple', 'blue', 'greyish-blue'] } }
       }
     }
   }
@@ -256,7 +327,7 @@ export const species__appearance = (culture: Culture) => {
   const capital = window.world.provinces[origin.capital]
   const { latitude } = world__gps(capital.hub)
   const { zone } = climates[origin.climate]
-  const { skin, hair, facialHair } = species__map[culture.species].appearance({
+  const { skin, hair } = species__map[culture.species].appearance({
     latitude: Math.abs(latitude),
     zone
   })
@@ -264,6 +335,6 @@ export const species__appearance = (culture: Culture) => {
     skin,
     eyes: species__eyes(),
     hair: hair ? { ...hair, styles: species__hairStyles() } : undefined,
-    facialHair: species__facialHair(facialHair)
+    facialHair: species__facialHair(species__map[culture.species].traits?.facialHair)
   }
 }

@@ -3,9 +3,8 @@ import { location__spawn } from '../../regions/locations'
 import { roundToNearestN } from '../../utilities/math'
 import { dayMS, hourMS } from '../../utilities/math/time'
 import { decorateText } from '../../utilities/text/decoration'
-import { complication__spawn } from '../complications'
+import { challenge__spawn } from '../challenges'
 import { difficulty__odds } from '../difficulty'
-import { task__definition, task__spawn } from '../tasks'
 import { Thread } from '../types'
 import { Stage } from './types'
 
@@ -32,23 +31,16 @@ export const stage__weather = (params: { thread: Thread; stage: Stage }) => {
 
 export const stage__spawn = (params: { thread: Thread; transition?: Stage['transition'] }) => {
   const { thread, transition } = params
-  const { depth } = thread
   const current = stage__current(thread)
-  const { tag: task, text } = task__spawn({ blacklist: [current?.task], thread })
-  const nested = depth < 2 && !transition && window.dice.random < task__definition[task].nested
-  const complication =
-    !current?.complication && window.dice.random < 0.1
-      ? complication__spawn({ thread, type: 'task' })
-      : undefined
+  const blacklist = [current?.challenge]
+  const { challenge, text } = challenge__spawn({ blacklist, thread })
   const loc = window.world.provinces[thread.location]
   const { district, site } = location__spawn({ loc })
   const stage = {
-    task,
+    challenge,
     text,
     result: '',
     transition,
-    child: nested ? stage__placeholder : undefined,
-    complication,
     setting: {
       place: `${decorateText({
         link: loc,

@@ -1,8 +1,12 @@
 import { scaleLinear, scalePow } from 'd3'
 
+import { hourMS } from '../../../utilities/math/time'
+import { titleCase } from '../../../utilities/text'
+import { decorateText } from '../../../utilities/text/decoration'
 import { world__gps, world__heightToKM } from '../../../world'
 import { ExteriorCell } from '../../../world/cells/types'
 import { Climate, climates, rain } from '../../../world/climate/types'
+import { Province } from '../../provinces/types'
 import { Hub } from '../types'
 import {
   CloudTypes,
@@ -33,7 +37,7 @@ export const computeHeat = (params: { cell: ExteriorCell; month: number; climate
   )
 }
 
-export const computeRain = (params: { climate: Climate; month: number; cell: ExteriorCell }) => {
+const computeRain = (params: { climate: Climate; month: number; cell: ExteriorCell }) => {
   const { month, cell, climate } = params
   const latitude = world__gps(cell).latitude
   const south = latitude < 0
@@ -44,7 +48,7 @@ export const computeRain = (params: { climate: Climate; month: number; cell: Ext
     .range(south ? [summer, winter] : [winter, summer])(time)
 }
 
-export const tempDescriptor = (t: number) => {
+const tempDescriptor = (t: number) => {
   if (t < -40) return 'polar'
   else if (t >= -40 && t < -30) return 'arctic'
   else if (t >= -30 && t < -20) return 'bitterly cold'
@@ -66,7 +70,7 @@ export const tempDescriptor = (t: number) => {
   return 'scorching'
 }
 
-export const beaufort = (w: number) => {
+const beaufort = (w: number) => {
   if (w < 1) return 'calm'
   else if (w >= 1 && w < 4) return 'light air'
   else if (w >= 4 && w < 8) return 'light breeze'
@@ -82,7 +86,7 @@ export const beaufort = (w: number) => {
   return 'hurricane'
 }
 
-export const windMap = (w: number) => {
+const windMap = (w: number) => {
   if (w >= 2 && w <= 3) return window.dice.randint(1, 3)
   else if (w >= 4 && w <= 5) return window.dice.randint(4, 7)
   else if (w >= 6 && w <= 7) return window.dice.randint(8, 12)
@@ -129,7 +133,7 @@ const desertClimates = Object.values(climates)
   .filter(({ terrain }) => terrain === 'desert')
   .map(({ type }) => type)
 
-export const freezingPoint = 33
+const freezingPoint = 33
 
 const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => WeatherPhenomena> = {
   stormy: ({ clouds, rain, temp }) => {
@@ -224,7 +228,7 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
   overcast: () => ({ ...fairWeather() })
 }
 
-export const proceduralWeather = (params: {
+const proceduralWeather = (params: {
   rainChance: number
   temp: number
   climate: Climate['type']
@@ -310,4 +314,22 @@ export const hub__weather = (loc: Hub) => {
     season: season(),
     time
   }
+}
+
+export const province__weather = (loc: Province) => {
+  if (!loc.weather || loc.weather?.memory < window.world.date) {
+    const { season, time, heat, conditions, variance } = hub__weather(loc.hub)
+    loc.weather = {
+      text: `${decorateText({
+        label: titleCase(heat.desc),
+        tooltip: `${heat.degrees.toFixed(0)}°F`
+      })}${
+        variance === 'normal'
+          ? ''
+          : decorateText({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
+      }, ${season}, ${time}, ${conditions}`,
+      memory: window.world.date + hourMS * 8
+    }
+  }
+  return loc.weather
 }

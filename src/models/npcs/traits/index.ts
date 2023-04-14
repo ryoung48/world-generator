@@ -2,22 +2,21 @@ import { range } from 'd3'
 
 import { province__culture } from '../../regions/provinces'
 import { Province } from '../../regions/provinces/types'
-import { ThreadContext } from '../../threads/types'
 import { decorateText } from '../../utilities/text/decoration'
 import { professions } from '../professions'
 import { species__map } from '../species'
-import { NPC } from '../types'
+import { NPC, NPCParams } from '../types'
 import { Personality, Quirk, QuirkDetails } from './types'
 
-const rollPersonality = (params: { count: number; role?: ThreadContext['role'] }) => {
+const rollPersonality = (params: { count: number; role?: NPCParams['context']['role'] }) => {
   const { count, role } = params
   const preference =
-    role === 'patron'
+    role === 'friend'
       ? window.dice.weightedChoice([
           { v: [0, 0, 1], w: 5 },
           { v: [0, 0, 0], w: 1 }
         ])
-      : role === 'rival'
+      : role === 'enemy'
       ? window.dice.weightedChoice([
           { v: [1, 1, 0], w: 5 },
           { v: [1, 1, 1], w: 1 }
@@ -74,7 +73,7 @@ const talent: Quirk[] = [
   'negligent'
 ]
 const connections: Quirk[] = ['connections', 'secret sectarian', 'foreign agent']
-const vice: Quirk[] = ['alcoholic', 'drug addict', 'gluttonous', 'masochistic']
+const vice: Quirk[] = ['alcoholic', 'drug addict', 'gluttonous']
 
 const quirks: Record<Quirk, QuirkDetails> = {
   'seeking redemption': { conflicts: seekers, spawn: () => 0.5 },
@@ -91,27 +90,29 @@ const quirks: Record<Quirk, QuirkDetails> = {
   alcoholic: { conflicts: vice, spawn: () => 1 },
   'drug addict': { conflicts: vice, spawn: () => 1 },
   gluttonous: { conflicts: vice, spawn: ({ austere }) => (austere ? 0 : 1) },
-  masochistic: { conflicts: vice, spawn: () => 0.5 },
   corruption: {
     text: '{corrupt|venal}',
     spawn: ({ official, honest }) => (official && !honest ? 1 : 0)
   },
-  lustful: { spawn: ({ austere }) => (austere ? 0 : 1) },
+  lustful: { spawn: ({ austere, youthful }) => (austere || !youthful ? 0 : 1) },
   sadistic: {
-    spawn: ({ sympathetic, context }) => (!sympathetic && context?.role === 'rival' ? 1 : 0)
+    spawn: ({ sympathetic, context }) => (!sympathetic && context?.role === 'enemy' ? 1 : 0)
   },
   blackmailed: { conflicts: ['blackmailer'], spawn: () => 1 },
   blackmailer: {
     conflicts: ['blackmailed'],
     spawn: ({ sympathetic, honest, context }) =>
-      sympathetic || honest || context?.role !== 'rival' ? 0 : 1
+      sympathetic || honest || context?.role !== 'enemy' ? 0 : 1
   },
   'trades gossip': { spawn: ({ enigmatic }) => (enigmatic ? 0 : 1) },
   manipulative: {
     spawn: ({ honest, sympathetic, context }) =>
-      honest || sympathetic || context?.role === 'patron' ? 0 : 1
+      honest || sympathetic || context?.role === 'friend' ? 0 : 1
   },
-  childhood: { text: '{{adopted|orphaned} as a child|twin sibling}', spawn: () => 0.5 },
+  childhood: {
+    text: '{{adopted|orphaned} as a child|twin sibling|sheltered upbringing|large family}',
+    spawn: () => 0.5
+  },
   'social outcast': { spawn: () => 0.5 },
   outfit: {
     text: '{formal & clean|ragged & dirty|flamboyant & outlandish} outfit',
@@ -125,9 +126,24 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'facial piercings': { spawn: ({ piercings }) => (piercings ? 1 : 0) },
   'aromatic scent': { spawn: () => 1 },
   'strong accent': { spawn: ({ foreigner }) => (foreigner ? 1 : 0) },
-  traveler: { spawn: () => 1 },
+  traveler: {
+    text: '{well-traveled|wanderlust}',
+    spawn: () => 1,
+    conflicts: ['homesick']
+  },
+  homesick: { spawn: ({ foreigner }) => (foreigner ? 1 : 0), conflicts: ['traveler'] },
   speech: {
     text: '{speaks {quickly|slowly|quietly|loudly|copiously|sparsely}|{melodic|rough|sharp|deep} voice}',
+    spawn: () => 1
+  },
+  mannerism: {
+    text: ({ hair }) =>
+      decorateText({
+        label: 'distinct mannerism',
+        tooltip: `{nervous {twitch|habit|gesture}|{whistles|hums} occasionally${
+          hair ? '|{tosses hair|plays with hair}' : ''
+        }|likes to wink}`
+      }),
     spawn: () => 1
   },
   scars: {
@@ -144,7 +160,11 @@ const quirks: Record<Quirk, QuirkDetails> = {
     spawn: ({ youngAdult, horns }) => (youngAdult || !horns ? 0 : 0.5)
   },
   height: { text: '{tall|short}', conflicts: ['weight'], spawn: () => 2 },
-  weight: { text: '{thin|fat}', conflicts: ['height'], spawn: () => 2 },
+  weight: {
+    text: ({ species }) => (species === 'elf' ? 'thin' : '{thin|fat}'),
+    conflicts: ['height'],
+    spawn: () => 2
+  },
   intellect: { text: '{idiotic|{brilliant|genius}}', spawn: () => 1 },
   wisdom: { text: '{oblivious|{perceptive|insightful}}', spawn: () => 1 },
   charisma: {
@@ -182,6 +202,14 @@ const quirks: Record<Quirk, QuirkDetails> = {
   gambler: { spawn: () => 0.5 },
   funny: { text: '{humorous|sarcastic|whimsical}', spawn: () => 1 },
   storyteller: { spawn: ({ youngAdult }) => (youngAdult ? 0 : 0.5) },
+  nostalgic: { spawn: ({ youngAdult }) => (youngAdult ? 0 : 0.5) },
+  superstitious: { spawn: () => 1 },
+  inquisitive: { spawn: () => 1 },
+  'criminal past': { spawn: ({ profession }) => (profession.includes('criminal') ? 0 : 1) },
+  dissident: {
+    text: decorateText({ label: 'dissident', tooltip: 'dislikes figures of authority' }),
+    spawn: () => 1
+  },
   'war veteran': { spawn: ({ youngAdult }) => (youngAdult ? 0 : 1) },
   connections: {
     text: ({ profession }) =>
@@ -215,7 +243,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
       tooltip: '{talented|respected}'
     }),
     conflicts: talent,
-    spawn: () => 1
+    spawn: () => 0.5
   },
   'brash overconfidence': { spawn: ({ courteous }) => (courteous ? 0 : 1) },
   'fatal extravagance': { spawn: ({ austere }) => (austere ? 0 : 0.5) },
@@ -237,26 +265,26 @@ const quirks: Record<Quirk, QuirkDetails> = {
     spawn: ({ youthful }) => (youthful ? 1 : 0)
   },
   'load-bearing relationship': {
-    text: `load-bearing relationship (${decorateText({
-      label: '{friend|relative|associate}',
-      tooltip: '{emotional support|practical assistance}'
-    })})`,
+    text: decorateText({
+      label: 'load-bearing relationship',
+      tooltip: '{friend|relative} ({emotional support|practical assistance})'
+    }),
     conflicts: relations,
     spawn: () => 0.5
   },
   'misplaced trust': {
-    text: `misplaced trust (${decorateText({
-      label: '{friend|relative|associate}',
-      tooltip: '{incompetence|self-interest|secret malice}'
-    })})`,
+    text: decorateText({
+      label: 'misplaced trust',
+      tooltip: '{friend|relative} ({incompetence|self-interest|secret malice})'
+    }),
     conflicts: relations,
     spawn: () => 0.5
   },
   'troublesome relationship': {
-    text: `troublesome ${decorateText({
-      label: '{friend|relative|associate}',
-      tooltip: '{poor decisions|reckless indulgences|threatened by an enemy}'
-    })}`,
+    text: decorateText({
+      label: 'troublesome relationship',
+      tooltip: '{friend|relative} ({poor decisions|reckless indulgences|threatened by an enemy})'
+    }),
     conflicts: relations,
     spawn: () => 0.5
   },
@@ -272,7 +300,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
       label: 'irrational hatred',
       tooltip: '{misunderstanding|past {crimes|affiliations}}'
     }),
-    spawn: ({ context }) => (context?.role === 'rival' ? 0.5 : 0)
+    spawn: ({ context }) => (context?.role === 'enemy' ? 0.5 : 0)
   }
 }
 
@@ -283,7 +311,7 @@ const rollQuirks = ({
 }: {
   loc: Province
   npc: NPC
-  context?: ThreadContext
+  context?: NPCParams['context']
 }) => {
   const { personality, culture, age } = npc
   const { key: profession } = npc.profession
@@ -309,17 +337,19 @@ const rollQuirks = ({
     sorcerer: profession.includes('sorcerer'),
     official,
     skin: species.traits.skin === 'skin' && !appearance.skin.texture?.includes('long'),
+    hair: appearance.hair !== undefined,
     piercings: species.traits.piercings ?? true,
     horns: species.traits.horns,
     poor: strata === 'lower',
     comfortable: strata === 'middle',
     rich: strata === 'upper',
-    context
+    context,
+    species: window.world.cultures[culture].species
   }
   let count = 2
   const results: NPC['quirks'] = []
   const locals = loc.actors
-    .map(i => window.world.actors[i])
+    .map(i => window.world.npcs[i])
     .reduce((dict: Record<string, number>, actor) => {
       actor.quirks.forEach(quirk => {
         if (!dict[quirk.tag]) dict[quirk.tag] = 0
@@ -346,7 +376,11 @@ const rollQuirks = ({
   return results
 }
 
-export const npc__traits = (params: { loc: Province; npc: NPC; context?: ThreadContext }) => {
+export const npc__traits = (params: {
+  loc: Province
+  npc: NPC
+  context?: NPCParams['context']
+}) => {
   const { npc, loc, context } = params
   npc.personality = rollPersonality({ count: 3, role: context?.role })
   npc.quirks = rollQuirks({ npc, loc, context })

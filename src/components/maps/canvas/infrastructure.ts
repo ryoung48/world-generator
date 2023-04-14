@@ -1,9 +1,10 @@
+import { hub__isTown, hub__isVillage } from '../../../models/regions/hubs'
 import { Hub } from '../../../models/regions/hubs/types'
-import { Province } from '../../../models/regions/provinces/types'
-import { scaleExp } from '../../../models/utilities/math'
 import { RouteTypes } from '../../../models/world/travel/types'
 import { World } from '../../../models/world/types'
 import { fonts } from '../../theme/fonts'
+import { canvas__drawIcon, icon__scaling } from '../icons'
+import { terrain__icons } from '../icons/terrain'
 import { canvas__circle } from '.'
 import { map__breakpoints, map__styles } from './draw_styles'
 
@@ -50,17 +51,6 @@ export const map__drawRoads = (params: {
   ctx.restore()
 }
 
-const popScale = [500, 300000]
-
-const locRadius = (city: Hub, font: number) => {
-  const rel = font * 2
-  return scaleExp(popScale, [rel * 0.15, rel * 0.65], city.population, 0.5)
-}
-
-const locFont = (city: Hub, font: number) => {
-  return scaleExp(popScale, [font * 2, font * 5], city.population, 0.5)
-}
-
 const locHighlight = (params: {
   loc: Hub
   ctx: CanvasRenderingContext2D
@@ -69,8 +59,7 @@ const locHighlight = (params: {
 }) => {
   const { loc: point, ctx, scale, color } = params
   const fontSize = baseFontSize()
-  const radius =
-    fontSize * (scale > map__breakpoints.regional ? 0.2 : locRadius(point, fontSize) * 2)
+  const radius = fontSize * (scale > map__breakpoints.regional ? 0.2 : 0.3)
   ctx.save()
   const gradient = ctx.createRadialGradient(point.x, point.y, radius, point.x, point.y, radius * 10)
   gradient.addColorStop(0, `rgba(${color}, 0.4)`)
@@ -81,18 +70,22 @@ const locHighlight = (params: {
   ctx.restore()
 }
 
-const drawLocation = (params: {
-  ctx: CanvasRenderingContext2D
-  location: Province
-  text: { fontSize: number; offset: number }
-  fill: { color: string; radius: number }
-  border?: { color: string; width: number }
-}) => {
-  const { ctx, fill, text, location, border } = params
-  canvas__circle({ point: location.hub, radius: fill.radius, fill: fill.color, border, ctx })
-  ctx.fillStyle = 'black'
-  ctx.font = `${text.fontSize}px ${fontFamily}`
-  ctx.fillText(location.name, location.hub.x, location.hub.y - text.offset)
+const settings = {
+  city: {
+    radius: 0.2,
+    name: { local: { size: 2, offset: 1 }, regional: { size: 2, offset: 0.5 } },
+    type: { local: { size: 1, offset: 0.6 } }
+  },
+  town: {
+    radius: 0.15,
+    name: { local: { size: 1.3, offset: 0.7 }, regional: { size: 2, offset: 0.5 } },
+    type: { local: { size: 0.6, offset: 0.4 } }
+  },
+  village: {
+    radius: 0.1,
+    name: { local: { size: 0.8, offset: 0.5 }, regional: { size: 2, offset: 0.5 } },
+    type: { local: { size: 0.4, offset: 0.3 } }
+  }
 }
 
 export const map__drawLocationsRegional = (params: {
@@ -101,101 +94,51 @@ export const map__drawLocationsRegional = (params: {
   nationSet: Set<number>
   cachedImages: Record<string, HTMLImageElement>
 }) => {
-  const { ctx, scale, nationSet } = params
-  if (scale <= map__breakpoints.regional) {
-    ctx.textAlign = 'center'
-    ctx.shadowColor = 'white'
-    const settlements = window.world.provinces.filter(province => nationSet.has(province.nation))
-    const fontSize = baseFontSize()
-    const towns = settlements.filter(province => {
-      return (
-        province.idx !== window.world.regions[province.nation].capital &&
-        province.idx !== window.world.regions[province.region].capital
-      )
-    })
-    towns.forEach(province => {
-      const radius = locRadius(province.hub, fontSize)
-      const offset = 0.3 + radius
-      drawLocation({
-        ctx,
-        fill: { radius, color: 'black' },
-        text: { fontSize: locFont(province.hub, fontSize), offset },
-        location: province
-      })
-    })
-    const defunct = settlements.filter(province => {
-      return (
-        province.idx !== window.world.regions[province.nation].capital &&
-        province.idx === window.world.regions[province.region].capital
-      )
-    })
-    defunct.forEach(province => {
-      const { hub } = province
-      const radius = locRadius(hub, fontSize)
-      const offset = 0.5 + radius
-      drawLocation({
-        ctx,
-        fill: { radius, color: 'black' },
-        text: { fontSize: fontSize * 4, offset },
-        location: province
-      })
-      // region name
-      ctx.fillStyle = 'rgba(0,0,0,0.5)'
-      ctx.font = `${fontSize * 10}px ${fontFamily}`
-      ctx.fillText(window.world.regions[province.region].name, hub.x, hub.y + 4 + radius)
-    })
-    const capitals = settlements.filter(province => {
-      return province.idx === window.world.regions[province.nation].capital
-    })
-    capitals.forEach(province => {
-      const { hub } = province
-      const radius = locRadius(hub, fontSize)
-      const offset = 0.8 + radius
-      drawLocation({
-        ctx,
-        fill: { radius, color: 'white' },
-        border: { width: radius, color: 'black' },
-        text: { fontSize: fontSize * 6, offset },
-        location: province
-      })
-      // region name
-      ctx.font = `${fontSize * 12}px ${fontFamily}`
-      ctx.fillText(window.world.regions[province.region].name, hub.x, hub.y + 5 + radius)
-    })
-  }
-}
-
-export const map__drawLocationsLocal = (params: {
-  ctx: CanvasRenderingContext2D
-  cachedImages: Record<string, HTMLImageElement>
-  scale: number
-  nationSet: Set<number>
-}) => {
-  const { scale, ctx, nationSet } = params
-  if (scale >= map__breakpoints.regional) {
-    ctx.save()
-    ctx.textAlign = 'center'
-    const radius = 0.1
-    const baseFont = baseFontSize()
-    window.world.provinces
-      .filter(province => nationSet.has(province.nation))
-      .forEach(loc => {
-        const capital = loc.idx === window.world.regions[loc.nation].capital
+  const { ctx, scale, nationSet, cachedImages } = params
+  ctx.textAlign = 'center'
+  ctx.shadowColor = 'white'
+  const settlements = window.world.provinces.filter(province => nationSet.has(province.nation))
+  const fontSize = baseFontSize()
+  const iconScale = icon__scaling()
+  const regional = scale <= map__breakpoints.regional
+  settlements.forEach(loc => {
+    const type = hub__isVillage(loc.hub) ? 'village' : hub__isTown(loc.hub) ? 'town' : 'city'
+    const setting = settings[type]
+    if (regional) {
+      const capital = window.world.regions[loc.nation].capital === loc.idx
+      if (capital)
         canvas__circle({
           point: loc.hub,
-          radius,
-          fill: capital ? 'white' : 'black',
-          border: capital ? { width: radius, color: 'black' } : undefined,
+          radius: setting.radius + 0.1,
+          fill: 'transparent',
+          border: { width: 0.05, color: 'black' },
           ctx
         })
-        ctx.fillStyle = 'black'
-        ctx.font = `${baseFont * 1.5}px ${fontFamily}`
-        ctx.fillText(loc.name, loc.hub.x, loc.hub.y - 0.55)
-        ctx.font = `${baseFont * 0.75}px ${fontFamily}`
-        ctx.fillText(loc.hub.type, loc.hub.x, loc.hub.y - 0.25)
-      })
-    ctx.restore()
-  }
+      canvas__circle({ point: loc.hub, radius: setting.radius, fill: 'black', ctx })
+      ctx.fillStyle = 'black'
+      ctx.font = `${fontSize * setting.name.regional.size}px ${fontFamily}`
+      ctx.fillText(loc.name, loc.hub.x, loc.hub.y - setting.name.regional.offset)
+    } else {
+      const img = cachedImages[type]
+      const icon = terrain__icons[type]
+      canvas__drawIcon({ ctx, img, icon, ...iconScale, point: loc.hub })
+      ctx.fillStyle = 'black'
+      ctx.font = `${fontSize * setting.name.local.size}px ${fontFamily}`
+      ctx.fillText(loc.name, loc.hub.x, loc.hub.y - setting.name.local.offset)
+      ctx.font = `${fontSize * setting.type.local.size}px ${fontFamily}`
+      ctx.fillText(loc.hub.type, loc.hub.x, loc.hub.y - setting.type.local.offset)
+    }
+    const nation = window.world.regions[loc.nation]
+    const region = window.world.regions[loc.region]
+    if (regional && loc.idx === nation.capital) {
+      ctx.font = `${fontSize * 12}px ${fontFamily}`
+      ctx.fillText(nation.name, loc.hub.x, loc.hub.y + 5)
+    } else if (regional && loc.idx === region.capital) {
+      ctx.fillStyle = 'rgba(0,0,0,0.5)'
+      ctx.font = `${fontSize * 10}px ${fontFamily}`
+      ctx.fillText(region.name, loc.hub.x, loc.hub.y + 4)
+    }
+  })
 }
 
 export const map__drawAvatarLocation = (params: {

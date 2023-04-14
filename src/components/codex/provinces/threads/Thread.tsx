@@ -7,13 +7,12 @@ import {
   thread__blocked,
   thread__close,
   thread__ongoing,
-  thread__paused,
-  thread__xp
+  thread__paused
 } from '../../../../models/threads'
 import { stage__current, stage__weather } from '../../../../models/threads/stages'
 import { Thread } from '../../../../models/threads/types'
 import { partition } from '../../../../models/utilities/math'
-import { decorateText } from '../../../../models/utilities/text/decoration'
+import { formatters } from '../../../../models/utilities/text/formatters'
 import { view__context } from '../../../context'
 import { cssColors } from '../../../theme/colors'
 import { StyledText } from '../../common/text/StyledText'
@@ -26,7 +25,7 @@ export function ThreadView(props: { thread: Thread; goToThread: (_thread: Thread
   const { thread, goToThread } = props
   const { state, dispatch } = view__context()
   const { avatar, codex, journal } = state
-  const { goal, stages, complication } = thread
+  const { mission, stages } = thread
   const pages = Math.ceil(thread.stages.length / stagesPerPage)
   const [page, setPage] = useState(pages)
   const ended = !thread__ongoing(thread)
@@ -41,87 +40,57 @@ export function ThreadView(props: { thread: Thread; goToThread: (_thread: Thread
   }
   useEffect(() => {
     setPage(pages)
-  }, [journal])
+  }, [journal, thread])
   const currentStages = partition([...stages].reverse(), stagesPerPage).reverse()
-  const actors = thread.actors.filter(
-    actor =>
-      actor.loc === thread.location ||
-      actor.role === 'patron' ||
-      actor.role === 'rival' ||
-      thread.closed
-  )
-  const neutral = actors
-    .filter(actor => actor.role === 'neutral')
-    .map(actor => decorateText({ link: window.world.actors[actor.idx] }))
   const current = stage__current(thread)
+  const right = [
+    { label: 'Friend', content: <StyledText text={thread.friend}></StyledText> },
+    { label: 'Thing', content: <StyledText text={thread.thing}></StyledText> },
+    { label: 'Place', content: <StyledText text={thread.place}></StyledText> },
+    { label: 'Mission', content: <StyledText text={`${mission.text}.`}></StyledText> }
+  ]
+  const left = [
+    { label: 'Enemy', content: <StyledText text={thread.enemy}></StyledText> },
+    { label: 'Hostiles', content: <StyledText text={thread.hostiles}></StyledText> },
+    { label: 'Complication', content: <StyledText text={thread.complication}></StyledText> }
+  ]
   return (
-    <Grid container style={{ fontSize: 12 }}>
-      <Grid item xs={12} mt={1}>
-        <span>
-          <StyledText text={goal}></StyledText>
-          {complication && <i>{` ${complication.text}`}</i>}
-        </span>
-      </Grid>
+    <Grid container>
+      {thread.hooks.map(({ tag, text }, i) => (
+        <Grid key={i} xs={12}>
+          <b>{tag}:</b> {text}
+        </Grid>
+      ))}
       <Grid item xs={12}>
-        <Divider style={{ marginTop: 5, marginBottom: 5 }}>Actors</Divider>
+        <Divider style={{ marginTop: 10, marginBottom: 10 }}></Divider>
       </Grid>
       <Grid item container alignContent='start' xs={5.5}>
-        <Grid item xs={12}>
-          <StyledText
-            text={`Allies: ${actors
-              .filter(actor => actor.role === 'friend' || actor.role === 'patron')
-              .map(actor =>
-                decorateText({
-                  link: window.world.actors[actor.idx],
-                  bold: actor.role === 'patron'
-                })
-              )
-              .join(', ')}`}
-          ></StyledText>
-        </Grid>
-        <Grid item xs={12}>
-          <StyledText
-            text={`PCs: ${(thread.pcs ?? avatar.npcs)
-              .map(i => {
-                const actor = window.world.actors[i]
-                return `${decorateText({
-                  link: window.world.actors[actor.idx]
-                })}`
-              })
-              .join(', ')}`}
-          ></StyledText>
-        </Grid>
+        {right.map(({ label, content }, i) => (
+          <Grid item xs={12} key={i}>
+            <b>{label}</b>: {content}
+          </Grid>
+        ))}
       </Grid>
       <Grid item container xs={1} justifyContent='center'>
         <Divider orientation='vertical'></Divider>
       </Grid>
       <Grid item container alignContent='start' xs={5.5}>
-        <Grid item xs={12}>
-          <StyledText
-            text={`Enemies: ${actors
-              .filter(actor => actor.role === 'rival' || actor.role === 'enemy')
-              .map(actor =>
-                decorateText({ link: window.world.actors[actor.idx], bold: actor.role === 'rival' })
-              )
-              .join(', ')}`}
-          ></StyledText>
-        </Grid>
-        {neutral.length > 0 && (
-          <Grid item xs={12}>
-            <StyledText text={`Neutral: ${neutral.join(', ')}`}></StyledText>
+        {left.map(({ label, content }, i) => (
+          <Grid item xs={12} key={i}>
+            <b>{label}</b>: {content}
           </Grid>
-        )}
+        ))}
       </Grid>
       <Fragment>
         <Grid item xs={12}>
-          <Divider style={{ marginTop: 5, marginBottom: 5 }}>Stages</Divider>
+          <Divider style={{ marginTop: 10, marginBottom: 10 }}>Challenges</Divider>
         </Grid>
         {currentStages[page - 1].reverse().map((stage, i) => {
           if (!stage) return <span key={i}>placeholder</span>
           const ref = window.world.threads[stage.child]
           const paused = ref && thread__ongoing(ref)
           const abandoned = ref && thread__abandoned(ref)
-          const blocked = stage === current && thread__blocked({ pc: avatar.cr, thread })
+          const blocked = stage === current && thread__blocked({ avatar, thread })
           const status = abandoned
             ? 'abandoned'
             : blocked
@@ -158,7 +127,7 @@ export function ThreadView(props: { thread: Thread; goToThread: (_thread: Thread
               <Grid item xs={12} style={{ color: cssColors.subtitle, fontSize: 10 }}>
                 <span>
                   <b>Reward:</b>
-                  {` ${thread__xp(thread.xp)}`}
+                  {` ${formatters.compact(thread.outcome?.cp ?? 0)} cp`}
                 </span>
               </Grid>
             </Fragment>
@@ -166,7 +135,7 @@ export function ThreadView(props: { thread: Thread; goToThread: (_thread: Thread
             <Fragment>
               <Button
                 style={{ marginRight: 10 }}
-                disabled={!avatarAtLoc || paused || thread__blocked({ pc: avatar.cr, thread })}
+                disabled={!avatarAtLoc || paused || thread__blocked({ avatar, thread })}
                 onClick={() => {
                   thread.accepted = true
                   const outcome = thread__advance({ thread, avatar })

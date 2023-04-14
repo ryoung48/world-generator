@@ -3,6 +3,7 @@ import { Grid } from '@mui/material'
 import Tippy from '@tippyjs/react'
 import { CSSProperties } from 'react'
 
+import { decorateItem } from '../../../../models/npcs/equipment'
 import { entity__tags, TaggedEntity } from '../../../../models/utilities/codex/entities'
 import { decorateText } from '../../../../models/utilities/text/decoration'
 import { view__context } from '../../../context'
@@ -10,8 +11,9 @@ import { cssColors } from '../../../theme/colors'
 import { DetailedTableRow } from '../DataTable'
 
 const DescribeActor = ({ idx }: { idx: number }) => {
-  const actor = window.world.actors[idx]
+  const actor = window.world.npcs[idx]
   const culture = window.world.cultures[actor.culture]
+  const custom = actor.profession.key === 'custom'
   return (
     <Grid container style={{ fontSize: 14 }}>
       <Grid item xs={12}>
@@ -21,15 +23,23 @@ const DescribeActor = ({ idx }: { idx: number }) => {
             <span>
               <StyledText
                 text={`${actor.age}, ${actor.gender} ${decorateText({
+                  link: culture,
                   label: culture.species,
                   tooltip: culture.name,
                   color: cssColors.subtitle
-                })}, ${actor.profession.title}`}
+                })}${custom ? '' : `, ${actor.profession.title}`}`}
               ></StyledText>
             </span>
           }
         ></DetailedTableRow>
       </Grid>
+      {custom && (
+        <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+          <span>
+            <StyledText text={actor.profession.title} color={cssColors.subtitle}></StyledText>
+          </span>
+        </Grid>
+      )}
       <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
         <span>
           <b>appearance:</b>{' '}
@@ -50,6 +60,19 @@ const DescribeActor = ({ idx }: { idx: number }) => {
           ></StyledText>
         </span>
       </Grid>
+      {actor.equipment && (
+        <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+          <span>
+            <b>equipment:</b>{' '}
+            <StyledText
+              text={Object.values(actor.equipment)
+                .map(item => decorateItem(item))
+                .join(', ')}
+              color={cssColors.subtitle}
+            ></StyledText>
+          </span>
+        </Grid>
+      )}
     </Grid>
   )
 }

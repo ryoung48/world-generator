@@ -1,15 +1,21 @@
-import { NPC } from '../npcs/types'
-import { Actor } from './actors/types'
-import { Background } from './backgrounds/types'
+import { Mission } from './mission/types'
 import { Stage } from './stages/types'
 
 export interface Thread
-  extends Omit<Stage, 'child' | 'task' | 'text' | 'result' | 'setting' | 'duration'> {
+  extends Omit<Stage, 'child' | 'challenge' | 'text' | 'result' | 'setting' | 'duration'> {
+  type: 'community' | 'wilderness' | 'court' | 'ruin' | 'religion'
+  subtype: string
+  hooks: { tag: string; text: string }[]
   // thread index (window.world.threads)
   idx?: number
-  // goal that defines the thread
-  goal?: string
-  background?: Background
+  // components
+  friend: string
+  enemy: string
+  complication: string
+  thing: string
+  place: string
+  hostiles: string
+  mission?: { tag: Mission; text: string }
   // location where the thread takes place
   location: number
   origin: number
@@ -21,8 +27,6 @@ export interface Thread
   progress: number
   // how many tasks have failed?
   failures: number
-  // successful investigations
-  clues: number
   // is this thread closed?
   closed?: boolean
   accepted?: boolean
@@ -31,12 +35,7 @@ export interface Thread
   // parent thread
   parent?: number
   // actors
-  actors: Actor[]
-  subject?: number
   pcs?: number[]
-}
-
-export interface ThreadContext {
-  ref?: NPC
-  role?: Thread['actors'][number]['role']
+  // rewards
+  outcome?: { cp: number }
 }

@@ -15,6 +15,6 @@ export const map__styles = {
 }
 
 export const map__breakpoints = {
-  regional: 40,
+  regional: 30,
   global: 5
 }

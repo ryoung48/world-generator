@@ -3,15 +3,15 @@ import { ReactNode } from 'react'
 
 const classes = {
   list: css`
-    font-size: 14px;
-    line-height: 22px;
+    font-size: 12px;
+    line-height: 20px;
   `,
   label: css`
     font-weight: 600;
   `
 }
 
-export function SectionList(props: { list: { label: string; content: ReactNode }[] }) {
+export function SectionList(props: { list: { label: ReactNode; content: ReactNode }[] }) {
   const { list } = props
   return (
     <div className={classes.list}>

@@ -1,6 +1,7 @@
 import { range } from 'd3'
 
 import { religion__folk, religion__organized } from '../../../npcs/religions'
+import { species__map } from '../../../npcs/species'
 import { region__domains, region__neighbors } from '../../../regions'
 import {
   province__findClosest,
@@ -37,18 +38,6 @@ const claimProvince = (params: { nation: Region; province: Province }) => {
   province.nation = nation.idx
 }
 
-const government = (params: {
-  development: Region['development']
-  governments: (_region: Region) => Region['government']
-}) => {
-  const { development, governments } = params
-  const regions = window.world.regions.filter(region => region.development === development)
-  regions.forEach(region => {
-    region.government = governments(region)
-  })
-  return regions
-}
-
 const sortClosestRegion = (params: { ref: Region; neighbors: Region[] }) => {
   const { ref, neighbors } = params
   return province__sortClosest(
@@ -71,13 +60,6 @@ const regionRelations = (params: { target: DiplomaticRelation; region: Region })
     .map(([r]) => window.world.regions[parseInt(r)])
 
 const regionAtWar = (region: Region) => regionRelations({ target: 'at war', region }).length > 0
-
-const isDuchy = (region: Region) => region.provinces.length <= 15
-
-const validSteppeNomads = (region: Region) =>
-  region.climate.includes('steppe') &&
-  window.world.landmarks[window.world.cells[window.world.provinces[region.capital].cell].landmark]
-    .type === 'continent'
 
 export class LoreShaper extends Shaper {
   constructor() {
@@ -106,54 +88,10 @@ export class LoreShaper extends Shaper {
   }
   private history() {
     const { provinces, regions } = window.world
-    const civilized = government({
-      development: 'civilized',
-      governments: () =>
-        window.dice.weightedChoice([
-          { v: 'autocratic kingdom', w: 0.4 },
-          { v: 'theocratic kingdom', w: 0.05 },
-          { v: 'oligarchic kingdom', w: 0.2 },
-          { v: 'city-state confederacy', w: 0.2 },
-          { v: 'warring states', w: 0.1 }
-        ])
-    })
-    const frontier = government({
-      development: 'frontier',
-      governments: () =>
-        window.dice.weightedChoice([
-          { v: 'autocratic kingdom', w: 0.15 },
-          { v: 'theocratic kingdom', w: 0.05 },
-          { v: 'oligarchic kingdom', w: 0.35 },
-          { v: 'city-state confederacy', w: 0.3 },
-          { v: 'warring states', w: 0.1 }
-        ])
-    })
-    const tribal = government({
-      development: 'tribal',
-      governments: region =>
-        validSteppeNomads(region)
-          ? 'steppe nomads'
-          : window.dice.weightedChoice([
-              { v: 'autocratic chiefdom', w: 0.025 },
-              { v: 'theocratic chiefdom', w: 0.025 },
-              { v: 'oligarchic chiefdom', w: 0.25 },
-              { v: 'tribal confederacy', w: 0.5 },
-              { v: 'autonomous tribes', w: 0.1 },
-              { v: 'warring tribes', w: 0.1 }
-            ])
-    })
-    const remote = government({
-      development: 'remote',
-      governments: region =>
-        validSteppeNomads(region)
-          ? 'steppe nomads'
-          : window.dice.weightedChoice([
-              { v: 'oligarchic chiefdom', w: 0.04 },
-              { v: 'tribal confederacy', w: 0.15 },
-              { v: 'autonomous tribes', w: 0.8 },
-              { v: 'warring tribes', w: 0.05 }
-            ])
-    })
+    const civilized = window.world.regions.filter(r => r.development === 'civilized')
+    const frontier = window.world.regions.filter(r => r.development === 'frontier')
+    const tribal = window.world.regions.filter(r => r.development === 'tribal')
+    const remote = window.world.regions.filter(r => r.development === 'remote')
     // empires
     const imperium: RegionalCounters = {
       civilized: { target: 0.05, current: 0, total: civilized.length },
@@ -161,75 +99,54 @@ export class LoreShaper extends Shaper {
       tribal: { target: 0.025, current: 0, total: tribal.length },
       remote: { target: 0, current: 0, total: remote.length }
     }
-    const decentralized: Region['government'][] = [
-      'warring states',
-      'warring tribes',
-      'autonomous tribes',
-      'tribal confederacy',
-      'free city',
-      'pirate republic'
-    ]
-    const imperial: Region['government'][] = [
-      'autocratic empire',
-      'theocratic empire',
-      'oligarchic empire',
-      'steppe horde',
-      'grand republic'
-    ]
-    window.dice.shuffle(regions).forEach(region => {
-      const { current, target, total } = imperium[region.development]
-      if (
-        region.provinces.length > 0 &&
-        !decentralized.includes(region.government) &&
-        current / total < target
-      ) {
-        let completed = false
-        while (!completed) {
-          const neighbors = region__neighbors(region).filter(n => !imperial.includes(n.government))
-          if (neighbors.length === 0) break
-          const closest = findClosestRegion({ ref: region, neighbors })
-          claimRegion({ nation: region, region: closest })
-          completed = region__domains(region).length > 5
+    const sizeLimit = (region: Region) => {
+      const culture = window.world.cultures[region.culture.native]
+      const species = species__map[culture.species]
+      return culture.species !== 'ogre' && species.traits.height !== 'small'
+    }
+    window.dice
+      .shuffle(regions)
+      .filter(sizeLimit)
+      .forEach(region => {
+        const { current, target, total } = imperium[region.development]
+        if (region.provinces.length > 0 && current / total < target) {
+          let completed = false
+          while (!completed) {
+            const neighbors = region__neighbors(region).filter(n => n.government !== 'empire')
+            if (neighbors.length === 0) break
+            const closest = findClosestRegion({ ref: region, neighbors })
+            claimRegion({ nation: region, region: closest })
+            completed = region__domains(region).length > 5
+          }
+          if (region__domains(region).length >= 5) {
+            imperium[region.development].current++
+            region.government = 'empire'
+          }
         }
-        if (region__domains(region).length >= 5) {
-          imperium[region.development].current++
-          region.government =
-            region.government === 'city-state confederacy'
-              ? 'grand republic'
-              : region.government === 'autocratic kingdom' ||
-                region.government === 'autocratic chiefdom'
-              ? 'autocratic empire'
-              : region.government === 'theocratic kingdom' ||
-                region.government === 'theocratic chiefdom'
-              ? 'theocratic empire'
-              : region.government === 'steppe nomads'
-              ? 'steppe horde'
-              : 'oligarchic empire'
-        }
-      }
-    })
+      })
     // regular conquest
-    const anarchy: Region['government'][] = ['warring states', 'warring tribes', 'pirate republic']
-    window.dice.shuffle(regions).forEach(region => {
-      const neighbors = region__neighbors(region).filter(
-        neighbor => region__domains(neighbor).length === 1
-      )
-      if (
-        region.provinces.length > 1 &&
-        neighbors.length > 0 &&
-        !anarchy.includes(region.government) &&
-        !imperial.includes(region.government) &&
-        window.dice.random < 0.4
-      ) {
-        const closest = province__sortClosest(
-          neighbors.map(neighbor => provinces[neighbor.capital]),
-          provinces[region.capital]
+    window.dice
+      .shuffle(regions)
+      .filter(sizeLimit)
+      .forEach(region => {
+        const neighbors = region__neighbors(region).filter(
+          neighbor => region__domains(neighbor).length === 1
         )
-          .map(province => regions[province.region])
-          .slice(0, window.dice.choice([1, 1, 2]))
-        closest.forEach(neighbor => claimRegion({ nation: region, region: neighbor }))
-      }
-    })
+        if (
+          region.provinces.length > 1 &&
+          neighbors.length > 0 &&
+          region.government !== 'empire' &&
+          window.dice.random < 0.4
+        ) {
+          const closest = province__sortClosest(
+            neighbors.map(neighbor => provinces[neighbor.capital]),
+            provinces[region.capital]
+          )
+            .map(province => regions[province.region])
+            .slice(0, window.dice.choice([1, 1, 2]))
+          closest.forEach(neighbor => claimRegion({ nation: region, region: neighbor }))
+        }
+      })
     // random expansion
     window.dice.shuffle(regions).forEach(nation => {
       if (nation.provinces.length > 1) {
@@ -250,77 +167,21 @@ export class LoreShaper extends Shaper {
         })
       }
     })
-    // grand duchies
-    regions.forEach(region => {
-      if (
-        isDuchy(region) &&
-        !anarchy.includes(region.government) &&
-        region.provinces.length > 1 &&
-        region.civilized
-      ) {
-        region.government = 'grand duchy'
-      }
-    })
-    // free cities
+    // realm titles
     regions
-      .filter(region => region.provinces.length === 1)
+      .filter(region => region.government !== 'empire')
       .forEach(region => {
-        region.government = region.civilized ? 'free city' : 'autonomous tribes'
-      })
-    // colonial domains
-    const colonial: Region['government'][] = imperial.concat([
-      'pirate republic',
-      'trading company',
-      'exiled kingdom'
-    ])
-    const overlords = regions.filter(region => region.development === 'civilized')
-    const domains = regions.filter(
-      region =>
-        !region.civilized &&
-        region__domains(region).length === 1 &&
-        region.provinces.map(p => window.world.provinces[p]).some(province => province.hub.coastal)
-    )
-    window.dice
-      .shuffle(domains)
-      .filter(isDuchy)
-      .slice(0, Math.ceil(window.world.regions.length * 0.02))
-      .forEach(region => {
-        const prospects = overlords.filter(colony => colony.side === region.side)
-        if (prospects.length === 0) return
-        region.government = 'pirate republic'
-        region.culture.ruling = window.dice.choice(prospects).culture.native
-      })
-    window.dice
-      .shuffle(domains)
-      .filter(region => !isDuchy(region) && !colonial.includes(region.government))
-      .slice(0, Math.ceil(window.world.regions.length * 0.02))
-      .forEach(region => {
-        const prospects = overlords.filter(colony => colony.side === region.side)
-        if (prospects.length === 0) return
-        region.government = 'exiled kingdom'
-        region.culture.ruling = window.dice.choice(prospects).culture.native
-      })
-    window.dice
-      .shuffle(domains)
-      .filter(region => !colonial.includes(region.government))
-      .slice(0, Math.ceil(window.world.regions.length * 0.04))
-      .forEach(region => {
-        region.government = 'trading company'
-        const prospects = overlords.filter(
-          overlord => overlord.side === region.side && overlord.provinces.length > 1
-        )
-        if (prospects.length === 0) return
-        const selected = window.dice.choice(prospects)
-        region.culture.ruling = selected.culture.native
-        selected.relations[region.idx] = 'vassal'
-        region.relations[selected.idx] = 'suzerain'
+        if (region.provinces.length === 1) {
+          region.government = 'free city'
+        } else if (region.provinces.length <= 8) {
+          region.government = 'barony'
+        } else if (region.provinces.length <= 16) {
+          region.government = 'duchy'
+        } else {
+          region.government = 'kingdom'
+        }
       })
     // subjects
-    const theocracy: Region['government'][] = [
-      'theocratic chiefdom',
-      'theocratic kingdom',
-      'theocratic empire'
-    ]
     window.dice.shuffle(regions).forEach(region => {
       const domain = region__domains(region).length
       const neighbors = province__sortClosest(
@@ -329,7 +190,6 @@ export class LoreShaper extends Shaper {
             neighbor =>
               region__domains(neighbor).length === 1 &&
               neighbor.provinces.length < region.provinces.length &&
-              !anarchy.includes(neighbor.government) &&
               Object.values(neighbor.relations).every(
                 relation => relation !== 'vassal' && relation !== 'suzerain'
               )
@@ -349,20 +209,11 @@ export class LoreShaper extends Shaper {
         )
       if (
         region.provinces.length > 0 &&
-        !decentralized.includes(region.government) &&
         Object.values(region.relations).every(relation => relation !== 'suzerain')
       ) {
         neighbors.forEach(neighbor => {
           neighbor.relations[region.idx] = 'suzerain'
           region.relations[neighbor.idx] = 'vassal'
-          if (
-            region.civilized &&
-            theocracy.includes(region.government) &&
-            neighbor.provinces.length > 1 &&
-            window.dice.flip
-          ) {
-            neighbor.government = 'monastic order'
-          }
         })
       }
     })
@@ -375,12 +226,7 @@ export class LoreShaper extends Shaper {
     }
     window.dice.shuffle(regions).forEach(region => {
       const { current, target, total } = wars[region.development]
-      if (
-        current / total < target &&
-        region.provinces.length > 1 &&
-        !anarchy.includes(region.government) &&
-        !regionAtWar(region)
-      ) {
+      if (current / total < target && region.provinces.length > 1 && !regionAtWar(region)) {
         const neighbors = region__neighbors(region).filter(
           neighbor =>
             region.provinces.length > 1 && !neighbor.relations[region.idx] && !regionAtWar(neighbor)

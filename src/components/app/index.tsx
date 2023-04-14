@@ -1,7 +1,7 @@
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/animations/scale.css'
 
-import { Grid, ThemeProvider } from '@mui/material'
+import { Backdrop, CircularProgress, Grid, ThemeProvider } from '@mui/material'
 import { Container } from '@mui/system'
 import { useReducer, useState } from 'react'
 
@@ -34,6 +34,12 @@ function App() {
             </Grid>
           )}
           {state?.id && stats && <PerformanceView></PerformanceView>}
+          <Backdrop
+            sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
+            open={state.loading}
+          >
+            <CircularProgress color='inherit' />
+          </Backdrop>
         </Container>
         <Footer></Footer>
       </ViewContext.Provider>

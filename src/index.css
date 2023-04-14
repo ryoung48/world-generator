@@ -21,7 +21,9 @@ body {
 
 .tippy-box[data-theme~='actor'] {
   background-color: #474747;
+  border: double black;
   color: white;
+  border-radius: 0px;
 }
 
 

@@ -15,7 +15,6 @@ import { map__breakpoints } from './canvas/draw_styles'
 import { map__drawEmbellishments } from './canvas/embellishments'
 import {
   map__drawAvatarLocation,
-  map__drawLocationsLocal,
   map__drawLocationsRegional,
   map__drawRoads
 } from './canvas/infrastructure'
@@ -75,7 +74,6 @@ const paint = (params: {
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
   map__drawAvatarLocation({ ctx, loc: province.hub, scale })
   map__drawLocationsRegional({ ctx, scale, nationSet, cachedImages })
-  map__drawLocationsLocal({ ctx, scale, nationSet, cachedImages })
   map__drawEmbellishments({ ctx, scale, cachedImages })
 }
 
@@ -97,6 +95,8 @@ export function WorldMap() {
     const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
     const poly = window.world.cells[cell]
     const province = window.world.provinces[poly.province]
+    const region = window.world.regions[poly.region]
+    const culture = window.world.cultures[region.culture.native]
     const nation = cell__nation(poly)
     const localScale = transform.scale > map__breakpoints.regional
     const globalScale = transform.scale <= map__breakpoints.global
@@ -105,7 +105,12 @@ export function WorldMap() {
     dispatch({
       type: 'update codex',
       payload: {
-        target: current === 'location' ? province : window.world.regions[nation],
+        target:
+          state.codex.current === 'culture'
+            ? culture
+            : current === 'location'
+            ? province
+            : window.world.regions[nation],
         disableZoom: true
       }
     })
@@ -176,7 +181,12 @@ export function WorldMap() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.translate(transform.dx, transform.dy)
       ctx.scale(transform.scale, transform.scale)
-      const province = window.world.provinces[state.codex.province]
+      const culture = window.world.cultures[state.codex.culture]
+      const origin = window.world.regions[culture.origin]
+      const province =
+        window.world.provinces[
+          state.codex.current === 'culture' ? origin.capital : state.codex.province
+        ]
       paint({
         scale: transform.scale,
         cachedImages,

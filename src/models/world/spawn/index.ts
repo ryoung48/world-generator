@@ -54,6 +54,7 @@ export const world__spawn = (params: {
     template,
     coasts: [],
     dim: {
+      res,
       // display image width / height (pixels)
       ...canvasDims,
       // voronoi cell resolution
@@ -62,7 +63,7 @@ export const world__spawn = (params: {
       rh: 5000,
       rw: 5000,
       // noise resolution
-      res: 256,
+      noise: 256,
       // scale + cell metrics
       sh: 0,
       sw: 0,
@@ -74,10 +75,10 @@ export const world__spawn = (params: {
     provinces: [],
     cultures: [],
     religions: [],
-    actors: [],
+    npcs: [],
     conflicts: [],
-    uniqueNames: {},
     threads: [],
+    uniqueNames: {},
     date,
     firstNewMoon,
     lunarCycle: 28,

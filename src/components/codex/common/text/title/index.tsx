@@ -13,7 +13,7 @@ const classes = {
     font-size: 40px;
   `,
   subtitle: css`
-    padding-top: 5px;
+    padding-top: 3px;
   `
 }
 

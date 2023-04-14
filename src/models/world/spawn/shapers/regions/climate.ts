@@ -40,7 +40,7 @@ export const regional__climates = () => {
     const coasts = land.filter(cell => cell.isCoast)
     const east = coasts.filter(cell => cell.oceanCurrent === 'E').length
     const west = coasts.filter(cell => cell.oceanCurrent === 'W').length
-    const inland = east + west === 0 || !region.coastal
+    const inland = !region.coastal
     region.regional.land = land.length
     region.regional.mountains = land.filter(c => c.isMountains).length
     const latitude = Math.abs(world__gps(cell).latitude)

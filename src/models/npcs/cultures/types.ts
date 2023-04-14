@@ -6,6 +6,61 @@ import { Climate } from '../../world/climate/types'
 import { Language } from '../languages/types'
 import { Gender } from '../types'
 
+type CulturalValue =
+  | 'adaptation'
+  | 'aesthetic'
+  | 'arcana'
+  | 'austerity'
+  | 'beasts'
+  | 'bravery'
+  | 'charity'
+  | 'decadence'
+  | 'diplomacy'
+  | 'etiquette'
+  | 'exploration'
+  | 'family'
+  | 'forethought'
+  | 'forgiveness'
+  | 'freedom'
+  | 'function'
+  | 'hierarchy'
+  | 'history'
+  | 'honor'
+  | 'hospitality'
+  | 'humility'
+  | 'industry'
+  | 'intellect'
+  | 'imperialism'
+  | 'justice'
+  | 'logic'
+  | 'loyalty'
+  | 'lust'
+  | 'might'
+  | 'nature'
+  | 'legalism'
+  | 'philosophy'
+  | 'purity'
+  | 'revanchism'
+  | 'sacrifice'
+  | 'seafaring'
+  | 'stewardship'
+  | 'stoicism'
+  | 'subterfuge'
+  | 'success'
+  | 'tenacity'
+  | 'vengeance'
+  | 'wealth'
+  | 'zeal'
+
+export type CultureValueDetails = Record<
+  CulturalValue,
+  {
+    text: string
+    conflicts?: CulturalValue[]
+    coastal?: boolean
+  }
+>
+
 export interface Culture extends TaggedEntity {
   tag: 'culture'
   // neighboring cultures
@@ -15,7 +70,21 @@ export interface Culture extends TaggedEntity {
   // cultural homelands (dialects)
   regions: number[]
   // species stats
-  species: 'human' | 'elf' | 'dwarf' | 'orc' | 'orlan' | 'bovine' | 'feline' | 'avian' | 'draconic'
+  species:
+    | 'human'
+    | 'elf'
+    | 'dwarf'
+    | 'orc'
+    | 'orlan'
+    | 'bovine'
+    | 'feline'
+    | 'avian'
+    | 'draconic'
+    | 'goblin'
+    | 'hobgoblin'
+    | 'ogre'
+    | 'gnoll'
+    | 'vulpine'
   appearance?: {
     skin: {
       colors: (AllColors | 'fair' | 'pale')[]
@@ -44,7 +113,9 @@ export interface Culture extends TaggedEntity {
   language?: Language
   lineage: Gender
   religion?: number
-  fashion: { color: Hue }
+  values: CulturalValue[]
+  motifs?: string
+  fashion: { color: Hue; scheme?: string }
   // display colors (for maps)
   display: string
 }

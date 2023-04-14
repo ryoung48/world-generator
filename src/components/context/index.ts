@@ -1,9 +1,9 @@
-import { range } from 'd3'
 import { createContext, Dispatch, useContext } from 'react'
 
 import { npc__spawn } from '../../models/npcs'
+import { itemPrice } from '../../models/npcs/equipment'
+import { Profession } from '../../models/npcs/professions/types'
 import { region__nation } from '../../models/regions'
-import { actor__cr } from '../../models/threads/actors'
 import {
   codex__restoreHistory,
   codex__spawn,
@@ -11,7 +11,7 @@ import {
   codex__update
 } from '../../models/utilities/codex'
 import { Dice } from '../../models/utilities/math/dice'
-import { ViewActions, ViewState } from './types'
+import { Avatar, ViewActions, ViewState } from './types'
 
 export const view__init: ViewState = {
   id: '',
@@ -20,7 +20,8 @@ export const view__init: ViewState = {
   gps: { x: 0, y: 0, zoom: 0 },
   time: Date.now(),
   borderChange: true,
-  avatar: { cr: 0, npcs: [] }
+  avatar: { pcs: [], cp: 0 },
+  loading: false
 }
 
 export const view__reducer = (state: ViewState, action: ViewActions): ViewState => {
@@ -53,19 +54,35 @@ export const view__reducer = (state: ViewState, action: ViewActions): ViewState 
       return updated
     }
     case 'start adventure': {
+      const adventurers = window.dice.sample<Profession>(
+        [
+          'barbarian',
+          'chanter',
+          'cipher',
+          'druid',
+          'fighter',
+          'monk',
+          'paladin',
+          'cleric',
+          'ranger',
+          'rogue',
+          'wizard'
+        ],
+        5
+      )
       const updated = {
         ...state,
         avatar: {
-          cr: actor__cr(1),
-          npcs: range(5).map(() => {
+          pcs: adventurers.map(profession => {
             const npc = npc__spawn({
               loc: window.world.provinces[state.codex.province],
-              profession: 'mercenary',
+              profession,
               age: 'young adult',
               pc: true
             })
             return npc.idx
-          })
+          }),
+          cp: 50
         }
       }
       return updated
@@ -87,11 +104,23 @@ export const view__reducer = (state: ViewState, action: ViewActions): ViewState 
       return updated
     }
     case 'progress': {
-      const { xp, duration } = action.payload
+      const { duration, cp } = action.payload
       window.world.date += duration
-      const avatar = window.structuredClone(state.avatar)
-      avatar.cr += xp
+      state.avatar.cp += cp
+      const avatar = window.structuredClone(state.avatar) as Avatar
       return { ...state, avatar, time: window.world.date }
+    }
+    case 'loading': {
+      return { ...state, loading: action.payload }
+    }
+    case 'purchase': {
+      const { item, npc } = action.payload
+      const loc = window.world.provinces[state.codex.province]
+      loc.market.goods = loc.market.goods.filter(g => g !== item)
+      const { equipment } = npc
+      const old = equipment.findIndex(e => e.slot === item.slot)
+      equipment.splice(old, 1, item)
+      return { ...state, avatar: { ...state.avatar, cp: state.avatar.cp - itemPrice(item) } }
     }
   }
 }

@@ -35,7 +35,7 @@ export const classifyClimate = (params: {
       region.climate = 'savanna'
     } else if (latitude < 30 && continent) {
       region.climate = 'hot desert'
-    } else if (latitude < 40) {
+    } else if (latitude < 35) {
       region.climate = 'hot steppe'
     } else if (latitude < 45 && continent) {
       region.climate = 'cold desert'

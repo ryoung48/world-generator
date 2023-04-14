@@ -1,3 +1,4 @@
+import { Item } from '../../npcs/equipment/types'
 import { TaggedEntity } from '../../utilities/codex/entities'
 import { WeightedDistribution } from '../../utilities/math'
 import { RouteTypes } from '../../world/travel/types'
@@ -28,20 +29,9 @@ export interface Province extends TaggedEntity {
   land: number
   ocean: number
   mountains: number
-  terrain:
-    | 'desert'
-    | 'plains'
-    | 'jungle'
-    | 'forest'
-    | 'marsh'
-    | 'tundra'
-    | 'glacier'
-    | 'mountains'
-    | 'highlands'
-    | 'hills'
-    | 'farmland'
   // memory
   actors: number[]
-  weather?: number
+  weather?: { text: string; memory: number }
   demographics?: number
+  market?: { goods: Item[]; memory: number }
 }

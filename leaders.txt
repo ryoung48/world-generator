@@ -1,0 +1,101 @@
+// import { decorateText } from '../../utilities/text/decoration'
+// import { region__isActive, region__nation } from '..'
+// import { Province } from '../provinces/types'
+
+// export const settlement__leadership = (province: Province) => {
+//   if (!province.hub.leadership) {
+//     const region = window.world.regions[province.region]
+//     const culture = window.world.cultures[region.culture.ruling]
+//     const { government } = region__nation(region)
+//     const { civilized } = region
+//     const sovereign = region__isActive(region)
+//     const centralized = ['autocratic', 'oligarchic'].some(s => government.includes(s))
+//     const anarchy = government.includes('warring')
+//     const theocracy = government.includes('theocratic')
+//     const capital = (centralized || theocracy) && province.capital
+//     if (location__isVillage(loc) && !civilized) {
+//       loc.leadership = {
+//         ruler: `${window.dice.weightedChoice([
+//           { v: '{a hereditary|an elected} {chieftain|warlord}', w: 1 },
+//           { v: 'council of elders', w: 1 },
+//           { v: 'resident {sorcerer|priest}', w: 0.2 }
+//         ])} ${trait}`
+//       }
+//     } else if (location__isVillage(loc) && civilized) {
+//       loc.leadership = {
+//         ruler: `${window.dice.weightedChoice([
+//           { v: '{a hereditary|an elected} headman', w: 1 },
+//           { v: 'a hereditary lord', w: 0.2 },
+//           { v: 'an appointed reave representing a distant lord', w: 1 },
+//           { v: 'a council of elders', w: 1 },
+//           { v: 'a resident {sorcerer|priest}', w: 0.2 }
+//         ])} ${trait}`
+//       }
+//     } else if (capital && sovereign) {
+//       const male = culture.lineage === 'male'
+//       const elected = government.succession === 'elected'
+//       const imperial = region__isImperial(region)
+//       const ruler = imperial ? (male ? 'emperor' : 'empress') : male ? 'king' : 'queen'
+//       loc.leadership = {
+//         ruler: `${window.dice.weightedChoice([
+//           {
+//             v: `${elected ? 'an elected' : 'a hereditary'} ${ruler}`,
+//             w: centralized ? 1 : 0
+//           },
+//           {
+//             v: `${elected ? 'an elected' : 'a hereditary'} ${imperial ? 'archon' : 'high prelate'}`,
+//             w: theocracy ? 1 : 0
+//           },
+//           {
+//             v: `a {lord regent|regency council} until the ${ruler} comes of age`,
+//             w: elected ? 0 : 0.2
+//           }
+//         ])} ${trait}`
+//       }
+//     } else if (capital && !sovereign) {
+//       loc.leadership = {
+//         ruler: `${window.dice.weightedChoice([
+//           { v: 'an appointed viceroy', w: centralized ? 1 : 0 },
+//           { v: 'an appointed archbishop', w: theocracy ? 1 : 0 }
+//         ])} ${trait}`
+//       }
+//     } else {
+//       loc.leadership = {
+//         ruler: `${window.dice.weightedChoice([
+//           { v: 'an appointed bureaucrat', w: centralized ? 1 : 0 },
+//           { v: 'a hereditary aristocrat', w: 1 },
+//           {
+//             v: '{a hereditary|an elected} warlord',
+//             w: anarchy ? 5 : 0
+//           },
+//           {
+//             v: '{a hereditary|an elected} bishop',
+//             w: theocracy ? 5 : province.capital ? 0 : 0.5
+//           },
+//           {
+//             v: 'a council of {nobles|merchants|oligarchs}',
+//             w: 1
+//           },
+//           {
+//             v: 'a council of warlords',
+//             w: anarchy ? 5 : 0
+//           },
+//           {
+//             v: 'a council of priests',
+//             w: theocracy ? 5 : province.capital ? 0 : 0.5
+//           },
+//           {
+//             v: 'a council of sorcerers',
+//             w: province.capital ? 0 : 0.1
+//           },
+//           {
+//             v: 'a shadowy syndicate',
+//             w: province.capital ? 0 : anarchy ? 1 : 0.1
+//           }
+//         ])} ${trait}`
+//       }
+//     }
+//     loc.leadership.ruler = window.dice.spin(loc.leadership.ruler)
+//   }
+//   return loc.leadership
+// }

@@ -96,7 +96,8 @@ export const shortestPath = ({
           // start the cost at the distance between cells
           const cost = distance([nx, cx], [ny, cy])
           let penalty = 1
-          const foreignPath = ![destination.region, origin.region].includes(neighbor.region)
+          const foreignPath =
+            ![destination.region, origin.region].includes(neighbor.region) && type === 'land'
           // mountains are difficult to traverse
           if (neighbor.isMountains) penalty += 1.5
           // prioritize coastal roads

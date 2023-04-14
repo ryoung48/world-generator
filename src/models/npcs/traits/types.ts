@@ -1,4 +1,5 @@
-import { ThreadContext } from '../../threads/types'
+import { Culture } from '../cultures/types'
+import { NPCParams } from '../types'
 
 export type Personality =
   | 'sympathetic'
@@ -41,7 +42,6 @@ export type Quirk =
   | 'alcoholic'
   | 'drug addict'
   | 'gluttonous'
-  | 'masochistic'
   | 'lustful'
   | 'sadistic'
   | 'trades gossip'
@@ -58,7 +58,9 @@ export type Quirk =
   | 'aromatic scent'
   | 'strong accent'
   | 'traveler'
+  | 'homesick'
   | 'speech'
+  | 'mannerism'
   | 'scars'
   | 'maimed'
   | 'afflicted'
@@ -84,8 +86,13 @@ export type Quirk =
   | 'gambler'
   | 'funny'
   | 'storyteller'
+  | 'nostalgic'
+  | 'superstitious'
+  | 'inquisitive'
   | 'war veteran'
   | 'connections'
+  | 'criminal past'
+  | 'dissident'
   | 'foreign agent'
   | 'secret sectarian'
   | 'local leader'
@@ -122,6 +129,7 @@ export interface QuirkParams {
   youngAdult: boolean
   sorcerer: boolean
   skin: boolean
+  hair: boolean
   horns: boolean
   poor: boolean
   comfortable: boolean
@@ -130,7 +138,8 @@ export interface QuirkParams {
   profession: string
   coastal: boolean
   piercings: boolean
-  context: ThreadContext
+  context: NPCParams['context']
+  species: Culture['species']
 }
 
 export type QuirkDetails = {

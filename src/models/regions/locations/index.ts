@@ -1,5 +1,5 @@
-import { climates } from '../../world/climate/types'
 import { hub__alias, hub__isCity, hub__isVillage } from '../hubs'
+import { province__terrain } from '../provinces'
 import { Province } from '../provinces/types'
 import { Loc } from './types'
 
@@ -297,7 +297,6 @@ const places: Record<Loc['district'], Loc> = {
   outskirts: {
     district: 'outskirts',
     site: ({ loc }) => {
-      const { terrain } = loc
       const site = window.dice.weightedChoice([
         {
           v: `${window.dice.choice(['stronghold', 'outpost', 'fortress'])} (military)`,
@@ -326,7 +325,7 @@ const places: Record<Loc['district'], Loc> = {
             },
             {
               v: 'river crossing',
-              w: terrain === 'marsh' || terrain === 'forest' || terrain === 'jungle' ? 0 : 1
+              w: 0.3
             }
           ])})`,
           w: 0.1
@@ -358,10 +357,6 @@ const places: Record<Loc['district'], Loc> = {
   wilderness: {
     district: 'wilderness',
     site: ({ loc }) => {
-      const { terrain } = loc
-      const region = window.world.regions[loc.region]
-      const climate = climates[region.climate]
-      const mountainous = terrain === 'mountains' || terrain === 'highlands'
       const site = window.dice.weightedChoice([
         {
           v: `${window.dice.choice([
@@ -418,46 +413,7 @@ const places: Record<Loc['district'], Loc> = {
           w: 0.05
         },
         {
-          v: window.dice.weightedChoice([
-            {
-              v: `${terrain} (${window.dice.spin(
-                '{tangled|labyrinthine|treacherous|cursed|scorched|fungal}'
-              )})`,
-              w: terrain === 'forest' || terrain === 'jungle' ? 1 : 0
-            },
-            {
-              v: `${terrain} (${window.dice.spin('{vast|treacherous|cursed}')})`,
-              w: terrain === 'tundra' || terrain === 'glacier' ? 1 : 0
-            },
-            {
-              v: `${window.dice.spin('{marsh|swamp|big|fens}')} (${window.dice.spin(
-                '{labyrinthine|treacherous|cursed|fungal}'
-              )})`,
-              w: terrain === 'marsh' ? 1 : 0
-            },
-            {
-              v: `desert (${window.dice.spin('{sandy|rocky}')}, ${window.dice.spin(
-                '{canyons|ravine|cursed|wastes|scorched}'
-              )})`,
-              w: terrain === 'desert' ? 1 : 0
-            },
-            {
-              v: `desert (sandy, ${window.dice.spin('{oasis|dunes}')})`,
-              w: terrain === 'desert' && climate.zone === 'tropical' ? 1 : 0
-            },
-            {
-              v: `plains (${window.dice.spin('{vast|cursed|parched}')})`,
-              w: terrain === 'plains' ? 1 : 0
-            },
-            {
-              v: `mountains (${window.dice.spin('{high|low} pass')})`,
-              w: mountainous ? 1 : 0
-            },
-            {
-              v: `mountains (${window.dice.spin('{caldera|volcanic|hot springs}')})`,
-              w: mountainous ? 0.02 : 0
-            }
-          ]),
+          v: province__terrain(loc),
           w: 0.1
         }
       ])

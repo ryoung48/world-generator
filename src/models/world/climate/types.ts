@@ -119,7 +119,7 @@ export const climates: Record<Climate['type'], Climate> = {
     arid: true
   },
   'cold desert': {
-    type: 'cold steppe',
+    type: 'cold desert',
     code: 'BSk',
     zone: 'temperate',
     display: '#FE9695',

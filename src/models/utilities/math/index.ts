@@ -67,7 +67,7 @@ export const triangularNumber = (n: number) => (n * (n + 1)) / 2
 export const triangularRoot = (n: number) => Math.floor((Math.sqrt(8 * n + 1) - 1) / 2)
 
 export const imperialHeight = (height: number) =>
-  `${Math.floor(height / 12)}.${Math.floor(height % 12)}`
+  `${Math.floor(height / 12)}.${Math.floor(height % 12)} ft`
 export const computeWeight = (height: number, bmi: number) => (bmi * height ** 2) / 703 // pounds
 
 export const findRanges = (params: {

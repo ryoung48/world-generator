@@ -2,7 +2,7 @@ import { province__demographics } from '../regions/provinces/network'
 import { decorateText } from '../utilities/text/decoration'
 import { Culture } from './cultures/types'
 import { lang__first } from './languages/words/actors'
-import { profession__spawn } from './professions'
+import { profession__spawn, professions } from './professions'
 import { species__map } from './species'
 import { npc__traits } from './traits'
 import { Gender, LifePhase, NPC, NPCParams } from './types'
@@ -25,7 +25,7 @@ const npc__appearance = (params: { culture: Culture; age: LifePhase; gender: Gen
         })}`
       : ''
   }${
-    gender === 'male' && appearance?.facialHair?.chance > window.dice.random
+    gender === 'male' && appearance.facialHair?.chance > window.dice.random
       ? `, ${window.dice.choice(appearance.facialHair.styles)}`
       : ''
   }`
@@ -37,13 +37,17 @@ export const npc__spawn = (params: NPCParams) => {
   const profession = profession__spawn({ loc, gender, context, profession: params.profession })
   const { common, native, foreign } = province__demographics(loc)
   const cidx = window.dice.weightedChoice(
-    profession.culture === 'native' ? native : profession.culture === 'foreign' ? foreign : common
+    params.foreign || profession.culture === 'foreign'
+      ? foreign
+      : profession.culture === 'native'
+      ? native
+      : common
   )
   const culture = window.world.cultures[cidx]
   const age = params.age ?? profession.age
   const npc: NPC = {
     tag: 'actor',
-    idx: window.world.actors.length,
+    idx: window.world.npcs.length,
     name: lang__first(culture.language, gender),
     culture: culture.idx,
     age,
@@ -51,10 +55,13 @@ export const npc__spawn = (params: NPCParams) => {
     profession: { key: profession.key, title: profession.title },
     personality: [],
     quirks: [],
-    appearance: npc__appearance({ culture, age, gender })
+    appearance: npc__appearance({ culture, age, gender }),
+    health: 1
   }
   npc__traits({ loc, npc, context })
-  window.world.actors.push(npc)
+  const { equipment } = professions[profession.key]
+  if (equipment) npc.equipment = equipment()
+  window.world.npcs.push(npc)
   if (!pc) loc.actors.push(npc.idx)
   return npc
 }

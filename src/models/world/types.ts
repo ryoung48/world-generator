@@ -19,13 +19,14 @@ export interface CoastalEdge {
 }
 
 interface WorldDimensions extends Dimensions {
+  res: number
   // voronoi cell resolution
   cells: number
   // actual width / height (miles)
   rw: number
   rh: number
   // noise resolution
-  res: number
+  noise: number
   // cell dimensions
   cellArea: number
   cellLength: number
@@ -62,7 +63,7 @@ export interface World {
   provinces: Province[]
   cultures: Culture[]
   religions: Religion[]
-  actors: NPC[]
+  npcs: NPC[]
   uniqueNames: Record<string, boolean>
   threads: Thread[]
   // planet info

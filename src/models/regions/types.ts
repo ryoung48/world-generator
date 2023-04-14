@@ -33,19 +33,13 @@ export interface Region extends TaggedEntity {
   // society
   development?: 'civilized' | 'frontier' | 'tribal' | 'remote'
   civilized?: boolean
-  government?:
-    | `${'autocratic' | 'oligarchic' | 'theocratic' | 'exiled'} ${
-        | 'empire'
-        | 'kingdom'
-        | 'chiefdom'}`
-    | `steppe ${'nomads' | 'horde'}`
-    | 'free city'
-    | `${'city-state' | 'tribal'} confederacy`
-    | `warring ${'states' | 'tribes'}`
-    | `autonomous tribes`
-    | `grand ${'duchy' | 'republic'}`
-    | 'monastic order'
-    | 'pirate republic'
-    | 'trading company'
+  government?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
   religion?: number
+  description?: {
+    introduction: string
+    history: string
+    government: string
+    religions: string
+    issues: string
+  }
 }

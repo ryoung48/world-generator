@@ -17,7 +17,6 @@ export function NationView() {
   const { state } = view__context()
   const nation = window.world.regions[state.codex.nation]
   const climate = climates[nation.climate]
-  const { religion } = nation
   const ruling = window.world.cultures[nation.culture.ruling]
   const native = window.world.cultures[nation.culture.native]
   const totalPop = region__population(nation)
@@ -34,7 +33,7 @@ export function NationView() {
   const vassal = `${
     overlord
       ? `, ${decorateText({
-          label: nation.government === 'trading company' ? 'colony' : 'vassal',
+          label: 'vassal',
           link: overlord,
           tooltip: overlord?.name ?? undefined,
           color: cssColors.subtitle
@@ -72,10 +71,6 @@ export function NationView() {
                       }`}
                     ></StyledText>
                   )
-                },
-                {
-                  label: 'Religion',
-                  content: window.world.religions[religion].name
                 }
               ]}
             ></SectionList>

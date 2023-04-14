@@ -321,13 +321,6 @@ export const display__icons = () => {
           'ship_4',
           'ship_5',
           'ship_6',
-          'ship_7',
-          'ship_8',
-          'ship_9',
-          'ship_10',
-          'ship_11',
-          'ship_12',
-          'ship_13',
           'ship_14',
           'ship_15',
           'ship_16'

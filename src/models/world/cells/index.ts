@@ -71,6 +71,8 @@ export const cell__neighbors = (cell: ExteriorCell) => {
 }
 export const cell__province = (cell: ExteriorCell) => window.world.provinces[cell.province]
 export const cell__nation = (cell: ExteriorCell) => cell__province(cell).nation
+export const cell__culture = (cell: ExteriorCell) =>
+  window.world.regions[cell.region].culture.native
 export const cell__isNationBorder = (cell: ExteriorCell) => {
   const nation = cell__nation(cell)
   return cell__neighbors(cell).some(n => {
@@ -80,6 +82,13 @@ export const cell__isNationBorder = (cell: ExteriorCell) => {
 export const cell__isRegionBorder = (cell: ExteriorCell) => {
   return cell__neighbors(cell).some(n => {
     return cell.region !== n.region
+  })
+}
+
+export const cell__isCultureBorder = (cell: ExteriorCell) => {
+  const culture = cell__culture(cell)
+  return cell__neighbors(cell).some(n => {
+    return culture !== cell__culture(n)
   })
 }
 
