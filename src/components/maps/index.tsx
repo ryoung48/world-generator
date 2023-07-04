@@ -1,11 +1,10 @@
-import { Grid } from '@mui/material'
+import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { pointer, select, zoom, ZoomTransform } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
 import { region__domains, region__neighbors } from '../../models/regions'
 import { Province } from '../../models/regions/provinces/types'
 import { delay } from '../../models/utilities/math/time'
-import { cell__nation } from '../../models/world/cells'
 import { view__context } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
@@ -20,8 +19,7 @@ import {
 } from './canvas/infrastructure'
 import { iconPath } from './icons'
 import { map__drawTerrainIcons, terrain__icons } from './icons/terrain'
-
-type CachedImages = Record<string, HTMLImageElement>
+import { CachedImages, map__styles, MapStyle } from './types'
 
 const loadImage = (path: string): Promise<HTMLImageElement> => {
   return new Promise(resolve => {
@@ -50,10 +48,11 @@ const paint = (params: {
   cachedImages: CachedImages
   province: Province
   ctx: CanvasRenderingContext2D
+  style: MapStyle
 }) => {
-  const { scale, cachedImages, province, ctx } = params
+  const { scale, cachedImages, province, ctx, style } = params
   const nation = window.world.regions[province.nation]
-  const borders = region__neighbors(nation)
+  const borders = region__neighbors(nation, 2)
   const nations = [nation].concat(borders)
   const nationSet = new Set(nations.map(n => n.idx))
   const expanded = new Set(
@@ -68,7 +67,7 @@ const paint = (params: {
       .flat()
   )
   const lands = map__drawOceans({ ctx, scale, nations })
-  map__drawRegions({ ctx, scale, nations })
+  map__drawRegions({ ctx, scale, nations, style })
   map__drawLakes({ ctx, scale, nations })
   map__drawRoads({ ctx, scale, nationSet })
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
@@ -89,31 +88,26 @@ export function WorldMap() {
   const [zoomController, setZoom] = useState({ zoom: zoom() })
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [init, setInit] = useState(false)
+  const [style, setStyle] = useState<MapStyle>('Nations')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const transition = () => {
     const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
     const poly = window.world.cells[cell]
     const province = window.world.provinces[poly.province]
-    const region = window.world.regions[poly.region]
-    const culture = window.world.cultures[region.culture.native]
-    const nation = cell__nation(poly)
-    const localScale = transform.scale > map__breakpoints.regional
-    const globalScale = transform.scale <= map__breakpoints.global
-    const local = (state.codex.current === 'province' && !globalScale) || localScale
-    const current = local ? 'location' : 'nation'
-    dispatch({
-      type: 'update codex',
-      payload: {
-        target:
-          state.codex.current === 'culture'
-            ? culture
-            : current === 'location'
-            ? province
-            : window.world.regions[nation],
-        disableZoom: true
-      }
-    })
+    const nation = window.world.regions[province.nation]
+    const localTransition = transform.scale > map__breakpoints.regional
+    if (localTransition) {
+      dispatch({
+        type: 'select province',
+        payload: { target: province }
+      })
+    } else {
+      dispatch({
+        type: 'select region',
+        payload: { target: nation }
+      })
+    }
   }
   useEffect(() => {
     const init = async () => {
@@ -145,7 +139,8 @@ export function WorldMap() {
       node.call(controller)
       setZoom({ zoom: controller })
       // initial zoom
-      const nation = window.world.regions[state.codex.nation]
+      const province = window.world.provinces[state.province]
+      const nation = window.world.regions[province.nation]
       const capital = window.world.provinces[nation.capital]
       dispatch({
         type: 'update gps',
@@ -181,21 +176,16 @@ export function WorldMap() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       ctx.translate(transform.dx, transform.dy)
       ctx.scale(transform.scale, transform.scale)
-      const culture = window.world.cultures[state.codex.culture]
-      const origin = window.world.regions[culture.origin]
-      const province =
-        window.world.provinces[
-          state.codex.current === 'culture' ? origin.capital : state.codex.province
-        ]
       paint({
         scale: transform.scale,
         cachedImages,
-        province,
-        ctx
+        province: window.world.provinces[state.province],
+        ctx,
+        style
       })
       ctx.restore()
     }
-  }, [cachedImages, transform, state, init])
+  }, [cachedImages, transform, state, init, style])
   useEffect(() => {
     const oldScale = prevTransformRef.current?.scale
     const newScale = transform.scale
@@ -212,7 +202,28 @@ export function WorldMap() {
   }, [transform])
   return (
     <Grid container>
-      <Grid item xs={12} ref={containerRef} pb={0}>
+      <Grid item xs={12} ref={containerRef}>
+        <ToggleButtonGroup
+          color='primary'
+          exclusive
+          value={style}
+          onChange={(_, value) => setStyle(value)}
+          size='small'
+          style={{
+            zIndex: 2,
+            position: 'absolute',
+            top: window.world.dim.h + 30,
+            left: window.world.dim.w * 0.8
+          }}
+        >
+          {map__styles.map(label => (
+            <ToggleButton key={label} value={label}>
+              <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
+                {label}
+              </span>
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
         <canvas
           ref={canvasRef}
           style={{
@@ -226,8 +237,6 @@ export function WorldMap() {
             const [clientX, clientY] = pointer(event)
             const nx = (clientX - transform.dx) / transform.scale
             const ny = (clientY - transform.dy) / transform.scale
-            // const cell = window.world.diagram.delaunay.find(nx, ny)
-            // console.log(window.world.cells[cell].province)
             setCursor({ x: nx, y: ny })
           }}
           onClick={transition}

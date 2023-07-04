@@ -295,7 +295,7 @@ const species__hairStyles = (): Culture['appearance']['hair']['styles'] => {
   }
 }
 
-const species__facialHair = (chance = window.dice.choice([0.3, 0.6, 0.9])) => {
+const species__facialHair = (chance = window.dice.choice([0.3, 0.6, 0.8, 0.9])) => {
   const base = {
     chance,
     styles: ['trimmed beard'] as Culture['appearance']['facialHair']['styles']

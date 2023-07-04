@@ -28,7 +28,7 @@ export const weapons = {
   ranged: () => window.dice.spin('{war bow|hunting bow|crossbow}')
 }
 
-const tiers = [
+export const tiers = [
   { name: 'poor', color: 'gray' },
   { name: 'fair', color: 'white' },
   { name: 'fine', color: 'green' },
@@ -77,5 +77,5 @@ export const localMarket = (params: { loc: Province; avatar: Avatar }) => {
 }
 
 export const itemPrice = (item: Item) => {
-  return 50 * 3 ** item.tier
+  return slots[item.slot] * 100 * 3 ** item.tier
 }

@@ -29,6 +29,7 @@ type TableHeaders<T extends Object> = {
 type TableRowExpansion<T extends Object> = {
   align?: TableCellProps['align']
   content: (_data: T) => ReactNode
+  onClick?: (_data: T) => void
   idx?: (_data: T) => number
   disabled?: (_data: T) => boolean
   expanded?: [number, (_item: number) => void]
@@ -87,7 +88,10 @@ function ExpandableRow<T extends Object>(props: {
           <TableCell key='expand' align={expand.align} className={classes.cell}>
             <IconButton
               size='small'
-              onClick={() => setExpanded(open ? -1 : idx)}
+              onClick={() => {
+                expand.onClick?.(row)
+                setExpanded(open ? -1 : idx)
+              }}
               disabled={expand.disabled?.(row)}
               color='primary'
             >
@@ -170,11 +174,9 @@ export function DataTable<T extends Object>(props: {
 export function DetailedTableRow(props: { title: ReactNode; subtitle: ReactNode; link?: boolean }) {
   const { title, subtitle, link } = props
   return (
-    <Grid container m={0} style={{ lineHeight: link ? 1.5 : 1.2 }}>
-      <Grid item xs={12}>
-        {title}
-      </Grid>
-      <Grid item xs={12} className={style__subtitle} style={{ fontSize: 10 }}>
+    <Grid container m={0} direction='column' style={{ lineHeight: link ? 1.3 : 1.2 }}>
+      <Grid item>{title}</Grid>
+      <Grid item className={style__subtitle} style={{ fontSize: 10 }}>
         {subtitle}
       </Grid>
     </Grid>

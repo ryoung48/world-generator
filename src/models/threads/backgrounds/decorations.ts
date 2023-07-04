@@ -18,6 +18,7 @@ export const actor__spawn = (params: {
   tag: string
 }) => {
   const { loc, template, context, tag } = params
+  if (!template) console.log(tag)
   if (template.monstrous) return decorateTag(template.title, tag)
   const npc = npc__spawn({
     loc,
@@ -35,7 +36,7 @@ export const actor__spawn = (params: {
     foreign: template.foreign
   })
   npc.profession.title = decorateTag(template.title, tag)
-    .replace('POS', npc.gender === 'male' ? 'his' : 'her')
+    .replace('#possessive#', npc.gender === 'male' ? 'his' : 'her')
     .toLowerCase()
   return decorateText({ link: npc })
 }

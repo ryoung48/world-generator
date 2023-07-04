@@ -11,6 +11,7 @@ import { Culture, CultureValueDetails } from './types'
 export const culture__values: CultureValueDetails = {
   adaptation: { text: 'embracing foreign customs and traditions', conflicts: ['purity'] },
   aesthetic: { text: 'beauty in material goods and architecture', conflicts: ['function'] },
+  ancestry: { text: 'bloodline and family heritage' },
   arcana: { text: 'magical prowess and occult ability' },
   austerity: {
     text: 'ascetic unworldliness and pious poverty',
@@ -19,22 +20,22 @@ export const culture__values: CultureValueDetails = {
   beasts: { text: 'the ability to tame and control wild animals' },
   bravery: { text: 'courage and valiance in danger' },
   charity: { text: 'sharing wealth and goods with others' },
+  cultivation: { text: 'agriculture, gardens, and mastery over plants' },
   decadence: { text: 'personal indulgence and luxuriant pleasure', conflicts: ['austerity'] },
   diplomacy: { text: 'pacifism and peaceful resolution of problems', conflicts: ['might'] },
   etiquette: { text: 'eloquence and social expertise' },
   exploration: { text: 'exploring the unknown and discovering secrets' },
-  family: { text: 'filial devotion to family and parents' },
   forethought: { text: 'planning and anticipating future events and consequences' },
   forgiveness: { text: 'showing mercy to enemies', conflicts: ['vengeance'] },
   freedom: { text: 'individual rights and localized rule', conflicts: ['hierarchy'] },
   function: { text: 'building things in service of their posterity', conflicts: ['aesthetic'] },
-  hierarchy: { text: 'social stratification and the rule of the elite', conflicts: ['freedom'] },
+  hierarchy: { text: 'social stratification and class distinctions', conflicts: ['freedom'] },
   history: { text: 'remembrance of the past and memorializing history' },
   honor: { text: 'honesty and truthfulness in speech and action', conflicts: ['subterfuge'] },
   hospitality: { text: 'generosity and welcoming of strangers' },
   humility: { text: 'self-effacement and modesty' },
   industry: { text: "hard work and diligence in one's profession" },
-  intellect: { text: 'intellectual curiosity and the pursuit of knowledge' },
+  intellect: { text: 'education and knowledge-seeking' },
   imperialism: { text: "spreading one's culture and religion" },
   justice: { text: 'fairness and impartiality in decision-making' },
   logic: { text: 'humanistic reason and "rational" religion' },
@@ -51,7 +52,6 @@ export const culture__values: CultureValueDetails = {
   stewardship: { text: 'guardianship of their own land and holy sites' },
   stoicism: { text: 'patience and restraint in the face of adversity' },
   subterfuge: { text: 'subtlety and indirectness of action' },
-  success: { text: "excellence in one's profession or trade" },
   tenacity: { text: 'persevering and surviving against all odds' },
   vengeance: { text: 'execution of just vendettas', conflicts: ['forgiveness'] },
   wealth: { text: 'prosperity and accruing material wealth', conflicts: ['austerity'] },
@@ -111,7 +111,7 @@ export const culture__finalize = (culture: Culture, species: Culture['species'])
   ])
   // values
   const coastal = culture__coastal(culture)
-  while (culture.values.length < 4) {
+  while (culture.values.length < 3) {
     const dist = Object.entries(culture__values).map(([_key, value]) => {
       const key = _key as keyof typeof culture__values
       const coast = value.coastal === undefined || value.coastal === coastal

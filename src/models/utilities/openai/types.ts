@@ -16,6 +16,7 @@ interface Choice {
 interface Message {
   role: string
   content: string
+  function_call: { arguments: string }
 }
 
 interface Usage {

@@ -2,9 +2,14 @@ import { range } from 'd3'
 
 import { culture__culturize } from '../../../../npcs/cultures'
 import { region__population } from '../../../../regions'
-import { hub__moveToCoast, hub__setPopulation } from '../../../../regions/hubs'
-import { Hub } from '../../../../regions/hubs/types'
-import { province__cell, province__spawn } from '../../../../regions/provinces'
+import { hub__moveToCoast, hub__setPopulation } from '../../../../regions/provinces/hubs'
+import { Hub } from '../../../../regions/provinces/hubs/types'
+import {
+  province__cell,
+  province__climate,
+  province__spawn,
+  province__terrain
+} from '../../../../regions/provinces'
 import { Province } from '../../../../regions/provinces/types'
 import { Region } from '../../../../regions/types'
 import { point__distance } from '../../../../utilities/math/points'
@@ -247,6 +252,15 @@ const demographics = (provinces: Record<number, Province[]>) => {
   })
 }
 
+const environment = () => {
+  window.world.provinces.forEach(province => {
+    province.environment = {
+      terrain: province__terrain(province),
+      climate: province__climate(province)
+    }
+  })
+}
+
 export const urbanization = () => {
   const provinces: Record<number, Province[]> = {}
   const provinceNeighbors: Record<number, Set<number>> = {}
@@ -255,4 +269,5 @@ export const urbanization = () => {
   assignProvinces(provinceNeighbors)
   majorCities({ provinceNeighbors, provinces })
   demographics(provinces)
+  environment()
 }

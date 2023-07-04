@@ -3,7 +3,7 @@ import { decorateText } from '../../utilities/text/decoration'
 import { world__gps } from '../../world'
 import { ExteriorCell } from '../../world/cells/types'
 import { climates, glacierLatitudeCutoff } from '../../world/climate/types'
-import { hub__isCity, hub__spawn } from '../hubs'
+import { hub__spawn } from './hubs'
 import { Province } from './types'
 
 export const province__neighbors = (province: Province) =>
@@ -98,7 +98,8 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
     neighbors: [],
     artery: [],
     nation: cell.region,
-    actors: []
+    actors: [],
+    hooks: []
   }
   if (capital) {
     region.capital = province.idx
@@ -109,37 +110,45 @@ export const province__spawn = (params: { cell: ExteriorCell; capital?: boolean 
 }
 
 /*
-
 Calculates the terrain in a given province, taking information such as region climate and province mounts into account.
 @param {Province} province - The province to calculate the terrain of
 @returns {Province['terrain']} The terrain type for the given province
 */
-export const province__terrain = (province: Province): string => {
+export const province__terrain = (province: Province): Province['environment']['terrain'] => {
   // Get the cell for the given province, along with other information needed
   const cell = window.world.cells[province.hub.cell]
   const mountainous = province.mountains > 0
   const region = window.world.regions[province.region]
   const climate = climates[region.climate]
-  const tropical = climate.zone === 'tropical'
-  const city = hub__isCity(province.hub)
   const { latitude } = world__gps(province.hub)
-  // Determine the terrain type, including glaciers for high latitudes
-  const polarTerrain = Math.abs(latitude) > glacierLatitudeCutoff ? 'glacier' : 'tundra'
+  const glacial = Math.abs(latitude) > glacierLatitudeCutoff
   // Generate a chance of a marsh given certain criteria
-  let marshChance =
-    !cell.isMountains &&
-    !city &&
-    (climate.terrain === 'forest' || (polarTerrain === 'tundra' && region.climate === 'polar'))
-      ? 0.2
-      : 0
-  const mountains = `mountains ({jagged|weathered|volcanic})`
-  if (cell.isMountains) return mountains
-  if (mountainous && window.dice.random > 0.8) return mountains
-  else if (!cell.beach && window.dice.random > 0.8) return `hills ({rolling|rocky})`
-  else if (cell.beach && window.dice.random > 0.8) return `beach ({rocky|sandy})`
-  else if (marshChance > window.dice.random) return `wetlands ({marsh|swamp|bog|fens})`
-  else if (climate.terrain === 'forest') return `${tropical ? 'jungle' : 'forest'} ({light|heavy})`
-  else if (climate.terrain === 'plains') return 'plains ({grassland|scrubland})'
-  else if (climate.terrain === 'desert') return `desert ({sand dunes|badlands|wasteland|oasis})`
-  return `arctic (${polarTerrain})`
+  const coastal = province.hub.coastal && window.dice.random > 0.8
+  const lakeside = Object.keys(province.lakes).length > 0
+  if (cell.isMountains) return 'mountainous'
+  if (mountainous && window.dice.random > 0.8) return 'mountainous'
+  if (!province.hub.coastal && window.dice.random > 0.8) return 'hills'
+  if (!glacial && (coastal || lakeside)) return 'marsh'
+  if (climate.terrain === 'arctic') return glacial ? 'glacier' : 'tundra'
+  if (climate.terrain === 'forest')
+    return climate.zone === 'temperate'
+      ? 'forest'
+      : climate.zone === 'tropical'
+      ? 'jungle'
+      : 'taiga'
+  return climate.terrain
+}
+
+export const province__climate = (province: Province): Province['environment']['climate'] => {
+  const { latitude } = world__gps(province.hub)
+  const lat = Math.abs(latitude)
+  return lat < 23
+    ? 'tropical'
+    : lat < 35
+    ? 'subtropical'
+    : lat < 60
+    ? 'temperate'
+    : lat < 75
+    ? 'subarctic'
+    : 'arctic'
 }

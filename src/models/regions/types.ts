@@ -1,4 +1,4 @@
-import { TaggedEntity } from '../utilities/codex/entities'
+import { TaggedEntity } from '../utilities/entities/types'
 import { Directions } from '../utilities/math/points'
 import { Climate } from '../world/climate/types'
 
@@ -10,6 +10,27 @@ export type DiplomaticRelation =
   | 'neutral'
   | 'suspicious'
   | 'at war'
+
+export const governments = [
+  'autocratic monarchy',
+  'colonial overlord',
+  'feudal monarchy',
+  'fragmented warlords',
+  'free cities',
+  'free city',
+  'holy orders',
+  'imperial bureaucracy',
+  'merchant republic',
+  'nomadic tribes',
+  'steppe horde',
+  'sky cities',
+  'sorcerous cabal',
+  'splintered cults',
+  'theocratic authority',
+  'tribal confederacy',
+  'tribal monarchy',
+  'undead remnants'
+] as const
 
 export interface Region extends TaggedEntity {
   tag: 'nation'
@@ -24,8 +45,9 @@ export interface Region extends TaggedEntity {
     coastal?: boolean
   }
   culture: { ruling: number; native: number }
+  religion?: number
   // geography
-  climate?: Climate['type']
+  climate?: Climate['name']
   coastal: boolean
   borders: number[]
   landBorders: number[]
@@ -33,13 +55,6 @@ export interface Region extends TaggedEntity {
   // society
   development?: 'civilized' | 'frontier' | 'tribal' | 'remote'
   civilized?: boolean
-  government?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
-  religion?: number
-  description?: {
-    introduction: string
-    history: string
-    government: string
-    religions: string
-    issues: string
-  }
+  size?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
+  government?: typeof governments[number]
 }

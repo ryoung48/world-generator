@@ -1,0 +1,111 @@
+------------ ruins ------------
+-- locations --
+* {abandoned|ancient} mine
+* natural {cave|cavern}
+* savage {hamlet|encampment|stronghold}
+* {crumbling|overgrown} {villa|manor|castle|fortress}
+* {abandoned|ruined} village
+* hostile {encampment|stronghold}
+* {occult|ruined|ancient} {laboratory|academy|archive}
+* ancient ruins ({urban|rural})
+* {isolated|ruined|ancient} {temple|monastery|crypt|necropolis|monument}
+* {corrupt|untamed} wilds ({forest|marsh|plains|desert|mountains|hills|highlands|tundra|glacier})
+* magical disaster site
+* {ancient|military|merchant} shipwreck
+* ruined lighthouse
+* {ancient|occult|religious} vault
+-- complications --
+* abundant traps: the site is crusted over with dangerous snares and security measures.
+* {unstable|crumbling} structure: the site is falling apart and is actively dangerous to its inhabitants.
+* dungeon heart: The site will collapse if a particular {creature|object} is disturbed.
+* {energy blasts|birthing cyst}: The site periodically becomes extremely dangerous.
+* labyrinthine: the site is a maze of twisting passages and dead ends.
+* feral magic: the site is infused with {rotting|berserk} magic that taints the area and the occupants.
+* shifting interiors: the site's interior is constantly changing due to {spatial distortion|reconstruction|ancient relics}.
+* toxic miasma: the site is filled with {noxious fumes|a contagious disease|arcane radiation} that slowly kills intruders.
+* flooded halls: this site is largely flooded and is difficult to navigate.
+* civil war: multiple factions within the site are constantly fighting each other.
+* remote location: the site is exceedingly far away from anything else of importance, and its entrance is probably well-hidden.
+* sealed entrance: the site's entrance is bound shut by ancient {magic|technology}.
+* taboo wardens: entrance to the site is forbidden by {ancient law|local custom}.
+* living dungeon: the site is {animated by an ancient construct|infused with the spirit of some arcane mind|made up of the tiny bodies of countless construction-organisms}.
+* sealed evil: the site serves as a prison for a dangerous entity.
+* titanic beast: the site is the lair of some gargantuan beast that must be avoided at all costs.
+* infestation: {mutated|enchanted} {vermin|flora|fungi} have overrun the site.
+* lethal treasure: the site is filled with {toxic|cursed} {artifacts|relics|treasure}.
+-- inhabitants --
+* {sorcerous cabal|reclusive sorcerer} {elementals|treants|animated equipment|golems|abominations}
+* {raiders|degenerates|exiled noble}
+* dark cultists
+* {undead wraiths|vampiric spawn|necromancers|undead beasts} ++ {golems|abominations|husks}
+* monstrous beasts
+* relic automatons
+* aberrations ({fungal|infested|verdant|crystalline|corrupted|chimeric})
+* hivemind ({fungal|verdant|telepathic|networked})
+-- motivations: wealth|resources|lore|exploration|danger|rescue|key|artifacts|secrets
+-- enigmas (intellect|wisdom|charisma) --
+* {enchanted|cryptic|religious|warped|withered|defiled|intricate|sentient} {statue|monument|shrine|artwork|writing|archive|scrolls}
+* {{altered|augmented} gravity|arcana {nullifier|dampener|amplifier}|temporal distortion {slow|fast}}
+* benign enchantment ({healing|blessing|visions})
+* {mutated|enchanted} {vermin|flora|fungi}
+* locked {door|container} ({enchanted|mechanical})
+* {cryptic|warped|withered|defiled|mundane} {books|records|maps|debris|equipment} from past {inhabitants|intruders}
+* corpses of fallen {inhabitants|intruders} ({failed incursion|civil war|sacrifices})
+* signs of recent {bloodshed|battle|destruction|ritual|experimentation}
+* empty {cabinets|containers}
+* {discharged|broken} trap
+* {hidden|illusory} {ingress|egress}
+* treasure ({petty|minor|major|great})
+* labyrinthine {pathways|structure|corridors}
+ -- hazards (strength|dexterity|constitution) --
+* {unstable|crumbling} structures ({floors|ceilings|walls})
+* {dangerous|chaotic} {radiation|miasma|flames|arcana}
+* noxious {pools|flora|fungi}
+* infestation ({mammal|arthropod|reptile})
+* trapped {containers|interior} ({hidden|alluring}, {harmful|alarming|sealing|delaying})
+* explosive {dust|gases}
+* {contagious|virulent} disease
+* treacherous terrain ({flooded|verticality|footing})
+* obscuring {darkness|fog}
+* malign enchantment ({despair|madness|decay|transformation})
+* the way forward is blocked by {heavy|dangerous} {debris|rubble|overgrowth}
+* {broken|shattered} {corridors|egress|ingress} 
+* {warded|sealed|bound} entity
+* {auditory|visual|spatial} {distortions|illusions}
+
+* aristocratic: noble household|bureaucratic council
+* business: artisan guild|merchant consortium|{merchant|banking} house
+* temple: religious {sect|order}|sacred {temple|monastery}
+* criminal: criminal {syndicate|gang|brotherhood|cartel}
+* sorcerous: {sorcerous|occult} {cabal|conclave}
+* military: {chivalric|templar} order|mercenary company
+
+
+
+* ruthless assassins
+* rival mercenaries
+* angry mob
+* disguised warriors
+* paid guardsman
+* elite bodyguards
+* city guards
+* veteran witch-hunters
+* skilled sorcerer
+* mad alchemist
+* rebel soldiers
+* foreign agents
+* grizzled veterans
+* ethnic supremacists
+
+* bandit raiders
+* criminal thugs
+* religious zealots
+* dark cultists
+* inhuman aberrations
+
+* blighted raiders|degenerate cannibals
+* {mutated|enchanted|alien|corrupted} {beasts|flora|fungi}
+* {pack of wild beasts|lone predator}
+* undead {husks|abomination}|{vengeful|lost} wraiths
+* reclusive archmage|sorcerous cabal|vampiric spawn|necromantic cult
+* relic automatons|golem sentinels

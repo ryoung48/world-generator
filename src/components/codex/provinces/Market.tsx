@@ -1,5 +1,5 @@
 import { css } from '@emotion/css'
-import { IconButton } from '@mui/material'
+import { Grid, IconButton } from '@mui/material'
 import { ArrowDownBold, ArrowUpBold, Sack } from 'mdi-material-ui'
 
 import { decorateItem, itemPrice, localMarket } from '../../../models/npcs/equipment'
@@ -21,7 +21,7 @@ const validItem = (params: { item: Item; npc: NPC }) => {
 
 export function MarketView() {
   const { state, dispatch } = view__context()
-  const loc = window.world.provinces[state.codex.province]
+  const loc = window.world.provinces[state.province]
   const goods = localMarket({ loc, avatar: state.avatar }).sort((a, b) => b.tier - a.tier)
   const heroes = state.avatar.pcs.map(i => window.world.npcs[i])
   return (
@@ -39,7 +39,7 @@ export function MarketView() {
                 value: item => <StyledText text={decorateItem(item)}></StyledText>
               },
               {
-                text: `Cost`,
+                text: `Cost (${state.avatar.cp.toFixed(0)} cp)`,
                 align: 'left',
                 value: item => `${itemPrice(item)} cp`
               },
@@ -52,7 +52,7 @@ export function MarketView() {
                   const disabled =
                     !validItem({ item, npc: hero }) || state.avatar.cp < itemPrice(item)
                   return (
-                    <span>
+                    <Grid container alignContent='center'>
                       <IconButton
                         color='primary'
                         disabled={disabled}
@@ -60,10 +60,15 @@ export function MarketView() {
                       >
                         <Sack></Sack>
                       </IconButton>
-                      <IconButton color={upgrade ? 'success' : 'error'} disabled={disabled}>
+                      <IconButton
+                        color={upgrade ? 'success' : 'error'}
+                        disableRipple
+                        disabled={disabled}
+                        style={{ cursor: 'default' }}
+                      >
                         {upgrade ? <ArrowUpBold></ArrowUpBold> : <ArrowDownBold></ArrowDownBold>}
                       </IconButton>
-                    </span>
+                    </Grid>
                   )
                 }
               }

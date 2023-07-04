@@ -1,19 +1,5 @@
-import type { NPC } from '../types'
-
 const _professions = [
   'custom',
-  // adventurers
-  'barbarian',
-  'chanter',
-  'cipher',
-  'druid',
-  'fighter',
-  'monk',
-  'paladin',
-  'cleric',
-  'ranger',
-  'rogue',
-  'wizard',
   // lower
   'peasant',
   'village elder',
@@ -32,6 +18,11 @@ const _professions = [
   'monster hunter',
   'grave keeper',
   'missionary',
+  'street vendor',
+  'hedge wizard',
+  'fortune teller',
+  'ascetic',
+  'soldier (military)',
   // middle
   'tax collector',
   'investigator',
@@ -43,6 +34,7 @@ const _professions = [
   'criminal boss',
   'innkeeper',
   'priest',
+  'abbot',
   'lawyer',
   'scholar',
   'sorcerer',
@@ -64,23 +56,27 @@ const _professions = [
   'alchemist',
   'artificer',
   'merchant',
+  'shopkeeper',
   'banker',
   'caravan trader',
   'caravan master',
   'ship captain (merchant)',
   'dock master',
+  'officer (military)',
   // upper
+  'aristocrat',
   'oligarch',
+  'crime lord',
   'magistrate',
   'archmage',
   'high priest',
   'templar (grandmaster)',
   'ethnarch (minority)',
-  'merchant prince',
+  'general (military)',
   'exiled pretender',
-  'aristocrat',
   'diplomat',
-  'courtier'
+  'courtier',
+  'prince'
 ] as const
 export type Profession = typeof _professions[number]
 export type ProfessionDetails = {
@@ -93,7 +89,6 @@ export type ProfessionDetails = {
   age?: 'novice' | 'veteran' | 'master'
   weight?: number
   unique?: boolean
-  villain?: boolean
-  adventurer?: boolean
-  equipment?: () => NPC['equipment']
+  war?: boolean
+  capital?: boolean
 }

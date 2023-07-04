@@ -1,5 +1,5 @@
 import type { Province } from '../regions/provinces/types'
-import type { TaggedEntity } from '../utilities/codex/entities'
+import type { TaggedEntity } from '../utilities/entities/types'
 import type { Item } from './equipment/types'
 import type { Profession } from './professions/types'
 import type { Personality, Quirk } from './traits/types'
@@ -29,6 +29,8 @@ export interface NPC extends TaggedEntity {
   appearance: string
   health: number
   equipment?: Item[]
+  abilities?: { tag: string; text: string; tier: number }[]
+  outfit?: string
 }
 
 export interface NPCParams {

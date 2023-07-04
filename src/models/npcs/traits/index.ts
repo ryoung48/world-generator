@@ -58,20 +58,8 @@ const hobbyist: Quirk[] = [
   'chef',
   'poet'
 ]
-const relations: Quirk[] = [
-  'troubled romance',
-  'load-bearing relationship',
-  'misplaced trust',
-  'troublesome relationship'
-]
-const talent: Quirk[] = [
-  'well-off',
-  'despised',
-  'struggling',
-  'respected',
-  'delusional self-image',
-  'negligent'
-]
+const relations: Quirk[] = ['troubled romance']
+const talent: Quirk[] = ['well-off', 'despised', 'struggling', 'respected', 'negligent']
 const connections: Quirk[] = ['connections', 'secret sectarian', 'foreign agent']
 const vice: Quirk[] = ['alcoholic', 'drug addict', 'gluttonous']
 
@@ -136,24 +124,35 @@ const quirks: Record<Quirk, QuirkDetails> = {
     text: '{speaks {quickly|slowly|quietly|loudly|copiously|sparsely}|{melodic|rough|sharp|deep} voice}',
     spawn: () => 1
   },
+  verbiage: {
+    text: '{evasive when questioned|uses {flowery language|metaphors}|never directly {denies|refuses} anything}',
+    spawn: () => 1
+  },
   mannerism: {
     text: ({ hair }) =>
       decorateText({
         label: 'distinct mannerism',
         tooltip: `{nervous {twitch|habit|gesture}|{whistles|hums} occasionally${
           hair ? '|{tosses hair|plays with hair}' : ''
-        }|likes to wink}`
+        }|likes to wink|paces constantly|{taps|drums} fingers}`
       }),
     spawn: () => 1
   },
   scars: {
     text: ({ skin }) => `{light|light|light|heavy} {scars|scars|scars${skin ? '|burns' : ''}}`,
-    spawn: () => 1
+    spawn: () => 1,
+    conflicts: ['disease marks']
   },
   maimed: { text: 'missing {{arm|hand}|leg|eye}', spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
   afflicted: {
     text: 'afflicted ({illness|cursed})',
-    spawn: ({ youthful }) => (youthful ? 0 : 0.5)
+    spawn: ({ youthful }) => (youthful ? 0 : 0.5),
+    conflicts: ['disease marks']
+  },
+  'disease marks': {
+    text: 'old {pox marks|disease scars} are present',
+    conflicts: ['scars', 'afflicted'],
+    spawn: () => 0.25
   },
   horns: {
     text: '{broken|cracked|ringed} horns',
@@ -169,7 +168,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   wisdom: { text: '{oblivious|{perceptive|insightful}}', spawn: () => 1 },
   charisma: {
     text: '{awkward|obnoxious|charismatic|beautiful}',
-    conflicts: ['local leader'],
+    conflicts: ['natural leader'],
     spawn: () => 1
   },
   strength: { text: '{muscular|frail}', spawn: () => 1 },
@@ -203,8 +202,15 @@ const quirks: Record<Quirk, QuirkDetails> = {
   funny: { text: '{humorous|sarcastic|whimsical}', spawn: () => 1 },
   storyteller: { spawn: ({ youngAdult }) => (youngAdult ? 0 : 0.5) },
   nostalgic: { spawn: ({ youngAdult }) => (youngAdult ? 0 : 0.5) },
-  superstitious: { spawn: () => 1 },
+  superstitious: {
+    text: decorateText({
+      label: 'superstitious',
+      tooltip: '{carries various good luck charms|is careful to avoid certain actions}'
+    }),
+    spawn: () => 1
+  },
   inquisitive: { spawn: () => 1 },
+  obsessive: { spawn: () => 1 },
   'criminal past': { spawn: ({ profession }) => (profession.includes('criminal') ? 0 : 1) },
   dissident: {
     text: decorateText({ label: 'dissident', tooltip: 'dislikes figures of authority' }),
@@ -215,7 +221,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
     text: ({ profession }) =>
       decorateText({
         label: 'connections',
-        tooltip: `{${profession.includes('clergy') ? '' : 'religious|'}${
+        tooltip: `{${profession.includes('clergy') ? '' : 'temple|'}${
           profession.includes('criminal') ? '' : 'criminal|'
         }${profession.includes('aristocrat') ? '' : 'aristocratic|'}${
           profession.includes('bureaucrat') ? '' : 'bureaucratic|'
@@ -230,28 +236,17 @@ const quirks: Record<Quirk, QuirkDetails> = {
     conflicts: connections,
     spawn: () => 0.5
   },
-  'local leader': { conflicts: ['charisma'], spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
+  'natural leader': { conflicts: ['charisma'], spawn: ({ youthful }) => (youthful ? 0 : 0.5) },
   'magical gift': { spawn: ({ sorcerer }) => (sorcerer ? 0 : 0.5) },
-  'well-off': { conflicts: talent, spawn: () => 1 },
+  'well-off': { text: '{well-off|prosperous}', conflicts: talent, spawn: () => 1 },
   struggling: { conflicts: talent, spawn: () => 1 },
   respected: { conflicts: talent, spawn: () => 1 },
   despised: { conflicts: talent, spawn: () => 1 },
   negligent: { conflicts: talent, spawn: () => 1 },
-  'delusional self-image': {
-    text: decorateText({
-      label: 'delusional self-image',
-      tooltip: '{talented|respected}'
-    }),
-    conflicts: talent,
-    spawn: () => 0.5
-  },
-  'brash overconfidence': { spawn: ({ courteous }) => (courteous ? 0 : 1) },
-  'fatal extravagance': { spawn: ({ austere }) => (austere ? 0 : 0.5) },
-  'dark bargain': { spawn: () => 0.5 },
   'concealed sin': {
     text: decorateText({
       label: 'concealed sin',
-      tooltip: '{adulterous|treacherous|theft|incompetence}'
+      tooltip: '{adulterous|treacherous|theft|incompetence|dark bargain}'
     }),
     spawn: () => 0.5
   },
@@ -263,44 +258,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
     }),
     conflicts: relations,
     spawn: ({ youthful }) => (youthful ? 1 : 0)
-  },
-  'load-bearing relationship': {
-    text: decorateText({
-      label: 'load-bearing relationship',
-      tooltip: '{friend|relative} ({emotional support|practical assistance})'
-    }),
-    conflicts: relations,
-    spawn: () => 0.5
-  },
-  'misplaced trust': {
-    text: decorateText({
-      label: 'misplaced trust',
-      tooltip: '{friend|relative} ({incompetence|self-interest|secret malice})'
-    }),
-    conflicts: relations,
-    spawn: () => 0.5
-  },
-  'troublesome relationship': {
-    text: decorateText({
-      label: 'troublesome relationship',
-      tooltip: '{friend|relative} ({poor decisions|reckless indulgences|threatened by an enemy})'
-    }),
-    conflicts: relations,
-    spawn: () => 0.5
-  },
-  'ticking bomb': {
-    text: decorateText({
-      label: 'ticking bomb',
-      tooltip: '{self-destructive choices|impending treachery|internal strife|escalating threats}'
-    }),
-    spawn: () => 0.5
-  },
-  'irrational hatred': {
-    text: decorateText({
-      label: 'irrational hatred',
-      tooltip: '{misunderstanding|past {crimes|affiliations}}'
-    }),
-    spawn: ({ context }) => (context?.role === 'enemy' ? 0.5 : 0)
   }
 }
 

@@ -105,3 +105,10 @@ export const partition = <T>(array: T[], size: number) =>
   Array(Math.ceil(array.length / size))
     .fill(undefined)
     .map((_, i) => array.slice(i * size, i * size + size))
+
+export const counter = <T extends string | number>(arr: T[]) =>
+  arr.reduce((acc: Record<string, number>, item) => {
+    return { ...acc, [item]: (acc[item.toString()] || 0) + 1 }
+  }, {}) as Record<T, number>
+
+export const uniqueArray = <T extends string | number>(arr: T[]) => Array.from(new Set(arr))

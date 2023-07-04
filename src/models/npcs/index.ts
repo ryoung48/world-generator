@@ -2,7 +2,7 @@ import { province__demographics } from '../regions/provinces/network'
 import { decorateText } from '../utilities/text/decoration'
 import { Culture } from './cultures/types'
 import { lang__first } from './languages/words/actors'
-import { profession__spawn, professions } from './professions'
+import { profession__spawn } from './professions'
 import { species__map } from './species'
 import { npc__traits } from './traits'
 import { Gender, LifePhase, NPC, NPCParams } from './types'
@@ -32,7 +32,7 @@ const npc__appearance = (params: { culture: Culture; age: LifePhase; gender: Gen
 }
 
 export const npc__spawn = (params: NPCParams) => {
-  const { loc, context, pc } = params
+  const { loc, context } = params
   const gender = params?.gender ?? npc__randomGender()
   const profession = profession__spawn({ loc, gender, context, profession: params.profession })
   const { common, native, foreign } = province__demographics(loc)
@@ -59,9 +59,7 @@ export const npc__spawn = (params: NPCParams) => {
     health: 1
   }
   npc__traits({ loc, npc, context })
-  const { equipment } = professions[profession.key]
-  if (equipment) npc.equipment = equipment()
   window.world.npcs.push(npc)
-  if (!pc) loc.actors.push(npc.idx)
+  loc.actors.push(npc.idx)
   return npc
 }

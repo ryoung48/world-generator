@@ -25,7 +25,7 @@ const oceanCurrents = () => {
       .filter(n => !n.oceanCurrent)
       .forEach(n => {
         n.oceanCurrent = poly.oceanCurrent
-        if (n.isWater) queue.push(n)
+        if (n.isWater || n.coastal) queue.push(n)
       })
   }
 }
@@ -37,7 +37,7 @@ export const regional__climates = () => {
     const cell = province__cell(capital)
     region.coastal = cell.coastal
     const land = Shaper.regionLand[region.idx]
-    const coasts = land.filter(cell => cell.isCoast)
+    const coasts = land.filter(cell => cell.coastal)
     const east = coasts.filter(cell => cell.oceanCurrent === 'E').length
     const west = coasts.filter(cell => cell.oceanCurrent === 'W').length
     const inland = !region.coastal

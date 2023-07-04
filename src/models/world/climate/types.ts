@@ -7,7 +7,7 @@ export const rain = {
 }
 
 export interface Climate {
-  type:
+  name:
     | 'tropical rainforest'
     | 'tropical monsoon'
     | 'savanna'
@@ -43,12 +43,12 @@ const diurnalVariation: Record<'low' | 'standard' | 'extreme', [number, number]>
   extreme: [20, 4]
 }
 
-export const climates: Record<Climate['type'], Climate> = {
+export const climates: Record<Climate['name'], Climate> = {
   'tropical rainforest': {
-    type: 'tropical rainforest',
+    name: 'tropical rainforest',
     code: 'Af',
     zone: 'tropical',
-    display: '#0000FE',
+    display: 'hsl(240, 100%, 50%)',
     population: 1,
     scorePenalty: 1.2,
     diurnalHeat: diurnalVariation.low,
@@ -57,22 +57,22 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   'tropical monsoon': {
-    type: 'tropical monsoon',
+    name: 'tropical monsoon',
     code: 'Am',
     zone: 'tropical',
     population: 1.5,
     scorePenalty: 1,
     diurnalHeat: diurnalVariation.low,
-    display: '#0077FF',
+    display: 'hsl(212, 100%, 50%)',
     precipitation: [0.8, 0.1],
     affixes: ['jungle'],
     terrain: 'forest'
   },
   savanna: {
-    type: 'savanna',
+    name: 'savanna',
     code: 'Aw',
     zone: 'tropical',
-    display: '#46A9FA',
+    display: 'hsl(207, 95%, 63%)',
     population: 1.5,
     scorePenalty: 0.8,
     diurnalHeat: diurnalVariation.standard,
@@ -81,10 +81,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'plains'
   },
   'hot steppe': {
-    type: 'hot steppe',
+    name: 'hot steppe',
     code: 'BSh',
     zone: 'temperate',
-    display: '#F5A301',
+    display: 'hsl(40, 99%, 48%)',
     population: 1,
     scorePenalty: 0.8,
     diurnalHeat: diurnalVariation.standard,
@@ -93,10 +93,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'plains'
   },
   'cold steppe': {
-    type: 'cold steppe',
+    name: 'cold steppe',
     code: 'BWh',
     zone: 'temperate',
-    display: '#FFDB63',
+    display: 'hsl(46, 100%, 69%)',
     population: 1,
     scorePenalty: 0.8,
     diurnalHeat: diurnalVariation.standard,
@@ -105,10 +105,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'plains'
   },
   'hot desert': {
-    type: 'hot desert',
+    name: 'hot desert',
     code: 'BWk',
     zone: 'tropical',
-    display: '#FE0000',
+    display: 'hsl(0, 100%, 50%)',
     population: 0.5,
     scorePenalty: 1.5,
     diurnalHeat: diurnalVariation.extreme,
@@ -119,10 +119,10 @@ export const climates: Record<Climate['type'], Climate> = {
     arid: true
   },
   'cold desert': {
-    type: 'cold desert',
+    name: 'cold desert',
     code: 'BSk',
     zone: 'temperate',
-    display: '#FE9695',
+    display: 'hsl(1, 98%, 79%)',
     population: 0.5,
     scorePenalty: 1,
     diurnalHeat: diurnalVariation.extreme,
@@ -133,10 +133,10 @@ export const climates: Record<Climate['type'], Climate> = {
     arid: true
   },
   mediterranean: {
-    type: 'mediterranean',
+    name: 'mediterranean',
     code: 'Cfa',
     zone: 'temperate',
-    display: '#FFFF00',
+    display: 'hsl(60, 100%, 50%)',
     population: 3,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
@@ -145,10 +145,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   oceanic: {
-    type: 'oceanic',
+    name: 'oceanic',
     code: 'Cwa',
     zone: 'temperate',
-    display: '#66FF33',
+    display: 'hsl(105, 100%, 60%)',
     population: 3,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
@@ -157,10 +157,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   subtropical: {
-    type: 'subtropical',
+    name: 'subtropical',
     code: 'Csa',
     zone: 'temperate',
-    display: '#C6FF4E',
+    display: 'hsl(79, 100%, 65%)',
     population: 2.5,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
@@ -169,10 +169,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   'temperate monsoon': {
-    type: 'temperate monsoon',
+    name: 'temperate monsoon',
     code: 'Cfb',
     zone: 'temperate',
-    display: '#96FF96',
+    display: 'hsl(120, 100%, 80%)',
     population: 2.5,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
@@ -182,10 +182,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   laurentian: {
-    type: 'laurentian',
+    name: 'laurentian',
     code: 'Dfa',
     zone: 'temperate',
-    display: '#38C7FF',
+    display: 'hsl(197, 100%, 61%)',
     population: 3,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
@@ -194,10 +194,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   manchurian: {
-    type: 'manchurian',
+    name: 'manchurian',
     code: 'Dwa',
     zone: 'temperate',
-    display: '#ABB1FF',
+    display: 'hsl(236, 100%, 84%)',
     population: 2,
     scorePenalty: 0,
     diurnalHeat: diurnalVariation.standard,
@@ -207,10 +207,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   subarctic: {
-    type: 'subarctic',
+    name: 'subarctic',
     code: 'Dfc',
     zone: 'arctic',
-    display: '#007E7D',
+    display: 'hsl(180, 100%, 25%)',
     population: 1,
     scorePenalty: 0.4,
     diurnalHeat: diurnalVariation.standard,
@@ -219,10 +219,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   siberian: {
-    type: 'siberian',
+    name: 'siberian',
     code: 'Dwc',
     zone: 'arctic',
-    display: '#4C51B5',
+    display: 'hsl(237, 42%, 51%)',
     population: 1,
     scorePenalty: 0.4,
     diurnalHeat: diurnalVariation.standard,
@@ -232,10 +232,10 @@ export const climates: Record<Climate['type'], Climate> = {
     terrain: 'forest'
   },
   polar: {
-    type: 'polar',
+    name: 'polar',
     code: 'ET',
     zone: 'arctic',
-    display: '#B2B2B2',
+    display: 'hsl(0, 0%, 70%)',
     population: 0.3,
     scorePenalty: 1.5,
     diurnalHeat: diurnalVariation.standard,

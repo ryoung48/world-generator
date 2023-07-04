@@ -8,7 +8,7 @@ import {
 import { Culture } from '../../../../npcs/cultures/types'
 import { region__borders } from '../../../../regions'
 import { Region } from '../../../../regions/types'
-import { entity__partitionBFS } from '../../../../utilities/codex/entities'
+import { entity__partitionBFS } from '../../../../utilities/entities'
 import { WeightedDistribution } from '../../../../utilities/math'
 import { Directions } from '../../../../utilities/math/points'
 import { Climate, climates } from '../../../climate/types'
@@ -47,9 +47,9 @@ const culture__cultureScore = (culture: Culture) =>
     .map(r => climates[r.climate].population * (r.coastal ? 1.5 : 1))
     .reduce((sum, pop) => sum + pop, 0) / culture.regions.length
 
-const distantClimates: Climate['type'][] = ['polar', 'tropical rainforest']
+const distantClimates: Climate['name'][] = ['polar', 'tropical rainforest']
 
-const tribalLands: Climate['type'][] = ['hot steppe', 'cold desert', 'cold steppe', 'savanna']
+const tribalLands: Climate['name'][] = ['hot steppe', 'cold desert', 'cold steppe', 'savanna']
 
 const isDistant = (culture: Culture) => {
   const regions = culture__regions(culture)

@@ -5,7 +5,7 @@ import { Backdrop, CircularProgress, Grid, ThemeProvider } from '@mui/material'
 import { Container } from '@mui/system'
 import { useReducer, useState } from 'react'
 
-import { Codex } from '../codex'
+import { NationView } from '../codex/nations'
 import { view__init, view__reducer, ViewContext } from '../context'
 import { WorldMap } from '../maps'
 import { theme } from '../theme'
@@ -29,7 +29,7 @@ function App() {
                 <WorldMap></WorldMap>
               </Grid>
               <Grid item xs={5}>
-                <Codex></Codex>
+                {<NationView></NationView>}
               </Grid>
             </Grid>
           )}

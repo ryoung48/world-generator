@@ -1,36 +1,11 @@
-import { province__decoration } from '../../../models/regions/provinces'
-import { DiplomaticRelation, Region } from '../../../models/regions/types'
-import { titleCase } from '../../../models/utilities/text'
+import { region__biomes } from '../../../models/regions'
+import { DiplomaticRelation } from '../../../models/regions/types'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { Climate, climates } from '../../../models/world/climate/types'
 import { view__context } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
-
-const region__biomes = (nation: Region) => {
-  const biomes = Object.entries(
-    nation.provinces
-      .map(t => window.world.provinces[t])
-      .reduce((dict: Record<string, number>, province) => {
-        const { climate } = window.world.regions[province.region]
-        if (!dict[climate]) dict[climate] = 0
-        dict[climate] += province.land
-        return dict
-      }, {})
-  ).sort((a, b) => b[1] - a[1])
-  const total = biomes.reduce((sum, [_, v]) => sum + v, 0)
-  return biomes
-    .map(
-      ([k, v]) =>
-        `${decorateText({
-          label: titleCase(k),
-          tooltip: climates[k as Climate['type']].code
-        })} (${formatters.percent(v / total)})`
-    )
-    .join(', ')
-}
 
 const diplomaticScore: Record<DiplomaticRelation, number> = {
   'at war': 1,
@@ -54,7 +29,8 @@ const diplomaticColor: Record<DiplomaticRelation, string> = {
 
 export function Geography() {
   const { state } = view__context()
-  const nation = window.world.regions[state.codex.nation]
+  const province = window.world.provinces[state.province]
+  const nation = window.world.regions[province.nation]
   const domains = Array.from(
     new Set(nation.provinces.map(p => window.world.provinces[p].region))
   ).map(r => window.world.regions[r])
@@ -109,10 +85,6 @@ export function Geography() {
                 .join(', ')}
             ></StyledText>
           )
-        },
-        {
-          label: `Settlements (${provinces.length})`,
-          content: <StyledText text={province__decoration(provinces)}></StyledText>
         }
       ]}
     ></SectionList>

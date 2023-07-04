@@ -1,41 +1,28 @@
-import { colors__randomPreset } from '../colors'
-import { Trait, TraitEnriched } from './types'
+import { counter } from '../math'
+import { TraitSelectionArgs } from './types'
 
-export const entity__traits = <tags extends string, args extends { entity: TraitEnriched<tags> }>({
-  traits,
-  tag
-}: {
-  traits: Record<tags, Trait<tags, args>>
-  tag: string
-}) => {
-  const traitList = Object.values<Trait<tags, args>>(traits)
-
-  return {
-    colors: colors__randomPreset({
-      tags: traitList.map(trait => trait.tag),
-      seed: `${tag} traits`,
-      dark: true
-    }),
-    spawn: (
-      params: {
-        trait?: Trait<tags, args>
-        filter?: (_trait: Trait<tags, args>) => boolean
-      } & args
-    ) => {
-      const validTraits = traitList.filter(params.filter ?? (() => true))
-      const {
-        entity,
-        trait = window.dice.weightedChoice(
-          validTraits.map(trait => {
-            const { conflicts } = traits[trait.tag]
-            const used = entity.traits.some(
-              ({ tag }) => trait.tag === tag || conflicts?.includes(tag)
-            )
-            return { v: trait, w: used ? 0 : trait.spawn(params) }
-          })
-        )
-      } = params
-      entity.traits = [...entity.traits, { tag: trait.tag, text: trait.text(params) }]
-    }
-  }
+export const trait__selection = <Tags extends string, Args>({
+  available,
+  current,
+  constraints,
+  used
+}: TraitSelectionArgs<Tags, Args>) => {
+  const _used = counter(used)
+  const selected = window.dice.weightedChoice(
+    Object.keys(available).map(_tag => {
+      const trait = available[_tag as Tags]
+      const conflict =
+        current.some(tag => tag === _tag) ||
+        trait.conflicts?.some(conflict => current.some(tag => tag === conflict))
+      const invalid = Object.entries(constraints || {}).some(([key, value]) => {
+        const _key = key as keyof Args
+        return trait.constraints?.[_key] !== undefined && trait.constraints[_key] !== value
+      })
+      return {
+        w: conflict || invalid ? 0 : 1 / (_used[_tag as Tags] * 10 || 1),
+        v: _tag as Tags
+      }
+    })
+  )
+  return { tag: selected, text: window.dice.spin(available[selected].text) }
 }

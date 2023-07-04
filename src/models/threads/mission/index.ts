@@ -10,6 +10,7 @@ export const mission__spawn = (type: Thread['type']) => {
   )
   return {
     tag: mission,
-    text: window.dice.spin(missions[mission].text)
+    text: window.dice.spin(missions[mission].text),
+    complication: window.dice.choice([...missions[mission].complication])
   }
 }

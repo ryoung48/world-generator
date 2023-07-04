@@ -1,0 +1,280 @@
+-- leaders -- (nascent|rising|fading) ~ (respected|wise|charitable|optimistic|despotic|neglectful|paranoid|corrupt|decadent|treacherous|capricious|imperious|pious|zealous|xenophobic|supremacist|isolationist|xenophilic|progressive|traditional|afflicted|enchanted|melancholic|occult|proxy|puppet|overextended) :: weak|strong
+* tribal: (hereditary|elected) chieftain|warlord :: council (elders|chiefs) :: resident (sorcerer|priest)
+* villages: (hereditary|elected|appointed) headman|reave|lord :: council (elders) :: resident (sorcerer|priest)
+* towns|cities: (hereditary|elected|colonial) aristocrat|bureaucrat|warlord|bishop :: council (nobles|merchants|oligarchs|sorcerers|priests|warlords|syndicate|regents) :: viceroy|king|emperor|imperator|archbishop :: regent (general|consort|relative|official)
+* courtiers: consort (foreigner?)|crown prince|sibling|parent :: general|admiral|guard :: artist|scholar|writer|explorer :: priest|inquisitor|sorcerer :: spymaster|statesman|treasurer|merchant|diplomat  (foreigner|criminal)
+-- location traits --
+* abandoned structures: this settlement is home to a number of abandoned palaces and temples, which have been taken over by squatters and criminals
+* abandoned village: a nearby village was abandoned long ago, and now lies in ruins
+** affliction's mark: Someone important is afflicted with a persistent, incurable illness; the sufferer {is desperate for a cure|requires regular infusions of some costly remedy in order to survive}
+** ancestral grudge: resolve a centuries-old feud between this settlement’s monastery and a neighboring noble family
+* ancient archives: a nearby ruined {shrine|temple|keep|estate|city|crypt|fortress} is said to contain a vast collection of ancient texts and knowledge
+* ancient forge: a blacksmith from a distant land seeks an escort to the nearby ruins; rumors speak of an ancient forge located within this ruin that could be used to craft legendary weapons and armor
+* ancient monument: deep in the wilderness lies an ancient monument, which is said to be the resting place of a powerful {god|hero|demon}
+* artistic patrons: this settlement is renowned for its art, music, and literature; it attracts scholars and artists from across the region
+* assassins guild: this settlement is home to a powerful assassins guild, which is involved in political intrigue and espionage
+* automaton guardians: the nearby ruins are guarded by a number of ancient automatons, which are still active and hostile to intruders
+* bad water: there are problems with the local water supply; {the water is {contaminated|poisoned} and is making people sick|old wells are running dry|the water is infested with dangerous vermin}
+* bandit camp: a group of bandits have taken up residence in a nearby {wilderness encampment|ruined fortification}, using it as a base of operations for their raids
+* black market: this settlement has a thriving underground economy where illegal goods and services can be bought and sold
+* blood feud: two powerful families in this settlement are locked in a bitter vendetta; tensions are high as both families struggle for influence 
+** bloody inquisition: deal with an overzealous inquisitor who has arrived in this settlement and is causing unrest
+** brother's betrayal: investigate the betrayal of a monk in this settlement who stole an artifact for a rival monastery
+* buried ruins: this settlement was built on top of old ruins; {these ruins were {built over accidentally|intentionally buried}|excavation of the ruins is currently in progress|monsters have been known to emerge from the ruins every so often}
+* canal streets: this settlement is built on a network of canals, which are used for transportation and trade
+* caravan routes: this settlement is a major stop on a caravan route; merchants and travelers from across the region pass through here and are often in need of escorts
+* contested ruins: multiple factions of {bandits|cultists|undead|aberrations} fight for control of the nearby ruins; any expedition into the ruins will need to deal with them
+* contested shipwreck: a shipwreck lies on the coast near this settlement, and is rumored to contain a vast treasure
+* corrupted elemental: a powerful elemental has been corrupted by dark magic, and is now a threat to the locals
+* corrupt officials: the local authorities are extremely corrupt; they are more interested in lining their own pockets than in serving the people
+* coup d'etat: a group of conspirators are plotting to overthrow the local leadership and seize control of this settlement
+* criminal syndicate: a powerful criminal syndicate has a tight grip on all illegal activity in this settlement; local law enforcement is either corrupt or powerless to stop them
+* crop failure: a {drought|flood|plague|insect infestation|magical blight} has caused the local crops to fail, and the locals are in desperate need of food
+* crop theft: a {group of bandits have|grasping noble has} recently stolen much of the village's food supply; the locals are desperate for help
+* crumbling ruins: this settlement is home to a ruined {shrine|temple|keep|estate|city|crypt|fortress}, which is slowly falling apart and is in danger of collapsing
+* cryptic art: a vast, ancient work of art is rumored to exist out in the nearby wilderness, but its meaning and purpose are unknown
+* crystalline horrors: the nearby caves are filled with strange arcane crystals, which are known to transform any living creature that comes into contact with them into crystalline monstrosities
+* cursed artifact: the locals have uncovered a powerful artifact, but it is cursed and has brought much misfortune; they are looking for a way to destroy it
+* cursed local: there are rumors of a shapeshifter or other cursed creature living among the locals, but no one knows who it is; recent events have caused the locals to become suspicious of each other
+* cyclical doom: the ruins of a nearby {shrine|temple|keep|estate|city|crypt|fortress} are said to be extremely dangerous due to {fluxes of magical energy|swarms of quick-breeding dangerous vermin} that periodically sweep through the area
+** dangerous exorcism: a local priest is seeking assistance in performing an exorcism on a possessed local; the exorcism is dangerous and may result in the death of the possessed
+* dangerous wildlife: this settlement is home to a dangerous and aggressive species of wildlife, which is a constant threat to the locals
+* dark cult: this settlement is home to a cult that worships a dark and twisted deity, and is involved in human sacrifice and other depraved acts
+* defiled land: the land around this settlement has been poisoned by an ancient curse, leaving it {barren and desolate|corrupted and savage}
+* degenerate cannibals: the nearby ruins are home to a tribe of degenerate cannibals, who are rumored to be cursed and cannot leave the ruins
+* desecrated shrine: a local {shrine|temple} has been desecrated; the local authorities are still searching for the culprits
+* despotic lord: this settlement is ruled with an iron fist, crushing any hint of resistance and demanding extravagant service from the locals
+* disappearing caravans: a number of caravans have recently gone missing near this settlement; the local authorities are offering a reward for information
+* dueling explorers: nearby ruins have recently been unearthed and multiple groups of rival explorers are racing to claim the treasure within
+* dire tombs: the nearby ruins are said to be haunted by the restless spirits of the dead, who rise from their graves to terrorize the living
+* distant gate: the nearby ruins are said to contain a portal to another world, which is guarded by a powerful {demon|angel|elemental|fae}
+* dying forest: the once-vibrant forest that surrounds this settlement is slowly dying, its trees and wildlife withering away under mysterious circumstances
+* elder's disappearance: a revered elder has mysteriously disappeared; the tribe seeks assistance in the search
+** eldritch pact: {a local noble has made a pact with a powerful {demon|angel|elemental|fae} in exchange for {power|wealth|immortality}|learn of a pact between the monks of a nearby monastery and otherworldly beings, exchanging knowledge for unknown services}
+* ethnic tensions: tensions are rising between two rival ethnic groups and it seems like a violent conflict may be imminent
+* experimental lab: the nearby ruined {temple|keep|estate} was once used by a {mad sorcerer|ancient artificer} to conduct vile experiments
+** false idol: {a local {shrine|temple} is home to a false idol, which is secretly a powerful demon in disguise|unmask a clergy member in this settlement who is secretly spreading the worship of a forbidden deity}
+* faded remnant: this settlement is a decaying city of crumbling ruins and abandoned buildings, once a grand metropolis now reduced to a shadow of its former glory
+* feral magic: the nearby ruins are said to be tainted by a decayed and twisted enchantment, which is mutating the local wildlife into savage monsters
+* flooded halls: the nearby ruins are said to be flooded with {water|water|lava|poisonous liquids}, making exploration difficult
+* food shortage: this settlement is suffering from a severe food shortage; mobs of hungry commoners are rioting in the streets
+* forbidden faith: this settlement is home to a secret cult that worships a forbidden deity, and is constantly under threat of discovery and persecution
+** forbidden romance: navigate the dangerous romance between a clergy member and a noble within this settlement
+** forbidden rites: stop a forbidden ritual from being performed in the catacombs beneath the settlement’s temple
+* forced evictions: some of the locals are being forced out of their homes by a powerful {noble|merchant|official|criminal gang}
+* forgotten mines: the nearby mines were abandoned long ago, but are rumored to contain rich veins of valuable ore; they are also rumored to be {haunted|infested with foul creatures}
+* foreign spies: this settlement is rumored to have a number of active foreign spies, who are gathering information and plotting to undermine the local authorities
+* fortress monastery: this settlement is a remote fortress that houses a powerful monastic order dedicated to a particular {god|philosophy}
+* fungal garden: the locals of this settlement have developed a thriving industry growing exotic and unusual plants and fungi
+* fungal infestation: a strange fungus has taken root in the buildings and tunnels of this settlement, causing sickness and madness among the locals
+* gang warfare: this this settlement is plagued by constant fighting between rival criminal {gangs|cartels|syndicates}
+* ghost ship: a ghost ship is said to haunt the nearby coast, with an undead crew that is always on the lookout for fresh victims
+* grand library: this settlement is home to a vast library containing ancient texts and knowledge, drawing scholars and seekers of arcane knowledge from far and wide
+* guild oligarchy: the politics of this settlement are dominated by the various craft guilds, each vying for power and influence
+* harsh occupation: this settlement is under the control of a foreign army that is imposing harsh and oppressive rule
+* haunted estate: a large estate near this settlement is said to be haunted by the ghost of its former owner
+* hazardous district: a section of this settlement has suffered from a great magical disaster, and is now a dangerous and unstable place
+* heavy fortification: this settlement is a military bastion that is heavily fortified and protected by a {large|small} garrison of professional soldiers
+* heretical beliefs: this settlement is home to a heretical sect of a major religion that is disrupting old patterns of authority and worship
+* hivemind natives: a {hiveminded {insect|fungal} swarm|telepathic gestalt species|unified golem force} inhabits the nearby ruined {shrine|temple|keep|estate|city|crypt|fortress}
+* hostile terrain: this settlement is surrounded by a harsh and inhospitable environment that makes travel to and from other provinces difficult
+* incompetent leaders: the leaders of this settlement are incompetent and corrupt, and the locals are suffering as a result
+* invading army: there is an army in the area, and it has little inclination to be gentle with the locals
+* isolated academy: there is a school of {sorcerers|esoteric artists|hermit-scholars} in the area; it is largely self-sufficient and has little contact with the outside world
+* knightly order: this settlement is home to a powerful order of knights that is dedicated to a particular {god|philosophy}
+* lawless chaos: local authority has broken down entirely in this settlement with looters pillaging wealthier districts
+* lethal treasure: the nearby ruins are said to be filled with {deadly traps and other dangers, but also rumored to contain vast riches|vast troves of cursed treasure}
+* limited access: the nearby ruins have been sealed off by powerful magic; the ruins can only be accessed {by those with the right keys|during a specific time of year}
+* living dungeon: the nearby ruins are said to be alive, and are constantly shifting and changing
+* lost battlefield: a great battle was fought in the nearby wilderness long ago; {{shades|spirits} of the fallen still haunt|ancient war automatons still patrol} the area
+* magical academy: this settlement is home to a prestigious magical academy that attracts students from across the region
+* malignant slums: this settlement is home to a large slum district that is a hotbed of crime and disease
+* marriage alliance: the local chieftain is hiring guards to escort {his|her} {daughter|son} to a neighboring tribe for a politically arranged marriage
+* massacre site: a terrible massacre took place recently; {the locals are still recovering from the shock|the local authorities are still searching for the culprits}
+* master artisan: this settlement is home to a master {alchemist|armorer|weaponsmith} who is renowned for their skill and craftsmanship; they are always on the lookout for rare and exotic materials
+* mercenary companies: this settlement is home to numerous mercenary companies that are often hired out to the highest bidder
+* merchant council: this settlement is heavily influenced by a council of wealthy merchant princes who are dedicated to the prosperity of the city
+* migration path: this settlement is located along a major migration path for a dangerous species of wildlife; the locals avoid the area during the migration season
+* military outpost: this settlement is home to a remote military outpost with a {large|small} garrison of professional soldiers; the outpost is reliant on regular supply shipments from nearby settlements
+* missing hunters: a group of hunters went into the wilderness a couple days ago and hasn't returned; the locals are worried that some misfortune has befallen them
+* missionary zeal: missionaries have recently arrived in the area and is attempting to convert the locals to their faith; authorities are concerned that this may lead to unrest
+** monastic brewing: assist a monk in a nearby monastery with brewing a batch of sacred ale for a religious ceremony
+** monastic rivals: navigate the rivalry between two factions within the monastery in this settlement over the succession of the abbot; the locals are worried that this may lead to violence
+** monastic smugglers: a group of monks are secretly smuggling {contraband|stolen goods|addictive drugs} {out of|into} the settlement
+* monster forge: the nearby ruins are said to be an {ancient spawning pit for mutated beasts|ancient agricultural complex with feral livestock|open portal to a distant and hostile realm}
+* monstrous tribute: the locals of this this settlement have cut a deal with some unspeakable entity {spirit|undead|aberration|beast|primordial} and make regular sacrifices in hopes of continued {forbearance|protection}
+* natural disaster: a recent {flood|earthquake|landslide|volcanic eruption|tornado|drought} has devastated this settlement and the surrounding area
+* necromantic cult: this settlement is home to a vile cult that studies necromancy; they fuel a vibrant organ trade and are rumored to be lead by a powerful lich
+* neglectful ruler: the ruler of this settlement has little interest in the affairs of the locals and is often absent
+* new industry: a new mining operation has recently been established in the area and is disrupting old patterns of authority
+* noble intrigue: a local noble household is in need of assistance with a task that requires great discretion; {a noble scion {has disappeared|is being accused of illegitimacy|has been {kidnapped|possessed by a demon}|is being led astray by a manipulative lover}|multiple noble heirs are vying for {control of the family fortune|the hand of a very eligible spouse}}
+* nomadic traders: this settlement is frequently visited by a nomadic {clans|tribes} ({native|diaspora|seafaring}) seeking to exchange goods and services
+** oathbreakers: bring to justice a band of knights who broke their oaths to a noble in this settlement and now terrorizing the countryside
+* old lighthouse: a lighthouse stands on a nearby hill, but it has long since fallen into disrepair; the locals avoid the area at night
+* oppressed minority: a minority group within this settlement is subject to discrimination, prejudice, and persecution by the ruling majority
+* opulent court: the local leadership of this settlement lives a life of luxury and extravagance, surrounded by sycophantic courtiers and lavish displays of wealth
+* oracle bones: the local shaman seeks rare bones for an important divination and requires assistance to retrieve them; the bones are said to be guarded by a powerful {spirit|undead|aberration|beast|primordial}
+* petrified garden: a garden of {stone|crystal} statues stands in the nearby wilderness; this is the lair of a powerful creature that is capable of petrifying any intruders
+** pilgrimage protection: {safeguard a group of pilgrims as they journey to a holy shrine; the route is dangerous and the pilgrims are vulnerable|escort a group of clergymen on a dangerous pilgrimage to a sacred site}
+* pilgrimage site: this settlement hosts a popular pilgrimage site ({religious|cultural|historic|ancient}) that draws visitors from all over the region
+* pirate haven: this settlement is a popular port of call for {pirates|slavers|raiders} who use it as a base of operations
+* pirate scourge: this settlement is plagued by pirates who prey on the local shipping lanes; the local authorities are unable or unwilling to stop them
+* plague outbreak: a terrible contagion has broken out in this settlement and is spreading rapidly
+* plundered tribute: something has stolen {taxes due to the regional overlord|food supplies for a nearby military fortress|a sacred offerings a nearby {temple|monastery}}
+* poacher problems: this settlement is plagued by poachers who hunt the local wildlife for profit
+** poisoned chalice: solve the mystery of who poisoned a high-ranking clergy member in this settlement during a religious ceremony
+* prophetic halls: the walls of an ancient ruin are covered in prophetic writings that foretell of a great tragedy; the locals are seeking someone to help decipher them
+* prosperous land: neighboring powers view this settlement with envy as it is rich in natural resources
+* punishment post: the  leader of this settlement once held a much higher station, but was demoted to this post due to some past transgression
+* rare reagents: a rare {plant|creature|mineral} is found in the area that is highly sought after by {alchemists|sorcerers|artificers}
+* rebel stronghold: this settlement is a stronghold of a rebel {army|faction} that is fighting against the regional overlord
+* recent brutality: this settlement has been ravaged by a recent conflict and the scars of battle are still visible throughout the settlement
+* reclusive hermit: a hermit has taken up residence in the wilderness outside of this settlement, rumored to have {vast knowledge and power|malign interests and dark powers}
+* reformist struggle: this settlement is the center of a religious reformation that seeks {a return to earlier practices|to purge corruption}
+* refugee camps: this settlement is home to a large number of refugees who have fled conflict in a neighboring region; their presence is straining local infrastructure and resources
+* remnant faith: this settlement is home to the last worshipers of a dying religion, who are fiercely protective of their traditions and beliefs
+* remote monastery: there is a remote monastery in the area that is home to a small group of {monks|ascetics}, who are {guarding a {sacred relic|imprisoned heretics}|of a a particularly {rigorous|heretical} sect}
+* renegade sorcerer: there is a bounty on a renegade sorcerer who has been studying forbidden magic in the area
+* revanchist exile: a powerful noble has been exiled from a neighboring region and is now plotting a return to power
+* ritual preparation: the locals are preparing for a {wedding|funeral|festival|sacrifice} that is of great importance to the community
+* riverine escort: a local river barge owner is hiring guards to protect their shipments from {bandits|monsters}
+* river's wrath: the river that sustains this area has become cursed, and the tribe must appease the angered river spirit
+* ruined castle: this settlement is built around a ruined castle that is said to be haunted by the spirits of its former inhabitants
+* sacred harvest: the tribe requires help in harvesting a sacred plant that only blooms once every several years; the plant has great religious significance to the tribe
+* sacred hunt: the tribe is preparing for a traditional hunt of a great beast, a ritual that binds the community and provides essential resources
+* sacred grove: this settlement is built around a sacred grove that is home to powerful nature spirits and is fiercely protected by the locals
+** sacred texts: help this settlement's clergy find and retrieve ancient religious texts stolen from their temple
+** sacrilegious theft: {a sacred relic has been stolen from a local temple and it is suspected that the thief is a member of the clergy|defend a local temple from thieves seeking to steal a sacred relic}
+* sealed evil: the nearby ruins are said to contain a great evil that was sealed away long ago, and now that seal is weakening
+* sectarian violence: multiple religious sects in this settlement are engaged in violent conflict, leading to widespread destruction and casualties
+* sinking city: this settlement was built atop something unstable, and now that substrate is crumbling; locals living in affected areas are frantically trying to relocate
+* slave markets: this settlement is a popular destination for slave traders, and the local economy is heavily dependent on the slave trade
+* slave uprising: the slaves of this settlement have risen up against their masters and are now fighting for their freedom
+* sleeping guardian: awaken a giant guardian in the ruins to protect this settlement from an invading army; the guardian is ancient and powerful, but also unpredictable
+* sorcerous cabal: a secretive cabal of sorcerers in this settlement is engaged in the study of forbidden and arcane knowledge, often at great risk to themselves and those around them
+* spirit's blessing: the local chieftain is preparing for a pilgrimage to gain the favor of ancient spirits; the tribe is seeking guards to protect the chieftain on their journey
+* stolen artifact: a powerful {artifact|relic|scroll} has been stolen from a nearby {temple|monastery|tomb|wizard's tower} and the locals are desperate to recover it
+* syncretic faith: a new religion has recently emerged in this settlement that combines elements of multiple faiths
+* taboo wardens: the nearby ruins are considered {sacred|cursed} by the locals; they forbid anyone from entering the ruins and will punish any who trespass
+* temple cults: there are numerous cults that are devoted to specific temples or shrines, and compete with each other for power and influence within the local religion
+* terrible beast: there is a bounty on a dangerous {beast|monster} that is terrorizing the locals
+* toxic economy: this settlement is reliant on a rare {industry|product} ({metallurgy|alchemy|arcana}) that is extremely valuable due to its use in the creation of powerful arcane {potions|enchantments|implements|artifacts|constructs}, but {{has harmful side-effects for|requires blood sacrifices from} those {handling|collecting} the raw materials | is slowly {destroying|polluting} the land with its extraction|extraction requires traversing extremely dangerous terrain}
+* toxic miasma: the nearby ruins are filled with {noxious fumes|arcane radiation|contagious diseases} that make any exploration extremely dangerous
+* tribal migration: the tribe is preparing to migrate to a new location, and requires assistance navigating through dangerous territory
+* underground arena: there is an underground arena in this settlement where locals compete in brutal combat for the entertainment of the masses
+* underground sewers: there is a notorious network of underground sewers beneath this settlement that is home to a variety of dangerous creatures and shady denizens
+* unique product: this settlement produces {exquisite liquors|rare medicines|superb armaments|exotic spices|rare textiles} that cannot be found anywhere else and are highly sought after by the elite
+* vicious flora: the local flora is extremely dangerous and has claimed many lives over the years
+* wanted outlaw: a notorious outlaw is rumored to be hiding out in this settlement, and the local authorities are offering a reward for their capture
+* war conscripts: the locals are being pressed into military service to fight in a regional conflict
+** wine conspiracy: unravel a conspiracy involving wine production in this settlement’s monastery used for sinister purposes
+* witch coven: this province is home to a coven of witches who are rumored to be engaged in dark rituals and practices
+* witch hunts: magic users are being hunted and executed due to a recent transgression
+* wizards lair: there is a ruined tower in the nearby wilderness that once belonged to a {powerful wizard|reclusive archmage}; it is said to be filled with warped enchantments and dangerous magical experiments
+* vampiric clan: a clan of vampires has taken up residence in the area and is preying on the local populace
+* xenophobic locals: the locals of this settlement are distrustful and hostile towards outsiders, often resorting to violence to protect their territory and way of life
+
+-- subsistence -- :: foraging|horticulture|agriculture|pastoralism|fishing|mining|logging|whaling|trade|industry :: wasteland|raiding|toxic|unique
+
+Below is a list of generic fantasy RPG quest hooks:
+
+* fortress monastery: this settlement is a remote fortress that houses a powerful monastic order dedicated to a particular {god|philosophy}
+* fungal infestation: a strange fungus has taken root in the buildings and tunnels of this settlement, causing sickness and madness among the locals
+* gang warfare: this this settlement is plagued by constant fighting between rival criminal {gangs|cartels|syndicates}
+* revanchist exile: a powerful noble has been exiled from a neighboring region and is now plotting a return to power
+* upcoming festival: this settlement is preparing for a major festival that draws visitors from across the region
+* dying forest: the once-vibrant forest that surrounds this settlement is slowly dying, its trees and wildlife withering away under mysterious circumstances
+* sectarian violence: multiple religious sects in this settlement are engaged in violent conflict, leading to widespread destruction and casualties
+
+create more using the same style as above that could fit in a tribal setting
+create a list of three friends, enemies, places, things, and complications for each hook above; make sure that the description and list elements are generic
+
+-- defenses --- ::
+* law enforcement:  professional army | mercenaries | guards | militia
+* walls: stone|wooden|none (pristine|well-kept|worn|derelict|shattered)
+
+village: wooden {palisade|walls}|natural protective barriers|pact with local brigands|volunteer militia|large guard beasts|defensive spells and wards
+towns: stone walls ({well-kept|worn|derelict|shattered})|volunteer militia|organized guard patrols|underground passages used for escape and ambush|defensive spells and wards|watchtower on the outskirts|mercenaries
+cities: stone walls ({well-kept|worn|derelict|shattered})|volunteer militia|organized guard patrols|underground passages used for escape and ambush|defensive spells and wards|watchtower on the outskirts|mercenaries|professional army|several large fortresses|well-established spy network
+
+trade goods:
+
+af: tropical fruits (mangoes, bananas), spices (pepper, cinnamon, cloves, nutmeg), hardwoods (ebony, teak, mahogany), gold, ivory, gems (diamonds, rubies, sapphires), medicinal herbs
+am: rice, tea, coconuts, spices (turmeric, coriander), textiles (cotton, silk), bamboo products, tropical hardwoods, porcelain, opium, silver, beads & jewelry
+aw: grains dyes (indigo), livestock (cattle, goats, chickens), leather goods, gold, ivory, hides & furs
+bw: salt, dates, livestock (camels), incense, ceramics, silver, copper, glassware
+bs: grain, livestock (sheep, goats, horses), textiles (wool), hides & furs, honey, gold, silver, beads & jewelry, wine, dried fruit
+csa: olives, wine, citrus fruit, silk, glassware, finished textiles, almonds
+cfa: rice, cotton, indigo, tobacco, tea, silk, porcelain, bamboo products, jade
+cfb: fish, timber, textiles (wool), hides & furs, iron, beer & ale, glassware, barely, honey
+dfa: grain, livestock (cattle), hides & furs, timber, salt, flax & linen, pottery, honey
+dfc: timber, hides & furs, amber, iron, copper, tin, honey
+ef: whale oil, hides & furs, bones & antlers
+
+
+assign each of the trade goods below to koppen climates; make sure each koppen climate has at least 10 trade goods; make sure each trade good is assigned to at least one koppen climate
+
+'clay',
+'creatures',
+'dyes',
+'fabric',
+'fish',
+'furs',
+'grains',
+'grapes',
+'honey',
+'incense',
+'livestock',
+'lumber',
+'marble',
+'metals (common)',
+'metals (gemstones)',
+'metals (precious)',
+'oils',
+'paper',
+'reagents (alchemical)',
+'reagents (arcane)',
+'salt',
+'silk',
+'spices',
+'stone',
+'vegetables',
+'wax'
+'artwork',
+'candles',
+'ceramics',
+'cloth goods',
+'cosmetics',
+'glasswork',
+'jewelry',
+'leatherwork',
+'machinery',
+'mercenaries',
+'metalwork',
+'products (alchemical)',
+'products (arcane)',
+'shipwrights',
+'spirits',
+'stonework',
+'texts',
+'woodwork'
+
+rescue a person
+retrieve a thing
+escort a person
+lift a curse
+bounty
+defend a person
+
+Write a "retrieve a thing" quest given the following context:
+
+unique product: this settlement {produces unique resource found nowhere else|contains masters a carefully-guarded craft}
+
+keep in mind that:
+* the quest should be generic enough to be used in any fantasy setting
+* the quest should be written in the form of a quest hook no longer than a single sentence
+* the quest hook should fit a "village elder" quest giver
+* do not output anything besides the quest hook
+
+rural: volunteer militia, wooden palisade, pact with local brigands, regular guard patrols
+urban: professional army, stone walls, mercenaries, {city|town} watch, watchtowers on the outskirts, noble household guards

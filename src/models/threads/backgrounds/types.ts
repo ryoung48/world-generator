@@ -17,10 +17,10 @@ export interface Hook {
       text: string
       enemies: Actor[]
       friends: Actor[]
-      complications: string
-      things: string
-      places: string
-      constraints?: { urban?: boolean }
+      complications: string[]
+      things: string[]
+      places: string[]
+      constraints?: { urban?: boolean; capital?: boolean; coastal?: boolean; tribal?: boolean }
     }
   >
   subtype: (_params: { loc: Province }) => string

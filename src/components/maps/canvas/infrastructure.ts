@@ -1,5 +1,5 @@
-import { hub__isTown, hub__isVillage } from '../../../models/regions/hubs'
-import { Hub } from '../../../models/regions/hubs/types'
+import { hub__isTown, hub__isVillage } from '../../../models/regions/provinces/hubs'
+import { Hub } from '../../../models/regions/provinces/hubs/types'
 import { RouteTypes } from '../../../models/world/travel/types'
 import { World } from '../../../models/world/types'
 import { fonts } from '../../theme/fonts'

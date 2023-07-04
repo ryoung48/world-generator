@@ -3,6 +3,7 @@ import { Delaunay, Voronoi } from 'd3'
 import { Culture } from '../npcs/cultures/types'
 import { Religion } from '../npcs/religions/types'
 import { NPC } from '../npcs/types'
+import { Quest } from '../threads/quests/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
 import { Thread } from '../threads/types'
@@ -65,6 +66,7 @@ export interface World {
   religions: Religion[]
   npcs: NPC[]
   uniqueNames: Record<string, boolean>
+  quests: Quest[]
   threads: Thread[]
   // planet info
   date: number

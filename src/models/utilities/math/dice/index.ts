@@ -7,6 +7,10 @@ export function generateId(seed = Math.random()) {
   return Math.floor(seed * Number.MAX_SAFE_INTEGER).toString(36)
 }
 
+export function randomChoice<T>(arr: T[]) {
+  return arr[~~(Math.random() * arr.length)]
+}
+
 interface Shuffler<T> {
   r: number
   e: T

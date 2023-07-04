@@ -1,6 +1,10 @@
-import { Region } from '../../../models/regions/types'
+import { region__nation } from '../../../models/regions'
+import { governments, Region } from '../../../models/regions/types'
+import { colors__randomPreset } from '../../../models/utilities/colors'
 import { cell__bfsNeighborhood, cells__boundary } from '../../../models/world/cells'
+import { climates } from '../../../models/world/climate/types'
 import { display__coastCurve } from '../../../models/world/spawn/shapers/display/coasts'
+import { MapStyle } from '../types'
 
 const contested = 'rgba(225, 0, 0, 0.4)'
 
@@ -23,50 +27,85 @@ const drawRegions = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
+  style: MapStyle
 }) => {
-  const { ctx, scale, nations: drawnBorders } = params
+  const { ctx, scale, nations: drawnBorders, style } = params
   const { borders, regions } = window.world.display
+  const regionStyle = style === 'Nations'
   // nations
-  ctx.lineWidth = 2
-  drawnBorders.forEach(nation => {
-    ctx.fillStyle = '#f7eedc'
-    borders[nation.idx].forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      ctx.clip(p)
-      ctx.strokeStyle = window.world.regions[border.r].colors.replace('%)', '%, 0.75)')
-      ctx.fill(p)
-      ctx.restore()
+  if (regionStyle) {
+    ctx.lineWidth = 2
+    drawnBorders.forEach(nation => {
+      ctx.fillStyle = '#f7eedc'
+      borders[nation.idx].forEach(border => {
+        ctx.save()
+        const p = new Path2D(border.d)
+        ctx.clip(p)
+        ctx.strokeStyle = window.world.regions[border.r].colors.replace('%)', '%, 0.75)')
+        ctx.fill(p)
+        ctx.restore()
+      })
     })
+  }
+  const governmentColors = colors__randomPreset({
+    tags: [...governments],
+    seed: `government`
   })
   // regions
   ctx.lineWidth = 0.5
-  window.world.regions.forEach(region => {
-    const color = region.colors.replace('%)', '%, 0.25)')
-    ctx.fillStyle = color.replace('%)', '%, 0.25)')
-    ctx.strokeStyle = color.replace('%)', '%, 0.15)')
-    regions[region.idx].forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      ctx.clip(p)
-      ctx.fill(p)
-      ctx.stroke(p)
-      ctx.restore()
+  if (style !== 'Government') {
+    window.world.regions.forEach(region => {
+      const nation = region__nation(region)
+      const base = regionStyle
+        ? region.colors
+        : style === 'Cultures'
+        ? window.world.cultures[region.culture.native].display
+        : style === 'Religions'
+        ? window.world.religions[region.religion].display
+        : style === 'Climate'
+        ? climates[region.climate].display
+        : governmentColors[nation.government]
+      const color = base.replace('%)', '%, 0.25)')
+      ctx.fillStyle = color.replace('%)', '%, 0.25)')
+      ctx.strokeStyle = color.replace('%)', '%, 0.15)')
+      regions[region.idx].forEach(border => {
+        ctx.save()
+        const p = new Path2D(border.d)
+        ctx.clip(p)
+        ctx.fill(p)
+        regionStyle && ctx.stroke(p)
+        ctx.restore()
+      })
     })
-  })
+  } else {
+    window.world.regions
+      .filter(region => region.provinces.length > 0)
+      .forEach(nation => {
+        ctx.fillStyle = governmentColors[nation.government].replace('%)', '%, 0.25)')
+        borders[nation.idx].forEach(border => {
+          ctx.save()
+          const p = new Path2D(border.d)
+          ctx.clip(p)
+          ctx.fill(p)
+          ctx.restore()
+        })
+      })
+  }
   // nations
   ctx.lineWidth = 2
-  drawnBorders.forEach(nation => {
-    borders[nation.idx].forEach(border => {
-      ctx.save()
-      const p = new Path2D(border.d)
-      ctx.clip(p)
-      ctx.filter = `blur(${scale}px)`
-      ctx.strokeStyle = window.world.regions[border.r].colors.replace('%)', '%, 0.75)')
-      ctx.stroke(p)
-      ctx.restore()
+  if (regionStyle) {
+    drawnBorders.forEach(nation => {
+      borders[nation.idx].forEach(border => {
+        ctx.save()
+        const p = new Path2D(border.d)
+        ctx.clip(p)
+        ctx.filter = `blur(${scale}px)`
+        ctx.strokeStyle = window.world.regions[border.r].colors.replace('%)', '%, 0.75)')
+        ctx.stroke(p)
+        ctx.restore()
+      })
     })
-  })
+  }
 }
 
 // const cultureBorder = (idx: number) => {
@@ -143,14 +182,16 @@ export const map__drawRegions = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
+  style: MapStyle
 }) => {
-  const { ctx, scale, nations } = params
+  const { ctx, scale, nations, style } = params
   // const globalScale = scale <= map__breakpoints.global
   const drawnBorders = nations
   // nations
-  drawRegions({ ctx, scale, nations: drawnBorders })
+  drawRegions({ ctx, scale, nations: drawnBorders, style })
   // drawCultures({ ctx, scale, nations: drawnBorders })
   // wars
+  if (style !== 'Nations') return
   ctx.lineCap = 'round'
   const conflictZones = new Set(drawnBorders.map(region => region.idx))
   window.world.conflicts

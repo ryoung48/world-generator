@@ -28,7 +28,7 @@ export const enemies = {
         { w: 1, v: 'dark cultists' },
         {
           w: 1,
-          v: '{blighted raiders|degenerate cannibals|inhuman aberrations|hulking aberration}'
+          v: '{blighted raiders|degenerate savages|inhuman aberrations|hulking aberration}'
         },
         { w: 1, v: '{mutated|enchanted|corrupted} {beast|beasts|flora|fungi}' },
         { w: 1, v: '{pack of wild beasts|lone predator}' },

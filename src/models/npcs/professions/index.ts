@@ -1,10 +1,7 @@
-import { cssColors } from '../../../components/theme/colors'
-import { hub__fillSite, hub__isVillage, hub__site } from '../../regions/hubs'
+import { hub__fillSite, hub__isVillage, hub__site } from '../../regions/provinces/hubs'
 import { Province } from '../../regions/provinces/types'
-import { buildDistribution, WeightedDistribution } from '../../utilities/math'
-import { decorateText } from '../../utilities/text/decoration'
-import { accessories, armor, weapons } from '../equipment'
-import { Gender, LifePhase, NPC, NPCParams } from '../types'
+import { buildDistribution, counter, WeightedDistribution } from '../../utilities/math'
+import { Gender, LifePhase, NPCParams } from '../types'
 import { Profession, ProfessionDetails } from './types'
 
 export const professions: Record<Profession, ProfessionDetails> = {
@@ -13,7 +10,8 @@ export const professions: Record<Profession, ProfessionDetails> = {
   peasant: { strata: 'lower', urban: false, weight: 10 },
   laborer: { strata: 'lower', urban: true },
   beggar: { strata: 'lower', urban: true },
-  servant: { title: 'servant ({ordinary|indentured})', strata: 'lower' },
+  criminal: { strata: 'lower', weight: 0.5 },
+  servant: { title: 'servant (ordinary)', strata: 'lower' },
   'servant (master)': { strata: 'lower', age: 'veteran', weight: 0.1 },
   sailor: {
     title: 'sailor ({deckhand|deckhand|deckhand|{cannoneer|navigator|helmsman}})',
@@ -26,234 +24,12 @@ export const professions: Record<Profession, ProfessionDetails> = {
   poet: { strata: 'lower', urban: true, weight: 0.2 },
   musician: { strata: 'lower', urban: true, weight: 0.2 },
   courtesan: { strata: 'lower', urban: true, weight: 0.5 },
-  criminal: { strata: 'lower', weight: 0.5 },
-  // adventurer
-  barbarian: {
-    title: decorateText({
-      label: 'barbarian',
-      tooltip: '{berserker|tempest|fanatic}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const selected = window.dice.choice([armor.heavy, armor.medium])
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: selected() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: selected === armor.heavy }) }
-      ]
-      if (window.dice.flip) {
-        equipment.push({ slot: 'two-handed', tier: 0, name: weapons.heavy() })
-      } else {
-        equipment.push({ slot: 'mainhand', tier: 0, name: weapons.medium() })
-        equipment.push({ slot: 'offhand', tier: 0, name: weapons.medium() })
-      }
-      return equipment
-    },
-    weight: 0
-  },
-  chanter: {
-    title: decorateText({
-      label: 'chanter',
-      tooltip: '{beckoner|skald|troubadour}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: window.dice.choice([armor.medium, armor.light])() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.light() },
-        { slot: 'offhand', tier: 0, name: window.dice.spin('instrument') }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  cipher: {
-    title: decorateText({
-      label: 'cipher',
-      tooltip: '{witch|beguiler|soul blade|wild mind}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.medium() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.light() },
-        { slot: 'offhand', tier: 0, name: weapons.light() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  druid: {
-    title: decorateText({
-      label: 'druid',
-      tooltip: '{elements|rejuvenation|shifter|decay}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.light() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.implements() },
-        { slot: 'offhand', tier: 0, name: weapons.sorcery() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  fighter: {
-    title: decorateText({
-      label: 'fighter',
-      tooltip: '{mage-slayer|devoted|unbroken|tactician}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.heavy() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: true }) }
-      ]
-      if (window.dice.flip) {
-        equipment.push({ slot: 'two-handed', tier: 0, name: weapons.heavy() })
-      } else {
-        equipment.push({ slot: 'mainhand', tier: 0, name: weapons.medium() })
-        equipment.push({ slot: 'offhand', tier: 0, name: armor.shield() })
-      }
-      return equipment
-    },
-    weight: 0
-  },
-  monk: {
-    title: decorateText({
-      label: 'monk',
-      tooltip: '{sage|shadowdancer|kensai|brewmaster}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.light() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'two-handed', tier: 0, name: weapons.monk() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  paladin: {
-    title: decorateText({
-      label: 'paladin',
-      tooltip: '{protection|compassion|justice|dread}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.heavy() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: true }) }
-      ]
-      if (window.dice.flip) {
-        equipment.push({ slot: 'two-handed', tier: 0, name: weapons.heavy() })
-      } else {
-        equipment.push({ slot: 'mainhand', tier: 0, name: weapons.medium() })
-        equipment.push({ slot: 'offhand', tier: 0, name: armor.shield() })
-      }
-      return equipment
-    },
-    weight: 0
-  },
-  cleric: {
-    title: decorateText({
-      label: 'cleric',
-      tooltip: '{death|life|war|knowledge|order}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.light() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.implements() },
-        { slot: 'offhand', tier: 0, name: weapons.sorcery() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  rogue: {
-    title: decorateText({
-      label: 'rogue',
-      tooltip: '{assassin|duelist|trickster|debonaire}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.medium() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.light() },
-        { slot: 'offhand', tier: 0, name: weapons.light() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  ranger: {
-    title: decorateText({
-      label: 'ranger',
-      tooltip: '{marksman|stalker|arcana|beast master}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.medium() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'two-handed', tier: 0, name: weapons.ranged() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
-  wizard: {
-    title: decorateText({
-      label: 'wizard',
-      tooltip: '{conjuration|enchantment|evocation|illusion|transmutation}',
-      color: cssColors.subtitle
-    }),
-    strata: 'lower',
-    adventurer: true,
-    equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.light() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.implements() },
-        { slot: 'offhand', tier: 0, name: weapons.sorcery() }
-      ]
-      return equipment
-    },
-    weight: 0
-  },
   guard: { title: `guard (${hub__site})`, strata: 'lower', urban: true, official: true },
   'monster hunter': {
     title: '{monster|witch|undead} hunter ({itinerant|itinerant|famous})',
     strata: 'lower',
     age: 'veteran',
-    weight: 0.25,
+    weight: 0.1,
     unique: true
   },
   'grave keeper': {
@@ -264,8 +40,19 @@ export const professions: Record<Profession, ProfessionDetails> = {
     weight: 0.2
   },
   missionary: { strata: 'lower', culture: 'foreign', urban: true },
+  ascetic: { title: 'monk', strata: 'lower', weight: 0.25 },
+  'street vendor': { strata: 'lower', urban: true, weight: 0.5 },
+  'hedge wizard': {
+    title: { male: 'hedge wizard', female: 'hedge witch' },
+    strata: 'lower',
+    urban: false,
+    weight: 0.1,
+    unique: true
+  },
+  'fortune teller': { strata: 'lower', urban: true },
+  'soldier (military)': { strata: 'lower', war: true },
   // middle class
-  'village elder': { strata: 'middle', urban: false, age: 'master', culture: 'native' },
+  'village elder': { strata: 'middle', urban: false, age: 'master', culture: 'native', weight: 5 },
   gentry: { title: '{gentry|landlord} ({minor|minor|major|fallen})', strata: 'middle' },
   investigator: { strata: 'middle', official: true },
   'tax collector': { strata: 'middle', official: true },
@@ -273,6 +60,7 @@ export const professions: Record<Profession, ProfessionDetails> = {
     title: `guard captain (${hub__site})`,
     strata: 'middle',
     urban: true,
+    unique: true,
     official: true
   },
   bodyguard: { strata: 'middle', urban: true },
@@ -292,9 +80,17 @@ export const professions: Record<Profession, ProfessionDetails> = {
   'criminal boss': { strata: 'middle', age: 'veteran', weight: 0.5 },
   innkeeper: { strata: 'middle' },
   priest: { strata: 'middle', official: true },
+  abbot: {
+    title: { male: 'abbot', female: 'abbess' },
+    age: 'veteran',
+    strata: 'middle',
+    official: true,
+    unique: true,
+    weight: 0.25
+  },
   lawyer: { strata: 'middle', urban: true, official: true },
   scholar: { strata: 'middle', urban: true },
-  sorcerer: { strata: 'middle' },
+  sorcerer: { title: { male: 'sorcerer', female: 'sorceress' }, strata: 'middle', urban: true },
   'poet (famous)': { strata: 'middle', urban: true, weight: 0.3 },
   'artist (famous)': { strata: 'middle', urban: true, weight: 0.3 },
   'musician (famous)': { strata: 'middle', urban: true, weight: 0.3 },
@@ -318,6 +114,7 @@ export const professions: Record<Profession, ProfessionDetails> = {
   alchemist: { strata: 'middle', urban: true, weight: 0.5 },
   artificer: { strata: 'middle', urban: true, weight: 0.1 },
   merchant: { strata: 'middle' },
+  shopkeeper: { strata: 'middle', urban: true, weight: 0.5 },
   banker: { strata: 'middle', age: 'veteran', urban: true, weight: 0.5 },
   'caravan trader': { strata: 'middle', urban: true, culture: 'foreign', weight: 0.5 },
   'caravan master': {
@@ -335,37 +132,68 @@ export const professions: Record<Profession, ProfessionDetails> = {
     urban: true,
     age: 'veteran'
   },
+  'officer (military)': { strata: 'middle', war: true },
   // upper class
-  oligarch: { strata: 'upper', age: 'veteran', urban: true, official: true },
-  magistrate: {
-    title: `magistrate (${hub__site})`,
-    age: 'master',
-    strata: 'upper',
-    urban: true,
-    official: true
-  },
-  'merchant prince': { strata: 'upper', urban: true, age: 'master', weight: 0.1 },
-  archmage: { strata: 'upper', urban: true, age: 'master', weight: 0.1 },
-  'high priest': { strata: 'upper', urban: true, official: true, age: 'master', weight: 0.1 },
-  'templar (grandmaster)': { strata: 'upper', urban: true, age: 'master', weight: 0.1 },
-  'exiled pretender': { strata: 'upper', urban: true, culture: 'foreign', weight: 0.1 },
-  'ethnarch (minority)': {
-    strata: 'upper',
-    urban: true,
-    age: 'master',
-    culture: 'foreign',
-    weight: 0.1
-  },
   aristocrat: {
     title: 'aristocrat ({minor|minor|major|disgraced})',
     strata: 'upper',
     urban: true,
     weight: 6
   },
+  oligarch: { strata: 'upper', age: 'veteran', urban: true, official: true },
+  'crime lord': { strata: 'upper', age: 'veteran', unique: true, urban: true, weight: 0.1 },
+  magistrate: {
+    title: `magistrate (${hub__site})`,
+    age: 'master',
+    strata: 'upper',
+    urban: true,
+    unique: true,
+    official: true
+  },
+  archmage: {
+    title: '{archmage|court wizard}',
+    strata: 'upper',
+    urban: true,
+    unique: true,
+    age: 'master',
+    weight: 0.1
+  },
+  'high priest': {
+    strata: 'upper',
+    urban: true,
+    unique: true,
+    official: true,
+    age: 'master',
+    weight: 0.1
+  },
+  'templar (grandmaster)': {
+    strata: 'upper',
+    urban: true,
+    unique: true,
+    age: 'master',
+    weight: 0.1
+  },
+  'general (military)': { strata: 'upper', urban: true, unique: true, war: true, age: 'master' },
+  'exiled pretender': {
+    strata: 'upper',
+    urban: true,
+    unique: true,
+    culture: 'foreign',
+    weight: 0.1
+  },
+  'ethnarch (minority)': {
+    strata: 'upper',
+    urban: true,
+    unique: true,
+    age: 'master',
+    culture: 'foreign',
+    weight: 0.1
+  },
   diplomat: {
     title: 'courtier ({diplomat|ambassador})',
     strata: 'upper',
     urban: true,
+    unique: true,
     age: 'veteran',
     culture: 'foreign'
   },
@@ -373,8 +201,18 @@ export const professions: Record<Profession, ProfessionDetails> = {
     title: 'courtier ({statesman|spymaster|kingmaker|marshal|chancellor|steward|majordomo})',
     strata: 'upper',
     urban: true,
+    unique: true,
     official: true,
     age: 'veteran'
+  },
+  prince: {
+    title: { male: 'prince', female: 'princess' },
+    strata: 'upper',
+    culture: 'native',
+    urban: true,
+    capital: true,
+    unique: true,
+    age: 'novice'
   }
 }
 
@@ -406,31 +244,34 @@ const distribution = (params: {
 }) => {
   const { strata, loc, target } = params
   const rural = hub__isVillage(loc.hub)
-  return buildDistribution(
-    Object.entries(professions)
-      .filter(([_, profession]) => profession.strata === strata)
-      .map(([_tag, profession]) => {
-        const tag = _tag as Profession
-        const urbanCheck = profession.urban === undefined || profession.urban === !rural
-        const coastalCheck =
-          profession.coastal === undefined || profession.coastal === loc.hub.coastal
-        const uniqueCheck =
-          !profession.unique ||
-          loc.actors.map(i => window.world.npcs[i]).every(actor => actor.profession.key !== tag)
-        const weight = profession.weight ?? 1
-        return { v: tag, w: urbanCheck && coastalCheck && uniqueCheck ? weight : 0 }
-      }),
-    target
-  )
+  const used = counter(loc.actors.map(i => window.world.npcs[i].profession.key))
+  const dist = Object.entries(professions)
+    .filter(([_, profession]) => profession.strata === strata)
+    .map(([_tag, profession]) => {
+      const tag = _tag as Profession
+      const urbanCheck = profession.urban === undefined || profession.urban === !rural
+      const coastalCheck =
+        profession.coastal === undefined || profession.coastal === loc.hub.coastal
+      const uniqueCheck = !profession.unique || !used[tag]
+      const warCheck = !profession.war || loc.conflict === 'war'
+      const capitalCheck = !profession.capital || loc.capital
+      const weight = (profession.weight ?? 1) * 10 ** -(used[tag] ?? 0)
+      return {
+        v: tag,
+        w: urbanCheck && coastalCheck && uniqueCheck && warCheck && capitalCheck ? weight : 0
+      }
+    })
+  return buildDistribution(dist, target)
 }
 
 const stratified = (params: { loc: Province; social: StrataMap<number> }) => {
   const { loc, social } = params
-  return window.dice.weightedChoice([
+  const dist = [
     ...distribution({ strata: 'lower', loc, target: social.lower }),
     ...distribution({ strata: 'middle', loc, target: social.middle }),
     ...distribution({ strata: 'upper', loc, target: social.upper })
-  ])
+  ]
+  return window.dice.weightedChoice(dist)
 }
 
 export const profession__spawn = (params: {

@@ -1,0 +1,72 @@
+descriptors:
+-- personality -- 
+* compassionate|altruistic|generous :: arrogant|imperious|heartless|cruel|callous|sadistic|greedy|envious|grasping|rapacious
+* brave|reckless|trusting :: craven|cautious|paranoid
+* diplomatic|stoic :: wrathful|passionate
+* diligent|ambitious :: lazy|negligent
+* fickle :: stubborn
+* gregarious :: enigmatic
+* lawful|honest :: treacherous|deceptive|manipulative
+* forgiving :: vengeful|spiteful
+* zealous|pious :: skeptic :: heretic|atheistic
+* xenophilic|progressive :: traditional|xenophobic
+---
+* altruistic|greedy
+* gregarious|enigmatic
+* stoic|passionate
+* honest|devious
+* diligent|lazy
+* pious|irreverent
+* forgiving|vengeful
+* xenophilic|xenophobic
+* stubborn|capricious
+* fearless|cautious
+* humble|arrogant
+--- quirks ---
+* seeking {redemption}
+* optimistic|melancholic ({death|betrayal|misfortune})
+* idealistic|pragmatic
+* {decadent|austere} lifestyle
+* lustful|gluttonous|alcoholic|drug addict|masochistic|sadistic|wrathful|paranoid
+* {homosexual}|multi-ethnic marriage
+* {adopted|orphaned} upbringing|twin sibling|bastard origins
+* {social outcast|black sheep}
+* {formal & clean|ragged & dirty|flamboyant & outlandish} outfit
+* {distinctive|gaudy} {necklace|amulet|ring|earrings|trinket|hat}
+* {colorful|intricate|runic} tattoos
+* facial piercings
+* aromatic scent
+* speaks {quickly|slowly|quietly|loudly|copiously|sparsely} :: {melodic|rough|sharp|deep} voice :: strong accent
+* {light|heavy} {scars|burns}
+* missing {right|left} {arm|leg|hand|eye} :: afflicted ({illness|curse})
+* {thin|fat} body
+* {tall|short} stature
+* {idiotic|dull|smart|genius} mind
+* {oblivious|{perceptive|insightful}}
+* {awkward|charismatic} persona
+* {unattractive|beautiful|muscular|frail} physique
+* {laborious|vigorous|clumsy|dexterous} movements
+* {meticulous & organized|chaotic & disorganized} presentation
+* animal companion
+* artistic|academic|musician|seafarer|huntsman|occultist|botanist|chef|duelist|brawler|gambler
+* humorous|sarcastic
+* storyteller
+* war veteran
+* underworld connections
+* professionally {despised|struggling|respected|prosperous} :: rags to riches|riches to rags
+--- misc ---
+* shrewd :: cheating :: charlatan (merchants|artisans|priests|scholars|sorcerers)
+* revanchist|usurper|despotic|rapacious|corrupt|imperious|pacifist|blackmailed|bribed
+* pallid & gaunt (ghoul|vampiric)
+* loyalist|rebel supporter
+* (former|mistreated employee|friend|associate|lover|mistress :: grandparent|uncle|cousin|parent|sibling|spouse|child) of the patron|rival
+* victim of recent (crime|oppression|cruelty|complication :: patron|rival)
+-- wants --
+* acquire|steal|transport|defend|destroy resources|supplies|contract|blackmail|key|artifact|relic (stolen|lost|illegal?)
+* defend|escort|rescue person
+* investigate|resolve mystery|crime|complication|intrigue|folly
+* bounty (monster|criminal ~ secret hater of ethnicity :: bloody cult priest :: (inhuman|eldritch) creature masquerading as a local :: methodical hired assassin)
+* explore|clear ruin|wilderness
+-- motivations --
+* wealth|fame|artifact
+* revenge|redemption|fear

@@ -77,6 +77,7 @@ export const world__spawn = (params: {
     religions: [],
     npcs: [],
     conflicts: [],
+    quests: [],
     threads: [],
     uniqueNames: {},
     date,

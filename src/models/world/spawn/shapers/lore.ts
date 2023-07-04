@@ -1,6 +1,6 @@
 import { range } from 'd3'
 
-import { religion__folk, religion__organized } from '../../../npcs/religions'
+import { religion__spawn } from '../../../npcs/religions'
 import { species__map } from '../../../npcs/species'
 import { region__domains, region__neighbors } from '../../../regions'
 import {
@@ -61,6 +61,11 @@ const regionRelations = (params: { target: DiplomaticRelation; region: Region })
 
 const regionAtWar = (region: Region) => regionRelations({ target: 'at war', region }).length > 0
 
+const steppeNomads = (region: Region) =>
+  region.climate.includes('steppe') &&
+  window.world.landmarks[window.world.cells[window.world.provinces[region.capital].cell].landmark]
+    .type === 'continent'
+
 export class LoreShaper extends Shaper {
   constructor() {
     super()
@@ -78,8 +83,7 @@ export class LoreShaper extends Shaper {
     ]
   }
   private worldReligions() {
-    religion__folk()
-    religion__organized()
+    religion__spawn()
     window.world.regions.forEach(region => {
       const { religion: ridx } = window.world.cultures[region.culture.ruling]
       const religion = window.world.religions[ridx]
@@ -112,7 +116,7 @@ export class LoreShaper extends Shaper {
         if (region.provinces.length > 0 && current / total < target) {
           let completed = false
           while (!completed) {
-            const neighbors = region__neighbors(region).filter(n => n.government !== 'empire')
+            const neighbors = region__neighbors(region).filter(n => n.size !== 'empire')
             if (neighbors.length === 0) break
             const closest = findClosestRegion({ ref: region, neighbors })
             claimRegion({ nation: region, region: closest })
@@ -120,7 +124,7 @@ export class LoreShaper extends Shaper {
           }
           if (region__domains(region).length >= 5) {
             imperium[region.development].current++
-            region.government = 'empire'
+            region.size = 'empire'
           }
         }
       })
@@ -135,7 +139,7 @@ export class LoreShaper extends Shaper {
         if (
           region.provinces.length > 1 &&
           neighbors.length > 0 &&
-          region.government !== 'empire' &&
+          region.size !== 'empire' &&
           window.dice.random < 0.4
         ) {
           const closest = province__sortClosest(
@@ -169,53 +173,47 @@ export class LoreShaper extends Shaper {
     })
     // realm titles
     regions
-      .filter(region => region.government !== 'empire')
+      .filter(region => region.size !== 'empire')
       .forEach(region => {
         if (region.provinces.length === 1) {
-          region.government = 'free city'
+          region.size = 'free city'
         } else if (region.provinces.length <= 8) {
-          region.government = 'barony'
+          region.size = 'barony'
         } else if (region.provinces.length <= 16) {
-          region.government = 'duchy'
+          region.size = 'duchy'
         } else {
-          region.government = 'kingdom'
+          region.size = 'kingdom'
         }
       })
-    // subjects
-    window.dice.shuffle(regions).forEach(region => {
-      const domain = region__domains(region).length
-      const neighbors = province__sortClosest(
-        region__neighbors(region)
-          .filter(
-            neighbor =>
-              region__domains(neighbor).length === 1 &&
-              neighbor.provinces.length < region.provinces.length &&
-              Object.values(neighbor.relations).every(
-                relation => relation !== 'vassal' && relation !== 'suzerain'
-              )
-          )
-          .map(neighbor => provinces[neighbor.capital]),
-        provinces[region.capital]
-      )
-        .map(province => window.world.regions[province.nation])
-        .slice(
-          0,
-          window.dice.weightedChoice([
-            { w: 8, v: 0 },
-            { w: domain < 2 ? 0 : 4, v: 1 },
-            { w: domain < 3 ? 0 : 2, v: 2 },
-            { w: domain < 4 ? 0 : 1, v: 3 }
-          ])
-        )
-      if (
-        region.provinces.length > 0 &&
-        Object.values(region.relations).every(relation => relation !== 'suzerain')
-      ) {
-        neighbors.forEach(neighbor => {
-          neighbor.relations[region.idx] = 'suzerain'
-          region.relations[neighbor.idx] = 'vassal'
-        })
-      }
+    //government
+    const used = new Set<Region['government']>()
+    regions.forEach(region => {
+      const { civilized, coastal, development, size } = region
+      const large = size === 'kingdom' || size === 'empire'
+      const nonRemote = development !== 'remote'
+      const nonCivilized = development !== 'civilized'
+      const steppe = steppeNomads(region)
+      region.government =
+        steppe && region.size === 'empire'
+          ? 'steppe horde'
+          : civilized && region.size === 'free city'
+          ? 'free city'
+          : window.dice.weightedChoice([
+              { w: nonRemote ? 2 : 0, v: 'autocratic monarchy' },
+              { w: civilized || !coastal ? 0 : 1, v: 'colonial overlord' },
+              { w: nonRemote ? 2 : 0, v: 'feudal monarchy' },
+              { w: nonCivilized ? 1 : 0, v: 'fragmented warlords' },
+              { w: nonRemote && size !== 'empire' && coastal ? 2 : 0, v: 'free cities' },
+              { w: nonRemote && !large ? 1 : 0, v: 'holy orders' },
+              { w: civilized && large ? 2 : 0, v: 'imperial bureaucracy' },
+              { w: civilized && !large ? 1 : 0, v: 'merchant republic' },
+              { w: civilized ? 0 : 2, v: 'nomadic tribes' },
+              { w: nonRemote && nonCivilized && !large ? 1 : 0, v: 'sorcerous cabal' },
+              { w: nonRemote && nonCivilized && !large ? 1 : 0, v: 'splintered cults' },
+              { w: nonRemote ? 2 : 0, v: 'theocratic authority' },
+              { w: civilized ? 0 : 2, v: 'tribal confederacy' }
+            ])
+      used.add(region.government)
     })
     // wars
     const wars: RegionalCounters = {
@@ -262,9 +260,15 @@ export class LoreShaper extends Shaper {
               }
             ])
           )
+          const battlegrounds = borders.slice(0, Math.max(0.5 * borders.length, 3))
+          battlegrounds
+            .map(p => window.world.provinces[p])
+            .forEach(province => {
+              province.conflict = 'war'
+            })
           window.world.conflicts.push({
             type: 'war',
-            provinces: borders.slice(0, Math.max(0.5 * borders.length, 3)),
+            provinces: battlegrounds,
             regions: [region.idx, belligerent.idx]
           })
         }

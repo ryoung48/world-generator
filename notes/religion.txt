@@ -1,0 +1,88 @@
+-- traditions -- 
+* ancient ways: the religion is only the latest iteration of a faith that goes back beyond recorded history; ancient temples and doctrines of very different kinds may still exist, abandoned after now-forgotten ages of reform and change
+* ancestral tombs: {region} is known for its elaborate and sacred tombs, where locals honor their ancestors and seek guidance from spirits
+* apocalyptic cycles: followers believe the world operates in a cyclical manner, with alternating periods of creation, existence, and destruction, followed by renewal and rebirth
+* apotropaic symbols: the faithful use symbols, amulets, and talismans to ward off evil spirits, bad luck, and misfortune
+* aristocratic: the religion is {largely|exclusively} practiced by the elite of the society; believers from lesser classes are {unable to carry out the obligations of the faith|prohibited from participating}
+* ascetic traditions: the faith tends to scorn material wealth and comforts, esteeming poverty, simplicity, and deprivation; its shrines and regalia tend to be very simple and austere
+* caste system: the religion divides the local populace into castes with strict roles and no social mobility; the caste system is enforced by the local clergy
+* charitable: the clergy feels responsible for the well-being of the poor and hosts a plethora of charity programs, which provide food, shelter, and medical care
+* dire sacrifices: the religion requires regular sacrifices and offerings in exchange for divine favor; the sacrifices are often gruesome and involve the slaughter of animals or even humans
+* divine bloodlines: the ruling class claims to be descended from the gods, and their divine heritage is used to justify their rule; the clergy is often closely related to the ruling families
+* doctrinal schools: the religion is divided into different schools of thought, each with its own interpretation of the faith's core tenets; these schools often compete with each other for influence
+* dualistic: the religion divides the world into two opposing forces, {good and evil|light and darkness|order and chaos}; adherents sometimes argue over the specific qualities and roles of each force 
+* ecstatic rituals: the faithful engage in wild and frenzied rituals, often involving music, dancing, and the consumption of mind-altering substances
+* esoteric doctrine: sacred texts are written in a dead language only known by the clergy in order to safeguard the faith's most important rituals and teachings
+* ethnic creed: the religion is considered to be specific to a particular ethnic group; entry is extremely restricted to outsiders
+* entropic cult: the religion believes that the world is slowly decaying and will eventually be destroyed; the faithful believe that they must perform good deeds to slow the decay 
+* fertility rituals: the faithful engage in rituals and ceremonies aimed at promoting fertility and successful harvests; these rites often involve elaborate dances, feasting, and offerings to deities
+* funerary rites: the faithful have elaborate rituals for the dead, including burial practices, mourning periods, and commemorative ceremonies
+* geomancy: the religion incorporates the study and manipulation of earth energies; followers believe that certain locations possess unique spiritual power and can be harnessed for various purposes
+* green pact: the religion forbids the destruction of plant life and requires the followers to favor meat oriented diets; cannibalism is sometimes practiced in remote areas
+* guardian spirits: the faithful believe in the existence of personal guardian spirits or entities, who provide protection, guidance, and support throughout their lives
+* harmonious: this religion cheerfully absorbs other faiths and gods, either casting them as servitors of their deity or different aspects of their chosen divinity
+* heavenly hymns: the faith is known for its beautiful and elaborate hymns, chants, and songs; the faithful believe that music is essential to understanding the divine
+* holy grounds: followers believe that certain locations are sacred and must be protected at all costs; these locations are often heavily fortified
+* initiation rites: the religion requires a rigorous series of rituals and tests to be performed before one can be considered a full member of the faith
+* lay clergy: the religion allows common followers to serve as clergy, without the need for extensive training or initiation rites; this often results in a more egalitarian and inclusive religious community
+* localized variation: the faith has substantially different manifestations in different locations, each branch harmonized with local cultures and habits
+* marriage ceremonies: the faithful have elaborate rituals for marriage, often involving feasts, music, dancing, and other festivities
+* martyrdom: the followers of the religion venerate those who have died for their faith, and martyrdom is considered the highest form of devotion
+* material luxuriance: the religion prizes ornate regalia, splendid shrines, magnificent religious art, and the finest possible adornment of all things related to the faith
+* meditative practices: followers engage in deep meditation, seeking to attain spiritual insight, inner peace, and heightened awareness
+* missionary zeal: {religion} is wel-known for its countless missionaries, who travel far and wide seeking to spread the faith and its teachings
+* monastic clergy: the clergy of the religion are required to live in isolated monasteries and devote their lives to prayer and contemplation; they are often credited with being holier than the secular clergy who work in the world
+* monolatrists: the religion views all other faiths as inferior or subservient; followers are forbidden from worshiping any other deities; deviations from orthodoxy are harshly punished; conflict with other religions is regular and expected
+* mutilated clergy: clergy of the faith are required to undergo some grievous mutilation or physical scarring as a sign of their devotion.
+* nature veneration: followers hold a deep respect for the natural world and seek harmony with their surroundings; vegetarian diets are common among the faithful
+* polarized genders: the faith enforces strict gender roles with specific expectations for outfits, occupations, and legal rights
+* polyamory: the religion allows its followers to have multiple spouses; this is considered a holy practice and is encouraged by the clergy
+* prophetic dreams: the faithful believe that dreams are a gateway to the spirit world, and seek to interpret their dreams for guidance and wisdom
+* purification rituals: the faithful engage in elaborate rituals to purify themselves of sin and impurity; these rituals often involve bathing, fasting, and other forms of self-denial
+* religious laws: the religion has a developed a complex and sophisticated legal system that is used to adjudicate disputes and settle conflicts
+* remnant faith: this faith is a dying religion; its last remaining followers are fiercely protective of their traditions and beliefs
+* ritual scarification: followers practice ritual scarification to mark important life events and demonstrate their devotion to the faith; the scars are often elaborate and intricate
+* sacred dance: the faithful use dance as a form of spiritual expression, believing that certain movements and patterns can invoke divine energies or communicate with the spirit world
+* sacred pilgrimage: the faithful of {region} undertake a dangerous pilgrimage to a holy site, enduring great hardship and risking their lives in the process
+* soul reincarnation: followers believe that each soul is reborn after death based on their actions in life; the most virtuous souls eventually transcend the cycle of death and birth
+* spirit possession: the religion incorporates rituals in which individuals become possessed by spirits, deities, or ancestors, often acting as vessels for divine messages or guidance
+* temple architects: the faith is known for its elaborate and beautiful temples, shrines, and monuments; they are often built by specialized architects and engineers
+* totemic worship: followers construct elaborate totems to represent and honor the spirits and gods they revere; these totems are often placed in prominent locations
+* underclass: there exists a local religion that is mostly practiced by poor, oppressed, marginalized, and unimportant; it serves {to comfort and console the downtrodden|as a weapon of revolt and change}
+* warrior monks: the clergy of the religion are trained in both religious and martial arts, acting as protectors of the faith and their communities
+* youth initiation: the faith incorporates rites of passage and initiation ceremonies for young people as they transition into adulthood, often involving tests, challenges, or spiritual experiences
+* venal clergy: the religion is led by a corrupt and decadent clergy, who are more interested in worldly pleasures than spiritual matters
+-- themes -- 
+* warfare: conflict, strength, aggression
+* harmony: peace, balance, tranquility
+* fire: passion, energy, destruction
+* sea: oceans, travel, storms
+* water: healing, cleansing, renewal
+* earth: stability, nature, endurance
+* sky: air, inspiration, freedom
+* aesthetics: beauty, art, creativity
+* household: ancestry, hearth, domestic
+* life: cultivation, fertility, abundance
+* death: endings, transformation, afterlife
+* ruin: disaster, collapse, chaos
+* light: salvation, forgiveness, rebirth
+* industry: diligence, craftsmanship, innovation
+* commerce: bargains, wealth, prosperity
+* eldritch: otherworldly, alien, strange
+* authority: law, order, discipline
+* shadows: darkness, secrets, hidden truths
+* knowledge: wisdom, learning, insight
+* hatred: anger, malice, vengeance
+* empathy: compassion, kindness, connection
+* luck: fortune, chance, serendipity
+* seasons: cycles, change, renewal
+* wilderness: navigation, tracking, beasts
+* pariah: betrayal, rebellion, outcasts
+* dreams: prophecy, visions, nightmares
+* tyranny: domination, ambition, enslavement
+* revelry: celebration, feasting, debauchery
+* intrigue: deception, plots, manipulation
+-- national stances toward religion --
+* state religion: the government has an official religion, which is supported and enforced by the state; other religions are often suppressed or persecuted
+* fundamentalist: the government is dominated by religious leaders, who enforce strict adherence to religious laws and customs
+* secular: the government is officially neutral toward religion, and does not favor any particular faith; religious freedom is generally respected

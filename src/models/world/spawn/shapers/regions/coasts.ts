@@ -1,4 +1,4 @@
-import { hub__moveToCoast } from '../../../../regions/hubs'
+import { hub__moveToCoast } from '../../../../regions/provinces/hubs'
 import { world__waterFeatures } from '../../..'
 import { cell__commonEdge, cell__neighbors } from '../../../cells'
 import { ExteriorCell } from '../../../cells/types'

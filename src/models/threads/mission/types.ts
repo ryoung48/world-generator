@@ -24,7 +24,7 @@ export const missions = {
     ]
   },
   espionage: {
-    text: 'Acquire sensitive information that will benefit a friend',
+    text: 'Acquire sensitive information',
     complication: [
       'False data was placed as a decoy',
       'The data will actually harm the client',
@@ -46,7 +46,7 @@ export const missions = {
     ]
   },
   sabotage: {
-    text: 'Destroy a {thing|place} that is important to the enemy',
+    text: 'Destroy a {thing|place} or render it inoperable',
     complication: [
       "It's currently held or used by a third party",
       "It's only accessible at particular times",

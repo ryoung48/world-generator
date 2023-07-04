@@ -2,6 +2,7 @@ import { AppBar, Box, Button, Grid, Toolbar, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { Dispatch, SetStateAction } from 'react'
 
+import { uniqueArray } from '../../models/utilities/math'
 import { view__context } from '../context'
 import { cssColors } from '../theme/colors'
 
@@ -35,6 +36,18 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
             </Grid>
           </Grid>
           <Grid container spacing={0} justifyContent='end'>
+            <Grid item px={1}>
+              <Button
+                onClick={() => {
+                  const key = 'seeds'
+                  const saved = JSON.parse(localStorage.getItem(key) || '[]') as string[]
+                  localStorage.setItem(key, JSON.stringify(uniqueArray([...saved, state.id])))
+                }}
+                disabled={!state.id}
+              >
+                save
+              </Button>
+            </Grid>
             <Grid item px={1}>
               <Button onClick={() => dispatch({ type: 'start adventure' })} disabled={!state.id}>
                 start

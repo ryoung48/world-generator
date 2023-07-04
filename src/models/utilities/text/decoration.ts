@@ -1,4 +1,4 @@
-import { TaggedEntity } from '../codex/entities'
+import { TaggedEntity } from '../entities/types'
 
 type CodexLinkParams = {
   tooltip?: string

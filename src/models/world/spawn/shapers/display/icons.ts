@@ -118,7 +118,7 @@ export const display__icons = () => {
     window.dice.random > 0.8 &&
     m.n.every(i => !used.has(i))
   // grass
-  const grasslands: Climate['type'][] = ['savanna', 'hot steppe', 'cold steppe']
+  const grasslands: Climate['name'][] = ['savanna', 'hot steppe', 'cold steppe']
   const biomes = Shaper.land.filter(p => !p.isMountains && !p.isWater && !p.isCoast)
   const grass = biomes.filter(p => grasslands.includes(window.world.regions[p.region].climate))
   const grassIcons: Display['icons'][number]['type'][] = [
@@ -147,7 +147,7 @@ export const display__icons = () => {
     }
   })
   // forest
-  const deciduous: Climate['type'][] = [
+  const deciduous: Climate['name'][] = [
     'mediterranean',
     'subtropical',
     'temperate monsoon',
@@ -179,7 +179,7 @@ export const display__icons = () => {
     }
   })
   // boreal
-  const coniferous: Climate['type'][] = ['subarctic', 'oceanic', 'manchurian', 'siberian']
+  const coniferous: Climate['name'][] = ['subarctic', 'oceanic', 'manchurian', 'siberian']
   const borealStyles: Record<number, number> = {}
   const boreal = biomes.filter(p => coniferous.includes(window.world.regions[p.region].climate))
   boreal.forEach(m => {
@@ -199,7 +199,7 @@ export const display__icons = () => {
     }
   })
   // tropical
-  const jungles: Climate['type'][] = ['tropical rainforest', 'tropical monsoon']
+  const jungles: Climate['name'][] = ['tropical rainforest', 'tropical monsoon']
   const tropicalStyles: Record<number, number> = {}
   const tropical = biomes.filter(p => jungles.includes(window.world.regions[p.region].climate))
   tropical.forEach(m => {
@@ -231,32 +231,9 @@ export const display__icons = () => {
       })
     }
   })
-  //swamps
-  forest
-    .concat(boreal)
-    .concat(tropical)
-    .forEach(m => {
-      if (valid(m) && cell__neighbors(m).every(freeSpace)) {
-        used.add(m.idx)
-        display.icons.push({
-          x: m.x,
-          y: m.y,
-          type: window.dice.choice([
-            'swamp_1',
-            'swamp_2',
-            'swamp_3',
-            'swamp_4',
-            'swamp_5',
-            'swamp_6',
-            'swamp_7'
-          ]),
-          cell: m.idx
-        })
-      }
-    })
   valid = m => !cell__hasRoads(m) && window.dice.random > 0.8 && m.n.every(i => !used.has(i))
   // desert
-  const deserts: Climate['type'][] = ['hot desert', 'cold desert']
+  const deserts: Climate['name'][] = ['hot desert', 'cold desert']
   const desert = biomes.filter(p => deserts.includes(window.world.regions[p.region].climate))
   const desertIcons: TerrainIcon[] = [
     'desert_1',
