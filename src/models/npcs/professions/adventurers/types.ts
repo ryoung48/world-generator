@@ -1,4 +1,4 @@
-import { NPC } from '../../types'
+import { Actor } from '../../types'
 
 export type Adventurer =
   | 'barbarian'
@@ -16,10 +16,10 @@ export type Adventurer =
 export type AdventurerKit = Record<
   Adventurer,
   {
-    equipment: () => NPC['equipment']
+    equipment: () => Actor['equipment']
     abilities: {
-      minor: NPC['abilities'][number][]
-      major: NPC['abilities'][number][]
+      minor: Actor['abilities'][number][]
+      major: Actor['abilities'][number][]
     }
   }
 >

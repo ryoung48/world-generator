@@ -31,7 +31,7 @@ export function ToggleButtons<T extends string>(props: {
           className={classes.tabs}
         >
           {selection.map((label, i) => (
-            <ToggleButton key={i} value={i}>
+            <ToggleButton key={i} value={i} sx={{ fontSize: 9 }}>
               {label}
             </ToggleButton>
           ))}

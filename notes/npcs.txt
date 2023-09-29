@@ -70,3 +70,222 @@ descriptors:
 -- motivations --
 * wealth|fame|artifact
 * revenge|redemption|fear
+
+come up with a list of 30 quirks that would help flavor a "guard captain" in a fantasy RPG; keep in mind the following:
+* all quirks must directly relate to a "guard captain"
+* there must be a mix of positive and negative quirks
+* all quirks should have a 1-3 word title followed by 30-80 character description
+* quirks should not hint at personality, but rather at the character's role in the world
+* quirks should be written in a way that they can be used as a hook for a story
+* quirks should be written in the following format: "title: description"
+
+come up with a list of 30 quirks that would help flavor a "guard captain" in a fantasy RPG; keep in mind the following:
+* all quirks must directly relate to a "guard captain"
+* there must be a mix of positive and negative quirks
+* all quirks should have a 1-3 word title followed by 30-80 character description
+* quirks should not hint at personality, but rather at the character's role in the world
+* quirks should be written in a way that they can be used as a hook for a story
+* quirks should be output as markdown in the following format:
+```json
+{
+    [title]: {
+        "tooltip": [description]
+    },
+    ...
+}
+```
+
+
+* mysterious past: hides a murky past that may come back to haunt them
+* haunted by doubts: questions own abilities, plagued by insecurity
+* distrustful of magic: suspicious of magic users, may react unpredictably around them
+* provincial: has never left the province
+* traveler: well versed in many lands and cultures
+* homesick: longs for home and family
+* squeamish: disturbed by gore and violence
+* claustrophobic: uncomfortable in enclosed spaces
+* fear of heights: vertigo prevents climbing tall structures
+* pilgrim: has traveled to a holy site and returned
+* picky eater: refuses to eat unfamiliar foods
+* dietary restrictions: cannot eat certain foods
+* pacifist: avoids violence except in dire need
+* restless: has trouble sitting still for long periods of time
+* blunt: speaks their mind without regard for others' feelings
+* snores loudly: keeps others awake at night
+* light sleeper: wakes at the slightest noise
+* night owl: stays up late, sleeps in
+* early riser: always wakes up before dawn
+* easily distracted: struggles to maintain focus and often daydreams
+* burnt out: has lost the passion for their work
+* gambler: enjoys games of chance and is always looking for a wager
+* street urchin: grew up on the streets and has unique knowledge of the city's underbelly
+* foreign agent: secretly working for a foreign power, causing intrigue and potential betrayal
+* royal blood: distant relative to the regional overlord, creating potential plots for the throne
+* diary: keeps a detailed diary of their life, which could be used to blackmail them
+* underworld connection: has been seen meeting with known criminals, hinting at a possible secret alliance or obligation
+
+* war stories: loves to tell embellished stories of past battles and glory
+
+* chronic complainer: always finds something to complain about
+* misplaced trust: has great trust in someone who is secretly plotting against them
+* persecuting foe: has a powerful nemesis that seeks to {destroy|disgrace} them
+* compulsive liar: lies about everything, even when there is no reason to
+* load-bearing relationship: has a {child|spouse|friend|associate} that they rely on for {emotional support|practical assistance}
+* lives for today: seeks immediate ends without regard for the future
+* overextended grasp: has taken on more than they can handle and is struggling to keep up
+* bastard origins: was born out of wedlock and is {unaware of their true parentage|doing everything they can to hide their true parentage|secretly plotting to claim their birthright}
+* family chains: is {bound to inherit a family duty that they are uninterested in fulfilling|being forced into an arranged marriage that they are not pleased with}
+* family alienation: has a strained relationship with {their spouse|a parent|a child|a sibling}
+* delusional self-image: believes themselves to be far more talented and capable than they actually are
+* bitter grudge: has a deep-seated hatred for someone and is always looking for an opportunity to get revenge
+* black sheep: is an outcast within their {family|profession} due to some past transgression
+* betting it all: has gambled everything on a risky venture and is desperate for it to succeed
+* chance at glory: has been given a once-in-a-lifetime opportunity to achieve their dreams, but it comes at a great cost
+* blithe idealist: has grand ambitions and is willing to sacrifice everything to achieve it
+* afflicted: {suffers from a chronic illness that requires regular infusions of some costly remedy|is dying from a deadly disease and is desperately seeking a cure}
+* doomed love: {is in love with someone who is {utterly unobtainable|wholly disinterested in their devotion|profoundly unhealthy in their affections}|is the unwilling object of someone's {unhealthy|unwanted} affections}
+* forbidden romance: is {in love with someone from {the wrong {social class|ethnic group}|a rival household}|involved in an {incestuous bond|adulterous relationship}}
+* lovesick fool: absolutely and utter smitten with someone, to the point where they are {neglecting|ignoring} critical situations that threaten to explode into outright disaster
+* ticking bomb: {ruinous vice|unendurable pressure|terminal illness|mounting debt} is threatening to shatter their plans at some unknown, but rapidly approaching time
+* troublesome friend: has a friend who is prone to {poor decisions|reckless indulgences} and is need of help getting them out of trouble
+
+* lustful: has a wandering eye and is always looking for a new lover
+* gluttonous: has an insatiable appetite and is always on the lookout for food
+* dull: slow-witted and uninteresting conversationally
+* gullible: easily tricked and manipulated
+* socially awkward: terrible at talking to people and making friends
+* clumsy: prone to tripping and dropping things
+* graceful: moves with a natural grace and elegance
+* charismatic: has a natural charm and is well-liked by others
+* intimidating: has a commanding presence and is feared by others
+* well-read: has read many books and is knowledgeable about many topics
+* well-traveled: has visited many lands and is knowledgeable about many cultures
+* dexterous: has quick reflexes and is good with their hands
+* despised: hated by many people for some past transgression
+* respected: well-respected by the community for some past deed
+* struggling: has fallen on hard times and is struggling to make ends meet
+* well-off: has a comfortable life and is financially secure
+* magical gift: has natural arcane affinity and is able to cast spells without training
+* obessive: fixates on a particular topic or hobby
+
+* seafarer: at home on the sea, knows its moods and whims
+* cultivation: has an immaculate garden and is knowledgeable about plants
+* medicine: has rudimentary medical knowledge; is able to diagnose illnesses and treat minor injuries
+* huntsman: at home in the wilderness, knows how to track and hunt animals
+* musician: plays an instrument and is able to entertain others
+* artist: has a talent for painting and drawing;
+* duelist: skilled with a blade and enjoys a good fight
+* brawler: skilled at unarmed combat and enjoys a good fight
+* occultist: secretly dabbles with forbidden lore and magic
+* chef: has a talent for cooking and is able to prepare delicious meals
+* poet: has a talent for writing poetry
+
+
+* charming sycophant: skilled at flattering others and gaining their favor
+* multilingual interpreter: fluent in various languages, facilitating communication
+* streetwise: knows how to survive on the streets and deal with unsavory characters
+* rural upbringing: grew up in the countryside and is knowledgeable about farming and agriculture
+* urban upbringing: grew up in the city and is knowledgeable about city life and politics
+* humble origins: grew up poor and has worked hard to get where they are today
+* rural dreams: longs to escape crowded, dirty city streets for the quiet, clean countryside
+* urban dreams: secretly dreams for more than peasant life
+* dirt poor: has barely enough to scrape by day-to-day
+* simple pleasures: finds joy in small comforts and diversions
+* tragic past: haunted by images of past hardship and loss
+* petty criminal: resorts to petty crime to supplement income
+* hospitable: welcomes guests and strangers with open arms
+* disdains charity: too proud to accept handouts or pity
+* family recipes: carries a treasured cookbook with generations of wisdom
+* opulent parties: hosts lavish feasts and galas for other elites
+* profligate spending: squanders money on extravagant indulgences
+* haughty demeanor: looks down on others and is quick to judge
+* inherited debt: owes a great deal of wealth due to the indiscretions of their ancestors
+* lineage pride: deeply invested in their family's history and reputation
+* exotic collector: accumulates rare trinkets and curios
+* heir apparent: next in line to inherit a great fortune
+* betrothed: the bride or groom in an upcoming marriage
+* religious patron: a generous benefactor of the local religious institutions
+* inheritance dispute: embroiled in a legal battle over a disputed inheritance
+* waning wealth: has fallen on hard times and is struggling to maintain their lifestyle
+* political hostage: kept as assurance in a shaky political alliance
+* overlord's favor: has the ear of the regional overlord and is able to influence their decisions
+* exiled: forbidden from ever returning home
+* foul mouth: constantly curses and uses crude language
+* wanderer: has no home and travels from place to place
+* well connected: {has friends in high places and is able to call in favors|has contacts to acquire rare, exotic items|has a close relationship with local law enforcement}
+* alluring: exceptional physical beauty that often leaves people awestruck
+* exotic attire: wears outlandish fashion that distinguishes them in any gathering
+* court fashion: {always dresses in the latest fashions and trends|sets trends and standards in high society attire}
+
+
+* bald
+* bowl
+* medium unkempt
+* very short
+* fade
+* medium flowing
+* long flowing
+* medium wavy
+* short wavy
+* curly
+* medium curls
+* large curly 
+* curly chevelure
+* curly bowl
+* roman fade
+* short afro
+* medium afro
+* short braids
+* pulled back
+* pulled back medium wavy
+* high bun
+* very long wild
+* long wild
+* raider
+* hair loops
+* steppe rider
+-------------
+* beaded beard
+* full beard
+* short beard
+* short goatee
+* mustache
+* goatee
+* big bushy beard
+* chinstrap beard
+* pointy beard
+* full curly beard
+* long wavy beard
+* big wavy beard
+* big chinstrap beard
+* short stylish beard
+* big wild beard
+* single beard braid
+* straight medium beard
+* fine curls beard
+* straight pointy beard
+* long curly beard
+* fine curls goatee
+* mustache with sideburns
+* wavy pointy beard
+* long straight rough beard
+--------------
+* crown braid
+* very long wavy
+* bun
+* very long double braid
+* medium wavy
+* fish tail braids
+* double buns
+* ribboned braid
+* long curly
+* spiral ribboned braid
+* medium afro
+* medium thin braids
+* short thin braids
+* medium neck braid
+* wavy sides
+* back knot
+* short single braid
+* long with crown braid
+* twin braids with ribbons

@@ -1,0 +1,112 @@
+import { range } from 'd3'
+
+import { MATH } from './math'
+import { Dice } from './math/dice'
+
+const huesWarm = ['magenta', 'red', 'vermilion', 'orange', 'amber', 'yellow'] as const
+const huesCool = ['olive', 'green', 'teal', 'blue', 'indigo', 'purple'] as const
+const neutralsWarm = ['burgundy', 'mahogany', 'copper', 'ochre', 'tan', 'beige'] as const
+const neutralsCool = [
+  'greyish-olive',
+  'greyish-green',
+  'greyish-teal',
+  'greyish-blue',
+  'greyish-indigo',
+  'greyish-purple'
+] as const
+const neutrals = ['brown', 'grey', 'white', 'black'] as const
+export type ColorHue =
+  | typeof huesWarm[number]
+  | typeof huesCool[number]
+  | typeof neutrals[number]
+  | typeof neutralsWarm[number]
+  | typeof neutralsCool[number]
+const modifiers = ['pale', 'light', 'dark', 'deep'] as const
+type ColorModifier = typeof modifiers[number]
+export type AllColors = `${ColorModifier} ${ColorHue}` | ColorHue
+const hues = [...huesWarm, ...huesCool] as const
+export type Hue = typeof hues[number]
+
+const neutralHueLookup: Record<Hue, ColorHue> = {
+  magenta: 'burgundy',
+  red: 'mahogany',
+  vermilion: 'copper',
+  orange: 'ochre',
+  amber: 'tan',
+  yellow: 'beige',
+  olive: 'greyish-olive',
+  green: 'greyish-green',
+  teal: 'greyish-teal',
+  blue: 'greyish-blue',
+  indigo: 'greyish-indigo',
+  purple: 'greyish-purple'
+}
+
+const colorWheel: Record<Hue, [number, number]> = {
+  red: [0, 10], // also [340, 360]
+  vermilion: [10, 20],
+  orange: [20, 40],
+  amber: [40, 50],
+  yellow: [50, 70],
+  olive: [70, 90],
+  green: [90, 130],
+  teal: [130, 170],
+  blue: [170, 250],
+  indigo: [250, 260],
+  purple: [260, 300],
+  magenta: [300, 340]
+}
+
+export const COLOR = {
+  adjacent: (params: { color: Hue; dist?: number }): Hue[] => {
+    const { color, dist = 2 } = params
+    const idx = hues.findIndex(hue => hue === color)
+    const max = hues.length
+    const start = idx - dist
+    const stop = start + dist * 2 + 1
+    return range(start, stop).map(i => hues[i >= max ? i - max : i < 0 ? max + i : i])
+  },
+  extractHue: (hslString: string): number | null => {
+    // Use a regular expression to match the hue, saturation, and lightness values
+    const regex = /hsl\((\d+),\s*(\d+)%?,\s*(\d+)%?\)/
+    const match = hslString.match(regex)
+    // Check if the string matches the HSL format
+    if (match && match[1]) {
+      // Return the hue as a number
+      return parseInt(match[1], 10)
+    }
+    // Return null if the string doesn't match the HSL format
+    return null
+  },
+  hslToHex(h: number, s: number, l: number) {
+    l /= 100
+    const a = (s * Math.min(l, 1 - l)) / 100
+    const f = (n: number) => {
+      const k = (n + h / 30) % 12
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1)
+      return Math.round(255 * color)
+        .toString(16)
+        .padStart(2, '0') // convert to Hex and prefix "0" if needed
+    }
+    return `#${f(0)}${f(8)}${f(4)}`
+  },
+  hues,
+  neutralHues: (colors: Hue[]) => Array.from(new Set(colors.map(color => neutralHueLookup[color]))),
+  permutations: (modifiers: ColorModifier[], colors: ColorHue[]): AllColors[] =>
+    MATH.permutations(modifiers, colors)
+      .map(group => group.join(' ') as AllColors)
+      .concat(colors),
+  randomHue: (color: Hue) => {
+    const space = colorWheel[color]
+    const target =
+      color === 'red' ? window.dice.choice<[number, number]>([space, [340, 360]]) : space
+    return window.dice.color(target)
+  },
+  randomPreset: <T extends string>(params: { tags: T[]; seed: string; dark?: boolean }) => {
+    const { tags, seed, dark } = params
+    const colors: Partial<Record<T, string>> = {}
+    const dice = new Dice(seed)
+    tags.forEach(tag => (colors[tag] = dark ? dice.darkColor() : dice.color()))
+    return colors as Record<T, string>
+  }
+}

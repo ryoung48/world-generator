@@ -1,29 +1,29 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Divider, Grid } from '@mui/material'
 import { Fragment } from 'react'
 
-import { province__traits } from '../../../models/quests/hooks'
+import { PROVINCE } from '../../../models/regions/provinces'
 import { hub__traits } from '../../../models/regions/provinces/hubs/traits'
-import { province__demographics } from '../../../models/regions/provinces/network'
-import { properSentences, titleCase } from '../../../models/utilities/text'
+import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { climates } from '../../../models/world/climate/types'
-import { view__context } from '../../context'
+import { CLIMATE } from '../../../models/world/climate'
+import { VIEW } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { CodexPage } from '../common/CodexPage'
-import { StyledTabs } from '../common/navigation/StyledTabs'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
-import { MarketView } from './Market'
-import { QuestGen } from './QuestGen'
+// import { ProvinceElements } from './Elements'
+import { HooksView } from './Hooks'
+import { PlayerCharacterView } from './PCs'
+// import { QuestList } from './quests'
 
 export function ProvinceView() {
-  const { state } = view__context()
+  const { state } = VIEW.context()
   const province = window.world.provinces[state.province]
   const region = window.world.regions[province.region]
-  const climate = climates[region.climate]
+  const climate = CLIMATE.lookup[region.climate]
   const traits = hub__traits(province.hub)
-  const { common } = province__demographics(province)
+  const { common } = PROVINCE.demographics(province)
   const cultureCount = 5
   const other = common.slice(cultureCount).reduce((sum, { w }) => sum + w, 0)
   const avatarSpawned = state.avatar.pcs.length > 0
@@ -34,7 +34,7 @@ export function ProvinceView() {
         <StyledText
           color={cssColors.subtitle}
           text={`(${province.idx}) ${province.hub.type}, ${decorateText({
-            link: window.world.regions[province.nation]
+            link: PROVINCE.nation(province)
           })}`}
         ></StyledText>
       }
@@ -50,12 +50,11 @@ export function ProvinceView() {
                       <StyledText
                         text={`${titleCase(province.environment.terrain)} (${decorateText({
                           label: province.environment.climate,
-                          tooltip: `${titleCase(climate.name)} (${climate.code})`
+                          tooltip: `${titleCase(region.climate)} (${climate.code})`
                         })})`}
                       ></StyledText>
                     )
-                  },
-                  { label: 'Leadership', content: traits.leadership }
+                  }
                 ]}
               ></SectionList>
             </Box>
@@ -63,24 +62,7 @@ export function ProvinceView() {
           <Grid item xs={6} mt={1}>
             <Box pt={1}>
               <SectionList
-                list={[
-                  { label: 'Design', content: traits.design },
-                  {
-                    label: 'Hooks',
-                    content: (
-                      <StyledText
-                        text={province__traits(province)
-                          .map(trait =>
-                            decorateText({
-                              label: titleCase(trait.tag),
-                              tooltip: properSentences(`${trait.text}.`)
-                            })
-                          )
-                          .join(', ')}
-                      ></StyledText>
-                    )
-                  }
-                ]}
+                list={[{ label: 'Leadership', content: traits.leadership }]}
               ></SectionList>
             </Box>
           </Grid>
@@ -114,14 +96,6 @@ export function ProvinceView() {
                     )
                   },
                   {
-                    label: `Defenses`,
-                    content: <span>{traits.defenses}</span>
-                  },
-                  {
-                    label: `Commerce`,
-                    content: <span>{traits.commerce}</span>
-                  },
-                  {
                     label: `Important Locals`,
                     content: (
                       <span>
@@ -144,14 +118,15 @@ export function ProvinceView() {
           </Grid>
           {avatarSpawned && (
             <Fragment>
+              <Grid item xs={12}>
+                <PlayerCharacterView></PlayerCharacterView>
+              </Grid>
               <Grid item xs={12} mt={1}>
-                <StyledTabs
-                  active
-                  tabs={[
-                    { label: 'Quest', content: <QuestGen province={province}></QuestGen> },
-                    { label: 'Market', content: <MarketView></MarketView> }
-                  ]}
-                ></StyledTabs>
+                <Divider>Hooks</Divider>
+              </Grid>
+              <Grid item xs={12} mt={1}>
+                <HooksView province={province}></HooksView>
+                {/* <QuestList></QuestList> */}
               </Grid>
             </Fragment>
           )}

@@ -1,12 +1,15 @@
-import { hub__isTown, hub__isVillage } from '../../../models/regions/provinces/hubs'
+import * as jdenticon from 'jdenticon'
+
+import { PROVINCE } from '../../../models/regions/provinces'
+import { HUB } from '../../../models/regions/provinces/hubs'
 import { Hub } from '../../../models/regions/provinces/hubs/types'
-import { RouteTypes } from '../../../models/world/travel/types'
-import { World } from '../../../models/world/types'
+import { RouteTypes, World } from '../../../models/world/types'
+import { HERALDRY } from '../../codex/common/Heraldry'
 import { fonts } from '../../theme/fonts'
+import { CANVAS } from '../common'
 import { canvas__drawIcon, icon__scaling } from '../icons'
 import { terrain__icons } from '../icons/terrain'
-import { canvas__circle } from '.'
-import { map__breakpoints, map__styles } from './draw_styles'
+import { MAP } from '../types'
 
 const fontFamily = fonts.maps
 const baseFontSize = () => window.world.dim.h / 2000
@@ -15,7 +18,7 @@ const regionalPath =
   (regions: Set<number>) => (route: World['display']['routes'][RouteTypes][number]) => {
     return route.provinces.some(idx => {
       const province = window.world.provinces[idx]
-      return regions.has(province.nation)
+      return regions.has(PROVINCE.nation(province).idx)
     })
   }
 
@@ -30,7 +33,7 @@ export const map__drawRoads = (params: {
   ctx.lineCap = 'square'
   let width = 0.15
   let dashes = [1, 0.6]
-  if (scale > map__breakpoints.regional) {
+  if (scale > MAP.breakpoints.regional) {
     width /= 4
     dashes = dashes.map(dash => dash / 4)
   }
@@ -46,7 +49,7 @@ export const map__drawRoads = (params: {
   // sea routes
   ctx.lineWidth = width
   ctx.setLineDash(dashes)
-  ctx.strokeStyle = `rgba(${map__styles.roads.sea}, 0.5)`
+  ctx.strokeStyle = `rgba(${MAP.roads.sea}, 0.5)`
   routes.sea.filter(roadFilter).forEach(r => ctx.stroke(new Path2D(r.d)))
   ctx.restore()
 }
@@ -59,7 +62,7 @@ const locHighlight = (params: {
 }) => {
   const { loc: point, ctx, scale, color } = params
   const fontSize = baseFontSize()
-  const radius = fontSize * (scale > map__breakpoints.regional ? 0.2 : 0.3)
+  const radius = fontSize * (scale > MAP.breakpoints.regional ? 0.2 : 0.3)
   ctx.save()
   const gradient = ctx.createRadialGradient(point.x, point.y, radius, point.x, point.y, radius * 10)
   gradient.addColorStop(0, `rgba(${color}, 0.4)`)
@@ -97,48 +100,83 @@ export const map__drawLocationsRegional = (params: {
   const { ctx, scale, nationSet, cachedImages } = params
   ctx.textAlign = 'center'
   ctx.shadowColor = 'white'
-  const settlements = window.world.provinces.filter(province => nationSet.has(province.nation))
+  const settlements = window.world.provinces.filter(province =>
+    nationSet.has(PROVINCE.nation(province).idx)
+  )
   const fontSize = baseFontSize()
   const iconScale = icon__scaling()
-  const regional = scale <= map__breakpoints.regional
-  settlements.forEach(loc => {
-    const type = hub__isVillage(loc.hub) ? 'village' : hub__isTown(loc.hub) ? 'town' : 'city'
-    const setting = settings[type]
-    if (regional) {
-      const capital = window.world.regions[loc.nation].capital === loc.idx
-      if (capital)
-        canvas__circle({
-          point: loc.hub,
-          radius: setting.radius + 0.1,
-          fill: 'transparent',
-          border: { width: 0.05, color: 'black' },
-          ctx
+  const regional = scale <= MAP.breakpoints.regional
+  settlements
+    .filter(province => !PROVINCE.nation(province).shattered)
+    .forEach(loc => {
+      const type = HUB.village(loc.hub) ? 'village' : HUB.town(loc.hub) ? 'town' : 'city'
+      const setting = settings[type]
+      if (regional) {
+        const capital = PROVINCE.isCapital(loc)
+        if (capital)
+          CANVAS.circle({
+            point: loc.hub,
+            radius: setting.radius + 0.1,
+            fill: 'transparent',
+            border: { width: 0.05, color: 'black' },
+            ctx
+          })
+        CANVAS.circle({ point: loc.hub, radius: setting.radius, fill: 'black', ctx })
+        ctx.fillStyle = 'black'
+        ctx.font = `${fontSize * setting.name.regional.size}px ${fontFamily}`
+        ctx.fillText(loc.name, loc.hub.x, loc.hub.y - setting.name.regional.offset)
+      } else {
+        const img = cachedImages[type]
+        const icon = terrain__icons[type]
+        canvas__drawIcon({ ctx, img, icon, ...iconScale, point: loc.hub })
+        ctx.fillStyle = 'black'
+        ctx.font = `${fontSize * setting.name.local.size}px ${fontFamily}`
+        ctx.fillText(loc.name, loc.hub.x, loc.hub.y - setting.name.local.offset)
+        ctx.font = `${fontSize * setting.type.local.size}px ${fontFamily}`
+        ctx.fillText(loc.hub.type, loc.hub.x, loc.hub.y - setting.type.local.offset)
+      }
+    })
+
+  if (regional)
+    settlements.forEach(loc => {
+      const nation = PROVINCE.nation(loc)
+      const region = window.world.regions[loc.region]
+      if (loc.idx === nation.capital && !nation.shattered) {
+        ctx.fillStyle = 'black'
+        ctx.font = `${fontSize * 12}px ${fontFamily}`
+        ctx.fillText(nation.name, loc.hub.x, loc.hub.y + 5)
+        ctx.save()
+        const tempCanvas = document.createElement('canvas')
+        const initialSize = 100
+        tempCanvas.width = initialSize
+        tempCanvas.height = initialSize
+        const tempCtx = tempCanvas.getContext('2d')
+        const config = HERALDRY.config(nation)
+        jdenticon.drawIcon(tempCtx, nation.name, initialSize, config)
+        const backColor = config?.backColor ?? '#ffffff'
+        const iconSize = 3
+        HERALDRY.draw({
+          ctx,
+          x: loc.hub.x - 1.25,
+          y: loc.hub.y + 6.5,
+          h: iconSize + 2,
+          w: iconSize + 0.5,
+          borderWidth: 0.2,
+          backColor
         })
-      canvas__circle({ point: loc.hub, radius: setting.radius, fill: 'black', ctx })
-      ctx.fillStyle = 'black'
-      ctx.font = `${fontSize * setting.name.regional.size}px ${fontFamily}`
-      ctx.fillText(loc.name, loc.hub.x, loc.hub.y - setting.name.regional.offset)
-    } else {
-      const img = cachedImages[type]
-      const icon = terrain__icons[type]
-      canvas__drawIcon({ ctx, img, icon, ...iconScale, point: loc.hub })
-      ctx.fillStyle = 'black'
-      ctx.font = `${fontSize * setting.name.local.size}px ${fontFamily}`
-      ctx.fillText(loc.name, loc.hub.x, loc.hub.y - setting.name.local.offset)
-      ctx.font = `${fontSize * setting.type.local.size}px ${fontFamily}`
-      ctx.fillText(loc.hub.type, loc.hub.x, loc.hub.y - setting.type.local.offset)
-    }
-    const nation = window.world.regions[loc.nation]
-    const region = window.world.regions[loc.region]
-    if (regional && loc.idx === nation.capital) {
-      ctx.font = `${fontSize * 12}px ${fontFamily}`
-      ctx.fillText(nation.name, loc.hub.x, loc.hub.y + 5)
-    } else if (regional && loc.idx === region.capital) {
-      ctx.fillStyle = 'rgba(0,0,0,0.5)'
-      ctx.font = `${fontSize * 10}px ${fontFamily}`
-      ctx.fillText(region.name, loc.hub.x, loc.hub.y + 4)
-    }
-  })
+        // Copy the identicon from the temporary canvas to the main canvas at the new size
+        ctx.drawImage(tempCanvas, loc.hub.x - 1, loc.hub.y + 7, iconSize, iconSize)
+        ctx.restore()
+      } else if (loc.idx === region.capital && !nation.shattered) {
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'
+        ctx.font = `${fontSize * 10}px ${fontFamily}`
+        ctx.fillText(region.name, loc.hub.x, loc.hub.y + 4)
+      } else if ((loc.idx === nation.capital || loc.idx === region.capital) && nation.shattered) {
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'
+        ctx.font = `${fontSize * 10}px ${fontFamily}`
+        ctx.fillText(region.name, loc.hub.x, loc.hub.y)
+      }
+    })
 }
 
 export const map__drawAvatarLocation = (params: {

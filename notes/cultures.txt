@@ -1,3 +1,4 @@
+-- values --
 * adaptation: seeking fortune in new places or new roles
 * aesthetic: beauty in material goods and architecture
 * ancestry: bloodline and family heritage
@@ -45,3 +46,44 @@
 * warriors: raw strength and martial prowess
 * wealth: prosperity and accruing material wealth
 * zeal: piety and devotion to religious ideals
+-- languages --
+* smooth: flowing sounds with many vowels and liquids
+* crisp: short syllables with plosives and a clear-cut rhythm
+* guttural: sounds produced in the back of the mouth/throat (kgh)
+* melodic: has a rise and fall in intonation, with many vowels and diphthongs
+* harsh: strong, abrupt consonants
+* nasal: sounds produced through the nose (m, n, ng)
+* lilting: has a sing-song quality, with many diphthongs and 
+* staccato: short, sharp syllables with many plosives and fricatives
+* rhotic: strong presence of the "r" sound, especially if it's rolled or trilled
+* monophthongal: has few diphthongs and a lot of single vowels without much glide
+* sibilant: sounds produced with a hissing or buzzing quality (s, z, sh, zh)
+* breathy: sounds produced with a lot of air, often with a raspy quality
+* labialized: sounds produced with the lips (w, wh, f, v, p, b, m)
+* palatalized: sounds produced with the tongue against the roof of the mouth (y, ch, j, sh, zh)
+* germinated: sounds produced with a double articulation (tt, kk, pp, etc.)
+* glottalized: sounds produced with a glottal stop (t', k', p', etc.)
+* aspirated: sounds produced with a puff of air (t, k, p, etc.)
+* lateralized: sounds produced with the tongue against the sides of the mouth (l)
+* vowel-rich: high proportion of vowels to consonants, often resulting in a very fluid sound
+* consonant-clustered: high proportion of consonants to vowels, often resulting in a very choppy sound
+
+-- art --
+* music: harmonic chants, drum-based rhythms, string melodies, wind instruments
+* dance: energetic jumps, graceful twirls, rhythmic stomps, expressive hand movements, partner coordination
+* visual: abstract paintings, realistic sketches, mosaic patterns, geometric shapes, natural landscapes, sculptural reliefs
+* literature: epic poems, historical chronicles, religious texts, philosophical treatises, romantic novels, political manifestos
+* architecture: grandiose temples, towering spires, ornate palaces, fortified castles, sprawling cities, humble villages
+* fashion: flowing robes, ornate jewelry, colorful dyes, intricate embroidery, exotic furs, elaborate headdresses
+* theater: dramatic monologues, comedic skits, musical performances, dance recitals, acrobatic feats, puppet shows
+* cuisine: spicy curries, sweet pastries, savory stews, bitter teas, sour pickles, salty meats
+
+-- traditions --
+* festivals: light celebrations, harvest festivity, ancestral remembrance, winter solstice, music & dance carnival
+* rites: coming-of-age ceremony, partnership union rituals, naming ceremony, funeral rites, coronation ceremony
+
+-- cuisine --
+* dishes: stews & broths, grilled preparations, steamed delicacies, fermented foods, raw platters
+* flavors: spicy & hot, sweet & tangy, savory & umami, bitter & aromatic, salty & crisp
+* ingredients: root vegetables, leafy greens, freshwater fish, assorted grains, wild berries
+

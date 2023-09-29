@@ -1,5 +1,39 @@
+import { Province } from '../../regions/provinces/types'
+import { QuirkParams } from '../traits/types'
+import { Gender } from '../types'
+
 const _professions = [
   'custom',
+  // tribal
+  'chieftain',
+  'shaman',
+  'tribal warrior',
+  'tribal elder',
+  'tribal artisan',
+  'hunter',
+  'forager',
+  'herdsman',
+  'foreigner (merchant)',
+  // monastic
+  'ascetic',
+  'scribe',
+  'librarian',
+  'groundskeeper',
+  'abbot',
+  // military
+  'chef (military)',
+  'quartermaster (military)',
+  'soldier (military)',
+  'officer (military)',
+  // colonial
+  'governor (colonial)',
+  'settler (colonial)',
+  'sailor (colonial)',
+  'merchant (colonial)',
+  'ship captain (colonial)',
+  'guard (colonial)',
+  'artisan (colonial)',
+  'innkeeper (colonial)',
   // lower
   'peasant',
   'village elder',
@@ -21,12 +55,11 @@ const _professions = [
   'street vendor',
   'hedge wizard',
   'fortune teller',
-  'ascetic',
-  'soldier (military)',
   // middle
   'tax collector',
   'investigator',
-  'gentry',
+  'gentry (minor)',
+  'gentry (major)',
   'guard captain',
   'bodyguard',
   'templar',
@@ -34,7 +67,6 @@ const _professions = [
   'criminal boss',
   'innkeeper',
   'priest',
-  'abbot',
   'lawyer',
   'scholar',
   'sorcerer',
@@ -56,15 +88,14 @@ const _professions = [
   'alchemist',
   'artificer',
   'merchant',
-  'shopkeeper',
   'banker',
   'caravan trader',
   'caravan master',
   'ship captain (merchant)',
   'dock master',
-  'officer (military)',
   // upper
-  'aristocrat',
+  'aristocrat (minor)',
+  'aristocrat (major)',
   'oligarch',
   'crime lord',
   'magistrate',
@@ -76,19 +107,26 @@ const _professions = [
   'exiled pretender',
   'diplomat',
   'courtier',
-  'prince'
+  'prince',
+  'suzerain'
 ] as const
 export type Profession = typeof _professions[number]
 export type ProfessionDetails = {
-  title?: string | { male: string; female: string }
+  title?:
+    | string
+    | { male: string; female: string }
+    | ((_params: { loc: Province; gender: Gender }) => string)
   strata: 'lower' | 'middle' | 'upper'
+  lifestyle: 'poor' | 'modest' | 'comfortable' | 'prosperous' | 'rich'
   coastal?: boolean
   official?: boolean
-  urban?: boolean
+  martial?: boolean
+  leadership?: boolean
+  kingdom?: boolean
   culture?: 'foreign' | 'native'
   age?: 'novice' | 'veteran' | 'master'
-  weight?: number
   unique?: boolean
   war?: boolean
   capital?: boolean
+  quirks?: Record<string, { text?: string; constraints?: Partial<QuirkParams>; tooltip?: string }>
 }

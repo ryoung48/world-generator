@@ -1,26 +1,27 @@
-import { Gender, NPC } from '../npcs/types'
-import type { Province } from '../regions/provinces/types'
 import { Stage } from './stages/types'
 
 export interface Quest extends Pick<Stage, 'status' | 'difficulty'> {
-  title?: string
-  description?: string
-  province: number
-  objectives?: Stage[]
-  npcs?: {
-    id: number
-    occupation: string
-    gender: Gender
-    age: NPC['age']
-    outfit: string
-    ref: number
-    foreigner?: boolean
-  }[]
-  questGiver?: number
+  // thread index (window.world.threads)
+  idx?: number
+  type: 'wilderness' | 'community'
+  goal?: { tag: string; text: string; complication: string }
+  enemies?: string
+  patron?: number
+  stages: Stage[]
+  // location where the thread takes place
+  location: number
+  origin: number
+  // how deep is the ancestral tree? (max 3)
+  depth: number
+  // how many tasks must be completed to achieve the goal?
   complexity: number
+  // how many tasks have been completed?
+  progress: number
+  // how many tasks have failed?
   failures: number
-  started?: boolean
+  // is this thread closed?
+  closed?: boolean
+  accepted?: boolean
+  // parent thread
+  parent?: number
 }
-
-export type QuestSpawnParams = { province: Province; pc: number }
-export type QuestAdvanceParams = { quest: Quest; pc: number; tag: string }

@@ -8,7 +8,7 @@
 * abandoned village: a nearby village was abandoned long ago, and now lies in ruins
 ** affliction's mark: Someone important is afflicted with a persistent, incurable illness; the sufferer {is desperate for a cure|requires regular infusions of some costly remedy in order to survive}
 ** ancestral grudge: resolve a centuries-old feud between this settlement’s monastery and a neighboring noble family
-* ancient archives: a nearby ruined {shrine|temple|keep|estate|city|crypt|fortress} is said to contain a vast collection of ancient texts and knowledge
+* ancient archives: the nearby ruins is said to contain a vast collection of ancient texts and knowledge
 * ancient forge: a blacksmith from a distant land seeks an escort to the nearby ruins; rumors speak of an ancient forge located within this ruin that could be used to craft legendary weapons and armor
 * ancient monument: deep in the wilderness lies an ancient monument, which is said to be the resting place of a powerful {god|hero|demon}
 * artistic patrons: this settlement is renowned for its art, music, and literature; it attracts scholars and artists from across the region
@@ -278,3 +278,61 @@ keep in mind that:
 
 rural: volunteer militia, wooden palisade, pact with local brigands, regular guard patrols
 urban: professional army, stone walls, mercenaries, {city|town} watch, watchtowers on the outskirts, noble household guards
+
+
+tribal:
+* chieftain
+* shaman
+* tribal warrior
+* tribal elder
+* hunter
+* forager
+* artisan ({bone|textiles|leather|wood|culinary|medicine})
+* herdsman
+
+Build a list of 30 npc occupation titles for a fantasy RPG quest inspried by worlds without number and godbound
+
+you can use the following examples as a guide:
+* Farmer tending crops and livestock
+* Miller grinding grain into flour
+* Baker making breads and pastries
+* Brewer brewing beers and ales
+
+Keep in mind the following:
+* npcs must be appropriate for a "refugee camp"
+* do not mention any proper names
+* do not start the description with "a" or "an"
+* do not mention any fantasy races such as elves, dwarves, goblins, orcs, ogres, etc.
+* descriptions should be no more than 8 words
+* descriptions should not hint at personality or alignment
+* do not repeat the examples above
+
+
+sinking city:
+* coastal decay: a large section of the community is collapsing into the sea
+* swampy ground: the ground beneath the settlement is slowly sinking into the swamp
+* sinkhole: a large sinkhole has opened up in the center of the settlement, swallowing buildings and people
+
+
+create a list of plot elements that might relate to the following hook:
+
+* sinking city: The community was built atop something unstable, and now that substrate is crumbling. It may be swampy ground or a decaying coastline, or it could be an ancient buried city that's now giving way. In the case of some antique habitation, the denizens that once lived there might be boiling upward as their home is collapsing, or new opportunities may be revealed even as the community's present structure is ruined
+
+
+keep in mind the following:
+* the setting is a fantasy RPG
+* each item should be between 40 and 80 characters long
+* each item should be setting agnostic
+* hooks should be written as commands (ex: "find the source of the smell")
+* do not give places names, instead give descriptions such as "large, ornate, stone building"
+* output the result as markdown with the following format:
+```json
+{
+    "locations": string[] // 20 examples, descriptions be between 25 and 50 characters long; locations should be appropriate for a "urban setting"
+    "npcs": { "title": string; "description": string }[] // 20 examples, descriptions be between 25 and 50 characters long
+    "hooks": string[] // 20 examples, each item should be between 60 and 80 characters long
+    "hazards": string[] // 20 examples, each item should be between 60 and 80 characters long
+    "complications": string[] // 20 examples, each item should be between 60 and 80 characters long
+}
+```
+

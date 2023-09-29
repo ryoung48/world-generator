@@ -1,215 +1,212 @@
-import { npc__spawn } from '../npcs'
-import { hub__alias } from '../regions/provinces/hubs'
-import { difficulty__random } from '../utilities/difficulty'
-import { openai__chat } from '../utilities/openai'
-import { province__traits } from './hooks'
-import { stage__current, stage__resolve, stage__spawn } from './stages'
-import { Quest, QuestAdvanceParams, QuestSpawnParams } from './types'
+import { range } from 'd3'
 
-export const quest__spawn = ({ province, pc }: QuestSpawnParams) => {
-  if (!province.quest)
-    province.quest = {
-      province: province.idx,
-      failures: 0,
-      complexity: window.dice.randint(5, 15),
-      difficulty: { cr: difficulty__random(pc) }
-    }
-  return province.quest
+import { Avatar } from '../../components/context/types'
+import { ACTOR } from '../npcs'
+import { enemies } from '../regions/provinces/hooks/enemies'
+import { mission__spawn } from '../regions/provinces/hooks/mission'
+import { Province } from '../regions/provinces/types'
+import { DIFFICULTY } from '../utilities/difficulty'
+import { describeDuration } from '../utilities/math/time'
+import { stage__current, stage__placeholder, stage__resolve, stage__spawn } from './stages'
+import { Quest } from './types'
+
+export const quest__spawn = (params: { loc: Province; parent?: Quest; pc: number }) => {
+  const { loc, parent, pc } = params
+  const quest: Quest = {
+    idx: window.world.quests.length,
+    type: window.dice.choice(['wilderness', 'community']),
+    status: 'perfection',
+    difficulty: { cr: DIFFICULTY.random(pc) },
+    complexity: window.dice.weightedChoice([
+      { w: 64, v: () => window.dice.randint(3, 7) },
+      { w: 32, v: () => window.dice.randint(8, 12) },
+      { w: 16, v: () => window.dice.randint(13, 17) },
+      { w: 8, v: () => window.dice.randint(18, 22) },
+      { w: 4, v: () => window.dice.randint(23, 27) },
+      { w: 2, v: () => window.dice.randint(28, 32) },
+      { w: 1, v: () => window.dice.randint(33, 37) }
+    ])(),
+    depth: 0,
+    progress: 0,
+    failures: 0,
+    location: loc.idx,
+    origin: loc.idx,
+    stages: [],
+    parent: parent?.idx
+  }
+  quest.goal = mission__spawn(quest.type)
+  quest.enemies = quest.type === 'wilderness' ? enemies.wilderness() : enemies.civilization()
+  const patron = ACTOR.spawn({ loc, context: { role: 'friend' } })
+  quest.patron = patron.idx
+  stage__spawn({ quest })
+  window.world.quests.push(quest)
+  return quest
 }
 
-export const quest__details = async ({ province }: QuestSpawnParams) => {
-  if (!province.quest.objectives) {
-    const region = window.world.regions[province.region]
-    const traits = province__traits(province)
-    const alias = hub__alias(province.hub)
-    const setting = !region.civilized && alias === 'village' ? 'tribal camp' : alias
-    const gen = await openai__chat<Quest>(`
-  Write a list of quest objectives for a fantasy RPG quest inspired by TES daggerfall and the witcher 3 that blends elements from the two hook tags below:
-  
-  ${traits.map(trait => `${trait.tag}: ${trait.text}`).join('\n')}
-  
-  Keep in mind the following:
-  * do not mention the settlement name, region name, organization names, or any NPC names in the quest summary or objectives
-  * each objective should synthesize elements from the two hooks above; there should be no objectives that use only a single hook
-  * each objective should be accompanied by a location that describes where the objective takes place; do not use proper names in location descriptions; locations should be appropriate for a "${setting}"; each location should be interesting and unique; do not repeat locations
-  * the surrounding terrain is ${province.environment.terrain}
-  * each objective should be a single sentence no more than 15 words long
-  * be as specific as possible; for example, "find the wizard's spellbook" is better than "find something valuable"
-  * be sure to add twists and complications among the objectives
-  * do not mention any fantasy races such as elves, dwarves, goblins, orcs, ogres, etc.
-  * the quest is to be completed by a party of adventurers
-  * The output should be a markdown code snippet formatted in the following schema:
-  \`\`\`json
-  {
-    "title": string; // 2-3 words at most
-    "description": string; // the main problem that the quest seeks to resolve; do not mention surrounding terrain in this summary; the main problem does not need to blend the two hooks if it does not make sense
-    "npcs": {
-        "id": number; // unique id for the npc
-        "occupation": string;
-        "gender": "male" | "female";
-        "age": "young adult" | "adult" | "middle age" | "old";
-        "outfit": string; // a list of clothing and equipment the npc is wearing (10 words at most, do not mention hairstyles or personality traits)
-        "foreigner": boolean; // whether the npc is a foreigner to the region or of a minority ethnic group
-    }[];
-    "questGiver": number; // id of the npc that starts the quest
-    "objectives": {
-        "text": string; // do not mention locations in this text
-        "location": string;
-        "npcs": number[]; // list of npc ids that might appear in this objective
-        "resolution": string; // what happens when this objective is completed and how does it connect to the next objective; should be written in past tense
-    }[] // there should be exactly ${province.quest.complexity} objectives
-  \`\`\`
-  
-  below is an example of what I am looking for written for a jungle city tagged with new industry & pilgrimage site with 8 objectives:
-  \`\`\`json
-  {
-    "title": "Sacred Veins",
-    "description": "Uncover the mysteries surrounding an ancient pilgrimage site that is being threatened by a new mining operation.",
-    "npcs": [
-        {
-            "id": 1,
-            "occupation": "Templar",
-            "gender": "female",
-            "age": "adult",
-            "outfit": "chainmail armor, white tabard with golden emblem, longsword, and a small amulet",
-            "foreigner": false
-        },
-        {
-            "id": 2,
-            "occupation": "Miner",
-            "gender": "male",
-            "age": "young adult",
-            "outfit": "dusty trousers, leather boots, pickaxe, and a lantern",
-            "foreigner": false
-        },
-        {
-            "id": 3,
-            "occupation": "Pilgrim",
-            "gender": "female",
-            "age": "middle age",
-            "outfit": "hooded robe, walking staff, a satchel of herbs, and prayer beads",
-            "foreigner": true
-        },
-        {
-            "id": 4,
-            "occupation": "Archaeologist",
-            "gender": "male",
-            "age": "adult",
-            "outfit": "green vest, pith helmet, satchel with brushes, and a magnifying glass",
-            "foreigner": true
-        },
-        {
-            "id": 5,
-            "occupation": "Spirit",
-            "gender": "female",
-            "age": "old",
-            "outfit": "ghostly white robe, emanating an eerie glow",
-            "foreigner": false
-        }
-    ],
-    "questGiver": 1,
-    "objectives": [
-        {
-            "text": "Investigate mining operation disrupting the pilgrimage site",
-            "location": "A newly dug mine entrance near the ancient shrine",
-            "npcs": [2],
-            "resolution": "Learned that the mining operation had accidentally opened an ancient tomb beneath the shrine"
-        },
-        {
-            "text": "Collect sacred relics unearthed by the miners",
-            "location": "Inside the mine, deep within the ancient tomb",
-            "npcs": [],
-            "resolution": "Acquired relics that were connected to the pilgrimage site's history"
-        },
-        {
-            "text": "Consult a pilgrim about the relics' significance",
-            "location": "A small campsite with tents, set up for pilgrims near the shrine",
-            "npcs": [3],
-            "resolution": "Learned that the relics were believed to keep an ancient spirit at peace"
-        },
-        {
-            "text": "Seek advice from an archaeologist about the tomb",
-            "location": "A makeshift research tent filled with artifacts and books",
-            "npcs": [4],
-            "resolution": "Discovered a ritual to appease the disturbed spirit using the relics"
-        },
-        {
-            "text": "Gather jungle herbs for the ritual",
-            "location": "A dense, overgrown jungle path leading to a clearing with rare herbs",
-            "npcs": [],
-            "resolution": "Obtained the necessary ingredients to perform the ritual"
-        },
-        {
-            "text": "Perform the ritual within the ancient tomb",
-            "location": "A large burial chamber deep inside the mine with ancient inscriptions",
-            "npcs": [5],
-            "resolution": "The spirit was partially appeased, but demanded the mining operations to cease"
-        },
-        {
-            "text": "Convince the miner to halt the mining operation",
-            "location": "Back at the mine entrance, now bustling with activity",
-            "npcs": [2],
-            "resolution": "The miner agreed to cease operations temporarily for further evaluation"
-        },
-        {
-            "text": "Report back to the templar",
-            "location": "In front of the ancient shrine, now serene and quiet",
-            "npcs": [1],
-            "resolution": "The templar thanked the adventurers and offered a reward for preserving the sacred site"
-        }
-    ]
+const quest__spawnChild = (params: { quest: Quest; pc: number }) => {
+  const { quest, pc } = params
+  const stage = stage__current(quest)
+  if (stage.child !== stage__placeholder) return false
+  const loc = window.world.provinces[quest.location]
+  const child = quest__spawn({ loc, parent: quest, pc })
+  child.depth = quest.depth + 1
+  stage.child = child.idx
+  return true
 }
-  \`\`\`
-        `)
-    if (gen) {
-      province.quest = { ...province.quest, ...gen }
-      province.quest.npcs = province.quest.npcs
-        .filter(npc => npc.gender === 'male' || npc.gender === 'female')
-        .map(npc => {
-          const spawned = npc__spawn({
-            loc: province,
-            gender: npc.gender,
-            age: npc.age,
-            profession: 'custom',
-            foreign: npc.foreigner
-          })
-          spawned.outfit = npc.outfit
-          spawned.profession.title = npc.occupation.toLowerCase()
-          return {
-            ...npc,
-            ref: spawned.idx
-          }
-        })
-      province.quest.objectives.forEach(objective => {
-        objective.setting = { weather: '', duration: '', memory: -Infinity }
-      })
+
+const quest__unresolved = (quest: Quest) => {
+  const { failures, complexity, progress } = quest
+  return failures < complexity && progress < complexity
+}
+
+export const quest__abandoned = (quest: Quest) => {
+  const { closed } = quest
+  return quest__unresolved(quest) && closed
+}
+
+export const quest__ongoing = (quest: Quest) => {
+  const { closed } = quest
+  return quest__unresolved(quest) && !closed
+}
+
+export const quest__child = (quest: Quest) => {
+  const current = stage__current(quest)
+  return window.world.quests[current?.child]
+}
+
+export const quest__paused = (quest: Quest) => {
+  const child = quest__child(quest)
+  return child && quest__ongoing(child)
+}
+
+export const quest__blocked = (params: { quest: Quest; pc: number }): boolean => {
+  const { quest, pc } = params
+  if (!quest) return false
+  const questOdds = DIFFICULTY.odds({ pc, ...quest.difficulty })
+  const child = quest__child(quest)
+  const childBlocked = quest__blocked({ pc, quest: child })
+  const current = stage__current(quest)
+  const currentOdds = DIFFICULTY.odds({ pc, ...current.difficulty })
+  return childBlocked || [questOdds, currentOdds].some(odds => odds.tier === 'insanity')
+}
+
+const quest__transition = (quest: Quest) => {
+  const location = window.world.provinces[quest.location]
+  if (quest.stages.length === 0 || window.dice.random > 0) return undefined
+  const transition = window.dice.choice(location.neighbors)
+  return { src: location.idx, dst: transition }
+}
+
+const reward = (params: {
+  difficulty: Quest['difficulty']
+  status: Quest['status']
+  pc: number
+}) => {
+  const { difficulty, status, pc } = params
+  const cp = 30 * 3 ** Math.max(0, DIFFICULTY.lvl(difficulty.cr) - 1)
+  const { tier } = DIFFICULTY.odds({ pc, ...difficulty })
+  const difficultyMod =
+    tier === 'trivial'
+      ? 0.25
+      : tier === 'easy'
+      ? 0.5
+      : tier === 'medium'
+      ? 1
+      : tier === 'hard'
+      ? 1.5
+      : 2
+  return (
+    difficultyMod *
+    (status === 'failure' ? 0 : status === 'pyrrhic' ? cp / 4 : status === 'success' ? cp / 2 : cp)
+  )
+}
+
+export const quest__xp = (exp: number) => `${(exp * 10000).toFixed(0)} xp`
+
+export const quest__advance = (params: { quest: Quest; avatar: Avatar }) => {
+  const { quest, avatar } = params
+  const current = stage__current(quest)
+  const child = quest__child(quest)
+  const pc = DIFFICULTY.avatar.cr(avatar)
+  // determine the result of the task
+  current.status = child?.status ?? stage__resolve({ pc, challenge: current.difficulty.cr })
+  // determine the resultant effect on the entire quest
+  if (current.status === 'pyrrhic') quest.failures += 1
+  else if (current.status === 'failure') quest.failures += 2
+  else quest.progress += current.status === 'success' ? 1 : 2
+  const ended = quest.progress >= quest.complexity
+  if (ended) quest.progress = quest.complexity
+  // spawn the next task (if applicable)
+  const ongoing = quest__ongoing(quest)
+  if (ongoing) {
+    const transition = quest__transition(quest)
+    if (transition) quest.location = transition.dst
+    stage__spawn({ quest, transition })
+    quest__spawnChild({ quest, pc })
+  }
+  // update the status of the entire quest
+  const { failures, complexity } = quest
+  const grade = failures / complexity
+  quest.status =
+    grade < 0.1 ? 'perfection' : grade < 0.6 ? 'success' : grade < 1 ? 'pyrrhic' : 'failure'
+  const cp = reward({ pc, difficulty: current.difficulty, status: current.status })
+  current.setting.duration = `, ∼ ${describeDuration(current.duration)}`
+  current.difficulty.pc = pc
+  const outcome = ongoing ? { cp: 0, duration: 0 } : quest__close({ quest, avatar })
+  return { cp: cp + outcome.cp, duration: current.duration + outcome.duration }
+}
+
+export const quest__close = (params: { quest: Quest; avatar: Avatar }) => {
+  const { quest, avatar } = params
+  const pc = DIFFICULTY.avatar.cr(avatar)
+  quest.closed = true
+  quest.difficulty.pc = pc
+  const outcome = { cp: 0, duration: 0 }
+  if (quest__abandoned(quest)) {
+    quest.status = 'failure'
+    // close all child quests recursively
+    const child = quest__child(quest)
+    if (child && !child.closed) {
+      const progress = quest__close({ quest: child, avatar })
+      outcome.cp += progress.cp
+      outcome.duration += progress.duration
     }
   }
-  return province.quest
+  // update parent quest if applicable
+  const parent = window.world.quests[quest.parent]
+  if (parent && !parent.closed) {
+    const progress = quest__advance({ quest: parent, avatar })
+    outcome.cp += progress.cp
+    outcome.duration += progress.duration
+  }
+  return outcome
 }
 
-export const quest__score = (quest: Quest) => quest.failures / quest.objectives.length
-
-export const quest__resolve = (params: { quest: Quest; pc: number }) => {
-  const { quest, pc } = params
-  const score = quest__score(quest)
-  quest.difficulty.pc = pc
-  quest.status =
-    score < 0.1 ? 'perfection' : score < 0.6 ? 'success' : score < 1 ? 'pyrrhic' : 'failure'
+export const quest__complexity = (quest: Quest) => {
+  const { complexity } = quest
+  let desc = 'epic'
+  if (complexity <= 5) desc = 'simple'
+  else if (complexity <= 10) desc = 'standard'
+  else if (complexity <= 15) desc = 'involved'
+  else if (complexity <= 20) desc = 'elaborate'
+  else if (complexity <= 25) desc = 'intricate'
+  else if (complexity <= 30) desc = 'byzantine'
+  return desc
 }
 
-export const quest__advance = async ({ quest, pc, tag }: QuestAdvanceParams) => {
-  const current = stage__current(quest)
-  if (!current) return await quest__resolve({ quest, pc })
-  const option = current.options.find(option => option.tag === tag)
-  option.selected = true
-  current.status = stage__resolve({ pc, challenge: option.difficulty })
-  current.difficulty = { cr: option.difficulty, pc }
-  if (current.status === 'failure') quest.failures += 2
-  else if (current.status === 'perfection') quest.failures = Math.max(0, quest.failures - 1)
-  else if (current.status === 'pyrrhic') quest.failures++
-  const score = quest__score(quest)
-  const next = score > 1 ? false : stage__current(quest)
-  if (next) await stage__spawn(quest)
-  else quest__resolve({ quest, pc })
+/**
+ * Gets all active threads at a location.
+ * Will spawn threads if needed.
+ * @param params.loc - location
+ * @param params.avatar - PC character used to estimate thread difficulty
+ * @returns list of threads for the location
+ */
+export const location__quests = (params: { loc: Province; pc: number }) => {
+  const { loc, pc } = params
+  const curr = window.world.quests.filter(thread => thread.origin === loc.idx)
+  if (curr.length < 3) {
+    range(3).forEach(() => quest__spawn({ loc, pc }))
+    return true
+  }
+  return false
 }

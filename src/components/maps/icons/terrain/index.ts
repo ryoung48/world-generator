@@ -1,5 +1,5 @@
-import { cell__isHub } from '../../../../models/world/cells'
-import { map__breakpoints } from '../../canvas/draw_styles'
+import { CELL } from '../../../../models/world/cells'
+import { MAP } from '../../types'
 import { canvas__drawIcon, icon__scaling } from '..'
 import { IconDef } from '../types'
 import { desert__icons } from './desert'
@@ -25,12 +25,12 @@ export const map__drawTerrainIcons = (params: {
   lands: Set<number>
 }) => {
   const { ctx, cachedImages, scale, regions, lands } = params
-  const globalScale = scale <= map__breakpoints.global
+  const globalScale = scale <= MAP.breakpoints.global
   const { sh, sw } = icon__scaling()
   const sortedIcons = window.world.display.icons
     .filter(m => {
       const cell = window.world.cells[m.cell]
-      const valid = !cell__isHub(cell) || scale <= 20
+      const valid = !CELL.isHub(cell) || scale <= 20
       const province = window.world.provinces[cell.province]
       const contained = regions.has(province.region)
       const drawnLand = cell.isWater || lands.has(cell.landmark)

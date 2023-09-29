@@ -1,16 +1,16 @@
 import { scaleLinear, scalePow } from 'd3'
 
-import { hourMS } from '../../../utilities/math/time'
+import { hourMS, season } from '../../../utilities/math/time'
 import { titleCase } from '../../../utilities/text'
 import { decorateText } from '../../../utilities/text/decoration'
-import { world__gps, world__heightToKM } from '../../../world'
-import { ExteriorCell } from '../../../world/cells/types'
-import { Climate, climates, rain } from '../../../world/climate/types'
-import { Province } from '../types'
+import { WORLD } from '../../../world'
+import { Cell } from '../../../world/cells/types'
+import { CLIMATE } from '../../../world/climate'
+import { Climate } from '../../../world/climate/types'
 import { Hub } from '../hubs/types'
+import { Province } from '../types'
 import {
   CloudTypes,
-  Season,
   TemperatureVariance,
   TimeOfDay,
   WeatherConditions,
@@ -18,9 +18,21 @@ import {
   WeatherPhenomena
 } from './types'
 
-export const computeHeat = (params: { cell: ExteriorCell; month: number; climate: Climate }) => {
+const rain = {
+  dry: 0.05,
+  low: 0.15,
+  moderate: 0.25,
+  wet: 0.4,
+  humid: 0.8
+}
+
+export const computeHeat = (params: {
+  cell: Cell
+  month: number
+  climate: Climate[keyof Climate]
+}) => {
   const { month, cell, climate } = params
-  const latitude = world__gps(cell).latitude
+  const latitude = WORLD.gps(cell).latitude
   const south = latitude < 0
   const absLat = Math.abs(latitude)
   const time = month > 5 ? 11 - month : month
@@ -33,13 +45,13 @@ export const computeHeat = (params: { cell: ExteriorCell; month: number; climate
     scaleLinear()
       .domain([0, 5])
       .range(south ? [summer, winter] : [winter, summer])(time) -
-    world__heightToKM(cell.h) * 5
+    WORLD.heightToKM(cell.h) * 6.7
   )
 }
 
-const computeRain = (params: { climate: Climate; month: number; cell: ExteriorCell }) => {
+const computeRain = (params: { climate: Climate[keyof Climate]; month: number; cell: Cell }) => {
   const { month, cell, climate } = params
-  const latitude = world__gps(cell).latitude
+  const latitude = WORLD.gps(cell).latitude
   const south = latitude < 0
   const [summer, winter] = climate.precipitation
   const time = month > 5 ? 11 - month : month
@@ -129,9 +141,9 @@ const fairWeather = (): WeatherPhenomena => ({
   wind: window.dice.roll(1, 4)
 })
 
-const desertClimates = Object.values(climates)
-  .filter(({ terrain }) => terrain === 'desert')
-  .map(({ name: type }) => type)
+const desertClimates = Object.entries(CLIMATE.lookup)
+  .filter(([_, { terrain }]) => terrain === 'desert')
+  .map(([type]) => type)
 
 const freezingPoint = 33
 
@@ -231,7 +243,7 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
 const proceduralWeather = (params: {
   rainChance: number
   temp: number
-  climate: Climate['name']
+  climate: keyof Climate
   time: TimeOfDay
 }) => {
   const condition = window.dice.weightedChoice<WeatherConditions>(
@@ -271,20 +283,11 @@ const proceduralWeather = (params: {
   }
 }
 
-const season = (): Season => {
-  const month = new Date(window.world.date).getMonth()
-  const { winter, spring, summer, fall } = window.world.seasons
-  if (winter.includes(month)) return 'winter'
-  if (summer.includes(month)) return 'summer'
-  if (spring.includes(month)) return 'spring'
-  if (fall.includes(month)) return 'autumn'
-}
-
-export const hub__weather = (loc: Hub) => {
-  const month = new Date(window.world.date).getMonth()
+export const hub__weather = (loc: Hub, month = new Date(window.world.date).getMonth()) => {
   // day temperature
   const cell = window.world.cells[loc.cell]
-  const climate = climates[window.world.regions[cell.region].climate]
+  const region = window.world.regions[cell.region]
+  const climate = CLIMATE.lookup[region.climate]
   const rain = computeRain({ climate, month, cell })
   const meanTemp = computeHeat({ cell, month, climate })
   let localTemp = window.dice.norm(meanTemp, 4)
@@ -305,13 +308,13 @@ export const hub__weather = (loc: Hub) => {
   const weather = proceduralWeather({
     rainChance: rain,
     temp: localTemp,
-    climate: climate.name,
+    climate: region.climate,
     time
   })
   return {
     ...weather,
     variance,
-    season: season(),
+    season: season(month),
     time
   }
 }

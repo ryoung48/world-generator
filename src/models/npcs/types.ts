@@ -18,7 +18,7 @@ export type LifePhase = typeof lifeCycle[number]
 
 export type Gender = 'male' | 'female'
 
-export interface NPC extends TaggedEntity {
+export interface Actor extends TaggedEntity {
   tag: 'actor'
   profession: { key: Profession; title: string }
   culture: number
@@ -35,9 +35,9 @@ export interface NPC extends TaggedEntity {
 
 export interface NPCParams {
   loc: Province
-  context?: { ref?: NPC; role: 'friend' | 'enemy' }
+  context?: { ref?: Actor; role: 'friend' | 'enemy' }
   profession?: Profession
-  age?: NPC['age']
+  age?: Actor['age']
   gender?: Gender
   pc?: boolean
   foreign?: boolean

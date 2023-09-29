@@ -1,5 +1,5 @@
 import { TaggedEntity } from '../utilities/entities/types'
-import { Directions } from '../utilities/math/points'
+import { Directions } from '../utilities/math/points/types'
 import { Climate } from '../world/climate/types'
 
 export type DiplomaticRelation =
@@ -34,27 +34,38 @@ export const governments = [
 
 export interface Region extends TaggedEntity {
   tag: 'nation'
-  colors: string
+  heraldry: { hue: number; color: string; style: 'monochrome' | 'contrast' | 'standard' }
   capital?: number
   side: Directions
-  provinces: number[] // owned provinces
   regional: {
     provinces?: number[]
     land?: number
     mountains?: number
     coastal?: boolean
   }
-  culture: { ruling: number; native: number }
+  culture: number
   religion?: number
   // geography
-  climate?: Climate['name']
+  climate?: keyof Climate
   coastal: boolean
   borders: number[]
   landBorders: number[]
   relations: Record<number, DiplomaticRelation>
   // society
+  provinces: number[]
   development?: 'civilized' | 'frontier' | 'tribal' | 'remote'
   civilized?: boolean
   size?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
   government?: typeof governments[number]
+  leadership?: { male: string; female: string }
+  shattered?: boolean
 }
+
+export type RegionNeighborsParams = { region: Region; depth?: number }
+export type RegionFindParams = {
+  regions: Region[]
+  ref: Region
+  type: 'closest' | 'furthest'
+}
+export type RegionSortParams = RegionFindParams
+export type RegionRelationsParams = { target: DiplomaticRelation; region: Region }

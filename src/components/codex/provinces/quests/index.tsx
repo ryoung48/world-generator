@@ -7,14 +7,14 @@ import {
   quest__complexity,
   quest__ongoing,
   quest__paused
-} from '../../../../models/threads/quests'
-import { stage__current, stage__previous } from '../../../../models/threads/quests/stages'
-import { Quest } from '../../../../models/threads/quests/types'
-import { avatar__cr, difficulties, difficulty__odds } from '../../../../models/utilities/difficulty'
+} from '../../../../models/quests'
+import { stage__current, stage__previous } from '../../../../models/quests/stages'
+import { Quest } from '../../../../models/quests/types'
+import { DIFFICULTY } from '../../../../models/utilities/difficulty'
 import { titleCase } from '../../../../models/utilities/text'
 import { decorateText } from '../../../../models/utilities/text/decoration'
 import { formatters } from '../../../../models/utilities/text/formatters'
-import { view__context } from '../../../context'
+import { VIEW } from '../../../context'
 import { style__clickable } from '../../../theme'
 import { cssColors } from '../../../theme/colors'
 import { DataTable, DetailedTableRow } from '../../common/DataTable'
@@ -25,12 +25,12 @@ import { quest__icons, style__disabledQuest } from './styles'
 const itemsPerPage = 5
 
 export function QuestList() {
-  const { state, dispatch } = view__context()
-  const { province, journal, avatar } = state
+  const { state, dispatch } = VIEW.context()
+  const { journal, avatar } = state
   const [expanded, setExpanded] = useState(-1)
   const [page, setPage] = useState(0)
-  const loc = window.world.provinces[province]
-  const pc = avatar__cr(avatar)
+  const loc = window.world.provinces[state.province]
+  const pc = DIFFICULTY.avatar.cr(avatar)
   const quests = journal
     .map(j => window.world.quests[j])
     .filter(quest =>
@@ -87,7 +87,7 @@ export function QuestList() {
           text: 'Quest',
           value: item => {
             const parent = window.world.quests[item.parent]
-            const { tier, odds } = difficulty__odds({ pc, ...item.difficulty })
+            const { tier, odds } = DIFFICULTY.odds({ pc, ...item.difficulty })
             return (
               <DetailedTableRow
                 title={
@@ -101,7 +101,7 @@ export function QuestList() {
                       color={cssColors.subtitle}
                       text={`${decorateText({
                         label: `${tier} (${formatters.percent(1 - odds)})`,
-                        color: difficulties[tier].color,
+                        color: DIFFICULTY.lookup[tier].color,
                         bold: true
                       })}, ${quest__complexity(item)} (${item.complexity})`}
                     ></StyledText>

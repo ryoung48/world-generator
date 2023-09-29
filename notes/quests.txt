@@ -1,180 +1,3 @@
--- bounty (monster): defeat a dangerous creature --
-
-subtasks:
-* gather information about the dangerous creature's habitat and behavior
-* track the creature's movements and observe its tactics
-* gather intelligence on the creature's weaknesses and strengths
-* recruit allies to aid in the hunt
-* create a plan of attack and choose the best approach
-* gather equipment and supplies to aid in the hunt
-* scout the creature's habitat to find weaknesses or hidden entrances
-* set traps or bait to catch the creature off guard
-* engage in a fierce battle with the creature
-* research special tactics and weapons to defeat the creature
-* rescue hostages or prisoners being held by the enemy to gain valuable intel
-* locate and study the creature's lair or den to gather intel on its habits
-* create a distraction or diversion to lure the creature out of hiding
-* interview survivors or witnesses of previous encounters with the creature
-* investigate any recent disturbances or unusual events in the creature's habitat that might be connected to its presence
-* coordinate with local authorities to establish a secure perimeter around the creature's hunting grounds
-* train with experts or mentors to develop specialized skills needed for the battle
-* gather specialized equipment or weapons to aid in the battle
-* use stealth or camouflage to sneak up on the creature and catch it by surprise
-* use a decoy or bait to lure the creature into a trap
-
-complications:
-* the player learns that the creature is under the protection of a powerful individual, creating potential conflicts or political ramifications
-* the creature's lair is located in a treacherous environment, making it difficult to access and confront the creature
-* a key {ally|informant} with valuable information about the creature is uncooperative or untrustworthy, complicating the player's preparations
-* the creature's {attacks|presence} causes widespread {panic|destruction}, requiring the player to minimize collateral damage while hunting it down
-* the creature possesses the ability to control or influence the minds of its victims, creating potential risks for the player and their allies
-* a curse or magical affliction affects the player during the quest, {hindering their abilities|causing unpredictable side effects}
-* a key {resource|location} needed to prepare for the confrontation is destroyed or compromised, forcing the player to improvise
-* the creature forms a pact or alliance with other dangerous creatures, creating a more challenging and multifaceted encounter
-* the player encounters a mysterious third party with their own agenda, who may help or hinder the quest depending on the player's choices
-* the creature {goes on a rampage|initiates a devastating attack}, forcing the player to act quickly to prevent further destruction
-* a powerful {artifact|weapon} needed to defeat the creature is stolen or lost, requiring the player to recover it before confronting the creature
-* the creature possesses the ability to {shape-shift|disguise} itself, making it difficult for the player to identify and confront their target
-* the player is forced to cooperate with a rival in order to defeat the creature, creating potential tensions or uneasy alliances
-* the creature's defeat triggers a chain of events or consequences, such as the release of a greater threat or the destabilization of a region, which the player must address
-* the dangerous creature is discovered to be part of a larger, more powerful group, requiring the player to adjust their strategy and approach
-* the creature {kidnaps|threatens} an important npc or ally, forcing the player to choose between pursuing the bounty or rescuing their friend
-* a rival group of bounty hunters is also pursuing the creature, leading to potential conflicts, alliances, or a race to claim the reward
-* the player discovers that the creature is being {controlled|manipulated} by a hidden enemy, adding a new layer of complexity to the quest
-* a moral dilemma arises when the player learns that the creature's actions are motivated by a {justifiable cause|tragic backstory}
-* the player's preferred {weapons|tactics} prove ineffective against the creature, requiring them to find new strategies or equipment to succeed
-* the creature goes into hiding or retreats to an inaccessible lair, forcing the player to devise a clever plan to draw it out and confront it
-
-
-
--- bounty (person): capture a wanted criminal --
-
--- espionage: acquire sensitive information --
-* infiltrate the enemy's stronghold to gather information
-* eavesdrop on conversations between key enemy figures
-* steal a key document from an enemy courier
-* disguise yourself and blend in with the enemy to gain their trust
-* {bribe|blackmail} a {guard|informant} for insider information
-* interrogate a captured enemy soldier for valuable intel
-* create a diversion to distract enemy forces and sneak into a secure area
-* plant false information to mislead the enemy
-* befriend a high-ranking enemy official to gain access to sensitive information
-* decrypt a coded message intercepted from the enemy to reveal crucial details
-* locate and extract an ally who has been captured by the enemy and possesses valuable intel
-* acquire a {map|blueprint} of the enemy's stronghold to navigate its hidden passages and avoid security measures
-* investigate the enemy's {personal|financial} connections to uncover potential {collaborators|sources of information}
-* employ a double agent to infiltrate the enemy's inner circle and gain access to their most closely guarded secrets
-* uncover and exploit a secret passage into the enemy's stronghold for discreet access
-* attend an enemy gathering or event under the guise of a guest to gather information
-* conduct surveillance on enemy agents to identify patterns or habits that can be exploited
-* forge an alliance with a rival faction to share intelligence on the enemy
-* find and neutralize an enemy spy within your own ranks to prevent information leaks
-* manipulate the enemy's allies into revealing sensitive information through {diplomacy|deception}
-* disguise yourself as an enemy messenger to deliver misinformation and gauge their reactions
-* locate and protect a key witness who possesses vital information about the enemy
-* procure sensitive information through an underground black market
-* incite a power struggle within the enemy's organization to distract them and reveal hidden secrets
-
-complications:
-* the enemy discovers the player's true identity, forcing them to evade capture and adapt their approach
-* the key {informant|contact} {goes missing|is found dead}, requiring the player to find a new source of information
-* the enemy unexpectedly changes their {plans|locations|security measures}, causing the player to reevaluate their strategy
-* a rival group is competing with the player to acquire the same sensitive information, leading to conflicts or potential alliances
-* the player discovers that the information they've been gathering is {false|misleading}, forcing them to question the reliability of their sources
-* the enemy captures one of the player's allies, requiring a rescue mission that could jeopardize the main objective
-* the player unwittingly becomes a pawn in a larger power struggle, with multiple factions vying for control of the sensitive information
-* the player's cover is blown by an unforeseen {event|betrayal}, forcing them to think quickly and adapt to maintain their mission
-* the player uncovers a {deeper conspiracy|hidden agenda} connected to the sensitive information, which adds new layers of complexity and danger to their quest
-
--- rescue: save a hostage or prisoner --
-* locate and track the missing friend's last known location
-* gather information from people who may have seen the friend or know their whereabouts
-* search for clues at the scene of the friend's disappearance
-* use stealth and disguise to infiltrate the enemy stronghold where the friend is being held
-* gather allies to help in the rescue mission
-* defeat guards and enemy soldiers to get to the friend
-* solve puzzles or traps to reach the friend
-* treat any injuries the friend may have sustained
-* negotiate with the kidnappers for the safe release of the friend
-* follow the trail of clues left by the kidnappers to find the friend
-* bribe or blackmail an informant for information on the kidnappers' location
-* create a distraction or diversion to draw the kidnappers away from the friend
-* gather and analyze intel on the kidnappers' equipment and weaponry
-* discover any secret passages or escape routes within the kidnappers' stronghold
-* free other prisoners or hostages held by the enemy to gain valuable intel or create additional distractions
-* use diplomacy or bribery to turn some of the kidnappers against their leader
-* study the layout of the kidnappers' stronghold to plan the most efficient route
-* locate and recover any personal belongings or important items the friend may have had with them
-
-complications:
-* the friend's captor is revealed to be a powerful or influential individual, making a direct confrontation risky or politically complicated
-* the friend's location is constantly changing, requiring the player to adapt their plans and act quickly to secure their rescue
-* the enemy stronghold is heavily fortified or protected by advanced security measures, making infiltration and extraction more challenging
-* there are multiple friends in need of rescue and they have been split up into multiple locations, forcing the player to devise a strategy to rescue them simultaneously or prioritize their efforts
-* the friend's captors demand a ransom or set a strict deadline, adding pressure and urgency to the rescue mission
-* a traitor within the player's ranks jeopardizes the rescue plan, forcing the player to identify and neutralize the threat
-* the friend is being forced to cooperate with their captors, making it difficult to distinguish between friend and foe during the rescue attempt
-* the player discovers that the friend's capture is part of a larger plot or conspiracy, adding new layers of complexity and danger to the quest
-* the friend has sustained serious injuries, making their rescue and recovery more urgent and challenging
-* the enemy stronghold is located in a remote or hostile environment, making travel and navigation difficult
-* the enemy anticipates the player's rescue attempt and sets traps or ambushes to thwart their efforts
-* the friend has set up their own kidnapping as part of a larger scheme, forcing the player to question their motives and allegiances
-* the friend has escaped on their own and is now on the run, forcing the player to track them down
-
--- sabotage: destroy a {thing|place} that is important to the enemy --
-* infiltrate the enemy's stronghold to plant explosives or other destructive devices
-* sabotage the enemy's supply lines to cripple their operations
-* destroy a key piece of equipment or machinery to disrupt the enemy's plans
-* poison the enemy's food or water supply to weaken their forces
-* set fire to the enemy's base or stronghold to create chaos and confusion
-* assassinate a high-ranking enemy official to sow discord and disrupt their leadership
-* steal or destroy the enemy's weapons or ammunition to cripple their fighting capabilities
-* sabotage the enemy's communication systems to disrupt their ability to coordinate
-
--- smuggling: transport a thing across a restricted zone --
-* sneak past enemy patrols and checkpoints
-* bribe or blackmail guards to look the other way
-* disguise the thing as something else
-* create a distraction to divert attention away from the smuggling operation
-* forge documents or credentials to gain access to restricted areas
-* use a secret passage or hidden route to bypass security measures
-* scout, explore or investigate to find a safe passage through the restricted zone that avoids the main checkpoints
-* spy on, eavesdrop or interrogate guards to gather information about patrol schedules and security measures
-
--- theft: steal a thing from a person or place --
-* infiltrate the target location to gather intel on security measures and guard patrols
-* create a distraction or diversion to draw attention away from the theft
-* acquire a disguise or fake identity to gain access to the target location
-* acquire a blueprint or map of the target location to plan the most efficient route
-* commission a convincing forgery of the target item to replace it with
-* use stealth and disguise to avoid detection
-* bribe or blackmail guards to look the other way
-* disable or bypass security systems to gain access to the target
-
--- retrieval: recover a lost thing from a dangerous location --
-* gather intel on the location and its inhabitants
-* recruit a guide or local expert to assist in navigating the dangerous terrain
-* acquire specialized equipment or supplies to aid in the retrieval
-* disarm or avoid traps and obstacles along the way
-* defeat hostile creatures or dangerous plants native to the area
-* navigate treacherous terrain or hazardous weather conditions
-* fight off any guardians or protectors of the lost thing
-* solve puzzles or riddles to gain access to the lost thing
-
-
-
-
-
-create 15 subtasks for the quest below:
-
-* sabotage: destroy a {thing|place} that is important to the enemy
-
-keep in mind the following:
-* the setting is a fantasy RPG
-* the quest is for a group of adventurers
-* each subtask is unique and interesting
-* each subtask can stand on its own as a "mini-quest"
-* the subtasks must non-linear and be completable in any order
 
 
 
@@ -368,152 +191,234 @@ keep in mind the following:
 * An alchemist needs rare ingredients for a powerful potion. Gather these ingredients from dangerous locales.
 * A knight under a curse seeks death in combat. Fight the knight, or find another way to lift the curse.
 
+* mobility: acrobatics, dodging hazards, moving quickly through difficult terrain
+* stealth: hiding, moving quietly, pickpocketing, lockpicking, disguises
+* investigation: searching locations, finding people, solving puzzles
+* logistics: organization and execution of strategic and tactical plans
+* knowledge: recalling facts about arcana, history, laws, myths, etiquette, & religions
+* perception: notice fine details through sight, hearing, & smell
+* insight: detecting lies, emotions, & intent of others
+* survival: recalling facts about nature, navigation, handling animals, tracking, & medicine
+* persuasion: influencing people through negotiation, charm, oration, deception, or intimidation
+* athletics: running, jumping, climbing, swimming, lifting, throwing, and overcoming obstacles with brute force
+* combat: {ambush|confront|survive an ambush from} hostile forces
+* favor: complete a task for an NPC in exchange for their support 
 
-'An Enemy has suffered a setback and seeks a Thing in order to rescue their situation.',
-'An Enemy keeps a Thing in a tightly-guarded Place, and a Friend is willing to pass the PCs information on it.',
-'An Enemy is trying to take control of a Place, but is being hindered by the activities of a Friend.',
-'An Enemy is struggling over a Thing with another Enemy, and the fallout from their fight is making problems for the PCs or a Friend.',
-'An Enemy has a grudge against a Friend and is trying to frame them for some crime related to a Thing.',
-'An Enemy has just destroyed the last obstacle that prevents them from full exertion of their malice and is using a Thing they claimed to prosecute it.',
-'An Enemy is currently at a Place and is exceptionally vulnerable for some reason. A Friend wants to take advantage of that.',
-'An Enemy has promised an ally a Thing and is becoming increasingly desperate to obtain it, as the consequences for failure are dire.',
-"An Enemy has imprisoned a Friend for some reason, and if they're not rescued soon a grim fate awaits them.",
-'An Enemy has allied with another Enemy in order to obtain a Thing from a Place, yet both are preparing to betray each other and the Thing could be stolen in the chaos.',
-'An Enemy has forced a Friend into service, but in the process the Friend has learned about how the PCs can obtain a Thing.',
-"A Friend stole a Thing from an Enemy. The Enemy doesn't know who did it, but their flailing retaliation threatens something precious to the Friend as they search for the culprit and the Thing.",
-"A Friend needs to be rescued from the hostile attentions of an Enemy, and they're currently hiding out at a Place dangerously close to enemy forces.",
-"A Friend has acquired a Thing, but it's also being sought by an Enemy and they need help to get it safely away and out of their foe's reach.",
-'A Friend needs help to get a Thing from an abandoned Place, but an Enemy is ahead of them and prepared to deal harshly with competitors.',
-'A Friend is not really a friend, but an Enemy agent, and is trying to lure the PCs into helping them acquire a Thing that will actually be turned over to their master.',
-"A Friend is being compelled by an Enemy's threats to sacrifice something important to them or endure some grave loss.",
-"A Friend desperately needs a Thing for their own purposes, but an Enemy stands between them and it, though the Enemy doesn't realize what's there.",
-"A Friend has obtained ownership or responsibility for a Place, but an Enemy has set up a trap or disaster there that's meant to ruin or disgrace them.",
-'A Friend has acquired a Thing and is making use of it to further their desires, but an Enemy means to spoil their efforts and rob them of the Thing.',
-'A Friend has been snatched away by an Enemy, who is convinced they are the key to acquiring a Thing. They may or may not be right about that.',
-"A Friend is sick or dying, and desperately needs a Thing if they're to live. Getting it would somehow directly put them in conflict with an Enemy, however.",
-"A Friend had a Thing but they hid it at a Place. Unfortunately, that Place is now under the control of an Enemy who doesn't know what's hidden there.",
-'A Thing has turned out to be very dangerous to possess, and an Enemy is trying to bait the PCs or a Friend into taking or stealing it.',
-"A Thing must be found if some calamity is to be avoided by the PCs or a Friend, but an Enemy stands to profit if it's never obtained.",
-'A Thing is located in a dangerous Place, and a Friend knows how to get it.',
-"A Thing seems to be useful for a particular function or value, but in actuality it's got a hidden value known to a Friend who is currently hiding from an Enemy. The PCs know there's more to it, but only the Friend can tell the full truth.",
-"A Thing has been lost by a Friend and they're desperate to get it back before it's found by an Enemy.",
-"A Thing is hidden in a Place controlled by an Enemy, but they're oblivious to it.",
-"A Thing has been stolen from an Enemy by a Friend and hidden in a Place, but the Enemy's searching around there and it's too dangerous for them to try to retrieve it.",
-"A Thing is instrumental to an Enemy's plan, but the Friend who knows where to get it is in hiding.",
-'A Thing has been demanded of the Enemy by someone they fear, and their plans for getting it involve steps that will bring grave harm to a Friend.',
-'A Thing was being kept at a Place by an Enemy, but a Friend has figured out a way to get past their defenses.',
-'A Thing was lost in a dangerous Place long ago, but an Enemy unwittingly holds the key to finding or unlocking it.',
-'A Thing hidden in a Place is needed by two different Friends for different important reasons, but if an Enemy is overcome, one or both of those reasons will cease to trouble them.',
-'A Thing has just been obtained by a Friend, but an Enemy now pursues them for it, and the PCs are asked to help drive off the Enemy or get the Friend someplace safe with the Thing.',
-'A Place has changed, becoming much more dangerous due to the influence of an Enemy. This is causing problems for a Friend.',
-'A Place has been overrun by an Enemy or their agents in an attempt to find a Thing that is supposedly located there.',
-'A Place is the destination to which a Friend must take a Thing. An Enemy means to waylay them, however.',
-"A Place is the source of an Enemy's power, and they guard it jealously. Despite this, a Friend knows of a Thing located there.",
-'A Place is falling apart, but the chaos has exposed a chance to get a Thing that is being pursued by an Enemy and others.',
-'A Place is under siege by an Enemy, who is determined to take it before a rival can claim it. A Friend would face disaster if either claimed it.',
-"A Place is currently entrapping an Enemy, who is powerless to escape. They've taken a Thing from a Friend, however, and will release it only when the Friend releases them.",
-'A Place is the inherited property or responsibility of a Friend, but they lack a Thing which is critical to their successful obtaining or maintenance of the place.',
-'A Place conceals its true nature as a very different Place, and a Friend has been unfortunately taken in by it.',
-'A Place is used by an Enemy to create a Thing, the processes and events going on there utilized to produce the desired result.',
-'A Place is distant and the journey there is dangerous, but a Friend offers a Thing if the PCs can get them there safely.',
-"A Place is the seat of an Enemy's power, where they are both most fearsome and least wary. A Friend has a plan to take advantage of that.",
-
-
-write a list of five quest hooks with the following requirements:
-* the quest must be generic enough to be used in any fantasy setting
-* the quest must be flexible enough to be given by any patron
-* refer to places as {place}, things as {thing}, and people as {person}
-* each quest hook should be no more than one sentence long
-
-
-write a list of 20 sub quest that could serve as an objective for a main quest; keep in mind the following:
-* the sub quest should be generic enough to be used in any fantasy setting
-* the sub quest should be non-linear and completable in any order
-* each sub quest should be no more than one sentence long
-* use the witcher 3 as inspiration
-* do not mention "main quest" or "sub quest" in the text
-
-
-
-
-
-
-
-
-
-
-
---
-Write a list of quest objectives for a fantasy RPG quest inspired by TES daggerfall and the witcher 3 that blends elements from the two hook tags below:
-
-    new industry: a new mining operation has recently been established in the area and is disrupting old patterns of authority
-    pilgrimage site: settlement hosts a popular pilgrimage site (ancient) that draws visitors from all over the region
-
-Keep in mind the following:
-* do not mention the settlement name or any NPC names in the quest summary or objectives
-* each objective should synthesize elements from the two hooks above; there should be no objectives that use only a single hook
-* each objective should be accompanied by a location that describes where the objective takes place; do not use proper names in location descriptions; locations should be appropriate for a "small city"; each location should be interesting and unique;  do not repeat locations
-* the surrounding terrain is jungle
-* the quest giver is a templar (female)
-* each objective should be a single sentence no more than 15 words long
-* be as specific as possible; for example, "find the wizard's spellbook" is better than "find something valuable"
-* be sure to add twists, complications, and moral dilemmas among the objectives
-* The output should be a markdown code snippet formatted in the following schema:
-```json
-{
-    "title": string;
-    "description": string; // a high level summary of the quest; do not mention surrounding terrain in this summary; make sure to justify why the quest giver is asking the player to do this quest
-    "npcs": { title: string; gender: string }[] // a list of npcs involved with their occupational title and gender;
-    "objectives": {
-        "text": string; // do not mention locations in this text
-        "location": string;
-    }[] // there should be exactly 8 objectives
-}
-```
+* smuggling: moving a {thing} across dangerous territory unnoticed
+* rescue: freeing a {friend|neutral} from captivity
+* bounty: capturing a wanted criminal
+* heist: {stealing an item of value|preventing a theft}
+* escort: deliver {a friend|the patron} to a safe location
+* intrigue: gathering information about {the rival|an enemy|a neutral}
+* sabotage: {destroying an object|disrupting a service} important to the rival
+* defense: protecting {a friend|the patron} from attack
+* negotiate: resolving a conflict between two or more parties
+* curse: removing a curse from {a friend|the patron|a thing|a place}
+* monster: defeating a dangerous {monster|group of monsters} ({avian|reptilian|mammal|arthropod|aquatic|plant|fungal})
+* disappearance: finding a missing {friend|thing}
 ---
-for the following objective:
 
-```json
-{
-    "text": "Decipher the ingredients for the cure among scattered overlord documents.",
-    "location": "A locked storage tent inside the overlord's camp."
-}
-```
 
-use the skills listed below and flavor them to fit the objective:
+* defense: protect {a friend|the thing|a place} against an impending threat
+* espionage: acquire sensitive information that will benefit a friend
+* sabotage: destroy a {thing|place} that is important to the enemy
+* smuggling: transport a thing across a restricted zone
+* theft: {steal a thing from enemy forces|prevent a theft}
+* rescue: retrieve a friend from a dangerous situation
+* bounty: defeat a dangerous enemy
+* retrieval: recover a lost thing
+* explore: gather information about a place
 
-mobility: acrobatics, dodging hazards, moving quickly through difficult terrain
-stealth: hiding, moving quietly, pickpocketing, lockpicking, disguises
-investigation: searching locations, finding people, solving puzzles
-logistics: organization and execution of strategic and tactical plans
-knowledge: recalling facts about arcana, history, laws, myths, etiquette, and religions
-perception: notice fine details through sight, hearing, and smell
-insight: detecting lies, emotions, and intent of others
-survival: recalling facts about nature, navigation, handling animals, tracking, and medicine
-persuasion: influencing people through negotiation, charm, oration, deception, or intimidation
-athletics: running, jumping, climbing, swimming, lifting, throwing, and overcoming obstacles with brute force
-combat: ambush, confront, or survive an ambush from hostile forces
 
-The output should be a markdown code snippet formatted in the following schema:
-```json
-{
-    "options": string[]
-}
-```
 
-below is an example of what I am looking for given the following objective: 
-```json
-{
-    "text": "Investigate the mining site for signs of desecration.",
-    "location": "Noisy mining camp filled with heavy machinery next to ancient ruins."
-}
-```
-```json
-{
-    "options": [
-        "Use investigation skills to search for ancient markings and signs of disturbance.",
-        "Utilize stealth to discreetly observe the miners’ activities around the ancient ruins.",
-        "Employ knowledge of history and religions to discern the significance of the desecration."
-    ]
-}
-```
+challenges:
+--
+stealth:
+* blend into the surrounding area to avoid {detection|pursuers}
+* silently move through the area without alerting the inhabitants
+* [urban] {pickpocket|steal} an object without being noticed
+* pick a lock to {reveal a dark secret|free prisoners}
+* [urban] stay hidden while eavesdropping on an important conversation
+* {infiltrate|scout} the area using disguises to gather information
+mobility:
+* squeeze through a narrow passage without getting trapped
+* run across {crumbling|unstable|slippery|hazardous} ground without falling
+* dodge projectiles while navigating a dangerous location
+* [urban] weave through a crowd to chase a fleeing npc
+investigation:
+* [urban] track down an elusive npc by interviewing locals
+* decipher a cryptic {inscription|riddle|map} to unlock a secret
+* search the area for {a {hidden clue|rare object}|concealed compartments|hidden chambers}
+* analyze the scene of a crime to determine what happened
+athletics:
+* climb a sheer surface to reach a higher location
+* swim through a {flooded area|strong current}
+* push aside heavy debris that is obscuring the path
+* break through a {locked door|weak barrier}
+* leap across a perilous gap
+* carry an injured companion to safety
+knowledge:
+* recall etiquette needed when addressing an important npc
+* identify scattered {arcane|religious} symbols in the area
+* remember an important {historical|religious} {event|figure} that relates to the area
+* perform an old {religious|arcane} ritual in order to break a curse
+* recognize the {historic|religious} significance of a newly discovered relic
+* recall a local {law|custom} that is being broken by an npc
+perception:
+* spot {a hidden|an illusory} entrance within the area
+* notice a concealed trap in a dimly lit corridor
+* hear the faint {whispering|rustling} of nearby hidden enemies
+* hear a distant cry for help masked by the ambient sounds of the area
+* notice signs of recent passage in the area
+* detect the subtle scent of a rare herb hidden among common foliage
+* recognize an inconsistency in the pattern of a room's decorations
+* spot an almost invisible {mark|inscription} made on a {map|manuscript|artifact}
+* [urban] notice the slight discoloration of a drink, warning of poison
+* [urban] notice a {suspicious|unusual} npc {in a crowd|following you}
+insight:
+* detect the subtle tell of an npc who's not being truthful
+* understand the underlying jealousy in a npc's compliments
+* perceive the hidden sorrow behind an npc's stern demeanor
+* sense the underlying tension in an npc's jovial facade
+* catch the fleeting expression of guilt on a suspect's face
+* understand the true motive behind a benefactor's generosity
+* notice the signs of distrust in an npc's casual questions
+* perceive the flicker of recognition in a stranger's eyes
+* sense the suppressed anger in an ally's voice
+* recognize the signs of enchantment affecting an individual's emotions
+* detect the signs of a potential betrayal in a trusted ally
+survival:
+* [wilderness] navigate a maze of twisting passages using natural landmarks
+* [wilderness] track a quarry through the wilderness by recognizing its unique signs
+* [wilderness] recognize the scent of a dangerous creature's territory to avoid it
+* treat a companion's wounds using {a healing poultice|makeshift bandages}
+* [wilderness] forage enough food and water to sustain the party for a day
+* [wilderness] calm a spooked pack animal to prevent it from bolting
+* [wilderness] harvest and prepare a medicinal herb to counteract a venomous bite
+* [wilderness] calm and heal a wounded creature without causing more harm
+* diagnose a disease by recognizing its symptoms
+persuasion:
+* convince a hostile npc to {stand down|help you|spare the lives of innocents|reveal their employer's identity}
+* {trick|bribe|intimidate|charm} a reluctant npc into {revealing a secret|giving you an item|letting you pass|look the other way}
+* negotiate a {peaceful|mutually beneficial} resolution to a conflict
+* [urban] charm a merchant into {giving you a discount|selling rare inventory}
+* [urban] win a crowd's support for your cause through stirring oration
+* [urban] intimidate a traitor into revealing their co-conspirators
+* [urban] convince an official to reconsider a {law|decree} detrimental to the patron
+* [urban] secure an audience with an elusive leader through charm and flattery
+combat:
+* defeat: {defeat|confront|ambush|survive an ambush from}
+* ambush a {convoy of hostile mercenaries transporting stolen goods|caravan transporting dark artifacts for a wicked sorcerer}
+* [wilderness] {defeat} a group of {bandits|highwaymen|raiders|slavers} that use this site as a base to ambush travelers
+* {defeat} a cult of some {unacceptable|long-dead} god trying to {complete a forbidden ritual|unleash a sealed evil}
+* {defeat} a {necromancer|ancient vampire lord} and their undead servitors conducting dark experiments at this site
+* [wilderness] {defeat} {a powerful beast that has made this site its lair|{swarms|packs} of dangerous beasts that have made this site their lair}
+* [wilderness] engage in combat with a fungal hive-mind and its spore-children that have taken root here
+* [wilderness] {defeat} animate and lethal plant life that has taken root here
+* [wilderness] {defeat} {an enraged|a malign} wilderness {spirit|elemental|eidolon} that protects this site
+* {defeat} the undead {husks|wraiths} of former inhabitants that still haunt this site
+* [wilderness] close a portal to a dead world that has opened here, spewing forth otherworldly horrors
+* [wilderness] {defeat} rival adventurers are also searching for loot at this site
+* [wilderness] {defeat} a tribe of aquatic {raiders|cultists} that have come ashore to plunder the surrounding area
+* [wilderness] {defeat} a tribe of subterranean {raiders|cultists} that have come to the surface to plunder the surrounding area
+* [wilderness] {defeat} a tribe of cursed cannibals driven mad by hunger that are known to lurk here
+* [wilderness] {defeat} relic {automatons|golems}that  guard the site against intruders
+* {defeat} a {hulking|ravenous|petrifying} magic-forged {aberration|chimera|abomination} rampaging through this site
+* {defeat} a {sorcerer|witch} of detestable inclinations conducting dark experiments here
+* [urban] survive an ambush from {a gang of thugs|a group of assassins|a cult of fanatics|corrupt {settlement} guards} in a dark alley
+* [urban] {confront|ambush} a rapacious aristocrat and their {henchmen|bodyguards} that have taken over this site
+
+bounty (monster):
+* [urban] acquire special {equipment|weapons} rumored to {be effective against|subdue|trap} the target
+* [wilderness] find tracks or signs indicating the target's presence in the area
+* [wilderness] encounter remnants of a destroyed {campsite|caravan}, indicating the target's path
+* [urban] interview survivors of the target's recent attacks for descriptions and patterns
+* [urban] convince a reluctant local guide to lead you through the target's territory
+* [urban] discover an ancient legend or prophecy related to the target's origins
+* [urban] learn of a protective {charm|ritual} to guard against the target's powers
+* [wilderness] discover a pattern or cycle in the target's movements or attacks
+* [wilderness] successfully lure the beast out using bait or a crafted device
+* [wilderness] witness the target from a safe distance, noting its abilities and behaviors
+* [wilderness] rescue a {local|traveler} {captured|cornered} by the target
+* [wilderness] engage the beast in a preliminary skirmish, testing its strength and agility
+* [wilderness] collaborate with another group or tribe also pursuing the target
+* [wilderness] locate the entrance to the target's {lair|nesting ground}
+* [wilderness] avoid hazardous flora that surrounds the target's lair
+* [wilderness] engage in a decisive battle against the target
+* [wilderness] transport the {subdued beast|evidence of its defeat} to the quest giver
+bounty (human):
+* investigate rumors about the target's last known whereabouts
+* [urban] find and decode a map leading to the target's hideout
+* [urban] track down and interrogate a known associate of the bounty
+* [urban] uncover a hidden {message|clue} leading closer to the target
+* [wilderness] navigate a treacherous path that the target is known to frequent
+* [urban] gain the trust of locals who might have information on the bounty
+* rescue a fellow bounty hunter who'd been captured while chasing the same target
+* discover and explore a lair or hideout recently abandoned by the target
+* engage in a skirmish with the target's henchmen or guards
+* [urban] decipher a {code|language} the target uses to communicate with allies
+* [urban] learn of a secret {meeting|rendezvous} connected to the bounty
+* [urban] save or protect potential victims from the target's anticipated actions
+* set up and execute a successful ambush based on acquired intelligence
+* confront a {decoy|impostor} set up by the target to mislead hunters
+* survive a trap or attack set by the bounty to deter pursuers
+* [urban] form an unlikely alliance with another entity also interested in the target's capture
+* [urban] extract crucial information by infiltrating a {gathering|event}
+* [urban] successfully defend against a {legal|political} challenge obstructing the bounty hunt
+* [urban] obtain a rare {artifact|token} the target is rumored to be seeking
+* uncover an unexpected twist or revelation about the target's true intentions
+* [urban] thwart or prevent a major action or event planned by the target
+* corner the target, leading to a tense standoff or negotiation
+* capture the target, either alive or as specified in the bounty details
+rescue:
+* [urban] gather descriptions and details of the {person|group} to be rescued
+* [urban] hear rumors about a secretive location where captives might be held
+* [urban] acquire {tools|equipment} essential for a stealthy rescue mission
+* [urban] learn of a secret {passage|entrance} to the captor's lair
+* discover a personal item left behind by the captured individual
+* [urban] find a witness who saw the abduction or can identify the kidnappers
+* [wilderness] navigate a treacherous landscape rumored to lead to the holding area
+* [urban] gather intelligence on the layout and defenses of the holding facility
+* [urban] acquire a disguise or credentials to infiltrate the captors' stronghold
+* gain knowledge of a secret exit or route within the captivity area
+* [*] bypass {guards|sentinels} posted around the area
+* [*] save another captive, gaining crucial information or assistance
+* [*] confront a mid-level {enforcer|lieutenant} guarding the inner sanctum
+* [*] find a safe place to regroup or strategize within enemy territory
+* [*] encounter and negotiate with a captor's ally for insider information
+* [*] locate the main chamber where the primary victim is held
+* [*] successfully free the captive and ensure their immediate safety
+* [*] engage in a standoff or parley with the {mastermind|leader} of the kidnappers
+* [*] navigate a challenging escape route through the captor's territory
+* [*] defend against pursuers aiming to recapture the freed individuals
+* [wilderness] safely cross a natural hazard with the rescued individuals
+* [*] decrypt a message or diary detailing the reasons behind the abduction
+* [*] confront a traitor or insider who played a role in the capture
+
+
+
+* intrigue: discover a {secret|scandal} that could be used to blackmail a rival
+* bounty: track and hunt down a dangerous foe ({beast|primordial|spirit|undead|bandit|cultist|sorcerer}) that is terrorizing the local populace
+* crime: investigate a recent case of {theft|murder|assault|fraud|vandalism}
+* rescue: free a {friend|relative} from captivity ({bandit|cultist|sorcerer})
+* innocence: #patron# has been framed for a crime and needs help proving their innocence
+* explore: there are rumors of a ruin in the nearby wilderness that might hold {vast wealth|forgotten lore}
+* disappearance: a {friend|relative} has gone missing and needs to be found
+* heist: steal {a priceless relic|sensitive information} from a rival
+* defense: protect #patron# for the duration of a {wedding|festival|funeral}
+* smuggling: transport {forbidden|illicit} {goods|relics} across a restricted zone
+* escort: transport #patron# through unsafe territory
+* curse: lift a curse that is affecting {a nearby ruin|the nearby wilderness}
+* conflict: there is a conflict between two factions and #patron# wants to {support one side|prolong the conflict|find a diplomatic solution|destroy both sides}
+
+impact:
+* reputation
+* gold
+* artifacts
+* health
+* morale
+complications:
+* time
+* locked
+* morality
+* personal

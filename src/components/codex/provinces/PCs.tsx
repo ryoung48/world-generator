@@ -1,10 +1,10 @@
 import { Grid } from '@mui/material'
 import { scaleLinear } from 'd3'
 
-import { avatar__lvl, npc__lvl } from '../../../models/utilities/difficulty'
+import { DIFFICULTY } from '../../../models/utilities/difficulty'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { view__context } from '../../context'
+import { VIEW } from '../../context'
 import { DetailedTableRow } from '../common/DataTable'
 import { StyledText } from '../common/text/StyledText'
 
@@ -13,9 +13,12 @@ const hpColorScale = scaleLinear()
   .range(['red', 'orange', 'green'] as any)
 
 export function PlayerCharacterView() {
-  const { state } = view__context()
+  const { state } = VIEW.context()
   return (
-    <Grid container>
+    <Grid container mt={0.5} sx={{ fontSize: 12 }}>
+      <Grid mr={0.4}>
+        <DetailedTableRow link title={<b>Player Characters:</b>} subtitle={''}></DetailedTableRow>
+      </Grid>
       {state.avatar.pcs.map((a, i) => {
         const actor = window.world.npcs[a]
         const health = actor.health
@@ -42,7 +45,7 @@ export function PlayerCharacterView() {
                   ></StyledText>
                 </span>
               }
-              subtitle={npc__lvl(actor).toFixed(2)}
+              subtitle={DIFFICULTY.actor.lvl(actor).toFixed(2)}
             ></DetailedTableRow>
           </Grid>
         )

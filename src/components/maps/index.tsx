@@ -2,24 +2,23 @@ import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { pointer, select, zoom, ZoomTransform } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
-import { region__domains, region__neighbors } from '../../models/regions'
+import { REGION } from '../../models/regions'
 import { Province } from '../../models/regions/provinces/types'
 import { delay } from '../../models/utilities/math/time'
-import { view__context } from '../context'
+import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
 import { map__drawRegions } from './canvas/borders'
-import { map__drawLakes, map__drawOceans } from './canvas/coasts'
-import { map__breakpoints } from './canvas/draw_styles'
 import { map__drawEmbellishments } from './canvas/embellishments'
 import {
   map__drawAvatarLocation,
   map__drawLocationsRegional,
   map__drawRoads
 } from './canvas/infrastructure'
+import { COAST } from './coasts'
 import { iconPath } from './icons'
 import { map__drawTerrainIcons, terrain__icons } from './icons/terrain'
-import { CachedImages, map__styles, MapStyle } from './types'
+import { CachedImages, MAP, MapSeason, MapStyle } from './types'
 
 const loadImage = (path: string): Promise<HTMLImageElement> => {
   return new Promise(resolve => {
@@ -45,20 +44,23 @@ const loadImages = async () =>
 
 const paint = (params: {
   scale: number
+  dx: number
+  dy: number
   cachedImages: CachedImages
   province: Province
   ctx: CanvasRenderingContext2D
   style: MapStyle
+  season: MapSeason
 }) => {
-  const { scale, cachedImages, province, ctx, style } = params
+  const { scale, dx, dy, cachedImages, province, ctx, style, season } = params
   const nation = window.world.regions[province.nation]
-  const borders = region__neighbors(nation, 2)
+  const borders = REGION.neighbors({ region: nation, depth: 2 })
   const nations = [nation].concat(borders)
   const nationSet = new Set(nations.map(n => n.idx))
   const expanded = new Set(
     nations
       .map(r =>
-        region__domains(r)
+        REGION.domains(r)
           .map(region => {
             return [region.idx, ...region.borders]
           })
@@ -66,18 +68,18 @@ const paint = (params: {
       )
       .flat()
   )
-  const lands = map__drawOceans({ ctx, scale, nations })
-  map__drawRegions({ ctx, scale, nations, style })
-  map__drawLakes({ ctx, scale, nations })
+  const lands = COAST.islands({ ctx, scale, nations })
+  map__drawRegions({ ctx, scale, nations, style, season })
+  COAST.lakes({ ctx, scale, nations })
   map__drawRoads({ ctx, scale, nationSet })
   map__drawTerrainIcons({ ctx, cachedImages, scale, regions: expanded, lands })
   map__drawAvatarLocation({ ctx, loc: province.hub, scale })
   map__drawLocationsRegional({ ctx, scale, nationSet, cachedImages })
-  map__drawEmbellishments({ ctx, scale, cachedImages })
+  map__drawEmbellishments({ ctx, scale, dx, dy, cachedImages })
 }
 
 export function WorldMap() {
-  const { state, dispatch } = view__context()
+  const { state, dispatch } = VIEW.context()
   const [cachedImages, setCachedImages] = useState<CachedImages>({})
   const [transform, setTransform] = useState({
     dx: 0,
@@ -89,23 +91,25 @@ export function WorldMap() {
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [init, setInit] = useState(false)
   const [style, setStyle] = useState<MapStyle>('Nations')
+  const [season, setSeason] = useState<MapSeason>('Winter')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+
   const transition = () => {
     const cell = window.world.diagram.delaunay.find(cursor.x, cursor.y)
     const poly = window.world.cells[cell]
     const province = window.world.provinces[poly.province]
     const nation = window.world.regions[province.nation]
-    const localTransition = transform.scale > map__breakpoints.regional
+    const localTransition = transform.scale > MAP.breakpoints.regional
     if (localTransition) {
       dispatch({
-        type: 'select province',
-        payload: { target: province }
+        type: 'transition',
+        payload: { tag: 'province', idx: province.idx }
       })
     } else {
       dispatch({
-        type: 'select region',
-        payload: { target: nation }
+        type: 'transition',
+        payload: { tag: 'nation', idx: nation.idx }
       })
     }
   }
@@ -177,25 +181,24 @@ export function WorldMap() {
       ctx.translate(transform.dx, transform.dy)
       ctx.scale(transform.scale, transform.scale)
       paint({
-        scale: transform.scale,
+        ...transform,
         cachedImages,
         province: window.world.provinces[state.province],
         ctx,
-        style
+        style,
+        season
       })
       ctx.restore()
     }
-  }, [cachedImages, transform, state, init, style])
+  }, [cachedImages, transform, state, init, style, season])
   useEffect(() => {
     const oldScale = prevTransformRef.current?.scale
     const newScale = transform.scale
     const regionalTransition =
-      oldScale <= map__breakpoints.global && newScale > map__breakpoints.global
-    const globalTransition =
-      newScale <= map__breakpoints.global && oldScale > map__breakpoints.global
+      oldScale > MAP.breakpoints.regional && newScale <= MAP.breakpoints.regional
     const localTransition =
-      oldScale <= map__breakpoints.regional && newScale > map__breakpoints.regional
-    if (regionalTransition || localTransition || globalTransition) {
+      oldScale <= MAP.breakpoints.regional && newScale > MAP.breakpoints.regional
+    if (regionalTransition || localTransition) {
       transition()
     }
     prevTransformRef.current = transform
@@ -212,11 +215,11 @@ export function WorldMap() {
           style={{
             zIndex: 2,
             position: 'absolute',
-            top: window.world.dim.h + 30,
-            left: window.world.dim.w * 0.8
+            top: window.world.dim.h + 10,
+            left: window.world.dim.w * 0.6
           }}
         >
-          {map__styles.map(label => (
+          {MAP.styles.map(label => (
             <ToggleButton key={label} value={label}>
               <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
                 {label}
@@ -224,6 +227,29 @@ export function WorldMap() {
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
+        {(style === 'Temperature' || style === 'Rain') && (
+          <ToggleButtonGroup
+            color='primary'
+            exclusive
+            value={season}
+            onChange={(_, value) => value && setSeason(value)}
+            size='small'
+            style={{
+              zIndex: 2,
+              position: 'absolute',
+              top: window.world.dim.h - 35,
+              left: window.world.dim.w * 0.82
+            }}
+          >
+            {MAP.seasons.map(label => (
+              <ToggleButton key={label} value={label}>
+                <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
+                  {label}
+                </span>
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        )}
         <canvas
           ref={canvasRef}
           style={{

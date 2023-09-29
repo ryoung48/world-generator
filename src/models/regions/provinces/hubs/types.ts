@@ -1,5 +1,4 @@
-import { Thread } from '../../../threads/types'
-import { Point } from '../../../utilities/math/points'
+import { Point } from '../../../utilities/math/points/types'
 
 export interface Hub extends Point {
   type:
@@ -12,6 +11,12 @@ export interface Hub extends Point {
     | 'large village'
     | 'small village'
     | 'tiny village'
+    | 'tribal camp'
+    | `small monastery`
+    | `large monastery`
+    | 'military outpost'
+    | 'trading outpost'
+    | 'colonial outpost'
   population: number
   coastal: boolean
   province: number
@@ -22,13 +27,14 @@ export interface Hub extends Point {
     design: string
     defenses: string
     locals: number[]
+    locs: { text: string; setting: string }[]
     terrain: string
     commerce: string
   }
-  thread?: Thread
 }
 
 export interface Settlement {
-  alias: 'city' | 'town' | 'village' | 'ruin'
+  alias: 'city' | 'town' | 'village' | 'tribal camp' | 'monastery' | 'outpost'
   population: number
+  tribal?: boolean
 }

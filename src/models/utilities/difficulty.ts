@@ -4,8 +4,8 @@ import { Avatar } from '../../components/context/types'
 import { cssColors } from '../../components/theme/colors'
 import { slots } from '../npcs/equipment'
 import { Item } from '../npcs/equipment/types'
-import { NPC } from '../npcs/types'
-import { scale } from './math'
+import { Actor } from '../npcs/types'
+import { MATH } from './math'
 
 export type Difficulty = 'trivial' | 'easy' | 'medium' | 'hard' | 'deadly' | 'insanity'
 interface DifficultyInfo {
@@ -18,7 +18,7 @@ interface DifficultyInfo {
   cost: number
 }
 
-export const difficulties: Record<Difficulty, DifficultyInfo> = {
+const difficulties: Record<Difficulty, DifficultyInfo> = {
   trivial: {
     tier: 'trivial',
     bounds: [-Infinity, 0.25],
@@ -57,37 +57,43 @@ export const difficulties: Record<Difficulty, DifficultyInfo> = {
   }
 }
 
-export const difficulty__random = (ref: number) => {
-  const tier = window.dice.weightedChoice<Difficulty>([
-    { w: 0.2, v: 'easy' },
-    { w: 0.5, v: 'medium' },
-    { w: 0.2, v: 'hard' },
-    { w: 0.1, v: 'deadly' },
-    { w: 0.05, v: 'insanity' }
-  ])
-  return ref * window.dice.uniform(...difficulties[tier].bounds)
-}
+const crRange = range(50)
+const crScale = scaleLinear()
+  .domain(crRange)
+  .range(crRange.map(i => 2 ** i - 1))
 
-export const difficulty__odds = (params: { pc: number; cr: number }) => {
-  const { pc, cr } = params
-  const ratio = cr / pc
-  const { tier } =
-    Object.values(difficulties).find(({ bounds: [x, y] }) => ratio >= x && ratio < y) ??
-    difficulties.insanity
-  const success = Math.min(1, scale([0.25, 2.25], [1, 0], ratio))
-  return { ratio, tier, odds: 1 - success }
+export const DIFFICULTY = {
+  actor: {
+    cr: (npc: Actor) =>
+      (npc.equipment ?? []).reduce((sum, item) => sum + DIFFICULTY.item.cr(item), 0),
+    lvl: (npc: Actor) => DIFFICULTY.lvl(DIFFICULTY.actor.cr(npc))
+  },
+  avatar: {
+    cr: ({ pcs }: Avatar) =>
+      pcs.map(p => DIFFICULTY.actor.cr(window.world.npcs[p])).reduce((sum, cr) => sum + cr, 0),
+    lvl: (avatar: Avatar) => DIFFICULTY.lvl(DIFFICULTY.avatar.cr(avatar))
+  },
+  cr: (level: number) => crScale(level),
+  item: { cr: (item: Item) => (slots[item.slot] * DIFFICULTY.cr(item.tier + 1)) / 2.5 },
+  lookup: difficulties,
+  lvl: (cr: number) => crScale.invert(cr),
+  odds: (params: { pc: number; cr: number }) => {
+    const { pc, cr } = params
+    const ratio = cr / pc
+    const { tier } =
+      Object.values(difficulties).find(({ bounds: [x, y] }) => ratio >= x && ratio < y) ??
+      difficulties.insanity
+    const success = Math.min(1, MATH.scale([0.25, 2.25], [1, 0], ratio))
+    return { ratio, tier, odds: 1 - success }
+  },
+  random: (ref: number) => {
+    const tier = window.dice.weightedChoice<Difficulty>([
+      { w: 0.2, v: 'easy' },
+      { w: 0.5, v: 'medium' },
+      { w: 0.2, v: 'hard' },
+      { w: 0.1, v: 'deadly' },
+      { w: 0.05, v: 'insanity' }
+    ])
+    return ref * window.dice.uniform(...difficulties[tier].bounds)
+  }
 }
-
-const cr__range = range(50)
-const cr__scale = scaleLinear()
-  .domain(cr__range)
-  .range(cr__range.map(i => 2 ** i - 1))
-export const difficulty__cr = (level: number) => cr__scale(level)
-export const difficulty__lvl = (cr: number) => cr__scale.invert(cr)
-export const item__cr = (item: Item) => (slots[item.slot] * difficulty__cr(item.tier + 1)) / 2.5
-export const npc__cr = (npc: NPC) =>
-  (npc.equipment ?? []).reduce((sum, item) => sum + item__cr(item), 0)
-export const npc__lvl = (npc: NPC) => difficulty__lvl(npc__cr(npc))
-export const avatar__cr = ({ pcs }: Avatar) =>
-  pcs.map(p => npc__cr(window.world.npcs[p])).reduce((sum, cr) => sum + cr, 0)
-export const avatar__lvl = (avatar: Avatar) => difficulty__lvl(avatar__cr(avatar))

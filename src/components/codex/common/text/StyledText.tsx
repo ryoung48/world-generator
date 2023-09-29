@@ -2,12 +2,13 @@ import { css } from '@emotion/css'
 import { Grid } from '@mui/material'
 import { CSSProperties } from 'react'
 
-import { culture__values } from '../../../../models/npcs/cultures'
+import { CULTURE } from '../../../../models/npcs/cultures'
 import { decorateItem } from '../../../../models/npcs/equipment'
-import { decorateAbility } from '../../../../models/npcs/professions/adventurers'
-import { species__map } from '../../../../models/npcs/species'
+import { SPECIES } from '../../../../models/npcs/species'
+import { entity__tags, TaggedEntity } from '../../../../models/utilities/entities/types'
 import { properList } from '../../../../models/utilities/text'
 import { decorateText } from '../../../../models/utilities/text/decoration'
+import { VIEW } from '../../../context'
 import { cssColors } from '../../../theme/colors'
 import { DetailedTableRow } from '../DataTable'
 import { LazyTippy } from './LazyTippy'
@@ -38,7 +39,7 @@ const DescribeActor = ({ idx }: { idx: number }) => {
       <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
         <span>
           <b>appearance:</b>{' '}
-          <StyledText text={actor.appearance} color={cssColors.subtitle}></StyledText>
+          <StyledText text={`${actor.appearance}`} color={cssColors.subtitle}></StyledText>
         </span>
       </Grid>
       <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
@@ -68,24 +69,6 @@ const DescribeActor = ({ idx }: { idx: number }) => {
           </span>
         </Grid>
       )}
-      {actor.abilities && (
-        <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
-          <span>
-            <b>abilities:</b>{' '}
-            <StyledText
-              text={actor.abilities.map(item => decorateAbility(item)).join(', ')}
-              color={cssColors.subtitle}
-            ></StyledText>
-          </span>
-        </Grid>
-      )}
-      {actor.outfit && (
-        <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
-          <span>
-            <b>outfit:</b> {actor.outfit}
-          </span>
-        </Grid>
-      )}
     </Grid>
   )
 }
@@ -93,7 +76,7 @@ const DescribeActor = ({ idx }: { idx: number }) => {
 const DescribeCulture = ({ idx }: { idx: number }) => {
   const culture = window.world.cultures[idx]
   const { skin } = culture.appearance
-  const species = species__map[culture.species]
+  const species = SPECIES.lookup[culture.species]
   return (
     <Grid container style={{ fontSize: 14 }}>
       <Grid item xs={12}>
@@ -114,7 +97,7 @@ const DescribeCulture = ({ idx }: { idx: number }) => {
       </Grid>
       <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
         <span>
-          <b>visual motifs:</b> {culture.motifs}
+          <b>fashion:</b> {culture.fashion.scheme}
         </span>
       </Grid>
       <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
@@ -123,9 +106,111 @@ const DescribeCulture = ({ idx }: { idx: number }) => {
           <StyledText
             color={cssColors.subtitle}
             text={culture.values
-              .map(value => decorateText({ label: value, tooltip: culture__values[value].text }))
+              .map(value =>
+                decorateText({ label: value, tooltip: CULTURE.values[value].text.toString() })
+              )
               .join(', ')}
           ></StyledText>
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>traditions:</b>{' '}
+          <StyledText
+            text={`${decorateText({
+              label: culture.traditions.good,
+              tooltip: CULTURE.traditions.good[culture.traditions.good].text.toString(),
+              color: cssColors.subtitle
+            })}, ${decorateText({
+              label: culture.traditions.bad,
+              tooltip: CULTURE.traditions.bad[culture.traditions.bad].text.toString(),
+              color: cssColors.subtitle
+            })}`}
+          ></StyledText>
+        </span>
+      </Grid>
+    </Grid>
+  )
+}
+
+const DescribeCourt = ({ idx }: { idx: number }) => {
+  const court = window.world.courts[idx]
+  return (
+    <Grid container style={{ fontSize: 14 }}>
+      <Grid item xs={12}>
+        <DetailedTableRow
+          title={court.name}
+          subtitle={
+            <span>
+              <StyledText text={court.subtitle}></StyledText>
+            </span>
+          }
+        ></DetailedTableRow>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>theme:</b> {court.theme.text.toLowerCase()}
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>conflict:</b> {court.conflict.toLowerCase()}
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>defenses:</b> {court.defense.toLowerCase()}
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>actors:</b>{' '}
+          <StyledText
+            text={court.actors
+              .map(a => {
+                const actor = window.world.npcs[a]
+                return decorateText({
+                  label: actor.name.toLowerCase(),
+                  link: actor,
+                  color: cssColors.subtitle
+                })
+              })
+              .join(', ')}
+          ></StyledText>
+        </span>
+      </Grid>
+    </Grid>
+  )
+}
+
+const DescribeRuin = ({ idx }: { idx: number }) => {
+  const ruin = window.world.ruins[idx]
+  return (
+    <Grid container style={{ fontSize: 14 }}>
+      <Grid item xs={12}>
+        <DetailedTableRow
+          title={ruin.name}
+          subtitle={<span>{ruin.subtype} (ruins)</span>}
+        ></DetailedTableRow>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>mood:</b> {ruin.mood}
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>hazards:</b> <StyledText text={`${ruin.hostiles}, ${ruin.hazards}`}></StyledText>
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>enigmas:</b> {ruin.enigmas}
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>treasures:</b> {ruin.treasures}
         </span>
       </Grid>
     </Grid>
@@ -185,6 +270,7 @@ const style__links = css`
 `
 
 export function StyledText(props: { text: string; color?: string }) {
+  const { dispatch } = VIEW.context()
   const { text } = props
   const baseColor = props.color ?? 'black'
   return (
@@ -192,9 +278,18 @@ export function StyledText(props: { text: string; color?: string }) {
       {text.split(/@(.+?)@/g).map((text, j) => {
         if (text.match(/.+|.+|.+/)) {
           const [label, i, cat, tooltip, color, italics, bold, underline] = text.split('##')
+          const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
-          const detailedTooltip = cat === 'actor' || cat === 'culture' || cat === 'religion'
-          const onClick = false
+          const detailedTooltip =
+            cat === 'actor' ||
+            cat === 'culture' ||
+            cat === 'religion' ||
+            cat === 'court' ||
+            cat === 'ruin'
+          const onClick =
+            entity__tags.includes(tag) && !detailedTooltip
+              ? () => dispatch({ type: 'transition', payload: { tag, idx, zoom: true } })
+              : false
           const textColor = color !== '' ? color : baseColor
           const underlineColor = underline || textColor
           const style: CSSProperties = {
@@ -231,6 +326,10 @@ export function StyledText(props: { text: string; color?: string }) {
                       <DescribeActor idx={idx} />
                     ) : cat === 'culture' ? (
                       <DescribeCulture idx={idx} />
+                    ) : cat === 'court' ? (
+                      <DescribeCourt idx={idx} />
+                    ) : cat === 'ruin' ? (
+                      <DescribeRuin idx={idx} />
                     ) : (
                       <DescribeReligion idx={idx} />
                     )

@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import { ProfileNode, Profiles } from '../../models/utilities/performance'
+import { ProfileNode, Profiles } from '../../models/utilities/performance/types'
 import { NestedPieChart } from '../codex/common/charts/NestedPirChart'
 import { NestedPieData, PieTooltip } from '../codex/common/charts/types'
 import { ToggleButtons } from '../codex/common/navigation/ToggleButtons'

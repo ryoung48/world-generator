@@ -1,5 +1,5 @@
-import { buildDistribution } from '../../../utilities/math'
-import { cluster__spawn } from '../clusters'
+import { MATH } from '../../../utilities/math'
+import { CLUSTER } from '../clusters'
 import { Language, PhonemeCatalog } from '../types'
 
 interface CustomClusterParams {
@@ -22,7 +22,7 @@ export const validTerms = (prospects: string[], letters: string[]) =>
 
 export const randomizePhonemes = (src: Language) => {
   Object.entries(src.basePhonemes).forEach(([k, v]) => {
-    src.phonemes[k as PhonemeCatalog] = buildDistribution(
+    src.phonemes[k as PhonemeCatalog] = MATH.buildDistribution(
       v.map(c => ({ v: c, w: window.dice.random })),
       1
     )
@@ -38,7 +38,7 @@ export const initClusters = (params: {
   const { src, shortSurnames, shortFirst, clusters } = params
   const { ending, surnames } = src
   src.clusters = {
-    settlement: cluster__spawn({
+    settlement: CLUSTER.spawn({
       src: src,
       key: 'settlement',
       ending,
@@ -46,7 +46,7 @@ export const initClusters = (params: {
       variation: 5,
       longNames: 0.5
     }),
-    wilderness: cluster__spawn({
+    wilderness: CLUSTER.spawn({
       src: src,
       key: 'wilderness',
       ending,
@@ -54,7 +54,7 @@ export const initClusters = (params: {
       variation: 5,
       longNames: 0.5
     }),
-    region: cluster__spawn({
+    region: CLUSTER.spawn({
       src: src,
       key: 'region',
       ending,
@@ -62,7 +62,7 @@ export const initClusters = (params: {
       variation: 15,
       longNames: 1
     }),
-    culture: cluster__spawn({
+    culture: CLUSTER.spawn({
       src: src,
       key: 'culture',
       ending,
@@ -70,7 +70,7 @@ export const initClusters = (params: {
       variation: 15,
       longNames: 0
     }),
-    male: cluster__spawn({
+    male: CLUSTER.spawn({
       src: src,
       key: 'male',
       ending,
@@ -79,7 +79,7 @@ export const initClusters = (params: {
       longNames: clusters?.male?.long_names || 0.3,
       variation: 15
     }),
-    female: cluster__spawn({
+    female: CLUSTER.spawn({
       src: src,
       key: 'female',
       ending: PhonemeCatalog.MIDDLE_VOWEL,
@@ -88,7 +88,7 @@ export const initClusters = (params: {
       len: shortFirst ? 1 : clusters?.female?.len,
       longNames: clusters?.female?.long_names || 0
     }),
-    last: cluster__spawn({
+    last: CLUSTER.spawn({
       src: src,
       key: 'last',
       variation: 15,

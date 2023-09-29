@@ -28,7 +28,11 @@ export interface Species {
     piercings?: boolean // defaults to true
     facialHair?: number
   }
-  appearance: (_params: { latitude: number; eastern?: boolean; zone: Climate['zone'] }) => {
+  appearance: (_params: {
+    latitude: number
+    eastern?: boolean
+    zone: Climate[keyof Climate]['zone']
+  }) => {
     skin: Culture['appearance']['skin']
     hair?: Omit<Culture['appearance']['hair'], 'styles'>
   }

@@ -4,8 +4,8 @@ import { ArrowDownBold, ArrowUpBold, Sack } from 'mdi-material-ui'
 
 import { decorateItem, itemPrice, localMarket } from '../../../models/npcs/equipment'
 import { Item } from '../../../models/npcs/equipment/types'
-import { NPC } from '../../../models/npcs/types'
-import { view__context } from '../../context'
+import { Actor } from '../../../models/npcs/types'
+import { VIEW } from '../../context'
 import { DataTable } from '../common/DataTable'
 import { ToggleButtons } from '../common/navigation/ToggleButtons'
 import { StyledText } from '../common/text/StyledText'
@@ -14,13 +14,13 @@ const style__disabled = css`
   background-color: #cecece !important;
 `
 
-const validItem = (params: { item: Item; npc: NPC }) => {
+const validItem = (params: { item: Item; npc: Actor }) => {
   const { item, npc } = params
   return npc.equipment.find(equipped => equipped.slot === item.slot && equipped.name === item.name)
 }
 
 export function MarketView() {
-  const { state, dispatch } = view__context()
+  const { state, dispatch } = VIEW.context()
   const loc = window.world.provinces[state.province]
   const goods = localMarket({ loc, avatar: state.avatar }).sort((a, b) => b.tier - a.tier)
   const heroes = state.avatar.pcs.map(i => window.world.npcs[i])

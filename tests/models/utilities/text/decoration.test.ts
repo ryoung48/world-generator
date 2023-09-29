@@ -1,7 +1,4 @@
 import { decorateText } from '../../../../src/models/utilities/text/decoration'
-import { test__world } from '../../../helpers/world'
-
-test__world()
 
 test('decorators: text decoration - basic', () => {
   const result = decorateText({ link: window.world.regions[0] })

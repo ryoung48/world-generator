@@ -1,7 +1,5 @@
 import { Climate } from '../../../world/climate/types'
 
-export type Season = 'spring' | 'summer' | 'autumn' | 'winter'
-
 export type TimeOfDay = 'dawn' | 'morning' | 'afternoon' | 'dusk' | 'night'
 
 export type TemperatureVariance = 'warmer' | 'colder' | 'normal'
@@ -29,7 +27,7 @@ export interface WeatherParams {
   rain: number
   temp: number
   clouds: CloudTypes
-  climate: Climate['name']
+  climate: keyof Climate
 }
 
 export interface WeatherPhenomena {

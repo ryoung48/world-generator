@@ -1,0 +1,68 @@
+forest:
+* the remnants of a long-forgotten village overtaken by creeping vines and moss
+* ancient ruins of a fortress overgrown with ivy and shrouded by towering trees
+* old chapel ruins bathed in soft light and scattered with forest flowers
+* grove where whispers of ancient spirits linger in the rustling leaves
+* narrow ravine filled with thorns and brambles hiding secret pathways
+* lonely watchtower overgrown with moss at the edge of a dark forest
+* old witch's cottage hidden among gnarled trees and thorn-riddled brambles
+* forgotten stone bridge crossing a clear rushing stream in the forest
+* eerie forest graveyard marked by moss-covered stones and ancient oaks
+* ancient stone ruins overrun by wild forest growth and colorful fungi
+* grand oak standing alone in a stone circle radiating with ancient magic
+* abhorrent shrine of dark rituals encrusted with ruby-red moss
+
+urban:
+* bustling marketplace filled with exotic goods and chattering merchants
+* hidden underground tunnel system beneath the {settlement}
+* towering castle overlooking the {settlement} shrouded in mystery
+* abandoned fort perched on the {settlement}'s edge
+* tranquil gardens blooming with magical flowers
+* grand cathedral where prayers echo off stone walls
+* {settlement}'s bustling dockyards filled with sailing ships and seabirds
+* crypts under the {settlement} teeming with whispers of forgotten souls
+* wealthy district with opulent mansions and manicured lawns
+* hidden cove at the edge of the {settlement} guarded by craggy rocks
+* grand {settlement} library brimming with ancient books and scrolls
+* clandestine hideout nestled in the {settlement}'s grimy underbelly
+* decaying ruins of a once grand palace now taken by nature
+* abandoned plague district fallen into eerie silence
+* {settlement}'s underground fight club pulsating with raw energy
+* sprawling {settlement} park where magic and nature entwine
+* underground lair of the {settlement}'s infamous criminal syndicate
+* refugee camp teeming with stories and varied cultures
+* sprawling slums filled with desperate lives and hopeful dreams
+* local tavern where {settlement} gossip and ale flow freely
+* mystical observatory capturing stars in its towering eyepiece
+* rooftop garden flourishing amidst the urban stone and steel
+* dark alleyways filled with whispers of the {settlement}'s underworld
+* forgotten {settlement} graveyard choked with overgrown vines and moss
+* treasury vault hidden deep beneath the bustling {settlement}
+* magical academy hidden within {settlement}'s ancient walls
+* bustling smithy spewing sparks and the clanging of steel
+* desolate site of a devastating magical catastrophe
+* dimly lit apothecary shop filled with peculiar smells and potions
+* dank sewers infested with luminous fungi
+* floating market filled with colorful boats and vendors
+* forgotten garden overrun by magical plants
+* luxurious bathhouse fed by a natural hot spring
+* vast underground chamber used for arcane experiments
+* back alley marketplace bustling with illicit trade and gossip
+* dilapidated shrine where forgotten gods are secretly worshipped
+* rundown asylum home to forgotten minds and their lost tales
+* forgotten subterranean vaults where {settlement}'s treasures lie buried
+* ornate {settlement} hall where local politicians convene and conspire
+* lavish yet affordable inn frequented by wandering adventurers
+* brick-laden courtyard where street performers entertain passersby
+* sprawling mansion with a labyrinth of secret passages
+* opulent auction house where magical artifacts are sold to highest bidders
+* {settlement}'s grand theater where the arts are celebrated
+* magical academy with a library of ancient tomes and scrolls
+
+
+in the party there are three characters:
+* borius: dwarf warrior who is stubborn but brave
+* gregor: donkey who is a quiet genius
+* kathra: human wizard who is shy, but kind
+
+how would each of these characters react to the situation

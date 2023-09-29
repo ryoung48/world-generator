@@ -7,6 +7,7 @@ type District =
   | 'docks'
   | 'slums'
   | 'rural'
+  | 'tribal'
   | 'outskirts'
   | 'wilderness'
 

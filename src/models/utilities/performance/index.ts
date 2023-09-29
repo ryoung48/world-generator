@@ -1,69 +1,106 @@
-import { PieData } from '../../../components/codex/common/charts/types'
-
-export interface ProfileNode extends PieData {
-  children: Record<string, ProfileNode> // child nodes
-}
-
-export interface Profiles {
-  history: ProfileNode
-  current: ProfileNode
-}
-
-/**
- * creates a starting blank profile
- * @param key - the profile node label
- * @returns empty profile
- */
-export const profile__spawn = (key: string) => ({
-  label: key,
-  color: window.dice.color(),
-  value: 0,
-  children: {}
-})
+import * as Performance from './types'
 
 // the current profile node context
-let context: ProfileNode
+let context: Performance.ProfileNode
 
-/**
- * records the time debt of function and stores it on the current profile
- * @param params.label - optional name for the profiled function (will default to the function name)
- * @param params.f - f function being profiled
- * @returns the result of f
- */
-export const profile = <T>(params: { label?: string; f: () => T }): T => {
-  const { label, f } = params
-  const key = label ?? f.name
-  if (!context.children[key]) context.children[key] = profile__spawn(key)
-  const oldContext = context
-  context = context.children[key]
-  const start = performance.now()
-  const result = f()
-  const end = performance.now()
-  context.value += end - start
-  context = oldContext
-  return result
-}
+// in-memory cache for memoized functions
+const _cache: Performance.MemoCache = { store: {} }
 
-/**
- * decorated version of profile for ease of use
- * @param f - f function being profiled
- * @param name - optional override for functions that don't have names
- * @returns decorated function
- */
-export const decoratedProfile =
-  <T, K extends unknown[]>(f: (..._args: K) => T, name?: string) =>
-  (...args: K) =>
-    profile({
-      label: name ?? f.name,
-      f: () => f(...args)
+export const PERFORMANCE = {
+  decorate: <T, K extends unknown[]>({ f, name, dirty, set }: Performance.PerfDecorate<T, K>) => {
+    return PERFORMANCE.profile.decorate({
+      f: PERFORMANCE.memoize.decorate({ f, dirty, set }),
+      name
     })
-
-/**
- * switches the current profile context
- * used to switch from the pre-generation profile
- * to the post generation profile
- * @param profile - profile to switch to
- */
-export const profile__switch = (profile: ProfileNode): void => {
-  context = profile
+  },
+  memoize: {
+    clear: () => Object.keys(_cache.store).forEach(key => (_cache.store[key] = {})),
+    decorate: <T, K extends unknown[]>({ f, dirty, set }: Performance.MemoDecorate<T, K>) => {
+      if (_cache.store[f.toString()] === undefined) _cache.store[f.toString()] = {}
+      const setter: Performance.MemoDecorate<T, K>['set'] =
+        set ?? ((cache, result, ...args) => (cache[PERFORMANCE.memoize.key(args)] = result))
+      return (...args: K) => {
+        const cache = _cache.store[f.toString()] as Record<string, T>
+        const key = PERFORMANCE.memoize.key(args)
+        if (dirty !== undefined && dirty(...args)) delete cache[key]
+        let result = cache[key]
+        if (result !== undefined) return result
+        result = f(...args)
+        setter(cache, result, ...args)
+        return result
+      }
+    },
+    key: (args: unknown[]) => JSON.stringify(args),
+    remove: <T, K extends unknown[]>(f: Performance.MemoDecorate<T, K>['f']) =>
+      (_cache.store[f.toString()] = {})
+  },
+  profile: {
+    /**
+     * records the time debt of function and stores it on the current profile
+     * @param params.label - optional name for the profiled function (will default to the function name)
+     * @param params.f - f function being profiled
+     * @returns the result of f
+     */
+    apply: <T>({ label, f }: Performance.ProfileParams<T>): T => {
+      const key = label ?? f.name
+      if (!context.children[key]) context.children[key] = PERFORMANCE.profile.spawn(key)
+      const oldContext = context
+      context = context.children[key]
+      const start = performance.now()
+      const result = f()
+      const end = performance.now()
+      context.value += end - start
+      context = oldContext
+      return result
+    },
+    /**
+     * decorated version of profile for ease of use
+     * @param f - f function being profiled
+     * @param name - optional override for functions that don't have names
+     * @returns decorated function
+     */
+    decorate:
+      <T, K extends unknown[]>({ name, f }: Performance.ProfileDecorate<T, K>) =>
+      (...args: K) =>
+        PERFORMANCE.profile.apply({
+          label: name ?? f.name,
+          f: () => f(...args)
+        }),
+    /**
+     * creates a starting blank profile
+     * @param key - the profile node label
+     * @returns empty profile
+     */
+    spawn: (key: string) => ({
+      label: key,
+      color: window.dice.color(),
+      value: 0,
+      children: {}
+    }),
+    /**
+     * switches the current profile context
+     * used to switch from the pre-generation profile
+     * to the post generation profile
+     * @param profile - profile to switch to
+     */
+    switch: (profile: Performance.ProfileNode): void => {
+      context = profile
+    },
+    wrapper: <T extends Object>(params: { o: T; label: string; ignore?: (keyof T)[] }) => {
+      const { o, label } = params
+      for (const key in o) {
+        if (params.ignore?.includes(key as keyof T)) continue
+        const name = `${label}.${key}`
+        if (typeof o[key] === 'function') {
+          o[key] = PERFORMANCE.profile.decorate({
+            name,
+            f: o[key] as unknown as Performance.MemoDecorate<unknown, unknown[]>['f']
+          }) as unknown as any
+        } else if (typeof o[key] === 'object') {
+          PERFORMANCE.profile.wrapper({ o: o[key], label: name })
+        }
+      }
+      return o
+    }
+  }
 }

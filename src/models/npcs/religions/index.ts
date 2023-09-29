@@ -1,9 +1,7 @@
-import { range } from 'd3'
-
-import { entity__partitionBFS } from '../../utilities/entities'
-import { trait__selection } from '../../utilities/traits'
+import { ENTITY } from '../../utilities/entities'
+import { TRAIT } from '../../utilities/traits'
 import { Culture } from '../cultures/types'
-import { lang__uniqueName } from '../languages/words'
+import { LANGUAGE } from '../languages'
 import { Religion, ReligionThemes, ReligionTraditions } from './types'
 
 const cultureCapital = (culture: Culture) => window.world.regions[culture.origin]
@@ -215,76 +213,75 @@ const themes: ReligionThemes = {
   wilderness: { text: 'navigation, tracking, beasts' }
 }
 
-export const religion__spawn = () => {
-  const { cultures } = window.world
-  const regions = cultures.map(cultureCapital)
-  entity__partitionBFS({
-    items: regions,
-    target: 5,
-    neighbors: region => {
-      const curr = window.world.cultures[region.culture.ruling]
-      return curr.neighbors
-        .map(c => window.world.cultures[c])
-        .filter(culture => culture.civilized === curr.civilized && culture.religion === undefined)
-        .map(cultureCapital)
-    }
-  }).forEach(group => {
-    const [center] = group
-    const culture = window.world.cultures[center.culture.ruling]
-    const tribal = !culture.civilized
-    const religion: Religion = {
-      tag: 'religion',
-      name: lang__uniqueName({ lang: culture.language, key: 'religion' }),
-      idx: window.world.religions.length,
-      type: window.dice.weightedChoice<Religion['type']>([
-        { w: tribal ? 0 : 1, v: 'philosophy' },
-        { w: 1, v: 'monotheistic' },
-        { w: 2, v: 'polytheistic' },
-        { w: 1, v: 'ancestor worship' },
-        { w: tribal ? 1 : 0, v: 'spirit worship' }
-      ]),
-      display: window.dice.color(),
-      cultures: [],
-      traditions: [],
-      themes: [],
-      clergy: window.dice.spin(
-        '{restricted to {men|women}|no gender restrictions} (celibacy is {required|encouraged|optional})'
-      ),
-      leadership: window.dice.weightedChoice<Religion['leadership']>([
-        { w: 1, v: 'hierocratic' },
-        { w: 2, v: 'multicephalous' },
-        { w: 3, v: 'autonomous' }
-      ])
-    }
-    window.world.religions.push(religion)
-    const ancestral = religion.type === 'ancestor worship'
-    const spirits = religion.type === 'spirit worship'
-    const organized = religion.leadership !== 'autonomous'
-    const coastal =
-      group.filter(region => region.coastal).length > group.filter(region => !region.coastal).length
-    const major = true
-    range(2).forEach(() => {
-      const tradition = trait__selection({
+export const RELIGION = {
+  spawn: () => {
+    const { cultures } = window.world
+    const regions = cultures.map(cultureCapital)
+    ENTITY.partitionBFS({
+      items: regions,
+      target: 5,
+      neighbors: region => {
+        const curr = window.world.cultures[region.culture]
+        return curr.neighbors
+          .map(c => window.world.cultures[c])
+          .filter(culture => culture.civilized === curr.civilized && culture.religion === undefined)
+          .map(cultureCapital)
+      }
+    }).forEach(group => {
+      const [center] = group
+      const culture = window.world.cultures[center.culture]
+      const tribal = !culture.civilized
+      const religion: Religion = {
+        tag: 'religion',
+        name: LANGUAGE.word.unique({ lang: culture.language, key: 'religion' }),
+        idx: window.world.religions.length,
+        type: window.dice.weightedChoice<Religion['type']>([
+          { w: tribal ? 0 : 1, v: 'philosophy' },
+          { w: 1, v: 'monotheistic' },
+          { w: 2, v: 'polytheistic' },
+          { w: 1, v: 'ancestor worship' },
+          { w: tribal ? 1 : 0, v: 'spirit worship' }
+        ]),
+        display: window.dice.color(),
+        cultures: [],
+        traditions: [],
+        themes: [],
+        clergy: window.dice.spin(
+          '{restricted to {men|women}|no gender restrictions} (celibacy is {required|encouraged|optional})'
+        ),
+        leadership: window.dice.weightedChoice<Religion['leadership']>([
+          { w: 1, v: 'hierocratic' },
+          { w: 2, v: 'multicephalous' },
+          { w: 3, v: 'autonomous' }
+        ])
+      }
+      window.world.religions.push(religion)
+      const ancestral = religion.type === 'ancestor worship'
+      const spirits = religion.type === 'spirit worship'
+      const organized = religion.leadership !== 'autonomous'
+      const coastal =
+        group.filter(region => region.coastal).length >
+        group.filter(region => !region.coastal).length
+      const major = true
+      religion.traditions = TRAIT.selection({
         available: traditions,
         current: religion.traditions.map(trait => trait.tag),
         used: window.world.religions.map(r => r.traditions.map(({ tag }) => tag)).flat(),
-        constraints: { tribal, ancestral, spirits, organized, major, coastal }
+        constraints: { tribal, ancestral, spirits, organized, major, coastal },
+        samples: 2
       })
-      religion.traditions.push(tradition)
-    })
-    range(3).forEach(() => {
-      const theme = trait__selection({
+      religion.themes = TRAIT.selection({
         available: themes,
         current: religion.themes.map(trait => trait.tag),
         used: window.world.religions.map(r => r.themes.map(theme => theme.tag)).flat(),
-        constraints: { coastal }
+        constraints: { coastal },
+        samples: 3
       })
-      religion.themes.push(theme)
+      const cultures = group.map(region => window.world.cultures[region.culture])
+      cultures.forEach(culture => {
+        culture.religion = religion.idx
+        religion.cultures.push(culture.idx)
+      })
     })
-    const cultures = group.map(region => window.world.cultures[region.culture.ruling])
-    cultures.forEach(culture => {
-      culture.religion = religion.idx
-      religion.cultures.push(culture.idx)
-    })
-  })
+  }
 }

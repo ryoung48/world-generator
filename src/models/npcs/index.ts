@@ -1,18 +1,33 @@
-import { province__demographics } from '../regions/provinces/network'
+import { PROVINCE } from '../regions/provinces'
 import { decorateText } from '../utilities/text/decoration'
 import { Culture } from './cultures/types'
-import { lang__first } from './languages/words/actors'
-import { profession__spawn } from './professions'
-import { species__map } from './species'
-import { npc__traits } from './traits'
-import { Gender, LifePhase, NPC, NPCParams } from './types'
+import { LANGUAGE } from './languages'
+import { PROFESSION } from './professions'
+import { SPECIES } from './species'
+import { NPC_TRAITS } from './traits'
+import { Actor, Gender, LifePhase, NPCParams } from './types'
 
-export const npc__randomGender = () => window.dice.choice<Gender>(['male', 'female'])
+const outfits = {
+  poor: '{rugged|patched|faded}',
+  modest: '{rustic|practical|basic}',
+  comfortable: '{stylish|professional|fine}',
+  prosperous: '{lavish|exquisite|elegant}',
+  rich: '{illustrious|ostentatious|magnificent}'
+}
 
-const npc__appearance = (params: { culture: Culture; age: LifePhase; gender: Gender }) => {
+const assignOutfit = (params: { npc: Actor }) => {
+  const { npc } = params
+  if (npc.profession.key === 'custom') return
+  const { lifestyle } = PROFESSION.lookup[npc.profession.key]
+  npc.outfit = window.dice.spin(`${outfits[lifestyle]} {outfit|attire|garments}`)
+}
+
+const assignAppearance = (params: { culture: Culture; age: LifePhase; gender: Gender }) => {
   const { age, gender } = params
   const { appearance, species } = params.culture
-  const skin = `${window.dice.choice(appearance.skin.colors)} ${species__map[species].traits.skin}`
+  const skin = `${window.dice.choice(appearance.skin.colors)} ${
+    SPECIES.lookup[species].traits.skin
+  }`
   return `${
     appearance.skin.texture ? decorateText({ label: skin, tooltip: appearance.skin.texture }) : skin
   }${
@@ -31,35 +46,39 @@ const npc__appearance = (params: { culture: Culture; age: LifePhase; gender: Gen
   }`
 }
 
-export const npc__spawn = (params: NPCParams) => {
-  const { loc, context } = params
-  const gender = params?.gender ?? npc__randomGender()
-  const profession = profession__spawn({ loc, gender, context, profession: params.profession })
-  const { common, native, foreign } = province__demographics(loc)
-  const cidx = window.dice.weightedChoice(
-    params.foreign || profession.culture === 'foreign'
-      ? foreign
-      : profession.culture === 'native'
-      ? native
-      : common
-  )
-  const culture = window.world.cultures[cidx]
-  const age = params.age ?? profession.age
-  const npc: NPC = {
-    tag: 'actor',
-    idx: window.world.npcs.length,
-    name: lang__first(culture.language, gender),
-    culture: culture.idx,
-    age,
-    gender,
-    profession: { key: profession.key, title: profession.title },
-    personality: [],
-    quirks: [],
-    appearance: npc__appearance({ culture, age, gender }),
-    health: 1
+export const ACTOR = {
+  gender: () => window.dice.choice<Gender>(['male', 'female']),
+  spawn: (params: NPCParams) => {
+    const { loc, context } = params
+    const gender = params?.gender ?? ACTOR.gender()
+    const profession = PROFESSION.spawn({ loc, gender, profession: params.profession })
+    const { common, native, foreign } = PROVINCE.demographics(loc)
+    const cidx = window.dice.weightedChoice(
+      params.foreign || profession.culture === 'foreign'
+        ? foreign
+        : profession.culture === 'native'
+        ? native
+        : common
+    )
+    const culture = window.world.cultures[cidx]
+    const age = params.age ?? profession.age
+    const npc: Actor = {
+      tag: 'actor',
+      idx: window.world.npcs.length,
+      name: LANGUAGE.word.firstName(culture.language, gender),
+      culture: culture.idx,
+      age,
+      gender,
+      profession: { key: profession.key, title: profession.title },
+      personality: [],
+      quirks: [],
+      appearance: assignAppearance({ culture, age, gender }),
+      health: 1
+    }
+    NPC_TRAITS.spawn({ loc, npc, context })
+    assignOutfit({ npc })
+    window.world.npcs.push(npc)
+    loc.actors.push(npc.idx)
+    return npc
   }
-  npc__traits({ loc, npc, context })
-  window.world.npcs.push(npc)
-  loc.actors.push(npc.idx)
-  return npc
 }

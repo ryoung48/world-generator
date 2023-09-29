@@ -6,7 +6,8 @@ import { Container } from '@mui/system'
 import { useReducer, useState } from 'react'
 
 import { NationView } from '../codex/nations'
-import { view__init, view__reducer, ViewContext } from '../context'
+import { ProvinceView } from '../codex/provinces'
+import { VIEW, ViewContext } from '../context'
 import { WorldMap } from '../maps'
 import { theme } from '../theme'
 import { Footer } from './Footer'
@@ -15,7 +16,7 @@ import { Landing } from './Landing'
 import { PerformanceView } from './Performance'
 
 function App() {
-  const [state, dispatch] = useReducer(view__reducer, view__init)
+  const [state, dispatch] = useReducer(VIEW.reducer, VIEW.init)
   const [stats, toggleStats] = useState(false)
   return (
     <ThemeProvider theme={theme}>
@@ -29,7 +30,8 @@ function App() {
                 <WorldMap></WorldMap>
               </Grid>
               <Grid item xs={5}>
-                {<NationView></NationView>}
+                {state.view === 'nation' && <NationView></NationView>}
+                {state.view === 'province' && <ProvinceView></ProvinceView>}
               </Grid>
             </Grid>
           )}

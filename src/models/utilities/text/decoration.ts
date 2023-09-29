@@ -9,7 +9,7 @@ type CodexLinkParams = {
 } & ({ link: TaggedEntity; label?: string } | { link?: TaggedEntity; label: string })
 
 export const cleanDecoration = (str: string) =>
-  str.replace(/@(.*?)@/g, (_, group) => {
+  str.replace(/@(.+?)@/g, (_, group) => {
     const [label, , , tooltip] = group.split('|')
     return tooltip ? `${label} (${tooltip})` : label
   })

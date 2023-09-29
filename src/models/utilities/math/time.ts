@@ -63,3 +63,16 @@ export const describeDuration = (time: number) => {
 export function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+export const season = (month: number) => {
+  const { winter, spring, summer, fall } = {
+    winter: [10, 11, 0],
+    spring: [1, 2, 3],
+    summer: [4, 5, 6],
+    fall: [7, 8, 9]
+  }
+  if (winter.includes(month)) return 'winter'
+  if (summer.includes(month)) return 'summer'
+  if (spring.includes(month)) return 'spring'
+  if (fall.includes(month)) return 'autumn'
+}

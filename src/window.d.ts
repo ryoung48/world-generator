@@ -1,6 +1,5 @@
 import { Dice } from './models/utilities/math/dice'
 import { Profiles } from './models/utilities/performance'
-import { MemCache } from './models/utilities/performance/memoization'
 import { World } from './models/world/types'
 
 declare global {
@@ -9,6 +8,9 @@ declare global {
     dice: Dice
     world: World
     profiles: Profiles
-    memcache: MemCache
   }
+}
+
+declare module 'd3-geo-voronoi' {
+  export = <any>{}
 }

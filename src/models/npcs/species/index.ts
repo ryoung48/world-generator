@@ -1,5 +1,5 @@
-import { world__gps } from '../../world'
-import { climates } from '../../world/climate/types'
+import { WORLD } from '../../world'
+import { CLIMATE } from '../../world/climate'
 import { Culture } from '../cultures/types'
 import { Species } from './types'
 
@@ -69,7 +69,7 @@ const humanTones: Species['appearance'] = ({ latitude: lat, eastern }) => {
   }
 }
 
-export const species__map: Record<Culture['species'], Species> = {
+const lookup: Record<Culture['species'], Species> = {
   human: {
     traits: { skin: 'skin', height: 'average', bmi: 22, age: 'average' },
     appearance: humanTones
@@ -280,8 +280,8 @@ export const species__map: Record<Culture['species'], Species> = {
   }
 }
 
-const hairStyles__female = ['long', 'short', 'ponytail', 'topknot', 'braided', 'bun'] as const
-const species__hairStyles = (): Culture['appearance']['hair']['styles'] => {
+const femaleHairStyles = ['long', 'short', 'ponytail', 'topknot', 'braided', 'bun'] as const
+const hairStyles = (): Culture['appearance']['hair']['styles'] => {
   const dist = window.dice.uniformDist(4)
   return {
     male: [
@@ -290,12 +290,12 @@ const species__hairStyles = (): Culture['appearance']['hair']['styles'] => {
       { v: window.dice.choice(['ponytail', 'braided']), w: 10 }
     ],
     female: window.dice
-      .sample([...hairStyles__female], 4)
+      .sample([...femaleHairStyles], 4)
       .map((style, i) => ({ v: style, w: dist[i] }))
   }
 }
 
-const species__facialHair = (chance = window.dice.choice([0.3, 0.6, 0.8, 0.9])) => {
+const facialHair = (chance = window.dice.choice([0.3, 0.6, 0.8, 0.9])) => {
   const base = {
     chance,
     styles: ['trimmed beard'] as Culture['appearance']['facialHair']['styles']
@@ -310,7 +310,7 @@ const eyeColors: Record<'common' | 'uncommon' | 'rare', Culture['appearance']['e
   uncommon: ['blue', 'green', 'copper', 'olive', 'burgundy'],
   rare: ['yellow', 'amber', 'ochre', 'purple', 'indigo', 'magenta']
 }
-const species__eyes = () => {
+const eyes = () => {
   const common = window.dice.shuffle(eyeColors.common)
   const colors = common.splice(0, 1)
   const uncommon = window.dice.shuffle([...common, ...eyeColors.uncommon])
@@ -322,19 +322,22 @@ const species__eyes = () => {
   }
 }
 
-export const species__appearance = (culture: Culture) => {
-  const origin = window.world.regions[culture.origin]
-  const capital = window.world.provinces[origin.capital]
-  const { latitude } = world__gps(capital.hub)
-  const { zone } = climates[origin.climate]
-  const { skin, hair } = species__map[culture.species].appearance({
-    latitude: Math.abs(latitude),
-    zone
-  })
-  culture.appearance = {
-    skin,
-    eyes: species__eyes(),
-    hair: hair ? { ...hair, styles: species__hairStyles() } : undefined,
-    facialHair: species__facialHair(species__map[culture.species].traits?.facialHair)
+export const SPECIES = {
+  lookup: lookup,
+  appearance: (culture: Culture) => {
+    const origin = window.world.regions[culture.origin]
+    const capital = window.world.provinces[origin.capital]
+    const { latitude } = WORLD.gps(capital.hub)
+    const { zone } = CLIMATE.lookup[origin.climate]
+    const { skin, hair } = lookup[culture.species].appearance({
+      latitude: Math.abs(latitude),
+      zone
+    })
+    culture.appearance = {
+      skin,
+      eyes: eyes(),
+      hair: hair ? { ...hair, styles: hairStyles() } : undefined,
+      facialHair: facialHair(lookup[culture.species].traits?.facialHair)
+    }
   }
 }

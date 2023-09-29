@@ -1,83 +1,83 @@
 import { decorateText } from '../../../utilities/text/decoration'
-import { npc__spawn } from '../..'
+import { ACTOR } from '../..'
 import { accessories, armor, tiers, weapons } from '../../equipment'
-import { NPC } from '../../types'
+import { Actor } from '../../types'
 import { Adventurer, AdventurerKit, AdventurerParams } from './types'
 
-const classes: Record<string, Adventurer[]> = {
-  'arcane knight': ['paladin', 'wizard'],
-  ascetic: ['monk', 'druid'],
-  battlemage: ['fighter', 'wizard'],
-  barbarian: ['barbarian', 'barbarian'],
-  beastmaster: ['ranger', 'druid'],
-  brawler: ['fighter', 'monk'],
-  brute: ['barbarian', 'fighter'],
-  cantor: ['chanter', 'monk'],
-  celebrant: ['chanter', 'priest'],
-  chanter: ['chanter', 'chanter'],
-  cipher: ['cipher', 'cipher'],
-  cleric: ['priest', 'fighter'],
-  contemplative: ['monk', 'priest'],
-  crusader: ['paladin', 'fighter'],
-  druid: ['druid', 'druid'],
-  fanatic: ['barbarian', 'paladin'],
-  fighter: ['fighter', 'fighter'],
-  geomancer: ['ranger', 'wizard'],
-  harbinger: ['chanter', 'rogue'],
-  herald: ['chanter', 'paladin'],
-  hierophant: ['cipher', 'wizard'],
-  'holy slayer': ['paladin', 'rogue'],
-  howler: ['barbarian', 'chanter'],
-  hunter: ['ranger', 'fighter'],
-  inquisitor: ['cipher', 'paladin'],
-  itinerant: ['ranger', 'priest'],
-  liberator: ['druid', 'paladin'],
-  loremaster: ['chanter', 'wizard'],
-  marauder: ['barbarian', 'rogue'],
-  mindstalker: ['cipher', 'rogue'],
-  monk: ['monk', 'monk'],
-  mystic: ['cipher', 'priest'],
-  oracle: ['cipher', 'druid'],
-  paladin: ['paladin', 'paladin'],
-  pathfinder: ['ranger', 'druid'],
-  priest: ['priest', 'priest'],
-  psyblade: ['cipher', 'fighter'],
-  ranger: ['ranger', 'ranger'],
-  ravager: ['barbarian', 'monk'],
-  rogue: ['rogue', 'rogue'],
-  sage: ['wizard', 'monk'],
-  savage: ['barbarian', 'ranger'],
-  scout: ['ranger', 'rogue'],
-  seer: ['cipher', 'ranger'],
-  shadowdancer: ['monk', 'rogue'],
-  shaman: ['barbarian', 'priest'],
-  shepherd: ['paladin', 'ranger'],
-  sorcerer: ['druid', 'wizard'],
-  spellblade: ['rogue', 'wizard'],
-  spiritualist: ['cipher', 'chanter'],
-  swashbuckler: ['rogue', 'fighter'],
-  tempest: ['barbarian', 'druid'],
-  templar: ['paladin', 'priest'],
-  thaumaturge: ['priest', 'wizard'],
-  theurge: ['chanter', 'druid'],
-  transcendent: ['cipher', 'monk'],
-  universalist: ['druid', 'priest'],
-  'war caller': ['chanter', 'fighter'],
-  wanderer: ['ranger', 'monk'],
-  warden: ['fighter', 'druid'],
-  warlock: ['barbarian', 'wizard'],
-  wildrhymer: ['chanter', 'ranger'],
-  witch: ['barbarian', 'cipher'],
-  wizard: ['wizard', 'wizard'],
-  votary: ['monk', 'paladin'],
-  zealot: ['rogue', 'priest']
+const classes: Record<string, { base: Adventurer[]; equipment?: Adventurer }> = {
+  'arcane knight': { base: ['paladin', 'wizard'], equipment: 'paladin' },
+  ascetic: { base: ['monk', 'druid'] },
+  battlemage: { base: ['fighter', 'wizard'], equipment: 'fighter' },
+  barbarian: { base: ['barbarian', 'barbarian'] },
+  beastmaster: { base: ['ranger', 'druid'] },
+  brawler: { base: ['fighter', 'monk'] },
+  brute: { base: ['barbarian', 'fighter'] },
+  cantor: { base: ['chanter', 'monk'] },
+  celebrant: { base: ['chanter', 'priest'] },
+  chanter: { base: ['chanter', 'chanter'] },
+  cipher: { base: ['cipher', 'cipher'] },
+  cleric: { base: ['priest', 'fighter'], equipment: 'fighter' },
+  contemplative: { base: ['monk', 'priest'] },
+  crusader: { base: ['paladin', 'fighter'] },
+  druid: { base: ['druid', 'druid'] },
+  fanatic: { base: ['barbarian', 'paladin'] },
+  fighter: { base: ['fighter', 'fighter'] },
+  geomancer: { base: ['ranger', 'wizard'], equipment: 'wizard' },
+  harbinger: { base: ['chanter', 'rogue'] },
+  herald: { base: ['chanter', 'paladin'] },
+  hierophant: { base: ['cipher', 'wizard'] },
+  'holy slayer': { base: ['paladin', 'rogue'] },
+  howler: { base: ['barbarian', 'chanter'] },
+  hunter: { base: ['ranger', 'fighter'] },
+  inquisitor: { base: ['cipher', 'paladin'] },
+  itinerant: { base: ['ranger', 'priest'] },
+  liberator: { base: ['druid', 'paladin'], equipment: 'paladin' },
+  loremaster: { base: ['chanter', 'wizard'] },
+  marauder: { base: ['barbarian', 'rogue'] },
+  mindstalker: { base: ['cipher', 'rogue'] },
+  monk: { base: ['monk', 'monk'] },
+  mystic: { base: ['cipher', 'priest'] },
+  oracle: { base: ['cipher', 'druid'] },
+  paladin: { base: ['paladin', 'paladin'] },
+  pathfinder: { base: ['rogue', 'druid'] },
+  priest: { base: ['priest', 'priest'] },
+  psyblade: { base: ['cipher', 'fighter'] },
+  ranger: { base: ['ranger', 'ranger'] },
+  ravager: { base: ['barbarian', 'monk'] },
+  rogue: { base: ['rogue', 'rogue'] },
+  sage: { base: ['wizard', 'monk'] },
+  savage: { base: ['barbarian', 'ranger'] },
+  scout: { base: ['ranger', 'rogue'] },
+  seer: { base: ['cipher', 'ranger'] },
+  shadowdancer: { base: ['monk', 'rogue'] },
+  shaman: { base: ['barbarian', 'priest'] },
+  shepherd: { base: ['paladin', 'ranger'] },
+  sorcerer: { base: ['druid', 'wizard'] },
+  spellblade: { base: ['rogue', 'wizard'], equipment: 'rogue' },
+  spiritualist: { base: ['cipher', 'chanter'] },
+  swashbuckler: { base: ['rogue', 'fighter'] },
+  tempest: { base: ['barbarian', 'druid'] },
+  templar: { base: ['paladin', 'priest'], equipment: 'paladin' },
+  thaumaturge: { base: ['priest', 'wizard'] },
+  theurge: { base: ['chanter', 'druid'] },
+  transcendent: { base: ['cipher', 'monk'] },
+  universalist: { base: ['druid', 'priest'] },
+  'war caller': { base: ['chanter', 'fighter'] },
+  wanderer: { base: ['ranger', 'monk'] },
+  warden: { base: ['fighter', 'druid'], equipment: 'fighter' },
+  warlock: { base: ['barbarian', 'wizard'] },
+  wildrhymer: { base: ['chanter', 'ranger'] },
+  witch: { base: ['barbarian', 'cipher'] },
+  wizard: { base: ['wizard', 'wizard'] },
+  votary: { base: ['monk', 'paladin'] },
+  zealot: { base: ['rogue', 'priest'] }
 }
 
 const kits: AdventurerKit = {
   barbarian: {
     equipment: () => {
       const selected = window.dice.choice([armor.heavy, armor.medium])
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: selected() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: selected === armor.heavy }) }
       ]
@@ -128,7 +128,7 @@ const kits: AdventurerKit = {
   },
   chanter: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: window.dice.choice([armor.medium, armor.light])() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'mainhand', tier: 0, name: weapons.light() },
@@ -175,12 +175,19 @@ const kits: AdventurerKit = {
   },
   cipher: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
-        { slot: 'armor', tier: 0, name: armor.medium() },
-        { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
-        { slot: 'mainhand', tier: 0, name: weapons.light() },
-        { slot: 'offhand', tier: 0, name: weapons.light() }
-      ]
+      const equipment: Actor['equipment'] = window.dice.flip
+        ? [
+            { slot: 'armor', tier: 0, name: armor.medium() },
+            { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
+            { slot: 'mainhand', tier: 0, name: weapons.light() },
+            { slot: 'offhand', tier: 0, name: weapons.light() }
+          ]
+        : [
+            { slot: 'armor', tier: 0, name: armor.light() },
+            { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
+            { slot: 'mainhand', tier: 0, name: weapons.implements() },
+            { slot: 'offhand', tier: 0, name: weapons.sorcery() }
+          ]
       return equipment
     },
     abilities: {
@@ -218,7 +225,7 @@ const kits: AdventurerKit = {
   },
   druid: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.light() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'mainhand', tier: 0, name: weapons.implements() },
@@ -261,7 +268,7 @@ const kits: AdventurerKit = {
   },
   fighter: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.heavy() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: true }) }
       ]
@@ -312,7 +319,7 @@ const kits: AdventurerKit = {
   },
   monk: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.light() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'two-handed', tier: 0, name: weapons.monk() }
@@ -358,7 +365,7 @@ const kits: AdventurerKit = {
   },
   paladin: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.heavy() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: true }) }
       ]
@@ -409,7 +416,7 @@ const kits: AdventurerKit = {
   },
   priest: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.light() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'mainhand', tier: 0, name: weapons.implements() },
@@ -452,7 +459,7 @@ const kits: AdventurerKit = {
   },
   ranger: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.medium() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'two-handed', tier: 0, name: weapons.ranged() }
@@ -498,7 +505,7 @@ const kits: AdventurerKit = {
   },
   rogue: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.medium() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'mainhand', tier: 0, name: weapons.light() },
@@ -533,7 +540,7 @@ const kits: AdventurerKit = {
   },
   wizard: {
     equipment: () => {
-      const equipment: NPC['equipment'] = [
+      const equipment: Actor['equipment'] = [
         { slot: 'armor', tier: 0, name: armor.light() },
         { slot: 'accessory', tier: 0, name: accessories({ heavy: false }) },
         { slot: 'mainhand', tier: 0, name: weapons.implements() },
@@ -581,21 +588,22 @@ export const adventurers = ({ count, province }: AdventurerParams): number[] => 
     .weightedSample(
       Object.keys(classes).map(_key => {
         const key = _key as keyof typeof classes
-        return { v: key, w: classes[key][0] === classes[key][1] ? 3 : 1 }
+        return { v: key, w: classes[key].base[0] === classes[key].base[1] ? 3 : 0 }
       }),
       count
     )
     .map(profession => {
-      const npc = npc__spawn({
+      const npc = ACTOR.spawn({
         loc: window.world.provinces[province],
         profession: 'custom',
         age: 'young adult',
         pc: true
       })
       npc.profession.title = profession
-      const kit = window.dice.choice(classes[profession as keyof typeof classes])
+      const selected = classes[profession as keyof typeof classes]
+      const kit = selected.equipment ?? window.dice.choice(selected.base)
       npc.equipment = kits[kit].equipment()
-      const [minor, major] = window.dice.shuffle(classes[profession as keyof typeof classes])
+      const [minor, major] = window.dice.shuffle(selected.base)
       npc.abilities = [
         { ...window.dice.choice(kits[minor].abilities.minor) },
         { ...window.dice.choice(kits[major].abilities.major) }
@@ -604,7 +612,7 @@ export const adventurers = ({ count, province }: AdventurerParams): number[] => 
     })
 }
 
-export const decorateAbility = (ability: NPC['abilities'][number]): string => {
+export const decorateAbility = (ability: Actor['abilities'][number]): string => {
   return decorateText({
     label: ability.tag,
     tooltip: ability.text,

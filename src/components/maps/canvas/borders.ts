@@ -1,10 +1,13 @@
-import { region__nation } from '../../../models/regions'
-import { governments, Region } from '../../../models/regions/types'
-import { colors__randomPreset } from '../../../models/utilities/colors'
-import { cell__bfsNeighborhood, cells__boundary } from '../../../models/world/cells'
-import { climates } from '../../../models/world/climate/types'
-import { display__coastCurve } from '../../../models/world/spawn/shapers/display/coasts'
-import { MapStyle } from '../types'
+import { interpolateSpectral, mean } from 'd3'
+
+import { PROVINCE } from '../../../models/regions/provinces'
+import { Region } from '../../../models/regions/types'
+import { ARRAY } from '../../../models/utilities/array'
+import { MATH } from '../../../models/utilities/math'
+import { CLIMATE } from '../../../models/world/climate'
+import { DISPLAY } from '../../../models/world/shapers/display'
+import { RegionSegment } from '../../../models/world/shapers/display/types'
+import { MAP, MapSeason, MapStyle } from '../types'
 
 const contested = 'rgba(225, 0, 0, 0.4)'
 
@@ -23,196 +26,194 @@ const stripesPattern = (ctx: CanvasRenderingContext2D) => {
   }
 }
 
+let regionBorders: Record<number, RegionSegment[]> = {}
+let provinceBorders: Record<
+  number,
+  {
+    path: string[]
+    elevation: string
+    winter: string
+    summer: string
+    summerRain: string
+    winterRain: string
+    climate: string
+  }
+> = {}
+
 const drawRegions = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
   style: MapStyle
+  season: MapSeason
 }) => {
-  const { ctx, scale, nations: drawnBorders, style } = params
-  const { borders, regions } = window.world.display
+  const { ctx, scale, nations: drawnBorders, style, season } = params
+  const { regions } = window.world.display
   const regionStyle = style === 'Nations'
-  // nations
-  if (regionStyle) {
-    ctx.lineWidth = 2
-    drawnBorders.forEach(nation => {
+  if (drawnBorders.some(nation => !regionBorders[nation.idx])) {
+    regionBorders = {
+      ...DISPLAY.borders.regions(drawnBorders),
+      ...regionBorders
+    }
+  }
+  // base coloration
+  ctx.lineWidth = 2
+  drawnBorders
+    .filter(region => !region.shattered)
+    .forEach(nation => {
       ctx.fillStyle = '#f7eedc'
-      borders[nation.idx].forEach(border => {
+      regionBorders[nation.idx].forEach(border => {
         ctx.save()
-        const p = new Path2D(border.d)
+        const p = new Path2D(border.path)
         ctx.clip(p)
-        ctx.strokeStyle = window.world.regions[border.r].colors.replace('%)', '%, 0.75)')
+        ctx.strokeStyle = window.world.regions[border.r].heraldry.color.replace('%)', '%, 0.75)')
         ctx.fill(p)
         ctx.restore()
       })
     })
-  }
-  const governmentColors = colors__randomPreset({
-    tags: [...governments],
-    seed: `government`
-  })
-  // regions
-  ctx.lineWidth = 0.5
-  if (style !== 'Government') {
+  if (style !== 'Elevation' && style !== 'Temperature' && style !== 'Rain' && style !== 'Climate') {
+    // regional areas
+    ctx.lineWidth = 0.5
     window.world.regions.forEach(region => {
-      const nation = region__nation(region)
       const base = regionStyle
-        ? region.colors
+        ? region.shattered
+          ? 'hsl(260, 100%, 80%)'
+          : region.heraldry.color
         : style === 'Cultures'
-        ? window.world.cultures[region.culture.native].display
+        ? window.world.cultures[region.culture].display
         : style === 'Religions'
         ? window.world.religions[region.religion].display
-        : style === 'Climate'
-        ? climates[region.climate].display
-        : governmentColors[nation.government]
-      const color = base.replace('%)', '%, 0.25)')
-      ctx.fillStyle = color.replace('%)', '%, 0.25)')
+        : CLIMATE.lookup[region.climate].display
+      const color = base
+      ctx.fillStyle = color.replace('%)', `%, ${regionStyle ? 0.25 : 0.5})`)
       ctx.strokeStyle = color.replace('%)', '%, 0.15)')
       regions[region.idx].forEach(border => {
         ctx.save()
-        const p = new Path2D(border.d)
+        const p = new Path2D(border.path)
         ctx.clip(p)
         ctx.fill(p)
-        regionStyle && ctx.stroke(p)
+        regionStyle && !region.shattered && ctx.stroke(p)
         ctx.restore()
       })
     })
   } else {
-    window.world.regions
-      .filter(region => region.provinces.length > 0)
-      .forEach(nation => {
-        ctx.fillStyle = governmentColors[nation.government].replace('%)', '%, 0.25)')
-        borders[nation.idx].forEach(border => {
-          ctx.save()
-          const p = new Path2D(border.d)
-          ctx.clip(p)
-          ctx.fill(p)
-          ctx.restore()
-        })
+    if (Object.keys(provinceBorders).length === 0) {
+      window.world.provinces.forEach(province => {
+        const cells = province.cells.land.map(c => window.world.cells[c])
+        const h = mean(cells.map(c => c.h))
+        const scaledH = MATH.scale([window.world.seaLevelCutoff, 1.2], [0.8, 0], h)
+        const w = mean(cells.map(c => c.heat.w))
+        const scaledW = MATH.scale([-25, 30], [1, 0], w)
+        const s = mean(cells.map(c => c.heat.s))
+        const scaledS = MATH.scale([-25, 30], [1, 0], s)
+        const summerRain = mean(cells.map(cell => cell.summerRain ?? 0)) / 1
+        const winterRain = mean(cells.map(cell => cell.winterRain ?? 0)) / 1
+        const [climate] = ARRAY.mode(cells.map(c => c.climate))
+        provinceBorders[province.idx] = {
+          path: DISPLAY.borders.provinces([province]),
+          elevation: interpolateSpectral(scaledH),
+          winter: interpolateSpectral(scaledW),
+          summer: interpolateSpectral(scaledS),
+          summerRain:
+            summerRain > 0.75
+              ? 'purple'
+              : summerRain > 0.5
+              ? 'blue'
+              : summerRain > 0.25
+              ? 'green'
+              : 'yellow',
+          winterRain:
+            winterRain > 0.75
+              ? 'purple'
+              : winterRain > 0.5
+              ? 'blue'
+              : winterRain > 0.25
+              ? 'green'
+              : 'yellow',
+          climate: climate === 'none' ? 'black' : CLIMATE.lookup[climate].display
+        }
       })
-  }
-  // nations
-  ctx.lineWidth = 2
-  if (regionStyle) {
-    drawnBorders.forEach(nation => {
-      borders[nation.idx].forEach(border => {
+    }
+
+    window.world.provinces.forEach(province => {
+      provinceBorders[province.idx].path.forEach(border => {
         ctx.save()
-        const p = new Path2D(border.d)
+        const p = new Path2D(border)
         ctx.clip(p)
-        ctx.filter = `blur(${scale}px)`
-        ctx.strokeStyle = window.world.regions[border.r].colors.replace('%)', '%, 0.75)')
-        ctx.stroke(p)
+        ctx.fillStyle =
+          provinceBorders[province.idx][
+            style === 'Climate'
+              ? 'climate'
+              : style === 'Elevation'
+              ? 'elevation'
+              : style === 'Rain'
+              ? season === 'Winter'
+                ? 'winterRain'
+                : 'summerRain'
+              : season === 'Winter'
+              ? 'winter'
+              : 'summer'
+          ]
+        ctx.fill(p)
         ctx.restore()
       })
     })
   }
+  // nation borders
+  ctx.lineWidth = regionStyle ? 2 : 1
+  drawnBorders
+    .filter(region => !region.shattered)
+    .forEach(nation => {
+      regionBorders[nation.idx].forEach(border => {
+        ctx.save()
+        const p = new Path2D(border.path)
+        ctx.clip(p)
+        ctx.filter = `blur(${scale}px)`
+        ctx.strokeStyle = window.world.regions[border.r].heraldry.color.replace('%)', '%, 0.75)')
+        if (nation.shattered) ctx.fill(p)
+        if (!nation.shattered) ctx.stroke(p)
+        ctx.restore()
+      })
+    })
+  drawnBorders
+    .filter(region => region.shattered)
+    .forEach(nation => {
+      regionBorders[nation.idx].forEach(border => {
+        ctx.save()
+        const p = new Path2D(border.path)
+        ctx.clip(p)
+        ctx.filter = `blur(${scale}px)`
+        ctx.strokeStyle = `hsl(0, 0%, 0%, 0.5)`
+        ctx.stroke(p)
+        ctx.restore()
+      })
+    })
 }
-
-// const cultureBorder = (idx: number) => {
-//   const { origin } = window.world.cultures[idx]
-//   const region = window.world.regions[origin]
-//   const capital = window.world.provinces[region.capital]
-//   const start = window.world.cells[capital.cell]
-//   const border = cell__bfsNeighborhood({
-//     start,
-//     spread: cell => cell__culture(cell) === idx
-//   }).filter(p => !p.isWater && (cell__isCultureBorder(p) || p.isCoast))
-//   const paths = cells__boundary({
-//     cells: border,
-//     boundary: cell => cell__culture(cell) !== idx || cell.isWater
-//   }).map(path => display__coastCurve()(path))
-//   return paths
-// }
-
-// const drawCultures = (params: {
-//   ctx: CanvasRenderingContext2D
-//   scale: number
-//   nations: Region[]
-// }) => {
-//   const { ctx, scale, nations } = params
-//   const { regions } = window.world.display
-//   const cultures = Array.from(new Set(nations.map(nation => nation.culture.native))).map(
-//     c => window.world.cultures[c]
-//   )
-//   // nations
-//   ctx.lineWidth = 2
-//   cultures.forEach(culture => {
-//     const borders = cultureBorder(culture.idx)
-//     ctx.fillStyle = '#f7eedc'
-//     borders.forEach(border => {
-//       ctx.save()
-//       const p = new Path2D(border)
-//       ctx.clip(p)
-//       ctx.strokeStyle = culture.display.replace('%)', '%, 0.75)')
-//       ctx.fill(p)
-//       ctx.restore()
-//     })
-//   })
-//   // regions
-//   ctx.lineWidth = 0
-//   window.world.regions.forEach(region => {
-//     const color = window.world.cultures[region.culture.native].display
-//     ctx.fillStyle = color.replace('%)', '%, 0.25)')
-//     regions[region.idx].forEach(border => {
-//       ctx.save()
-//       const p = new Path2D(border.d)
-//       ctx.clip(p)
-//       ctx.fill(p)
-//       // ctx.stroke(p)
-//       ctx.restore()
-//     })
-//   })
-//   // nations
-//   ctx.lineWidth = 2
-//   cultures.forEach(culture => {
-//     const borders = cultureBorder(culture.idx)
-//     borders.forEach(border => {
-//       ctx.save()
-//       const p = new Path2D(border)
-//       ctx.clip(p)
-//       ctx.filter = `blur(${scale}px)`
-//       ctx.strokeStyle = culture.display.replace('%)', '%, 0.75)')
-//       ctx.stroke(p)
-//       ctx.restore()
-//     })
-//   })
-// }
 
 export const map__drawRegions = (params: {
   ctx: CanvasRenderingContext2D
   scale: number
   nations: Region[]
   style: MapStyle
+  season: MapSeason
 }) => {
-  const { ctx, scale, nations, style } = params
-  // const globalScale = scale <= map__breakpoints.global
+  const { ctx, scale, nations, style, season } = params
   const drawnBorders = nations
   // nations
-  drawRegions({ ctx, scale, nations: drawnBorders, style })
-  // drawCultures({ ctx, scale, nations: drawnBorders })
+  drawRegions({ ctx, scale, nations: drawnBorders, style, season })
   // wars
-  if (style !== 'Nations') return
   ctx.lineCap = 'round'
+  if (scale <= MAP.breakpoints.global) return
   const conflictZones = new Set(drawnBorders.map(region => region.idx))
   window.world.conflicts
     .filter(conflict => conflict.regions.some(r => conflictZones.has(r)))
     .forEach(conflict => {
-      const edges = conflict.provinces
-        .map(p => window.world.provinces[p])
-        .filter(province => nations.includes(window.world.regions[province.nation]))
-        .map(province => {
-          return cell__bfsNeighborhood({
-            start: window.world.cells[province.cell],
-            spread: cell => cell.province === province.idx
-          })
-        })
-        .flat()
-      const group = new Set(edges.map(e => e.idx))
-      cells__boundary({
-        cells: edges.filter(edge => !edge.isWater),
-        boundary: cell => !group.has(cell.idx) || cell.isWater
-      })
-        .map(path => display__coastCurve()(path))
+      DISPLAY.borders
+        .provinces(
+          conflict.provinces
+            .map(p => window.world.provinces[p])
+            .filter(province => nations.includes(PROVINCE.nation(province)))
+        )
         .forEach(path => {
           ctx.save()
           const p = new Path2D(path)

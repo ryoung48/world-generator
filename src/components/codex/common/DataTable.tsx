@@ -119,7 +119,7 @@ export function DataTable<T extends Object>(props: {
   paging?: [number, Dispatch<SetStateAction<number>>]
   rowStyles?: (_item: T) => string | undefined
 }) {
-  const { data, rowsPerPage = 5, rowStyles } = props
+  const { data, rowsPerPage = 10, rowStyles } = props
   const headers = props.headers.filter(header => !header.hidden)
   const [page, setPage] = props.paging ?? useState(0)
   const rows = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

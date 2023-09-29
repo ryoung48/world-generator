@@ -1,4 +1,5 @@
 import {
+  parseOutermostBrackets,
   properList,
   properSentences,
   romanize,
@@ -28,6 +29,20 @@ test('proper list: returns a single element', () => {
 test('returns return the roman numeral version of a number', () => {
   const text = romanize(123)
   expect(text).toEqual('CXXIII')
+})
+
+describe('parseOutermostBrackets', () => {
+  it('should parse outermost brackets correctly', () => {
+    const input = 'Hello {world}! How are {you} today? {Nice} to meet {you}.'
+    const result = parseOutermostBrackets(input)
+    expect(result).toEqual(['{world}', '{you}', '{Nice}', '{you}'])
+  })
+
+  it('should handle nested brackets', () => {
+    const input = 'Hello {world {inner} outer}! How are {you} today?'
+    const result = parseOutermostBrackets(input)
+    expect(result).toEqual(['{world {inner} outer}', '{you}'])
+  })
 })
 
 export {}

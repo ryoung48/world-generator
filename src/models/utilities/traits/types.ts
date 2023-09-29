@@ -1,5 +1,5 @@
 export type Trait<Tags extends string, Constraints> = {
-  text: string
+  text?: string | ((_params: Constraints) => string)
   constraints?: Constraints
   conflicts?: Tags[]
 }
@@ -9,4 +9,5 @@ export type TraitSelectionArgs<Tags extends string, Args> = {
   current: Tags[]
   used?: Tags[]
   constraints?: Required<Args>
+  samples?: number
 }

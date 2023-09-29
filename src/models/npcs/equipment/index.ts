@@ -13,13 +13,13 @@ export const armor = {
 
 export const accessories = ({ heavy }: { heavy: boolean }) =>
   window.dice.spin(
-    `{belt|ring|necklace|cloak|hood|cowl|mask|scarf|sash|trinket|elixir|satchel|${
+    `{belt|ring|necklace|cloak|hood|cowl|scarf|sash|trinket|elixir|satchel|${
       heavy ? 'helmet|gauntlets|greaves|vambraces' : 'hat|gloves|boots|bracers'
     }}`
   )
 
 export const weapons = {
-  light: () => window.dice.spin('{sword|dagger}'),
+  light: () => window.dice.spin('dagger'),
   medium: () => window.dice.spin('{sword|axe|mace}'),
   heavy: () => window.dice.spin('{greatsword|warhammer|greataxe}'),
   implements: () => window.dice.spin('{staff|dagger|wand|scepter}'),

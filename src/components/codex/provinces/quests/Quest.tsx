@@ -1,4 +1,5 @@
-import { Button, Divider, Grid, Pagination } from '@mui/material'
+import { Button, Divider, Grid, IconButton, Pagination } from '@mui/material'
+import { Plus } from 'mdi-material-ui'
 import { Fragment, useEffect, useState } from 'react'
 
 import {
@@ -8,12 +9,12 @@ import {
   quest__close,
   quest__ongoing,
   quest__paused
-} from '../../../../models/threads/quests'
-import { stage__current, stage__weather } from '../../../../models/threads/quests/stages'
-import { Quest } from '../../../../models/threads/quests/types'
-import { avatar__cr } from '../../../../models/utilities/difficulty'
-import { partition } from '../../../../models/utilities/math'
-import { view__context } from '../../../context'
+} from '../../../../models/quests'
+import { stage__current, stage__weather } from '../../../../models/quests/stages'
+import { Quest } from '../../../../models/quests/types'
+import { ARRAY } from '../../../../models/utilities/array'
+import { DIFFICULTY } from '../../../../models/utilities/difficulty'
+import { VIEW } from '../../../context'
 import { StageView } from './Stage'
 import { quest__icons } from './styles'
 
@@ -21,7 +22,7 @@ const stagesPerPage = 5
 
 export function QuestView(props: { quest: Quest; goToQuest: (_quest: Quest) => void }) {
   const { quest, goToQuest } = props
-  const { state, dispatch } = view__context()
+  const { state, dispatch } = VIEW.context()
   const { avatar, journal, province } = state
   const { stages } = quest
   const pages = Math.ceil(quest.stages.length / stagesPerPage)
@@ -38,18 +39,14 @@ export function QuestView(props: { quest: Quest; goToQuest: (_quest: Quest) => v
   useEffect(() => {
     setPage(pages)
   }, [journal])
-  const currentStages = partition([...stages].reverse(), stagesPerPage).reverse()
+  const currentStages = ARRAY.partition([...stages].reverse(), stagesPerPage).reverse()
   const current = stage__current(quest)
-  const pc = avatar__cr(avatar)
+  const pc = DIFFICULTY.avatar.cr(avatar)
   return (
     <Grid container style={{ fontSize: 12 }}>
       <Grid item xs={12}>
         <b>Mission: </b>
         {quest.goal.text}. <i>{quest.goal.complication}.</i>
-      </Grid>
-      <Grid item xs={12}>
-        <b>Enemies: </b>
-        {quest.enemies}
       </Grid>
       <Grid item xs={12}>
         <Divider style={{ marginTop: 5, marginBottom: 10 }}>Challenges</Divider>
@@ -77,6 +74,11 @@ export function QuestView(props: { quest: Quest; goToQuest: (_quest: Quest) => v
               </Grid>
               <Grid item xs={10}>
                 <StageView stage={stage} goToQuest={goToQuest}></StageView>
+              </Grid>
+              <Grid item xs={1}>
+                <IconButton>
+                  <Plus></Plus>
+                </IconButton>
               </Grid>
             </Grid>
           </Grid>

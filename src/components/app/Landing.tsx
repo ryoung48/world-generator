@@ -4,17 +4,16 @@ import { Dispatch, SetStateAction, useState } from 'react'
 
 import { Dice, generateId, randomChoice } from '../../models/utilities/math/dice'
 import { delay } from '../../models/utilities/math/time'
-import { profile, profile__switch } from '../../models/utilities/performance'
-import { world__spawn } from '../../models/world/spawn'
-import { CivilizationShaper } from '../../models/world/spawn/shapers/civilization'
-import { ContinentShaper } from '../../models/world/spawn/shapers/continents'
-import { shapes } from '../../models/world/spawn/shapers/continents/templates'
-import { DisplayShaper } from '../../models/world/spawn/shapers/display'
-import { InfrastructureShaper } from '../../models/world/spawn/shapers/infrastructure'
-import { LoreShaper } from '../../models/world/spawn/shapers/lore'
-import { RegionalShaper } from '../../models/world/spawn/shapers/regions'
+import { PERFORMANCE } from '../../models/utilities/performance'
+import { WORLD } from '../../models/world'
+import { CIVILIZATION } from '../../models/world/shapers/civilization'
+import { CONTINENTS } from '../../models/world/shapers/continents'
+import { DISPLAY } from '../../models/world/shapers/display'
+import { INFRASTRUCTURE } from '../../models/world/shapers/infrastructure'
+import { LORE } from '../../models/world/shapers/lore'
+import { REGIONAL } from '../../models/world/shapers/regions'
 import { LazyTippy } from '../codex/common/text/LazyTippy'
-import { view__context } from '../context'
+import { VIEW } from '../context'
 
 const catchup = 500
 
@@ -72,7 +71,57 @@ const goodSeeds = [
   'j3wfsk0r83',
   'kin7uaqa1b',
   '296pg947rlp',
-  '2a5ks8m8xj1'
+  '2a5ks8m8xj1',
+  '1suc36425tz',
+  '1z4ad8l1tkz',
+  'j6nm6tzqen',
+  '5etnloxw61',
+  '24u0j8110ap',
+  '2bzcylmsaal',
+  'midxaagofn',
+  '1t4bonxv8qf',
+  '11rw3exwlfx',
+  '12bn4z7i4i7',
+  'mff7or4s0t',
+  '125feqgwa05',
+  'i9br78lovb',
+  'z0s50fskgt',
+  '1or5sbcowgp',
+  'a64zxzkmex',
+  '1c72b607stl',
+  '2el1ocgatz',
+  '2bgcvmelqm5',
+  '21b80sva7y9',
+  '22ggrr1rd71',
+  'kugbvmv8nl',
+  'hr0hxdo74x',
+  '1fyzra8rogp',
+  '1d1x2h5o357',
+  '12jhpoh4dkh',
+  '1k0gsj72z9l',
+  '1cx8kxh4l61',
+  '21jnsnu3sor',
+  'hp2bji2exx',
+  '1692beqevi5',
+  '1p1q71b2b3t',
+  'u7okwdzztt',
+  '14pgo22lvhv',
+  '13iks0hsyzr',
+  '4rn8ed17gj',
+  '2dlgc0fiq89',
+  '1gnq9237wc1',
+  'b1q9h6ofol',
+  '211g0vufob7',
+  'mazpg2zz1n',
+  'zss1jau67z',
+  '2274kcfs5fv',
+  'u52pffkqwl',
+  '1eh3ou930zf',
+  '1yahhlfh6bb',
+  'bac6rrya7b',
+  '1tglp01c0q3',
+  '1ubl7oty85z',
+  '1rje9rcl29l'
 ]
 
 const generator = async (params: {
@@ -84,31 +133,31 @@ const generator = async (params: {
   window.dice = new Dice(seed)
   update(0)
   await delay(catchup)
-  window.world = world__spawn({ seed, res, template: [...window.dice.choice(shapes)] })
-  profile({ label: 'Continents', f: () => new ContinentShaper().build() })
+  window.world = WORLD.spawn({ seed, res })
+  CONTINENTS.build()
   update(1)
   await delay(catchup)
-  profile({ label: 'Regions', f: () => new RegionalShaper().build() })
+  REGIONAL.build()
   update(2)
   await delay(catchup)
-  profile({ label: 'Civilization', f: () => new CivilizationShaper().build() })
+  CIVILIZATION.build()
   update(3)
   await delay(catchup)
-  profile({ label: 'Roads', f: () => new InfrastructureShaper().build() })
+  INFRASTRUCTURE.build()
   update(4)
   await delay(catchup)
-  profile({ label: 'Lore', f: () => new LoreShaper().build() })
-  profile({ label: 'Canvas', f: () => new DisplayShaper().build() })
+  LORE.build()
+  DISPLAY.build()
   update(5)
   await delay(catchup)
-  profile__switch(window.profiles.current)
+  PERFORMANCE.profile.switch(window.profiles.current)
 }
 
 export function Landing() {
   const [seed, setSeed] = useState(generateId())
   const [res, setRes] = useState(8)
   const [active, setActive] = useState(-1)
-  const { dispatch } = view__context()
+  const { dispatch } = VIEW.context()
   const generating = active >= 0
   const steps = ['continents', 'regions', 'civilization', 'infrastructure', 'lorecrafting']
   return (

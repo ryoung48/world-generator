@@ -2,16 +2,15 @@ import { Delaunay, Voronoi } from 'd3'
 
 import { Culture } from '../npcs/cultures/types'
 import { Religion } from '../npcs/religions/types'
-import { NPC } from '../npcs/types'
-import { Quest } from '../threads/quests/types'
+import { Actor } from '../npcs/types'
+import { Quest } from '../quests/types'
+import { Court } from '../regions/provinces/hooks/courts/types'
+import { Ruin } from '../regions/provinces/hooks/ruins/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
-import { Thread } from '../threads/types'
 import { Dimensions } from '../utilities/dimensions'
-import { ExteriorCell } from './cells/types'
-import { ContinentTemplate } from './spawn/shapers/continents/templates'
-import { Display } from './spawn/shapers/display/types'
-import { RouteTypes } from './travel/types'
+import { Cell } from './cells/types'
+import { Display } from './shapers/display/types'
 
 export interface CoastalEdge {
   water: number
@@ -33,11 +32,15 @@ interface WorldDimensions extends Dimensions {
   cellLength: number
 }
 
+export type RouteTypes = 'land' | 'sea'
+
 export interface World {
   id: string
   diagram?: Voronoi<Delaunay.Point>
-  cells: ExteriorCell[]
+  cells: Cell[]
   // geography
+  latitude: [number, number]
+  longitude: [number, number]
   landmarks: Record<
     number,
     {
@@ -49,7 +52,7 @@ export interface World {
     }
   >
   seaLevelCutoff: number
-  mountains: string[]
+  mountains: number[]
   coasts: CoastalEdge[]
   routes: Record<
     RouteTypes,
@@ -57,31 +60,34 @@ export interface World {
   >
   display: Display
   dim: WorldDimensions
-  template: ContinentTemplate['isles']
   // entities
   regions: Region[]
-  conflicts: { type: 'war' | 'rebellion'; provinces: number[]; regions: number[] }[]
+  conflicts: {
+    type: 'war' | 'rebellion'
+    provinces: number[]
+    regions: number[]
+  }[]
   provinces: Province[]
   cultures: Culture[]
   religions: Religion[]
-  npcs: NPC[]
+  courts: Court[]
+  ruins: Ruin[]
+  npcs: Actor[]
   uniqueNames: Record<string, boolean>
   quests: Quest[]
-  threads: Thread[]
   // planet info
   date: number
   firstNewMoon: number // first new moon on record
   lunarCycle: number // synodic month (days)
   rotation: number // daily period (hours)
   tilt: number // axial tilt (degrees)
-  seasons: {
-    winter: number[]
-    spring: number[]
-    summer: number[]
-    fall: number[]
-  }
-  geoBounds: {
-    lat: number[]
-    long: number[]
-  }
+}
+
+export type WorldSpawn = { seed: string; res: number }
+
+export type WorldPlacementParams = {
+  count: number
+  spacing: number
+  whitelist: Cell[]
+  blacklist?: Cell[]
 }

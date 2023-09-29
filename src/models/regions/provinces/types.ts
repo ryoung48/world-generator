@@ -1,9 +1,11 @@
 import { Item } from '../../npcs/equipment/types'
-import { ProvinceHook } from '../../quests/hooks/types'
 import type { Quest } from '../../quests/types'
 import { TaggedEntity } from '../../utilities/entities/types'
-import { WeightedDistribution } from '../../utilities/math'
-import { RouteTypes } from '../../world/travel/types'
+import { WeightedDistribution } from '../../utilities/math/types'
+import { Cell } from '../../world/cells/types'
+import type { RouteTypes } from '../../world/types'
+import { Region } from '../types'
+import type { Hooks } from './hooks/types'
 import { Hub } from './hubs/types'
 
 export interface Demographics {
@@ -15,10 +17,10 @@ export interface Demographics {
 export interface Province extends TaggedEntity {
   tag: 'province'
   cell: number
+  nation: number
   region: number
   capital: boolean
   population: number // total
-  nation: number // current owner
   hub: Hub
   conflict?: 'war'
   // networking
@@ -27,6 +29,7 @@ export interface Province extends TaggedEntity {
   neighbors: number[]
   artery: number[]
   // geography
+  cells: { land: number[] }
   islands: Record<number, number>
   lakes: Record<number, number>
   land: number
@@ -51,7 +54,19 @@ export interface Province extends TaggedEntity {
   demographics?: number
   market?: { goods: Item[]; memory: number }
   // quests
-  hooks: { tag: ProvinceHook; text: string }[]
+  hooks?: Hooks
   quest?: Quest
   actors: number[]
 }
+
+export type ProvinceNeighborParams = { province: Province; type?: 'local' | 'foreign' }
+export type ProvinceFindParams = {
+  provinces: Province[]
+  ref: Province
+  type: 'closest' | 'furthest'
+}
+export type ProvinceSortParams = ProvinceFindParams
+export type ProvinceFindOrderParams = { candidate: number; selected: number }
+export type ProvinceSpawnParams = { cell: Cell; capital?: boolean }
+export type ProvinceAttachParams = { province: Province; idx: number }
+export type ProvinceMoveParams = { province: Province; nation: Region }

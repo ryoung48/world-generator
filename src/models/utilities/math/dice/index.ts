@@ -1,7 +1,9 @@
 import { range } from 'd3'
 
+import { ARRAY } from '../../array'
 import { parseOutermostBrackets } from '../../text'
-import { percentageScale, WeightedDistribution } from '..'
+import { MATH } from '..'
+import { WeightedDistribution } from '../types'
 
 export function generateId(seed = Math.random()) {
   return Math.floor(seed * Number.MAX_SAFE_INTEGER).toString(36)
@@ -90,7 +92,7 @@ export class Dice {
     const keys = arr.map(({ v }) => v)
     const weights = arr.map(({ w }) => w)
     const rng = this.random
-    const scaled = percentageScale(weights)
+    const scaled = MATH.normalize(weights)
     let acc = 0
     for (let i = 0; i < scaled.length; i++) {
       acc += scaled[i]
@@ -105,17 +107,24 @@ export class Dice {
       .map(a => a.e)
   }
 
+  public cheapSample<T>(arr: T[], cnt: number) {
+    return ARRAY.unique(range(Math.floor(cnt * 1.5)))
+      .map(() => this.randint(0, arr.length - 1))
+      .map(i => arr[i])
+      .slice(0, cnt)
+  }
+
   public sample<T>(arr: T[], cnt: number) {
     return this.shuffle(arr).slice(0, cnt)
   }
-  public weightedSample<T>(arr: { v: T; w: number }[], num: number) {
+  public weightedSample<T>(arr: { v: T; w: number }[], num: number, unique = true) {
     let items = [...arr]
     const selected: T[] = []
     let count = num
     while (count-- > 0 && items.length > 0) {
       const chosen = this.weightedChoice(items)
       selected.push(chosen)
-      items = items.filter(({ v }) => v !== chosen)
+      if (unique) items = items.filter(({ v }) => v !== chosen)
     }
     return selected
   }

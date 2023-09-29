@@ -15,23 +15,21 @@
 * tribal confederacy: {region} is a loose alliance of various tribes and clans that each have their own leaders, but come together to make important decisions through a council of elders
 * tribal monarchy: {region} is ruled by a {hereditary|elected} chieftain who is recognized as the leader of all the tribes in the region
 * undead remnants: {region} is ruled by powerful undead oligarchs who maintain their power through necromantic magic and a vast army of undead soldiers
+* desolate wasteland: {region} was shattered recently by a cataclysmic event; what little resources that remain are extremely limited
+* savage verdancy: the land is unnaturally lush and fertile, but the inhabitants are savage and warlike, constantly fighting over territory and resources
 -- society --
 * abolished slavery: {region} has declared slavery illegal and looks upon all those who still permit this practice with disdain
 * arcane colleges: {region} is home to a number of prestigious arcane colleges, where students study the magical arts under the tutelage of experienced mages
 * banned sorcery: locals of {region} distrusts the arcane arts and greatly restricts its use; sorcerers are often persecuted and executed
-* bardic traditions: {region} has a rich history of oral storytelling, music, and performance, with traveling bards revered by the locals
 * beast lords: the inhabitants of {region} are known for their ability to tame and train fearsome beasts, using them as weapons and allies in battle
 * blighted lands: the outskirts of {region} are cursed with twisted landscapes, tainted by dark magic and ancient catastrophes
-* blood feuds: {region} has a long-standing tradition of revenge killings and blood feuds between rival clans and families
 * blood oaths: the locals of {region} place great value on blood oaths and loyalty, often forming strong alliances with other clans or individuals
 * clerical economy: clergy of the dominant faith hold tremendous economic power in {region}, often controlling the flow of wealth and owning vast amounts of land
 * colonial outposts: a number of ports in {region} are used as bases by foreign trading companies seeking to exploit local markets
 * condottiere: {region} is home to a large population of mercenaries who fight both locally and abroad
-* corrupted wilds: {region} has been warped and twisted by feral magic; long exposure mutates flora and fauna into bloodthirsty abominations
 * corrupt laws: {region} has a reputation for having a weak legal system and is a haven for corruption and vice; the locals are often forced to pay bribes to get things done
 * court eunuchs: {region} makes great use of eunuchs as domestic servants and bureaucratic administrators
 * culled nobility: the traditional aristocracy has recently been culled in a series of political executions intended to curb their growing influence
-* desolate wasteland: {region} was shattered recently by a cataclysmic event; what little resources that remain are extremely limited
 * diaspora clans: {region} is home to numerous nomadic clans who have been exiled from there homeland and are forced to wander; they are often persecuted by the locals
 * divination rituals: {region} has a secretive order of oracles who are consulted for divination and prophetic visions
 * drug trade: a potent drug has become a major source of revenue for {region}, but has also led to widespread addiction and social decay
@@ -70,13 +68,14 @@
 * slave markets: {region} is a popular destination for slave traders, and the local economy is heavily dependent on the slave trade
 * slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society; they are well-trained and loyal, but are often resented by the locals
 * sorcerous eugenics: the aristocracy of {region} are obsessed with eugenic breeding programs to produce superhuman paragons, many of whom suffer crippling mental or physical infirmities due to extensive inbreeding
-* supernatural storms: {region} is plagued by powerful and unpredictable storms, causing chaos and destruction wherever they strike
 * tributary system: a powerful neighbor of {region} demand regular tribute in exchange for protection and forbearance
 * venal offices: {region} is selling bureaucratic offices to wealthy citizens in order to overcome mounting debts; the locals are outraged by this corruption
 * virulent epidemic: a terrible contagion has broken out in {region} and is spreading rapidly; the locals are terrified and desperate for a cure
 * volcanic activity: {region} is marked by significant volcanic activity, which both threatens and benefits its inhabitants
-* wandering mystics: the locals of {region} revere a group of wandering mystics who possess great spiritual power and are sought out for their guidance
-* warrior aristocracy: most aristocrats are skilled warriors who maintain their position through military prowess and martial tradition
+-- wilds --
+* desolate wasteland: {region} was shattered recently by a cataclysmic event; what little resources that remain are extremely limited
+* corrupted wilds: {region} has been warped and twisted by feral magic; long exposure mutates flora and fauna into bloodthirsty abominations
+* supernatural storms: {region} is plagued by powerful and unpredictable storms, causing chaos and destruction wherever they strike
 -- conflict --
 * border dispute: {region} is at war with a neighboring region over a contested border containing {valuable resources|ancestral homelands}
 * deepfolk raiders: {region} is regularly attacked by subterranean dwellers who seek to plunder the region's riches and enslave its people

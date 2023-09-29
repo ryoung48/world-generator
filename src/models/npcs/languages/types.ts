@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { WeightedDistribution } from '../../utilities/math'
+import { WeightedDistribution } from '../../utilities/math/types'
 import { Gender } from '../types'
 
 export const enum PhonemeCatalog {
@@ -105,4 +105,14 @@ export const vowelRules: VowelRules = {
     yo: ['h', 'k'],
     yu: ['r']
   }
+}
+
+export interface WordParams {
+  lang: Language
+  key: string
+  len?: number
+  ending?: string
+  variation?: number
+  repeat?: boolean
+  stopChance?: number
 }
