@@ -1,5 +1,3 @@
-import { Delaunay, Voronoi } from 'd3'
-
 import { Culture } from '../npcs/cultures/types'
 import { Religion } from '../npcs/religions/types'
 import { Actor } from '../npcs/types'
@@ -9,6 +7,7 @@ import { Ruin } from '../regions/provinces/hooks/ruins/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
 import { Dimensions } from '../utilities/dimensions'
+import { GeoVoronoiDiagram } from '../utilities/math/voronoi/types'
 import { Cell } from './cells/types'
 import { Display } from './shapers/display/types'
 
@@ -36,7 +35,7 @@ export type RouteTypes = 'land' | 'sea'
 
 export interface World {
   id: string
-  diagram?: Voronoi<Delaunay.Point>
+  diagram?: GeoVoronoiDiagram
   cells: Cell[]
   // geography
   latitude: [number, number]
@@ -76,6 +75,7 @@ export interface World {
   uniqueNames: Record<string, boolean>
   quests: Quest[]
   // planet info
+  radius: number
   date: number
   firstNewMoon: number // first new moon on record
   lunarCycle: number // synodic month (days)

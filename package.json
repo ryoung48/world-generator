@@ -21,6 +21,7 @@
     "@tippyjs/react": "^4.2.6",
     "@types/json-schema": "^7.0.12",
     "d3": "^7.6.1",
+    "d3-geo-voronoi": "^2.0.1",
     "dayjs": "^1.11.4",
     "jdenticon": "^3.2.0",
     "js-priority-queue": "^0.1.5",
@@ -29,7 +30,8 @@
     "react-chartjs-2": "^4.3.1",
     "react-dom": "^18.2.0",
     "simplex-noise": "^2.4.0",
-    "utility-types": "^3.10.0"
+    "utility-types": "^3.10.0",
+    "versor": "^0.2.0"
   },
   "devDependencies": {
     "@types/d3": "^7.4.0",

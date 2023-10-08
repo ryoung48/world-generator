@@ -1,6 +1,7 @@
 import PriorityQueue from 'js-priority-queue'
 
 import { MATH } from '../../utilities/math'
+import { CELL } from '../cells'
 import { Cell } from '../cells/types'
 import { RouteTypes } from '../types'
 import * as Navigation from './types'
@@ -127,8 +128,8 @@ export const NAVIGATION = {
       prev = idx
       const cell = window.world.cells[prev]
       // consider all neighbors that pass the validation condition (f)
-      cell.n.forEach(next => {
-        const neighbor = window.world.cells[next]
+      CELL.neighbors(cell).forEach(neighbor => {
+        const next = neighbor.idx
         if (pathing(neighbor) || next === end) {
           // only consider neighbors that haven't already been visited
           if (visited[next] === undefined) {
@@ -152,7 +153,7 @@ export const NAVIGATION = {
             const prospect = cost * penalty + totals[prev]
             totals[next] = prospect
             visited[next] = prev
-            const priority = prospect + MATH.distance([nx, dx], [ny, dy])
+            const priority = prospect + MATH.distance([nx, ny], [dx, dy])
             // add cell w/ priority to the queue
             queue.queue({
               idx: next,

@@ -7,3 +7,10 @@ export interface VoronoiParams {
 export interface RelaxedVoronoiParams extends VoronoiParams {
   relaxation?: number
 }
+
+export type GeoVoronoiDiagram = {
+  neighbors: number[][]
+  polygons: number[][]
+  centers: [number, number][]
+  find: (_x: number, _y: number) => number
+}

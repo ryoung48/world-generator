@@ -1,4 +1,4 @@
-import { scaleLinear, scalePow } from 'd3'
+import { geoDistance, scaleLinear, scalePow } from 'd3'
 
 import { WeightedDistribution } from './types'
 
@@ -20,10 +20,19 @@ export const MATH = {
     return dist.map(({ value, count }) => ({ value, count: count / total }))
   },
   degrees: (r: number) => (r * 180) / Math.PI,
-  distance: ([x1, y1]: number[], [x2, y2]: number[], scale = [1, 1]) => {
-    const [sx, sy] = scale
-    return Math.hypot((x1 - x2) * sx, (y1 - y2) * sy)
+  distance: (p1: [number, number], p2: [number, number]) => {
+    return geoDistance(p1, p2)
   },
+  distanceCheap: ([x1, y1]: number[], [x2, y2]: number[]) => {
+    const lat1 = MATH.radians(y1)
+    const lon1 = MATH.radians(x1)
+    const lat2 = MATH.radians(y2)
+    const lon2 = MATH.radians(x2)
+    const x = (lon2 - lon1) * Math.cos((lat1 + lat2) / 2)
+    const y = lat2 - lat1
+    return Math.sqrt(x * x + y * y)
+  },
+  kmToMi: (km: number) => km / 1.609,
   normalize: (a: number[]) => {
     const total = a.reduce((sum, i) => sum + i, 0)
     return a.map(i => i / total)

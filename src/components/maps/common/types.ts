@@ -1,6 +1,7 @@
-import { GeoProjection } from 'd3'
+import { GeoPermissibleObjects, GeoProjection } from 'd3'
 
 import { Point } from '../../../models/utilities/math/points/types'
+import { Vertex } from '../../../models/utilities/math/voronoi/types'
 
 export interface CircleParams {
   point: Point
@@ -13,13 +14,13 @@ export interface CircleParams {
   }
 }
 
-export type MapProjectionParams = {
-  scale: number
-  ctx: CanvasRenderingContext2D
-  rotation: [number, number]
+export type DrawPolygonParams = {
+  points: Vertex[]
+  direction: 'inner' | 'outer'
+  path: (_object: GeoPermissibleObjects) => string
 }
 
-export type CurveParams = {
-  points: [number, number][]
+export type DrawMapParams = {
+  ctx: CanvasRenderingContext2D
   projection: GeoProjection
 }

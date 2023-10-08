@@ -2,7 +2,6 @@ import { ARRAY } from '../../utilities/array'
 import { POINT } from '../../utilities/math/points'
 import { VORONOI } from '../../utilities/math/voronoi'
 import { PERFORMANCE } from '../../utilities/performance'
-import { CURVES } from '../shapers/display/curves'
 import { Cell, CellSpawnParams } from './types'
 
 export const CELL = {
@@ -94,14 +93,14 @@ export const CELL = {
         }
       }
     })
-    const curve = CURVES.paths()
-    return boundaries.map(b => curve(b))
+    return boundaries
   },
   commonEdge: (i: number, j: number) => {
-    const iData = window.world.cells[i].data
-    const jData = window.world.cells[j].data
+    const iData = CELL.data(i)
+    const jData = CELL.data(j)
     return VORONOI.commonEdge(iData, jData)
   },
+  data: (i: number) => window.world.diagram.polygons[i].map(p => window.world.diagram.centers[p]),
   hasRoads: ({ roads }: Cell) => roads.land.length > 0 || roads.sea.length > 0,
   isHub: (cell: Cell) => {
     const province = window.world.provinces[cell.province]
@@ -123,24 +122,18 @@ export const CELL = {
   },
   nation: (cell: Cell) => CELL.province(cell).nation,
   neighbors: (cell: Cell, depth = 1): Cell[] => {
-    const neighbors = cell.n.map(n => window.world.cells[n])
+    const neighbors = window.world.diagram.neighbors[cell.idx].map(n => window.world.cells[n])
     if (depth > 1)
       return ARRAY.unique(neighbors.concat(neighbors.map(n => CELL.neighbors(n, depth - 1)).flat()))
     return neighbors
   },
   province: (cell: Cell) => window.world.provinces[cell.province],
-  spawn: ({ idx, point, diagram }: CellSpawnParams) => {
+  spawn: ({ idx, point }: CellSpawnParams) => {
     const [x, y] = point
-    const data = diagram.cellPolygon(idx) as [number, number][]
     const cell: Cell = {
       idx,
-      data,
-      mapEdge: data.some(
-        ([x, y]) => x <= 0 || y <= 0 || x >= window.world.dim.w || y >= window.world.dim.h
-      ),
       x,
       y,
-      n: Array.from(diagram.neighbors(idx)),
       score: 0,
       region: -1,
       province: -1,
@@ -150,7 +143,6 @@ export const CELL = {
       mountainDist: -1,
       roads: { land: [], sea: [] }
     }
-    cell.edge = false
     return cell
   }
 }

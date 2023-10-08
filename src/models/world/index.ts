@@ -1,11 +1,10 @@
-import { quadtree } from 'd3'
-
 import { canvasDims } from '../utilities/dimensions'
 import { MATH } from '../utilities/math'
 import { Dice } from '../utilities/math/dice'
 import { POINT } from '../utilities/math/points'
 import { Point } from '../utilities/math/points/types'
 import { dayMS, daysPerYear } from '../utilities/math/time'
+import { Vertex } from '../utilities/math/voronoi/types'
 import { PERFORMANCE } from '../utilities/performance'
 import { CELL } from './cells'
 import { Cell } from './cells/types'
@@ -30,7 +29,7 @@ const hourAngle = (latitude: number) => {
 
 const _land = () =>
   window.world.cells.filter(e => {
-    return e.h >= window.world.seaLevelCutoff && e.n.length > 0
+    return e.h >= window.world.seaLevelCutoff
   })
 const land = PERFORMANCE.memoize.decorate({ f: _land })
 
@@ -75,40 +74,46 @@ export const WORLD = PERFORMANCE.profile.wrapper({
       }
     },
     heightToKM: (h: number) => MATH.scale([window.world.seaLevelCutoff, 1.5], [0, 6], h),
-    heightToMI: (h: number) => WORLD.heightToKM(h) / 1.609,
-    land() {
-      return land()
-    },
+    heightToMI: (h: number) => MATH.kmToMi(WORLD.heightToKM(h)),
+    land: () => land(),
     mountains() {
       return mountains()
     },
     placement: ({ blacklist = [], whitelist, count, spacing }: WorldPlacementParams) => {
       const placed: Cell[] = []
       // create a quad tree to quickly find the nearest city
-      const tree = quadtree().extent([
-        [0, 0],
-        [window.world.dim.w, window.world.dim.h]
-      ])
+      const tree: Vertex[] = []
       // everything in the blacklist starts in the quad tree
       blacklist.forEach(({ x, y }) => {
-        tree.add([x, y])
+        tree.push([x, y])
       })
+      const closestPoint = (referencePoint: Vertex) =>
+        tree.reduce((acc, curr) => {
+          if (acc === null) return curr
+
+          const currDistance = MATH.distanceCheap(referencePoint, curr)
+          const accDistance = MATH.distanceCheap(referencePoint, acc)
+
+          return currDistance < accDistance ? curr : acc
+        }, null)
+
       // place cities by iterating through the (pre-sorted) whitelist
       for (let i = 0; i < whitelist.length && placed.length < count; i++) {
         const cell = whitelist[i]
         const { x, y } = cell
-        const closest = tree.find(x, y)
+        const closest = closestPoint([x, y])
         const dist = closest
           ? POINT.distance({ points: [{ x: closest[0], y: closest[1] }, cell] })
           : Infinity
         if (dist > spacing) {
           placed.push(cell)
-          tree.add([x, y])
+          tree.push([x, y])
         }
       }
       if (placed.length < count) console.log(`placement failure: ${placed.length} / ${count}`)
       return placed
     },
+    placementRatio: () => WORLD.land().length / window.world.cells.length / 0.2,
     reshape: () => {
       PERFORMANCE.memoize.remove(_land)
       PERFORMANCE.memoize.remove(_water)
@@ -132,8 +137,8 @@ export const WORLD = PERFORMANCE.profile.wrapper({
       const firstNewMoon = date - dayMS * window.dice.randint(0, 30)
       // dimensions
       const cells = 16000 * res
-      const latitude: [number, number] = [-10, 90]
-      const longitude: [number, number] = [0, 80]
+      const latitude: [number, number] = [-90, 90]
+      const longitude: [number, number] = [-180, 180]
       // average voronoi cell area (square miles)
       const milesPerDegree = { lat: 69, long: 54 }
       const milesLat = milesPerDegree.lat * (latitude[1] - latitude[0])
@@ -195,6 +200,7 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         conflicts: [],
         quests: [],
         uniqueNames: {},
+        radius: 6.371e3,
         date,
         firstNewMoon,
         lunarCycle: 28,

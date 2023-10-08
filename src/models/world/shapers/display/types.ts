@@ -2,11 +2,10 @@ import { TerrainIcon } from '../../../../components/maps/icons/terrain/types'
 import { RouteTypes } from '../../types'
 
 interface PathSegment {
-  path: string
+  path: [number, number][]
 }
 
-interface RoadSegment {
-  d: string
+interface RoadSegment extends PathSegment {
   provinces: number[]
   imperial?: boolean
 }
@@ -36,5 +35,5 @@ export interface Display {
   lakes: Record<number, LakeSegment>
   regions: Record<string, RegionSegment[]>
   icons: Icon[]
-  icebergs: { idx: number; path: string }[]
+  icebergs: number[]
 }

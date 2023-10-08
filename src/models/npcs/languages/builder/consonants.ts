@@ -42,7 +42,7 @@ export const buildConsonants = (params: { ending: PhonemeCatalog; vowels: string
     ...window.dice.sample(`bdfgh${j + k + k}lmprsstvwxzŋðʃʧʒ`.split(''), 12)
   ]
   const middleConsonants = window.dice.sample(
-    Array.from(new Set(startConsonants)).filter(c => c !== 'c' && c !== 'p'),
+    Array.from(new Set(startConsonants)).filter(c => c !== 'c'),
     6
   )
   const endConsonants = window.dice

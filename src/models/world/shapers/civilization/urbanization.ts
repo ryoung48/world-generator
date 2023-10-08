@@ -192,8 +192,9 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
       })
     },
     _settlements: () => {
-      const count = 3600
-      const spacing = (window.world.dim.w + window.world.dim.h) * 0.0028
+      const base = 2500
+      const count = Math.floor(base * WORLD.placementRatio())
+      const spacing = 0.023
       const regionSettlements: Record<string, Cell[]> = {}
       // compute geography scores & count land
       window.world.regions.forEach(region => {

@@ -17,6 +17,7 @@ import { VIEW } from '../context'
 
 const catchup = 500
 
+// 2eark2riwcx
 const goodSeeds = [
   '22vda3c6l6z',
   '14dqc3b1qlx',
@@ -155,7 +156,7 @@ const generator = async (params: {
 
 export function Landing() {
   const [seed, setSeed] = useState(generateId())
-  const [res, setRes] = useState(8)
+  const [res, setRes] = useState(4)
   const [active, setActive] = useState(-1)
   const { dispatch } = VIEW.context()
   const generating = active >= 0

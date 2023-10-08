@@ -1,14 +1,12 @@
-import { Delaunay, Voronoi } from 'd3'
-
 import { Directions, Point } from '../../utilities/math/points/types'
 import { Climate } from '../climate/types'
 
 export interface Cell extends Point {
   idx: number
-  data: Array<[number, number]>
-  n: number[]
+  // data: Array<[number, number]>
+  // n: number[]
   score: number
-  mapEdge: boolean
+  // mapEdge: boolean
   // coastal attributes
   coastalEdges?: [Point, Point][]
   isCoast?: boolean
@@ -38,7 +36,6 @@ export interface Cell extends Point {
   oceanDist: number
   mountainDist: number
   coastal?: boolean
-  edge?: boolean // edge of the map
   // roads & cities
   roads: { land: number[]; sea: number[] }
 }
@@ -46,5 +43,4 @@ export interface Cell extends Point {
 export interface CellSpawnParams {
   idx: number
   point: [number, number]
-  diagram: Voronoi<Delaunay.Point>
 }

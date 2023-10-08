@@ -1,3 +1,5 @@
+import { geoInterpolate } from 'd3'
+
 import { MATH } from '..'
 import { dayMS } from '../time'
 import { Directions, Point } from './types'
@@ -20,18 +22,20 @@ export const POINT = {
     else if (deg <= 60 || deg > 300) return 'E'
     return null
   },
-  distance: (params: { points: [Point, Point]; scale?: [number, number] }) => {
-    const { points, scale } = params
+  distance: (params: { points: [Point, Point] }) => {
+    const { points } = params
     const [p1, p2] = points
-    const { x: x1, y: y1 } = p1
-    const { x: x2, y: y2 } = p2
-    return MATH.distance([x1, y1], [x2, y2], scale)
+    return MATH.distance([p1.x, p1.y], [p2.x, p2.y])
   },
   isOnEdge: (params: { points: [Point, Point]; distance: number }) => {
     const { points, distance } = params
     const [p1, p2] = points
-    const remainder = 1 - distance
-    return { x: p1.x * distance + p2.x * remainder, y: p1.y * distance + p2.y * remainder }
+
+    // The geoInterpolate function expects points as [longitude, latitude]
+    const interpolate = geoInterpolate([p1.x, p1.y], [p2.x, p2.y])
+    const [interpolatedLongitude, interpolatedLatitude] = interpolate(distance)
+
+    return { x: interpolatedLongitude, y: interpolatedLatitude }
   },
   sameEdge: (e1: number[], e2: number[]) => {
     return e1[0] === e2[0] && e1[1] === e2[1]
@@ -42,3 +46,6 @@ export const POINT = {
     return { miles, duration: (miles / mpd) * dayMS }
   }
 }
+
+// @ts-ignore
+window.dist = POINT.distance

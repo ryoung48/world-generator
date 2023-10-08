@@ -34,7 +34,7 @@ const removeLake = ({ lakes, lake }: RemoveLakeParams) => {
     CELL.neighbors(cell)
       .filter(n => !n.isWater)
       .forEach(n => {
-        const coast = n.n.filter(p => window.world.cells[p].isWater)
+        const coast = CELL.neighbors(n).filter(p => p.isWater)
         n.isCoast = coast.length > 0
       })
   })
@@ -54,10 +54,11 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
         poly.score = (1 - poly.h) * 5 + (poly.beach ? 1 : 0)
       })
       // place the regional capitals
-      const count = 500
+      const base = 300
+      const count = Math.floor(base * WORLD.placementRatio())
       const capitals = WORLD.placement({
         count,
-        spacing: (window.world.dim.w + window.world.dim.h) * 0.012,
+        spacing: 0.1,
         whitelist: WORLD.land().sort((a, b) => b.score - a.score)
       }).filter(poly => window.world.landmarks[poly.landmark])
       capitals.forEach(poly => {
@@ -71,26 +72,26 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
     },
     _climates: () => {
       window.world.regions.forEach(region => {
-        const capital = window.world.provinces[region.capital]
-        const cell = PROVINCE.cell(capital)
-        region.coastal = cell.coastal
-        const land = REGIONAL.land[region.idx]
-        const coasts = land.filter(cell => cell.coastal)
-        const east = coasts.filter(cell => cell.oceanCurrent === 'E').length
-        const west = coasts.filter(cell => cell.oceanCurrent === 'W').length
-        const inland = !region.coastal
-        region.regional.land = land.length
-        region.regional.mountains = land.filter(c => c.isMountains).length
-        const latitude = Math.abs(WORLD.gps(cell).latitude)
-        const { type, monsoon } = window.world.landmarks[cell.landmark]
-        const continent = type === 'continent'
-        CLIMATE.classify({
-          region,
-          location: inland ? 'inland' : east > west ? 'east_coast' : 'west_coast',
-          continent,
-          monsoon,
-          latitude
-        })
+        // const capital = window.world.provinces[region.capital]
+        // const cell = PROVINCE.cell(capital)
+        // region.coastal = cell.coastal
+        // const land = REGIONAL.land[region.idx]
+        // const coasts = land.filter(cell => cell.coastal)
+        // const east = coasts.filter(cell => cell.oceanCurrent === 'E').length
+        // const west = coasts.filter(cell => cell.oceanCurrent === 'W').length
+        // const inland = !region.coastal
+        // region.regional.land = land.length
+        // region.regional.mountains = land.filter(c => c.isMountains).length
+        // const latitude = Math.abs(WORLD.gps(cell).latitude)
+        // const { type, monsoon } = window.world.landmarks[cell.landmark]
+        // const continent = type === 'continent'
+        // CLIMATE.classify({
+        //   region,
+        //   location: inland ? 'inland' : east > west ? 'east_coast' : 'west_coast',
+        //   continent,
+        //   monsoon,
+        //   latitude
+        // })
         region.climate = 'oceanic'
       })
     },
@@ -133,14 +134,14 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
       })
     },
     _currents: () => () => {
-      const east = [
-        window.world.diagram.delaunay.find(window.world.dim.w, window.world.dim.h / 2)
-      ].map(i => {
-        const cell = window.world.cells[i]
-        cell.oceanCurrent = 'E'
-        return cell
-      })
-      const west = [window.world.diagram.delaunay.find(0, window.world.dim.h / 2)].map(i => {
+      const east = [window.world.diagram.find(window.world.dim.w, window.world.dim.h / 2)].map(
+        i => {
+          const cell = window.world.cells[i]
+          cell.oceanCurrent = 'E'
+          return cell
+        }
+      )
+      const west = [window.world.diagram.find(0, window.world.dim.h / 2)].map(i => {
         const cell = window.world.cells[i]
         cell.oceanCurrent = 'W'
         return cell
@@ -260,12 +261,9 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
           window.world.mountains[idx] += 1
           // add neighboring mountain cells to the queue
           queue = queue.concat(
-            current.n.filter(
-              p =>
-                window.world.cells[p].isMountains &&
-                window.world.cells[p].mountain === undefined &&
-                !queue.includes(p)
-            )
+            CELL.neighbors(current)
+              .filter(p => p.isMountains && p.mountain === undefined && !queue.includes(p.idx))
+              .map(p => p.idx)
           )
         }
         // only consider cells that haven't been marked
@@ -291,13 +289,13 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
     },
     _rain: () => {
       const wet = 40
-      const east = [
-        window.world.diagram.delaunay.find(window.world.dim.w, window.world.dim.h / 2)
-      ].map(i => {
-        const cell = window.world.cells[i]
-        cell.e = wet
-        return cell
-      })
+      const east = [window.world.diagram.find(window.world.dim.w, window.world.dim.h / 2)].map(
+        i => {
+          const cell = window.world.cells[i]
+          cell.e = wet
+          return cell
+        }
+      )
       let queue = [...east]
       const eVisits = new Set<number>()
       const rain = (n: Cell, _rain: number, wind: Cell) => {
@@ -321,7 +319,7 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
         const poly = queue.shift()
         CELL.neighbors(poly).forEach(n => {
           const val = rain(n, poly.e, poly)
-          const edge = n.isWater && n.edge
+          const edge = false // n.isWater && n.edge
           if ((!eVisits.has(n.idx) || val > n.e) && (edge || POINT.directionH(poly, n) === 'W')) {
             n.e = val
             eVisits.add(n.idx)
@@ -329,7 +327,7 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
           }
         })
       }
-      const west = [window.world.diagram.delaunay.find(0, window.world.dim.h / 2)].map(i => {
+      const west = [window.world.diagram.find(0, window.world.dim.h / 2)].map(i => {
         const cell = window.world.cells[i]
         cell.w = wet
         return cell
@@ -341,7 +339,7 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
         const poly = queue.shift()
         CELL.neighbors(poly).forEach(n => {
           const val = rain(n, poly.w, poly)
-          const edge = n.isWater && n.edge
+          const edge = false // n.isWater && n.edge
           if ((!wVisits.has(n.idx) || val > n.w) && (edge || POINT.directionH(poly, n) === 'E')) {
             n.w = val
             wVisits.add(n.idx)
@@ -400,8 +398,7 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
     },
     _heat: () => {
       WORLD.land().forEach(cell => {
-        const { latitude } = WORLD.gps(cell)
-        const lat = Math.abs(latitude)
+        const lat = Math.abs(cell.y)
         // let key: keyof typeof heat.summer | keyof typeof heat.winter = 'normal'
         // if (cell.coastal) {
         //   const hot = (cell.e > cell.w && lat < 40) || (cell.w > cell.e && lat > 30)
@@ -414,7 +411,7 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
         cell.heat = { w: 0, s: 0 }
         cell.heat.w = scalePow().exponent(exp).domain([0, 90]).range([30, -28])(lat) - elevation
         cell.heat.s = scalePow().exponent(exp).domain([0, 90]).range([30, 4])(lat) - elevation
-        if (latitude < 0) cell.heat = { w: cell.heat.s, s: cell.heat.w }
+        if (cell.y < 0) cell.heat = { w: cell.heat.s, s: cell.heat.w }
       })
       // smoothing
       range(1).forEach(() => {
@@ -488,36 +485,34 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
           continue
         }
         // otherwise process neighbors
-        poly.n
-          .map(n => window.world.cells[n])
-          .forEach(n => {
-            // claim neighbor if not claimed
-            if (n.region === -1) {
-              n.region = region.idx
-              if (!n.isWater) REGIONAL.land[region.idx].push(n)
-              queue.push(n)
-            } else if (n.region !== poly.region) {
-              n.regionBorder = true
-              poly.regionBorder = true
-              const guest = window.world.regions[n.region]
+        CELL.neighbors(poly).forEach(n => {
+          // claim neighbor if not claimed
+          if (n.region === -1) {
+            n.region = region.idx
+            if (!n.isWater) REGIONAL.land[region.idx].push(n)
+            queue.push(n)
+          } else if (n.region !== poly.region) {
+            n.regionBorder = true
+            poly.regionBorder = true
+            const guest = window.world.regions[n.region]
+            addBorder({
+              borders: regionBorders,
+              r1: region,
+              r2: guest,
+              c1: poly.idx,
+              c2: n.idx
+            })
+            if (!n.isWater && !n.isCoast) {
               addBorder({
-                borders: regionBorders,
+                borders: mountainProspects,
                 r1: region,
                 r2: guest,
                 c1: poly.idx,
                 c2: n.idx
               })
-              if (!n.isWater && !n.isCoast) {
-                addBorder({
-                  borders: mountainProspects,
-                  r1: region,
-                  r2: guest,
-                  c1: poly.idx,
-                  c2: n.idx
-                })
-              }
             }
-          })
+          }
+        })
       }
     },
     _finalize: (regionBorders: RegionBorders) => {
@@ -554,9 +549,9 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
       REGIONAL._lakes()
       REGIONAL._coastlines()
       REGIONAL._finalize(regionBorders)
-      REGIONAL._rain()
+      // REGIONAL._rain()
       REGIONAL._heat()
-      REGIONAL._climate()
+      // REGIONAL._climate()
     },
     land
   }

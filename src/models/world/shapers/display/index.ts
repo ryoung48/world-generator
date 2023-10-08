@@ -9,7 +9,6 @@ import { Cell } from '../../cells/types'
 import { CLIMATE } from '../../climate'
 import { Climate } from '../../climate/types'
 import { CoastalEdge, RouteTypes } from '../../types'
-import { CURVES } from './curves'
 import { Display, RegionSegment } from './types'
 
 const drawCoasts = (params: {
@@ -18,8 +17,7 @@ const drawCoasts = (params: {
 }) => {
   const { landmarks, coastFilter } = params
   const coast = Object.values(window.world.coasts)
-  const boundaries: { path: string; idx: number }[] = []
-  const curve = CURVES.paths()
+  const boundaries: { path: [number, number][]; idx: number }[] = []
   landmarks.forEach(i => {
     // get ocean coastline edges
     const group = coast.filter(coastFilter(i)).map(e => e.edge)
@@ -52,7 +50,7 @@ const drawCoasts = (params: {
       }
     })
     // add ordered path to the list of ocean paths
-    boundaries.push({ path: curve(ordered), idx: i })
+    boundaries.push({ path: ordered, idx: i })
   })
   return boundaries
 }
@@ -68,9 +66,8 @@ const roadSegment = (params: { route: RouteTypes; path: number[]; imperial: bool
       const { hub } = settlement
       return cell.idx === hub.cell ? [hub.x, hub.y] : [cell.x, cell.y]
     }) as [number, number][]
-    const curve = CURVES.paths()
     window.world.display.routes[route].push({
-      d: curve(points),
+      path: points,
       provinces: Array.from(new Set([start.province, end.province])),
       imperial
     })
@@ -104,7 +101,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
   o: {
     borders: {
       regions: (nations: Region[]) => {
-        const regions: { path: string; r: number }[] = []
+        const regions: { path: [number, number][]; r: number }[] = []
         const borders: Record<string, RegionSegment[]> = {}
         // iterate though all regions
         const borderCells = WORLD.borders()
@@ -151,10 +148,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       // no icons on roads
       // no icons on rivers
       // 10% chance for no icon placement
-      let valid = (m: Cell) =>
-        window.dice.random > 0.5 &&
-        (window.world.regions[m.region].shattered ||
-          (!CELL.hasRoads(m) && CELL.neighbors(m).every(n => !CELL.isHub(n))))
+      let valid = (m: Cell) => window.dice.random > 0.5 && !CELL.hasRoads(m)
       // mountains
       const mountains = window.world.cells.filter(p => p.isMountains)
       const volcanoes: Display['icons'][number]['type'][] = ['volcano_0', 'volcano_1', 'volcano_2']
@@ -244,7 +238,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
         (window.world.regions[m.region].shattered || !CELL.hasRoads(m)) &&
         !used.has(m.idx) &&
         window.dice.random > (window.world.regions[m.region].shattered ? 0.5 : 0.8) &&
-        m.n.every(i => !used.has(i))
+        CELL.neighbors(m).every(i => !used.has(i.idx))
       // grass
       const grasslands: (keyof Climate)[] = ['savanna', 'hot steppe', 'cold steppe']
       const biomes = WORLD.land().filter(p => !p.isMountains && !p.isWater && !p.isCoast)
@@ -359,7 +353,10 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
           })
         }
       })
-      valid = m => !CELL.hasRoads(m) && window.dice.random > 0.8 && m.n.every(i => !used.has(i))
+      valid = m =>
+        !CELL.hasRoads(m) &&
+        window.dice.random > 0.8 &&
+        CELL.neighbors(m).every(i => !used.has(i.idx))
       // desert
       const deserts: (keyof Climate)[] = ['hot desert', 'cold desert']
       const desert = biomes.filter(p => deserts.includes(window.world.regions[p.region].climate))
@@ -456,24 +453,16 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
               !n.shallow &&
               !CELL.hasRoads(n) &&
               !used.has(n.idx) &&
-              n.n.every(
-                i =>
-                  !used.has(i) &&
-                  !CELL.hasRoads(window.world.cells[i]) &&
-                  !window.world.cells[i].shallow
-              )
+              CELL.neighbors(n).every(i => !used.has(i.idx) && !CELL.hasRoads(i) && !i.shallow)
           )
         )
         .flat()
-      const validIceIcon = (p: Cell) => !used.has(p.idx) && p.n.every(i => !used.has(i))
-      const line = CURVES.linear()
+      const validIceIcon = (p: Cell) =>
+        !used.has(p.idx) && CELL.neighbors(p).every(i => !used.has(i.idx))
       window.dice.shuffle(polarCoast.slice(0, Math.floor(polarCoast.length * 0.25))).forEach(m => {
         if (validIceIcon(m)) {
           used.add(m.idx)
-          window.world.display.icebergs.push({
-            idx: m.idx,
-            path: line(m.data)
-          })
+          window.world.display.icebergs.push(m.idx)
         }
       })
     },
