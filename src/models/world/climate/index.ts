@@ -1,9 +1,240 @@
-import { Climate, ClimateClassifyParams } from './types'
+import { Biome, BiomeDetails, Climate, ClimateClassifyParams } from './types'
 
 const diurnalVariation: Record<'low' | 'standard' | 'extreme', [number, number]> = {
   low: [10, 3],
   standard: [15, 3.5],
   extreme: [20, 4]
+}
+
+const holdridge: Record<Biome, BiomeDetails> = {
+  'rain forest (tropical)': {
+    name: 'rain forest',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#1AFFA1'
+  },
+  'wet forest (tropical)': {
+    name: 'wet forest',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#3EFF91'
+  },
+  'moist forest (tropical)': {
+    name: 'moist forest',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#60FF81'
+  },
+  'dry forest (tropical)': {
+    name: 'dry forest',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#81FF81'
+  },
+  'very dry forest (tropical)': {
+    name: 'very dry forest',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#A1FF81'
+  },
+  'thorn woodland (tropical)': {
+    name: 'thorn woodland',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#C1FF81'
+  },
+  'desert scrub (tropical)': {
+    name: 'desert scrub',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#E1FF81'
+  },
+  'desert (tropical)': {
+    name: 'desert',
+    latitude: 'tropical',
+    altitude: 'lowlands',
+    color: '#FFFF81'
+  },
+  'rain forest (subtropical)': {
+    name: 'rain forest',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#1AE1C1'
+  },
+  'wet forest (subtropical)': {
+    name: 'wet forest',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#3EE191'
+  },
+  'moist forest (subtropical)': {
+    name: 'moist forest',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#60E181'
+  },
+  'dry forest (subtropical)': {
+    name: 'dry forest',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#81E181'
+  },
+  'thorn steppe (subtropical)': {
+    name: 'thorn steppe',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#A1E181'
+  },
+  'desert scrub (subtropical)': {
+    name: 'desert scrub',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#C1E181'
+  },
+  'desert (subtropical)': {
+    name: 'desert',
+    latitude: 'subtropical',
+    altitude: 'highlands',
+    color: '#E1E181'
+  },
+  'rain forest (warm temperate)': {
+    name: 'rain forest',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#1AE1C1'
+  },
+  'wet forest (warm temperate)': {
+    name: 'wet forest',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#3EE191'
+  },
+  'moist forest (warm temperate)': {
+    name: 'moist forest',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#60E181'
+  },
+  'dry forest (warm temperate)': {
+    name: 'dry forest',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#81E181'
+  },
+  'thorn steppe (warm temperate)': {
+    name: 'thorn steppe',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#A1E181'
+  },
+  'desert scrub (warm temperate)': {
+    name: 'desert scrub',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#C1E181'
+  },
+  'desert (warm temperate)': {
+    name: 'desert',
+    latitude: 'warm temperate',
+    altitude: 'lower montane',
+    color: '#E1E181'
+  },
+  'rain forest (cool temperate)': {
+    name: 'rain forest',
+    latitude: 'cool temperate',
+    altitude: 'montane',
+    color: '#1AC1C1'
+  },
+  'wet forest (cool temperate)': {
+    name: 'wet forest',
+    latitude: 'cool temperate',
+    altitude: 'montane',
+    color: '#3EC191'
+  },
+  'moist forest (cool temperate)': {
+    name: 'moist forest',
+    latitude: 'cool temperate',
+    altitude: 'montane',
+    color: '#60C181'
+  },
+  'steppe (cool temperate)': {
+    name: 'steppe',
+    latitude: 'cool temperate',
+    altitude: 'montane',
+    color: '#81C181'
+  },
+  'desert scrub (cool temperate)': {
+    name: 'desert scrub',
+    latitude: 'cool temperate',
+    altitude: 'montane',
+    color: '#A1C181'
+  },
+  'desert (cool temperate)': {
+    name: 'desert',
+    latitude: 'cool temperate',
+    altitude: 'montane',
+    color: '#C1C181'
+  },
+  'rain forest (boreal)': {
+    name: 'rain forest',
+    latitude: 'boreal',
+    altitude: 'subalpine',
+    color: '#1AA1C1'
+  },
+  'wet forest (boreal)': {
+    name: 'wet forest',
+    latitude: 'boreal',
+    altitude: 'subalpine',
+    color: '#3EA191'
+  },
+  'moist forest (boreal)': {
+    name: 'moist forest',
+    latitude: 'boreal',
+    altitude: 'subalpine',
+    color: '#60A181'
+  },
+  'dry scrub (boreal)': {
+    name: 'dry scrub',
+    latitude: 'boreal',
+    altitude: 'subalpine',
+    color: '#81A181'
+  },
+  'desert (boreal)': {
+    name: 'desert',
+    latitude: 'boreal',
+    altitude: 'subalpine',
+    color: '#A1A181'
+  },
+  'rain tundra (subarctic)': {
+    name: 'rain tundra',
+    latitude: 'subarctic',
+    altitude: 'alpine',
+    color: '#1A81C1'
+  },
+  'wet tundra (subarctic)': {
+    name: 'wet tundra',
+    latitude: 'subarctic',
+    altitude: 'alpine',
+    color: '#3E8191'
+  },
+  'moist tundra (subarctic)': {
+    name: 'moist tundra',
+    latitude: 'subarctic',
+    altitude: 'alpine',
+    color: '#608181'
+  },
+  'dry tundra (subarctic)': {
+    name: 'dry tundra',
+    latitude: 'subarctic',
+    altitude: 'alpine',
+    color: '#818181'
+  },
+  'desert (arctic)': {
+    name: 'desert',
+    latitude: 'arctic',
+    altitude: 'ice cap',
+    color: '#FFFFFF'
+  }
 }
 
 const climates: Climate = {
@@ -260,5 +491,6 @@ export const CLIMATE = {
     }
   },
   glacierLatitudeCutoff: 80,
-  lookup: climates
+  lookup: climates,
+  holdridge
 }

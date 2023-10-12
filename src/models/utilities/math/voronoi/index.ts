@@ -10,7 +10,8 @@ const planar = ({ points, w, h }: VoronoiParams) => {
   return delaunay.voronoi([0, 0, w, h])
 }
 
-const spherical = ({ points }: VoronoiParams): GeoVoronoiDiagram => geoDelaunay(points)
+const spherical = ({ points }: Omit<VoronoiParams, 'w' | 'h'>): GeoVoronoiDiagram =>
+  geoDelaunay(points)
 
 export const VORONOI = {
   /**
@@ -59,9 +60,9 @@ export const VORONOI = {
      * @param {number} params.h - The height of the image to clip the Voronoi diagram.
      * @return {Delaunay} - The relaxed Voronoi diagram.
      */
-    spherical: ({ points, relaxation = 1, w, h }: RelaxedVoronoiParams) => {
+    spherical: ({ points, relaxation = 1 }: Omit<RelaxedVoronoiParams, 'w' | 'h'>) => {
       // create voronoi object clipped by the image width & height
-      let vor = spherical({ points, w, h })
+      let vor = spherical({ points })
       let count = 0
       let relaxedSites = points
       // perform loyd relaxation to smooth voronoi cells
@@ -69,7 +70,7 @@ export const VORONOI = {
         relaxedSites = Array.from(vor.polygons).map(poly =>
           polygonCentroid(poly.map(i => vor.centers[i]))
         )
-        vor = spherical({ points: relaxedSites, w, h })
+        vor = spherical({ points: relaxedSites })
       }
       return { vor, sites: relaxedSites }
     }

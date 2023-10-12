@@ -27,7 +27,7 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
           // mark it with the current land feature index
           current.landmark = idx
           current.isWater = false
-          const water = CELL.neighbors(current).filter(p => p.h < window.world.seaLevelCutoff)
+          const water = CELL.neighbors(current).filter(p => p.h < WORLD.elevation.seaLevel)
           current.isCoast = water.length > 0
           const ocean = water.filter(cell => cell.ocean)
           current.beach = ocean.length > 0
@@ -42,9 +42,7 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
           // add neighboring land cells to the queue
           queue = queue.concat(
             CELL.neighbors(current)
-              .filter(
-                p => p.h >= window.world.seaLevelCutoff && !p.landmark && !queue.includes(p.idx)
-              )
+              .filter(p => p.h >= WORLD.elevation.seaLevel && !p.landmark && !queue.includes(p.idx))
               .map(p => p.idx)
           )
         }
@@ -111,9 +109,7 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
           // add neighboring water cells to the queue
           queue = queue.concat(
             CELL.neighbors(current)
-              .filter(
-                p => p.h < window.world.seaLevelCutoff && !p.landmark && !queue.includes(p.idx)
-              )
+              .filter(p => p.h < WORLD.elevation.seaLevel && !p.landmark && !queue.includes(p.idx))
               .map(n => n.idx)
           )
         }

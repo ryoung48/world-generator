@@ -1,4 +1,4 @@
-import { geoDistance, scaleLinear, scalePow } from 'd3'
+import { geoDistance, range, scaleLinear, scalePow } from 'd3'
 
 import { WeightedDistribution } from './types'
 
@@ -33,6 +33,8 @@ export const MATH = {
     return Math.sqrt(x * x + y * y)
   },
   kmToMi: (km: number) => km / 1.609,
+  miToKM: (mi: number) => mi * 1.609,
+  ftToKm: (ft: number) => ft / 3281,
   normalize: (a: number[]) => {
     const total = a.reduce((sum, i) => sum + i, 0)
     return a.map(i => i / total)
@@ -54,6 +56,7 @@ export const MATH = {
     const scaleFn = scaleLinear().domain(domain).range(range)
     return scaleFn(v)
   },
+  scaleDiscrete: (count: number) => range(count).map(i => i / (count - 1)),
   scaleExp: (domain: number[], range: number[], v: number, exp: number) => {
     const scaleFn = scalePow().exponent(exp).domain(domain).range(range)
     return scaleFn(v)

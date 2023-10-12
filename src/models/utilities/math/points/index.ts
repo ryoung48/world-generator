@@ -5,21 +5,29 @@ import { dayMS } from '../time'
 import { Directions, Point } from './types'
 
 export const POINT = {
-  degrees: (ref: Point, origin: Point) => {
-    const rads = Math.atan2(origin.y - ref.y, origin.x - ref.x)
-    return MATH.degrees(rads < 0 ? Math.abs(rads) : 2 * Math.PI - rads)
+  bearing: (ref: Point, origin: Point) => {
+    const lat1 = MATH.radians(ref.y)
+    const lon1 = MATH.radians(ref.x)
+    const lat2 = MATH.radians(origin.y)
+    const lon2 = MATH.radians(origin.x)
+    const deltaLon = lon2 - lon1
+    const bearing = Math.atan2(
+      Math.sin(deltaLon) * Math.cos(lat2),
+      Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon)
+    )
+    return (MATH.degrees(bearing) + 360) % 360
   },
   direction: (p1: Point, p2: Point): Directions => {
-    const deg = POINT.degrees(p1, p2)
-    if (deg > 45 && deg <= 135) return 'N'
-    else if (deg > 135 && deg <= 225) return 'W'
-    else if (deg > 225 && deg <= 315) return 'S'
-    return 'E'
+    const deg = POINT.bearing(p1, p2)
+    if (deg > 45 && deg <= 135) return 'E'
+    else if (deg > 135 && deg <= 225) return 'S'
+    else if (deg > 225 && deg <= 315) return 'W'
+    return 'N'
   },
   directionH: (p1: Point, p2: Point): Directions => {
-    const deg = POINT.degrees(p1, p2)
-    if (deg > 120 && deg <= 240) return 'W'
-    else if (deg <= 60 || deg > 300) return 'E'
+    const deg = POINT.bearing(p1, p2)
+    if (deg > 210 && deg <= 330) return 'W'
+    else if (deg <= 150 && deg > 30) return 'E'
     return null
   },
   distance: (params: { points: [Point, Point] }) => {
@@ -46,6 +54,3 @@ export const POINT = {
     return { miles, duration: (miles / mpd) * dayMS }
   }
 }
-
-// @ts-ignore
-window.dist = POINT.distance

@@ -1,5 +1,5 @@
-import { Directions, Point } from '../../utilities/math/points/types'
-import { Climate } from '../climate/types'
+import { Point } from '../../utilities/math/points/types'
+import { Biome } from '../climate/types'
 
 export interface Cell extends Point {
   idx: number
@@ -11,7 +11,6 @@ export interface Cell extends Point {
   coastalEdges?: [Point, Point][]
   isCoast?: boolean
   waterSources?: Set<number>
-  oceanCurrent?: Directions
   // mountains
   isMountains?: boolean
   mountain?: number
@@ -26,12 +25,9 @@ export interface Cell extends Point {
   beach?: boolean
   ocean?: boolean
   shallow?: boolean
-  summerRain?: number
-  winterRain?: number
-  e?: number
-  w?: number
-  heat?: { w?: number; s?: number }
-  climate?: keyof Climate | 'none'
+  rain: { east: number; west: number; winter: number; summer: number }
+  heat?: { winter?: number; summer?: number }
+  climate?: Biome
   // distances
   oceanDist: number
   mountainDist: number

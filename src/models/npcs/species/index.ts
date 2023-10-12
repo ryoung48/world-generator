@@ -1,4 +1,3 @@
-import { WORLD } from '../../world'
 import { CLIMATE } from '../../world/climate'
 import { Culture } from '../cultures/types'
 import { Species } from './types'
@@ -327,10 +326,9 @@ export const SPECIES = {
   appearance: (culture: Culture) => {
     const origin = window.world.regions[culture.origin]
     const capital = window.world.provinces[origin.capital]
-    const { latitude } = WORLD.gps(capital.hub)
     const { zone } = CLIMATE.lookup[origin.climate]
     const { skin, hair } = lookup[culture.species].appearance({
-      latitude: Math.abs(latitude),
+      latitude: Math.abs(capital.hub.y),
       zone
     })
     culture.appearance = {

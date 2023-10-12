@@ -1,4 +1,4 @@
-import { mean, range, scaleLinear, scalePow } from 'd3'
+import { mean, range, scaleLinear } from 'd3'
 
 import { REGION } from '../../../regions'
 import { PROVINCE } from '../../../regions/provinces'
@@ -11,8 +11,6 @@ import { CELL } from '../../cells'
 import { Cell } from '../../cells/types'
 import { CLIMATE } from '../../climate'
 import { RegionAddBordersParams, RegionBorders, RemoveLakeParams } from './types'
-
-const mountainsCutoff = 0.5
 
 const addBorder = ({ borders, r1, r2, c1, c2 }: RegionAddBordersParams) => {
   if (!borders[r1.idx][r2.idx]) borders[r1.idx][r2.idx] = new Set()
@@ -29,7 +27,7 @@ const removeLake = ({ lakes, lake }: RemoveLakeParams) => {
     cell.landmark = landmark
     cell.isWater = false
     cell.shallow = false
-    cell.h = window.world.seaLevelCutoff
+    cell.h = WORLD.elevation.seaLevel
     REGIONAL.land[cell.region].push(cell)
     CELL.neighbors(cell)
       .filter(n => !n.isWater)
@@ -133,31 +131,6 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
         HUB.moveToCoast(loc.hub)
       })
     },
-    _currents: () => () => {
-      const east = [window.world.diagram.find(window.world.dim.w, window.world.dim.h / 2)].map(
-        i => {
-          const cell = window.world.cells[i]
-          cell.oceanCurrent = 'E'
-          return cell
-        }
-      )
-      const west = [window.world.diagram.find(0, window.world.dim.h / 2)].map(i => {
-        const cell = window.world.cells[i]
-        cell.oceanCurrent = 'W'
-        return cell
-      })
-      const queue = [...east, ...west]
-      while (queue.length > 0) {
-        // grab the next item in the queue
-        const poly = queue.shift()
-        CELL.neighbors(poly)
-          .filter(n => !n.oceanCurrent)
-          .forEach(n => {
-            n.oceanCurrent = poly.oceanCurrent
-            if (n.isWater || n.coastal) queue.push(n)
-          })
-      }
-    },
     _mountains: (mountainProspects: RegionBorders) => {
       WORLD.land()
         .filter(p => p.isMountains)
@@ -187,24 +160,20 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
           const cell = window.world.cells[i]
           if (cell.isWater) removeLake({ lakes, lake: cell.landmark })
           const high =
-            window.world.landmarks[cell.landmark].type === 'continent' && window.dice.flip
-              ? borders.size > 20
-                ? 1.05
-                : 0.95
-              : borders.size > 20
-              ? 0.95
-              : 0.75
+            borders.size > 10
+              ? window.dice.uniform(0.8, WORLD.elevation.max)
+              : window.dice.uniform(0.65, 0.8)
           const queue = [{ cell, h: high }]
           while (queue.length > 0 && mounts < total) {
             const { cell: curr, h } = queue.pop()
             curr.h = h
-            curr.isMountains = curr.h > mountainsCutoff
+            curr.isMountains = curr.h > WORLD.elevation.mountains
             mounts += 1
             queue.push(
               ...CELL.neighbors(curr)
                 .filter(c => !c.isWater && !c.isCoast && !c.isMountains)
                 .map(c => ({ cell: c, h: borders.has(c.idx) ? high : h - 0.1 }))
-                .filter(c => c.h > mountainsCutoff)
+                .filter(c => c.h > WORLD.elevation.mountains)
             )
           }
         })
@@ -231,14 +200,14 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
           const total = oceanDist + mountainDist
           l.h = MATH.scaleExp(
             [0, total],
-            [window.world.seaLevelCutoff, mountainsCutoff],
+            [WORLD.elevation.seaLevel, WORLD.elevation.mountains],
             total - mountainDist,
             2
           )
         } else {
           l.h = MATH.scaleExp(
             [0, islandScale],
-            [window.world.seaLevelCutoff, mountainsCutoff],
+            [WORLD.elevation.seaLevel, WORLD.elevation.mountains],
             oceanDist,
             2
           )
@@ -288,176 +257,249 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
       WORLD.reshape()
     },
     _rain: () => {
-      const wet = 40
-      const east = [window.world.diagram.find(window.world.dim.w, window.world.dim.h / 2)].map(
-        i => {
-          const cell = window.world.cells[i]
-          cell.e = wet
-          return cell
-        }
-      )
-      let queue = [...east]
-      const eVisits = new Set<number>()
-      const rain = (n: Cell, _rain: number, wind: Cell) => {
-        let rain = _rain
-        if (n.beach && wind.ocean) {
-          const latitude = Math.abs(WORLD.gps(n).latitude)
-          rain = latitude < 15 ? rain + 10 : latitude < 20 ? rain + 5 : rain
-        }
-        return Math.max(
-          !n.isWater
-            ? Math.max(
-                window.world.mountains[n.mountain] > 100 ? Math.floor(rain * 0.8) : rain - 1,
-                0
-              )
-            : Math.min(rain + 0.5, wet),
-          n.e ?? 0
-        )
-      }
-      while (queue.length > 0) {
-        // grab the next item in the queue
-        const poly = queue.shift()
-        CELL.neighbors(poly).forEach(n => {
-          const val = rain(n, poly.e, poly)
-          const edge = false // n.isWater && n.edge
-          if ((!eVisits.has(n.idx) || val > n.e) && (edge || POINT.directionH(poly, n) === 'W')) {
-            n.e = val
-            eVisits.add(n.idx)
+      const wet = 30
+      const ocean = WORLD.water().filter(cell => cell.ocean && !cell.shallow)
+      const affected = window.world.cells.filter(cell => cell.shallow || !cell.ocean)
+      const assignRain = (attr: 'east' | 'west') => {
+        const wind = attr === 'east' ? 'W' : 'E'
+        const visited = new Set<number>()
+        ocean.forEach(cell => {
+          cell.rain[attr] = wet
+          visited.add(cell.idx)
+        })
+        const queue = [...ocean]
+        while (queue.length > 0) {
+          const cell = queue.shift()
+          const rain = Math.max(
+            Math.min(
+              Math.max(cell.rain[attr], 0) +
+                (cell.ocean ? 1 : cell.isWater ? 0 : cell.isMountains ? -2 : -1),
+              wet
+            ),
+            0
+          )
+          const neighbors = CELL.neighbors(cell).filter(
+            n =>
+              (!visited.has(n.idx) || (!n.isWater && rain > n.rain[attr])) &&
+              POINT.direction(cell, n) === wind
+          )
+          neighbors.forEach(n => {
             queue.push(n)
-          }
+            n.rain[attr] = rain
+            visited.add(n.idx)
+          })
+        }
+        range(1).forEach(() => {
+          affected.forEach(cell => {
+            cell.rain[attr] = mean(
+              CELL.neighbors(cell)
+                .concat([cell])
+                .filter(n => n.rain[attr] >= 0 && (n.shallow || !n.ocean))
+                .map(n => n.rain[attr])
+            )
+            if (isNaN(cell.rain[attr])) cell.rain[attr] = 0
+          })
         })
       }
-      const west = [window.world.diagram.find(0, window.world.dim.h / 2)].map(i => {
-        const cell = window.world.cells[i]
-        cell.w = wet
-        return cell
-      })
-      queue = [...west]
-      const wVisits = new Set<number>()
-      while (queue.length > 0) {
-        // grab the next item in the queue
-        const poly = queue.shift()
-        CELL.neighbors(poly).forEach(n => {
-          const val = rain(n, poly.w, poly)
-          const edge = false // n.isWater && n.edge
-          if ((!wVisits.has(n.idx) || val > n.w) && (edge || POINT.directionH(poly, n) === 'E')) {
-            n.w = val
-            wVisits.add(n.idx)
-            queue.push(n)
-          }
-        })
-      }
-      const dry = {
-        east: scaleLinear([0, 35, 90], [1, 1, 0]),
-        west: scaleLinear([0, 45, 90], [1, 1, 0])
-      }
+      assignRain('east')
+      assignRain('west')
       WORLD.land().forEach(cell => {
-        const { latitude } = WORLD.gps(cell)
+        const latitude = cell.y
+        const east = Math.max(cell.rain.east, 0)
+        const west = Math.max(cell.rain.west, 0)
         // trade winds (summer)
         if (latitude > -5 && latitude < 25) {
-          cell.summerRain = cell.e ?? 0
+          cell.rain.summer = east
         }
         // trade winds (winter)
         if (latitude < 5 && latitude > -25) {
-          cell.winterRain = cell.e ?? 0
+          cell.rain.winter = east
         }
         const north = latitude >= 0
-        const summer = north ? 1 : 0.8
-        const winter = north ? 0.8 : 1
+        const summer = north ? 1 : 0.6
+        const winter = north ? 0.6 : 1
         const lat = Math.abs(latitude)
         // westerlies (summer)
-        const westL = dry.west(lat)
         if (lat > 40) {
-          if (north) cell.summerRain = (cell.w ?? 0) * summer * westL
-          else cell.winterRain = (cell.w ?? 0) * winter * westL
+          if (north) cell.rain.summer = west * summer
+          else cell.rain.winter = west * winter
         }
         // westerlies (winter)
+        const oceanic = lat >= 40 && lat <= 60
         if (lat > 30) {
-          if (north) cell.winterRain = (cell.w ?? 0) * winter * westL
-          else cell.summerRain = (cell.w ?? 0) * summer * westL
+          if (north) cell.rain.winter = west * (oceanic ? summer : winter)
+          else cell.rain.summer = west * (oceanic ? winter : summer)
         }
-        // storm fronts
+        // polar storm fronts
         if (lat >= 25) {
-          const eastL = dry.east(lat)
-          cell.summerRain = Math.max((cell.e ?? 0) * summer * eastL, cell.summerRain ?? 0)
-          cell.winterRain = Math.max((cell.e ?? 0) * winter * eastL, cell.winterRain ?? 0)
+          cell.rain.summer = Math.max(east * summer, cell.rain.summer, 0)
+          cell.rain.winter = Math.max(east * winter, cell.rain.winter, 0)
         }
-        cell.summerRain /= wet
-        cell.winterRain /= wet
+        cell.rain.east /= wet
+        cell.rain.west /= wet
+        cell.rain.summer /= wet
+        cell.rain.winter /= wet
+        if (cell.rain.summer < 0) cell.rain.summer = 0
+        if (cell.rain.winter < 0) cell.rain.winter = 0
       })
-      // smoothing
       range(3).forEach(() => {
         WORLD.land().forEach(cell => {
-          const n = CELL.neighbors(cell).filter(cell => !cell.isWater)
-          const summer = [cell.summerRain, ...n.map(n => n.summerRain ?? 0)]
-          cell.summerRain = mean(summer)
-          const winter = [cell.winterRain, ...n.map(n => n.winterRain ?? 0)]
-          cell.winterRain = mean(winter)
+          cell.rain.summer = mean(
+            CELL.neighbors(cell)
+              .concat([cell])
+              .filter(n => n.rain.summer >= 0 && !n.isWater)
+              .map(n => n.rain.summer)
+          )
+          cell.rain.winter = mean(
+            CELL.neighbors(cell)
+              .concat([cell])
+              .filter(n => n.rain.winter >= 0 && !n.isWater)
+              .map(n => n.rain.winter)
+          )
         })
       })
     },
     _heat: () => {
+      // Constants for the sinusoidal function
+      const { temperature } = WORLD
+      const delta = {
+        summer: (temperature.summer[0] - temperature.summer[1]) / 2,
+        winter: (temperature.winter[0] - temperature.winter[1]) / 2
+      }
+      const base = {
+        summer: (temperature.summer[0] + temperature.summer[1]) / 2,
+        winter: (temperature.winter[0] + temperature.winter[1]) / 2
+      }
+      const B = Math.PI / 90
+      // Sinusoidal function to estimate temperature
+      const temperatureCurve = (A: number, baseTemp: number, lat: number) => {
+        return A * Math.cos(B * lat) + baseTemp
+      }
+
+      const currentMod = scaleLinear()
+        .domain([0, 5, 20, 35, 50, 60, 70, 80, 90])
+        .range([0, 0, 0.5, 0, 0.5, 1, 0.5, 0, 0])
+      const coastal = WORLD.distance.coastal()
+      const continental = WORLD.cell.scale() * 25
+      const continentMod = scaleLinear().domain([0, 90]).range([0, 1])
       WORLD.land().forEach(cell => {
         const lat = Math.abs(cell.y)
-        // let key: keyof typeof heat.summer | keyof typeof heat.winter = 'normal'
-        // if (cell.coastal) {
-        //   const hot = (cell.e > cell.w && lat < 40) || (cell.w > cell.e && lat > 30)
-        //   const mild = (lat > 60 && hot) || (cell.e > cell.w && lat >= 40 && lat <= 50)
-        //   key = mild ? 'mild' : hot ? 'hot' : 'cold'
-        // }
+        const east = cell.rain.east > cell.rain.west
+        const key = lat > 30 ? (east ? 'cold' : 'hot') : east ? 'hot' : 'cold'
+        const current = (key === 'hot' ? 1 : -1) * currentMod(lat) * 0
+        const extreme = continentMod(lat) * 0
+        const summerMod = scaleLinear()
+          .domain([0, coastal, continental])
+          .range([key === 'hot' ? 0 : current, 0, extreme])(cell.oceanDist)
+        const winterMod = scaleLinear()
+          .domain([0, coastal, continental])
+          .range([current, 0, -extreme])(cell.oceanDist)
         const elevation = WORLD.heightToKM(cell.h) * 6.5
-        // cell.heat = { s: heat.summer[key](lat) - elevation, w: heat.winter[key](lat) - elevation }
-        const exp = 1.5
-        cell.heat = { w: 0, s: 0 }
-        cell.heat.w = scalePow().exponent(exp).domain([0, 90]).range([30, -28])(lat) - elevation
-        cell.heat.s = scalePow().exponent(exp).domain([0, 90]).range([30, 4])(lat) - elevation
-        if (cell.y < 0) cell.heat = { w: cell.heat.s, s: cell.heat.w }
+        cell.heat = { winter: 0, summer: 0 }
+        cell.heat.winter = temperatureCurve(delta.winter, base.winter, lat) - elevation + winterMod
+        cell.heat.summer = temperatureCurve(delta.summer, base.summer, lat) - elevation + summerMod
+        if (cell.y < 0) cell.heat = { winter: cell.heat.summer, summer: cell.heat.winter }
       })
       // smoothing
       range(1).forEach(() => {
         WORLD.land().forEach(cell => {
           const n = CELL.neighbors(cell).filter(cell => !cell.isWater && !cell.isMountains)
-          const summer = [cell.heat.s, ...n.map(n => n.heat.s)]
-          cell.heat.s = mean(summer)
-          const winter = [cell.heat.w, ...n.map(n => n.heat.w)]
-          cell.heat.w = mean(winter)
+          const summer = [cell.heat.summer, ...n.map(n => n.heat.summer)]
+          cell.heat.summer = mean(summer)
+          const winter = [cell.heat.winter, ...n.map(n => n.heat.winter)]
+          cell.heat.winter = mean(winter)
         })
       })
     },
     _climate: () => {
+      const domain = 2
+      const rainRanges = {
+        arctic: [62.5, 125, 250, 500],
+        subarctic: [62.5, 125, 250, 500, 1000],
+        boreal: [62.5, 125, 250, 500, 1000, 2000],
+        cool: [62.5, 125, 250, 500, 1000, 2000, 4000],
+        warm: [62.5, 125, 250, 500, 1000, 2000, 4000, 6000],
+        subtropical: [62.5, 125, 250, 500, 1000, 2000, 4000, 6000, 8000],
+        tropical: [62.5, 125, 250, 500, 1000, 2000, 4000, 6000, 8000, 10000]
+      }
+      const scale = (key: keyof typeof rainRanges) =>
+        scaleLinear()
+          .domain(MATH.scaleDiscrete(rainRanges[key].length).map(i => i * domain))
+          .range(rainRanges[key])
+      const arctic = scale('arctic')
+      const subarctic = scale('subarctic')
+      const boreal = scale('boreal')
+      const cool = scale('cool')
+      const warm = scale('warm')
+      const subtropical = scale('subtropical')
+      const tropical = scale('tropical')
       WORLD.land().forEach(cell => {
-        const { latitude } = WORLD.gps(cell)
-        const tropical = mean([cell.heat.s, cell.heat.w]) >= 18
-        const north = latitude >= 0
-        const winterRain = north ? cell.winterRain : cell.summerRain
-        const summerRain = north ? cell.summerRain : cell.winterRain
-        const winterHeat = north ? cell.heat.w : cell.heat.s
-        const summerHeat = north ? cell.heat.s : cell.heat.w
-        if (winterHeat <= 0) {
-          cell.climate = winterHeat > -10 ? 'polar' : 'ice cap'
-        } else if (summerRain < 0.25 && winterRain < 0.25) {
-          cell.climate = tropical ? 'hot desert' : 'cold desert'
-        } else if (summerRain < 0.5 && winterRain < 0.5) {
-          cell.climate = tropical ? 'hot steppe' : 'cold steppe'
-        } else if (tropical) {
-          cell.climate =
-            summerRain > 0.5 && winterRain > 0.5
-              ? 'tropical rainforest'
-              : winterRain > 0.25
-              ? 'tropical monsoon'
-              : 'savanna'
-        } else if (summerHeat >= 10 && winterHeat < 18 && summerRain < 0.5 && winterRain > 0.5) {
-          cell.climate = 'mediterranean'
-        } else if (summerHeat >= 18 && winterHeat < 18 && summerRain > 0.5) {
-          cell.climate = winterRain > 0.5 ? 'subtropical' : 'temperate monsoon'
-        } else if (summerHeat >= 10 && winterHeat < 10 && summerRain > 0.5 && winterRain > 0.5) {
-          cell.climate = 'oceanic'
-        } else if (summerHeat >= 10 && winterHeat < 10 && winterRain < 0.5) {
-          cell.climate = 'laurentian'
-        } else if (winterRain < 0.5) {
-          cell.climate = 'subarctic'
+        const averageHeat = mean([cell.heat.winter, cell.heat.summer])
+        const region =
+          averageHeat > 24
+            ? tropical
+            : averageHeat > 18
+            ? subtropical
+            : averageHeat > 12
+            ? warm
+            : averageHeat > 2
+            ? cool
+            : averageHeat > -5
+            ? boreal
+            : averageHeat > -12
+            ? subarctic
+            : arctic
+        cell.rain.winter += 0.01
+        cell.rain.summer += 0.01
+        const rain = region(cell.rain.winter + cell.rain.summer)
+        const ratio = cell.rain.summer / cell.rain.winter
+        cell.rain.winter = rain / ((1 + ratio) * 6)
+        cell.rain.summer = ratio * cell.rain.winter
+        if (region === tropical) {
+          if (rain > 8000) cell.climate = 'rain forest (tropical)'
+          else if (rain > 4000) cell.climate = 'wet forest (tropical)'
+          else if (rain > 2000) cell.climate = 'moist forest (tropical)'
+          else if (rain > 1000) cell.climate = 'dry forest (tropical)'
+          else if (rain > 500) cell.climate = 'very dry forest (tropical)'
+          else if (rain > 250) cell.climate = 'thorn woodland (tropical)'
+          else if (rain > 125) cell.climate = 'desert scrub (tropical)'
+          else cell.climate = 'desert (tropical)'
+        } else if (region === subtropical) {
+          if (rain > 4000) cell.climate = 'rain forest (subtropical)'
+          else if (rain > 2000) cell.climate = 'wet forest (subtropical)'
+          else if (rain > 1000) cell.climate = 'moist forest (subtropical)'
+          else if (rain > 500) cell.climate = 'dry forest (subtropical)'
+          else if (rain > 250) cell.climate = 'thorn steppe (subtropical)'
+          else if (rain > 125) cell.climate = 'desert scrub (subtropical)'
+          else cell.climate = 'desert (subtropical)'
+        } else if (region === warm) {
+          if (rain > 4000) cell.climate = 'rain forest (warm temperate)'
+          else if (rain > 2000) cell.climate = 'wet forest (warm temperate)'
+          else if (rain > 1000) cell.climate = 'moist forest (warm temperate)'
+          else if (rain > 500) cell.climate = 'dry forest (warm temperate)'
+          else if (rain > 250) cell.climate = 'thorn steppe (warm temperate)'
+          else if (rain > 125) cell.climate = 'desert scrub (warm temperate)'
+          else cell.climate = 'desert (warm temperate)'
+        } else if (region === cool) {
+          if (rain > 2000) cell.climate = 'rain forest (cool temperate)'
+          else if (rain > 1000) cell.climate = 'wet forest (cool temperate)'
+          else if (rain > 500) cell.climate = 'moist forest (cool temperate)'
+          else if (rain > 250) cell.climate = 'steppe (cool temperate)'
+          else if (rain > 125) cell.climate = 'desert scrub (cool temperate)'
+          else cell.climate = 'desert (cool temperate)'
+        } else if (region === boreal) {
+          if (rain > 1000) cell.climate = 'rain forest (boreal)'
+          else if (rain > 500) cell.climate = 'wet forest (boreal)'
+          else if (rain > 250) cell.climate = 'moist forest (boreal)'
+          else if (rain > 125) cell.climate = 'dry scrub (boreal)'
+          else cell.climate = 'desert (boreal)'
+        } else if (region === subarctic) {
+          if (rain > 500) cell.climate = 'rain tundra (subarctic)'
+          else if (rain > 250) cell.climate = 'wet tundra (subarctic)'
+          else if (rain > 125) cell.climate = 'moist tundra (subarctic)'
+          else cell.climate = 'dry tundra (subarctic)'
         } else {
-          cell.climate = 'none'
+          cell.climate = 'desert (arctic)'
         }
       })
     },
@@ -549,9 +591,9 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
       REGIONAL._lakes()
       REGIONAL._coastlines()
       REGIONAL._finalize(regionBorders)
-      // REGIONAL._rain()
+      REGIONAL._rain()
       REGIONAL._heat()
-      // REGIONAL._climate()
+      REGIONAL._climate()
     },
     land
   }

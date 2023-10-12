@@ -141,7 +141,8 @@ export const CELL = {
       landmark: 0,
       oceanDist: 0,
       mountainDist: -1,
-      roads: { land: [], sea: [] }
+      roads: { land: [], sea: [] },
+      rain: { east: -1, west: -1, winter: -1, summer: -1 }
     }
     return cell
   }

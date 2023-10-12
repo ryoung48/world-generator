@@ -5,18 +5,30 @@ import { useEffect, useRef, useState } from 'react'
 import { REGION } from '../../models/regions'
 import { Province } from '../../models/regions/provinces/types'
 import { delay } from '../../models/utilities/math/time'
+import { WORLD } from '../../models/world'
+import { CLIMATE } from '../../models/world/climate'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
 import { ACTION } from './actions'
 import { DRAW_BORDERS } from './border'
-import { DRAW_EMBELLISHMENTS } from './canvas/embellishments'
 import { DRAW_LANDMARKS } from './coasts'
 import { MAP } from './common'
+import { DRAW_EMBELLISHMENTS } from './embellishments'
 import { ICON } from './icons'
 import { DRAW_TERRAIN } from './icons/terrain'
 import { DRAW_INFRASTRUCTURE } from './infrastructure'
 import { CachedImages, MapSeason, MapStyle } from './types'
+
+function decimalToDMS(lat: number, lon: number): string {
+  const convert = (decimalDegree: number, isLatitude: boolean): string => {
+    const degree: number = Math.floor(decimalDegree)
+    const direction = isLatitude ? (decimalDegree >= 0 ? 'N' : 'S') : decimalDegree >= 0 ? 'E' : 'W'
+    return `${Math.abs(degree)}° ${direction}`
+  }
+
+  return `${convert(lat, true)},  ${convert(lon, false)}`
+}
 
 const loadImage = (path: string): Promise<HTMLImageElement> => {
   return new Promise(resolve => {
@@ -88,9 +100,8 @@ const paint = (params: {
   DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet })
   DRAW_TERRAIN.draw({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
   DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet })
-
-  const scale = MAP.scale.derived(projection)
-  DRAW_EMBELLISHMENTS.scale({ ctx, scale, rotation: projection.rotate() })
+  DRAW_EMBELLISHMENTS.scale({ ctx, projection })
+  DRAW_EMBELLISHMENTS.legend({ ctx, style })
 }
 
 let projection: GeoProjection = null
@@ -102,6 +113,7 @@ export function WorldMap() {
     rotation: [0, 0, 0],
     scale: 1
   })
+  const prevTransformRef = useRef<typeof transform>()
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [style, setStyle] = useState<MapStyle>('Nations')
   const [season, setSeason] = useState<MapSeason>('Winter')
@@ -119,6 +131,24 @@ export function WorldMap() {
       season,
       projection
     })
+  }
+  const transition = () => {
+    const { x, y } = cursor
+    const poly = window.world.cells[window.world.diagram.find(x, y)]
+    const province = window.world.provinces[poly.province]
+    const nation = window.world.regions[province.nation]
+    const localTransition = transform.scale / MAP.scale.init > MAP.breakpoints.regional
+    if (localTransition) {
+      dispatch({
+        type: 'transition',
+        payload: { tag: 'province', idx: province.idx }
+      })
+    } else {
+      dispatch({
+        type: 'transition',
+        payload: { tag: 'nation', idx: nation.idx }
+      })
+    }
   }
   useEffect(() => {
     const node = canvasRef.current
@@ -164,6 +194,19 @@ export function WorldMap() {
     if (Object.keys(cachedImages).length > 0) runPaint()
   }, [season, style, transform, state.province, state.region])
   useEffect(() => {
+    const oldScale = prevTransformRef.current?.scale / MAP.scale.init
+    const newScale = transform.scale / MAP.scale.init
+    const globalTransition = oldScale <= MAP.breakpoints.global && newScale > MAP.breakpoints.global
+    const regionalTransition =
+      oldScale > MAP.breakpoints.regional && newScale <= MAP.breakpoints.regional
+    const localTransition =
+      oldScale <= MAP.breakpoints.regional && newScale > MAP.breakpoints.regional
+    if (regionalTransition || localTransition || globalTransition) {
+      transition()
+    }
+    prevTransformRef.current = transform
+  }, [transform])
+  useEffect(() => {
     const { x, y, zoom } = state.gps
     if (projection && zoom > 0) {
       const node = canvasRef.current
@@ -171,20 +214,58 @@ export function WorldMap() {
       setCursor({ x, y })
     }
   }, [state.gps])
+  const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
+  const climate = CLIMATE.holdridge[cell.climate]
   return (
     <Grid container>
       <Grid item xs={12} ref={containerRef}>
+        <Grid
+          justifyContent='space-between'
+          container
+          sx={{
+            zIndex: 2,
+            position: 'absolute',
+            top: MAP.height * 0.145,
+            left: MAP.width * 1.05,
+            fontFamily: fonts.maps,
+            fontSize: 20,
+            backgroundColor: 'rgba(238, 238, 221, 0.5)',
+            width: 165,
+            padding: 1
+          }}
+        >
+          <Grid item xs={12}>
+            {decimalToDMS(cursor.y, cursor.x)}
+          </Grid>
+          {cell.heat && (
+            <Grid item xs={12}>
+              <span>{`${MAP.metrics.temperature.format(
+                season === 'Summer' ? cell.heat.summer : cell.heat.winter
+              )}, ${MAP.metrics.rain.format(
+                season === 'Summer' ? cell.rain.summer : cell.rain.winter
+              )}, ${MAP.metrics.elevation.format(WORLD.heightToKM(cell.h))}`}</span>
+            </Grid>
+          )}
+          {cell.heat && (
+            <Grid item xs={12}>{`${climate.name} (${
+              cell.isMountains ? climate.altitude : climate.latitude
+            })`}</Grid>
+          )}
+        </Grid>
         <ToggleButtonGroup
           color='primary'
           exclusive
           value={style}
-          onChange={(_, value) => setStyle(value)}
+          onChange={(_, value) => {
+            if (value) setStyle(value)
+          }}
           size='small'
           style={{
             zIndex: 2,
             position: 'absolute',
-            top: window.world.dim.h + 35,
-            left: window.world.dim.w * 0.65
+            top: MAP.height + 35,
+            left: MAP.width * 0.42,
+            background: 'rgba(238, 238, 221, 0.5)'
           }}
         >
           {MAP.styles.map(label => (
@@ -200,13 +281,16 @@ export function WorldMap() {
             color='primary'
             exclusive
             value={season}
-            onChange={(_, value) => setSeason(value)}
+            onChange={(_, value) => {
+              if (value) setSeason(value)
+            }}
             size='small'
             style={{
               zIndex: 2,
               position: 'absolute',
-              top: window.world.dim.h - 10,
-              left: window.world.dim.w * 0.85
+              top: MAP.height - 10,
+              left: MAP.width * 0.65,
+              background: 'rgba(238, 238, 221, 0.5)'
             }}
           >
             {MAP.seasons.map(label => (
@@ -224,27 +308,10 @@ export function WorldMap() {
             backgroundColor: cssColors.background.map,
             border: `thick double ${cssColors.primary}`,
             filter: 'contrast(0.9) sepia(0.3) url(#noiseFilter)',
-            height: `${window.world.dim.h}px`,
+            height: `${MAP.height}px`,
             width: `100%`
           }}
-          onClick={() => {
-            const { x, y } = cursor
-            const poly = window.world.cells[window.world.diagram.find(x, y)]
-            const province = window.world.provinces[poly.province]
-            const nation = window.world.regions[province.nation]
-            const localTransition = transform.scale > MAP.breakpoints.regional
-            if (!localTransition) {
-              dispatch({
-                type: 'transition',
-                payload: { tag: 'province', idx: province.idx }
-              })
-            } else {
-              dispatch({
-                type: 'transition',
-                payload: { tag: 'nation', idx: nation.idx }
-              })
-            }
-          }}
+          onClick={transition}
         ></canvas>
         {/* https://tympanus.net/codrops/2019/02/19/svg-filter-effects-creating-texture-with-feturbulence/ */}
         <svg height='0'>

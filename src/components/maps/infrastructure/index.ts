@@ -9,7 +9,7 @@ import { MAP } from '../common'
 import { DrawInfraParams } from './types'
 
 const fontFamily = fonts.maps
-const baseFontSize = () => window.world.dim.h / 2000
+const baseFontSize = () => MAP.height / 2000
 
 const regionalPath =
   (regions: Set<number>) => (route: World['display']['routes'][RouteTypes][number]) => {
@@ -34,7 +34,7 @@ const locHighlight = (params: {
   gradient.addColorStop(0.9, `rgba(${color}, 0)`)
   gradient.addColorStop(1, 'transparent')
   ctx.fillStyle = gradient
-  ctx.fillRect(0, 0, window.world.dim.h, window.world.dim.h)
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   ctx.restore()
 }
 

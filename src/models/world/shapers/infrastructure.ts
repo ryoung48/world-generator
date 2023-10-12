@@ -1,3 +1,4 @@
+import { MAP } from '../../../components/maps/common'
 import { CULTURE } from '../../npcs/cultures'
 import { REGION } from '../../regions'
 import { PROVINCE } from '../../regions/provinces'
@@ -101,7 +102,8 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
             .some(n => n.landmark === i)
         })
         if (ports.length > 1) {
-          const sight = window.world.dim.w * 0.04
+          // TODO: NOT OPTIMIZED
+          const sight = MAP.width * 0.04
           for (const start of ports) {
             const src = window.world.provinces[start.province]
             // find all nearby ports

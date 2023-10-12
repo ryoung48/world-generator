@@ -3,7 +3,6 @@ import { COLOR } from '../utilities/color'
 import { titleCase } from '../utilities/text'
 import { decorateText } from '../utilities/text/decoration'
 import { formatters } from '../utilities/text/formatters'
-import { WORLD } from '../world'
 import { Cell } from '../world/cells/types'
 import { CLIMATE } from '../world/climate'
 import { Climate } from '../world/climate/types'
@@ -91,8 +90,7 @@ export const REGION = {
   spawn: (cell: Cell) => {
     const idx = window.world.regions.length
     cell.region = idx
-    const { longitude } = WORLD.gps(cell)
-    const side = longitude > 40 ? 'E' : 'W'
+    const side = cell.x > 0 ? 'E' : 'W'
     const color = window.dice.color()
     const hue = COLOR.extractHue(color)
     const region: Region.Region = {

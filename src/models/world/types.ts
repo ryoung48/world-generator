@@ -6,7 +6,6 @@ import { Court } from '../regions/provinces/hooks/courts/types'
 import { Ruin } from '../regions/provinces/hooks/ruins/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
-import { Dimensions } from '../utilities/dimensions'
 import { GeoVoronoiDiagram } from '../utilities/math/voronoi/types'
 import { Cell } from './cells/types'
 import { Display } from './shapers/display/types'
@@ -17,29 +16,15 @@ export interface CoastalEdge {
   edge: [number, number][]
 }
 
-interface WorldDimensions extends Dimensions {
-  res: number
-  // voronoi cell resolution
-  cells: number
-  // actual width / height (miles)
-  rw: number
-  rh: number
-  // noise resolution
-  noise: number
-  // cell dimensions
-  cellArea: number
-  cellLength: number
-}
-
 export type RouteTypes = 'land' | 'sea'
 
 export interface World {
   id: string
+  resolution: number
   diagram?: GeoVoronoiDiagram
   cells: Cell[]
+  display: Display
   // geography
-  latitude: [number, number]
-  longitude: [number, number]
   landmarks: Record<
     number,
     {
@@ -50,15 +35,12 @@ export interface World {
       size: number
     }
   >
-  seaLevelCutoff: number
   mountains: number[]
   coasts: CoastalEdge[]
   routes: Record<
     RouteTypes,
     { path: number[]; length: number; src: number; dst: number; imperial?: boolean }[]
   >
-  display: Display
-  dim: WorldDimensions
   // entities
   regions: Region[]
   conflicts: {

@@ -102,7 +102,7 @@ export const NAVIGATION = {
     limit = Infinity
   }: Navigation.ShortestPathParams) => {
     const pathing = validPath[type]
-    const cells = window.world.dim.cells
+    const cells = window.world.cells.length
     const cellLimit = limit * cells
     // initialize the priority queue to compare cell priorities
     const queue = new PriorityQueue({

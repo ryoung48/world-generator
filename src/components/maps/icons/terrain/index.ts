@@ -58,22 +58,6 @@ export const DRAW_TERRAIN = {
       })
     })
     ctx.restore()
-    // ctx.save()
-    // ctx.fillStyle = 'white'
-    // ctx.strokeStyle = 'rgba(88, 103, 117, 0.2)'
-    // ctx.lineWidth = scale < 20 ? 1 : 0.5
-    // window.world.display.icebergs
-    //   .filter(({ idx }) => {
-    //     const cell = window.world.cells[idx]
-    //     const contained = regions.has(cell.region)
-    //     return contained || globalScale
-    //   })
-    //   .forEach(({ path }) => {
-    //     const p = new Path2D(path)
-    //     ctx.fill(p)
-    //     ctx.stroke(p)
-    //   })
-    // ctx.restore()
   },
   icons: terrain
 }

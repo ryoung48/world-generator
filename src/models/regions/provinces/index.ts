@@ -6,7 +6,6 @@ import { POINT } from '../../utilities/math/points'
 import { dayMS } from '../../utilities/math/time'
 import { PERFORMANCE } from '../../utilities/performance'
 import { decorateText } from '../../utilities/text/decoration'
-import { WORLD } from '../../world'
 import { CLIMATE } from '../../world/climate'
 import { HUB } from './hubs'
 import * as Province from './types'
@@ -50,8 +49,7 @@ export const PROVINCE = {
   },
   cell: (province: Province.Province) => window.world.cells[province.hub.cell],
   climate: (province: Province.Province): Province.Province['environment']['climate'] => {
-    const { latitude } = WORLD.gps(province.hub)
-    const lat = Math.abs(latitude)
+    const lat = Math.abs(province.hub.y)
     return lat < 23
       ? 'tropical'
       : lat < 35
@@ -252,8 +250,7 @@ export const PROVINCE = {
     const mountainous = province.mountains > 0
     const region = window.world.regions[province.region]
     const climate = CLIMATE.lookup[region.climate]
-    const { latitude } = WORLD.gps(province.hub)
-    const glacial = Math.abs(latitude) > CLIMATE.glacierLatitudeCutoff
+    const glacial = Math.abs(province.hub.y) > CLIMATE.glacierLatitudeCutoff
     // Generate a chance of a marsh given certain criteria
     const coastal = province.hub.coastal && window.dice.random > 0.8
     const lakeside = Object.keys(province.lakes).length > 0

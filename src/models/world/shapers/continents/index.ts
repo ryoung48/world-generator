@@ -25,7 +25,7 @@ export const CONTINENTS = PERFORMANCE.profile.wrapper({
         n.coastal = true
       })
       // determine the distance from the ocean cutoff for 'coastal cells'
-      const coastalCutoff = Math.max(1, Math.round(160 / window.world.dim.cellLength))
+      const coastalCutoff = WORLD.distance.coastal()
       while (queue.length > 0) {
         const current = queue.shift()
         const neighbors = CELL.neighbors(current).filter(n => !n.ocean && n.oceanDist === 0)
@@ -48,23 +48,17 @@ export const CONTINENTS = PERFORMANCE.profile.wrapper({
         label: 'noise',
         f: () => NoiseGenerator.sphere(window.world.cells, params, seed)
       })
-      elev.forEach((e, i) => (window.world.cells[i].h = e > 0.4 ? 0.1 : 0))
-      window.world.seaLevelCutoff = 0.1
+      elev.forEach((e, i) => (window.world.cells[i].h = e > 0.4 ? WORLD.elevation.seaLevel : 0))
     },
     _setup: () => {
       // create initial points
-      let points: [number, number][] = range(window.world.dim.cells).map(() => {
+      let points: [number, number][] = range(WORLD.cell.count()).map(() => {
         return [360 * window.dice.random, 90 * (window.dice.random - window.dice.random)]
       })
       PERFORMANCE.profile.apply({
         label: 'voronoi diagram',
         f: () => {
-          const { vor, sites } = VORONOI.relaxed.spherical({
-            points,
-            w: window.world.dim.w,
-            h: window.world.dim.h,
-            relaxation: 1
-          })
+          const { vor, sites } = VORONOI.relaxed.spherical({ points, relaxation: 1 })
           window.world.diagram = vor
           points = sites
         }

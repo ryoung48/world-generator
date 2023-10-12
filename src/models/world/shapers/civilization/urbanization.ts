@@ -73,7 +73,7 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
         })
       }
       // final populations
-      const { cellArea } = window.world.dim
+      const cellArea = WORLD.cell.area()
       window.world.regions.forEach(region => {
         const culture = window.world.cultures[region.culture]
         const dev = developmentPopulation(region.development)

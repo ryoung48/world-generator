@@ -1,8 +1,14 @@
 import * as d3 from 'd3'
 
+import { MATH } from '../../../models/utilities/math'
 import { Point } from '../../../models/utilities/math/points/types'
 import { Vertex } from '../../../models/utilities/math/voronoi/types'
 import { CircleParams, DrawPolygonParams } from './types'
+
+const rain = [0, 10, 25, 50, 100, 200, 400, 800].reverse()
+const elevation = [0, 300, 600, 1200, 2000, 3000, 4000, 6000, 9000, 12000, 16000, 20000, 26000].map(
+  MATH.ftToKm
+)
 
 /**
  * Creates a strongly typed curve context object.
@@ -44,9 +50,11 @@ function geoCurvePath(
 }
 
 export const MAP = {
+  height: 800,
+  width: 800,
   breakpoints: {
     regional: 30,
-    global: 3
+    global: 7
   },
   circle: (params: CircleParams) => {
     const { ctx, point, radius, fill, border } = params
@@ -95,6 +103,51 @@ export const MAP = {
         } as unknown as d3.ExtendedFeature
       ])
   },
+  metrics: {
+    elevation: {
+      color: d3.scaleLinear(elevation, [
+        '#A6BF97',
+        '#8AAB78',
+        '#B0B784',
+        '#D6D2AD',
+        '#D1C99B',
+        '#C0AA79',
+        '#937B57',
+        '#736248',
+        '#867764',
+        '#B3AA99',
+        '#CCC4B7',
+        '#ECE9E2',
+        '#F4F3EF'
+      ]),
+      format: (r: number) => `${r.toFixed(2)} km`,
+      legend: () =>
+        [...elevation].reverse().map(r => ({
+          color: MAP.metrics.elevation.color(r),
+          text: MAP.metrics.elevation.format(r)
+        }))
+    },
+    rain: {
+      scale: d3.scaleLinear(rain, MATH.scaleDiscrete(rain.length)),
+      color: (r: number) => d3.interpolateViridis(MAP.metrics.rain.scale(r)),
+      format: (r: number) => `${r.toFixed(0)} mm`,
+      legend: () =>
+        rain.map(r => ({
+          color: MAP.metrics.rain.color(r),
+          text: MAP.metrics.rain.format(r)
+        }))
+    },
+    temperature: {
+      scale: d3.scaleLinear([-35, 30], [1, 0]),
+      color: (heat: number) => d3.interpolateSpectral(MAP.metrics.temperature.scale(heat)),
+      format: (heat: number) => `${heat.toFixed(0)}° c`,
+      legend: () =>
+        [-30, -24, -12, -5, 0, 5, 12, 18, 24, 30].map(heat => ({
+          color: MAP.metrics.temperature.color(heat),
+          text: MAP.metrics.temperature.format(heat)
+        }))
+    }
+  },
   polygon: (params: DrawPolygonParams) => {
     const { direction, path, points } = params
     const reverse = points.slice().reverse()
@@ -121,9 +174,9 @@ export const MAP = {
     'Nations',
     'Cultures',
     'Religions',
-    'Climate',
     'Elevation',
+    'Temperature',
     'Rain',
-    'Temperature'
+    'Climate'
   ] as const
 }

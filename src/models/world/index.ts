@@ -1,8 +1,6 @@
-import { canvasDims } from '../utilities/dimensions'
 import { MATH } from '../utilities/math'
 import { Dice } from '../utilities/math/dice'
 import { POINT } from '../utilities/math/points'
-import { Point } from '../utilities/math/points/types'
 import { dayMS, daysPerYear } from '../utilities/math/time'
 import { Vertex } from '../utilities/math/voronoi/types'
 import { PERFORMANCE } from '../utilities/performance'
@@ -29,7 +27,7 @@ const hourAngle = (latitude: number) => {
 
 const _land = () =>
   window.world.cells.filter(e => {
-    return e.h >= window.world.seaLevelCutoff
+    return e.h >= WORLD.elevation.seaLevel
   })
 const land = PERFORMANCE.memoize.decorate({ f: _land })
 
@@ -38,7 +36,7 @@ const mountains = PERFORMANCE.memoize.decorate({ f: _mountains })
 
 const _water = () =>
   window.world.cells.filter(e => {
-    return e.h < window.world.seaLevelCutoff
+    return e.h < WORLD.elevation.seaLevel
   })
 const water = PERFORMANCE.memoize.decorate({ f: _water })
 
@@ -49,16 +47,24 @@ export const WORLD = PERFORMANCE.profile.wrapper({
     borders() {
       return land().filter(p => CELL.isNationBorder(p) || p.isCoast)
     },
-    center: (spacing: number) => {
-      const { w, h } = window.world.dim
-      return WORLD.land().filter(
-        ({ x, y }) => x > spacing && x < w - spacing && y > spacing && y < h - spacing
-      )
+    cell: {
+      base: 16000,
+      scale: () => window.world.resolution / 4,
+      count: () => window.world.resolution * WORLD.cell.base,
+      area: () => {
+        const surfaceArea = 4 * Math.PI * window.world.radius ** 2
+        return surfaceArea / WORLD.cell.count()
+      },
+      length: () => {
+        return WORLD.cell.area() ** 0.5
+      }
     },
     dayDuration: (latitude: number) => {
       const angularVelocity = 360 / window.world.rotation
       return (hourAngle(latitude) * 2) / angularVelocity
     },
+    distance: { coastal: () => Math.max(1, Math.round(160 / WORLD.cell.length())) },
+    elevation: { seaLevel: 0.1, mountains: 0.5, max: 0.95 },
     features: (type: 'water' | 'land') => {
       const water = (v: World['landmarks'][number]) => v.water
       const land = (v: World['landmarks'][number]) => !v.water
@@ -67,13 +73,12 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         .filter(([, v]) => filter(v))
         .map(([k]) => parseInt(k))
     },
-    gps: ({ x, y }: Point) => {
-      return {
-        latitude: MATH.scale([window.world.dim.h, 0], window.world.latitude, y),
-        longitude: MATH.scale([0, window.world.dim.w], window.world.longitude, x)
-      }
-    },
-    heightToKM: (h: number) => MATH.scale([window.world.seaLevelCutoff, 1.5], [0, 6], h),
+    heightToKM: (h: number) =>
+      MATH.scale(
+        [WORLD.elevation.seaLevel, WORLD.elevation.mountains, WORLD.elevation.max],
+        [0, 0.6, 6],
+        h
+      ),
     heightToMI: (h: number) => MATH.kmToMi(WORLD.heightToKM(h)),
     land: () => land(),
     mountains() {
@@ -136,25 +141,11 @@ export const WORLD = PERFORMANCE.profile.wrapper({
       const date = new Date(year, month, day, hours, minutes).getTime()
       const firstNewMoon = date - dayMS * window.dice.randint(0, 30)
       // dimensions
-      const cells = 16000 * res
-      const latitude: [number, number] = [-90, 90]
-      const longitude: [number, number] = [-180, 180]
-      // average voronoi cell area (square miles)
-      const milesPerDegree = { lat: 69, long: 54 }
-      const milesLat = milesPerDegree.lat * (latitude[1] - latitude[0])
-      const milesLong = milesPerDegree.long * (longitude[1] - longitude[0])
-      const cellArea = (milesLat * milesLong) / cells
-      const cellLength = cellArea ** 0.5
-      // MATH.scaled height & width (used in distance calculations)
-      const sh = milesLat / canvasDims.h
-      const sw = milesLong / canvasDims.w
       const world: World = {
         id: seed,
+        resolution: res,
         cells: [],
-        latitude,
-        longitude,
         landmarks: {},
-        seaLevelCutoff: 0.06,
         mountains: [],
         routes: {
           land: [],
@@ -172,24 +163,6 @@ export const WORLD = PERFORMANCE.profile.wrapper({
           icebergs: []
         },
         coasts: [],
-        dim: {
-          res,
-          // display image width / height (pixels)
-          ...canvasDims,
-          // voronoi cell resolution
-          cells,
-          // noise resolution
-          noise: 256,
-          // total map area (square miles)
-          rh: milesLat,
-          rw: milesLong,
-          // MATH.scale + cell metrics
-          sh,
-          sw,
-          // cell dimensions
-          cellArea,
-          cellLength
-        },
         regions: [],
         provinces: [],
         cultures: [],
@@ -200,16 +173,18 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         conflicts: [],
         quests: [],
         uniqueNames: {},
-        radius: 6.371e3,
+        radius: 3.959e3, // miles
         date,
         firstNewMoon,
         lunarCycle: 28,
         rotation: 24,
         tilt: 23.5
       }
-      // select hemisphere
-      if (window.dice.flip) world.latitude = [-90, 10]
       return world
+    },
+    temperature: {
+      summer: [30, 4],
+      winter: [30, -30]
     },
     water() {
       return water()

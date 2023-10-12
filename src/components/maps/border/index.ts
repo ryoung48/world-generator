@@ -1,8 +1,9 @@
-import { interpolateSpectral, mean } from 'd3'
+import { mean } from 'd3'
 
 import { PROVINCE } from '../../../models/regions/provinces'
-import { MATH } from '../../../models/utilities/math'
+import { ARRAY } from '../../../models/utilities/array'
 import { Vertex } from '../../../models/utilities/math/voronoi/types'
+import { WORLD } from '../../../models/world'
 import { CLIMATE } from '../../../models/world/climate'
 import { DISPLAY } from '../../../models/world/shapers/display'
 import { RegionSegment } from '../../../models/world/shapers/display/types'
@@ -32,10 +33,8 @@ let provinceBorders: Record<
   {
     path: Vertex[][]
     elevation: string
-    winter: string
-    summer: string
-    summerRain: string
-    winterRain: string
+    heat: { summer: string; winter: string }
+    rain: { summer: string; winter: string }
     climate: string
   }
 > = {}
@@ -119,44 +118,41 @@ export const DRAW_BORDERS = {
       if (Object.keys(provinceBorders).length === 0) {
         window.world.provinces.forEach(province => {
           const cells = province.cells.land.map(c => window.world.cells[c])
-          const h = mean(cells.map(c => c.h))
-          const scaledH = MATH.scale([window.world.seaLevelCutoff, 1.2], [0.8, 0], h)
-          const w = mean(cells.map(c => c.heat.w))
-          const scaledW = MATH.scale([-25, 30], [1, 0], w)
-          const s = mean(cells.map(c => c.heat.s))
-          const scaledS = MATH.scale([-25, 30], [1, 0], s)
-          const summerRain = mean(cells.map(cell => cell.e ?? 0)) / 50
-          const winterRain = mean(cells.map(cell => cell.w ?? 0)) / 50
+          const h = WORLD.heightToKM(mean(cells.map(c => c.h)))
+          const climate = CLIMATE.holdridge[ARRAY.mode(cells.map(cell => cell.climate))[0]]
           provinceBorders[province.idx] = {
             path: DISPLAY.borders.provinces([province]),
-            elevation: interpolateSpectral(scaledH),
-            winter: interpolateSpectral(scaledW),
-            summer: interpolateSpectral(scaledS),
-            summerRain: interpolateSpectral(summerRain),
-            winterRain: interpolateSpectral(winterRain),
-            climate: 'black'
+            elevation: MAP.metrics.elevation.color(h),
+            heat: {
+              summer: MAP.metrics.temperature.color(mean(cells.map(c => c.heat.summer))),
+              winter: MAP.metrics.temperature.color(mean(cells.map(c => c.heat.winter)))
+            },
+            rain: {
+              summer: MAP.metrics.rain.color(mean(cells.map(c => c.rain.summer ?? 0))),
+              winter: MAP.metrics.rain.color(mean(cells.map(c => c.rain.winter ?? 0)))
+            },
+            climate: climate.color
           }
         })
       }
       window.world.provinces.forEach(province => {
-        provinceBorders[province.idx].path.forEach(border => {
+        const styles = provinceBorders[province.idx]
+        styles.path.forEach(border => {
           ctx.save()
           const p = MAP.polygon({ points: border, path, direction: 'inner' })
           ctx.clip(p)
           ctx.fillStyle =
-            provinceBorders[province.idx][
-              style === 'Climate'
-                ? 'climate'
-                : style === 'Elevation'
-                ? 'elevation'
-                : style === 'Rain'
-                ? season === 'Winter'
-                  ? 'winterRain'
-                  : 'summerRain'
-                : season === 'Winter'
-                ? 'winter'
-                : 'summer'
-            ]
+            style === 'Climate'
+              ? styles.climate
+              : style === 'Elevation'
+              ? styles.elevation
+              : style === 'Rain'
+              ? season === 'Winter'
+                ? styles.rain.winter
+                : styles.rain.summer
+              : season === 'Winter'
+              ? styles.heat.winter
+              : styles.heat.summer
           ctx.fill(p)
           ctx.restore()
         })

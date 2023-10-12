@@ -67,7 +67,7 @@ export const world__load = (saved: string) => {
   }
   window.world = WORLD.spawn({
     seed: world.id,
-    res: world.dim.cells / 16000
+    res: world.resolution
   })
   // PERFORMANCE.profile.apply({ label: 'Continents', f: () => new ContinentShaper().build() })
   // PERFORMANCE.profile.apply({ label: 'Regions', f: () => new RegionalShaper().build() })

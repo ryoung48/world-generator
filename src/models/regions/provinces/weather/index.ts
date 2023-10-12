@@ -32,7 +32,7 @@ export const computeHeat = (params: {
   climate: Climate[keyof Climate]
 }) => {
   const { month, cell, climate } = params
-  const latitude = WORLD.gps(cell).latitude
+  const latitude = cell.y
   const south = latitude < 0
   const absLat = Math.abs(latitude)
   const time = month > 5 ? 11 - month : month
@@ -51,7 +51,7 @@ export const computeHeat = (params: {
 
 const computeRain = (params: { climate: Climate[keyof Climate]; month: number; cell: Cell }) => {
   const { month, cell, climate } = params
-  const latitude = WORLD.gps(cell).latitude
+  const latitude = cell.y
   const south = latitude < 0
   const [summer, winter] = climate.precipitation
   const time = month > 5 ? 11 - month : month
