@@ -3,15 +3,8 @@ import { range } from 'd3'
 import { ARRAY } from '../../array'
 import { parseOutermostBrackets } from '../../text'
 import { MATH } from '..'
+import { Directions } from '../points/types'
 import { WeightedDistribution } from '../types'
-
-export function generateId(seed = Math.random()) {
-  return Math.floor(seed * Number.MAX_SAFE_INTEGER).toString(36)
-}
-
-export function randomChoice<T>(arr: T[]) {
-  return arr[~~(Math.random() * arr.length)]
-}
 
 interface Shuffler<T> {
   r: number
@@ -162,7 +155,7 @@ export class Dice {
     return `hsl(${hue}, ${saturation}%, ${lum}%)`
   }
   public generateId() {
-    return generateId(this.random)
+    return DICE.id(this.random)
   }
   public spin(text: string): string {
     return parseOutermostBrackets(text).reduce((spun, match) => {
@@ -171,5 +164,28 @@ export class Dice {
         this.choice(this.spin(match.substring(1, match.length - 1)).split('|'))
       )
     }, text)
+  }
+  public direction(): Directions {
+    return this.choice(['N', 'S', 'E', 'W'])
+  }
+}
+
+export const DICE = {
+  choice: <T>(arr: T[]) => {
+    return arr[~~(Math.random() * arr.length)]
+  },
+  id: (seed = Math.random()) => {
+    return Math.floor(seed * Number.MAX_SAFE_INTEGER).toString(36)
+  },
+  spawn: (seed: string) => {
+    window.dice = new Dice(seed)
+    return window.dice
+  },
+  swap: <T>(seed: string, f: () => T) => {
+    const old = window.dice
+    window.dice = new Dice(seed)
+    const result = f()
+    window.dice = old
+    return result
   }
 }

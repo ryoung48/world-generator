@@ -1,12 +1,13 @@
-import { scaleLinear, scalePow } from 'd3'
+import { scaleLinear } from 'd3'
 
+import { MAP } from '../../../../components/world/common'
+import { MATH } from '../../../utilities/math'
 import { hourMS, season } from '../../../utilities/math/time'
 import { titleCase } from '../../../utilities/text'
 import { decorateText } from '../../../utilities/text/decoration'
-import { WORLD } from '../../../world'
 import { Cell } from '../../../world/cells/types'
-import { CLIMATE } from '../../../world/climate'
-import { Climate } from '../../../world/climate/types'
+import { BIOME } from '../../../world/climate'
+import { BiomeDetails } from '../../../world/climate/types'
 import { Hub } from '../hubs/types'
 import { Province } from '../types'
 import {
@@ -14,6 +15,7 @@ import {
   TemperatureVariance,
   TimeOfDay,
   WeatherConditions,
+  WeatherConditionsParams,
   WeatherParams,
   WeatherPhenomena
 } from './types'
@@ -24,40 +26,6 @@ const rain = {
   moderate: 0.25,
   wet: 0.4,
   humid: 0.8
-}
-
-export const computeHeat = (params: {
-  cell: Cell
-  month: number
-  climate: Climate[keyof Climate]
-}) => {
-  const { month, cell, climate } = params
-  const latitude = cell.y
-  const south = latitude < 0
-  const absLat = Math.abs(latitude)
-  const time = month > 5 ? 11 - month : month
-  const exp = 1.5
-  const summerMod = climate.heatMod?.summer ?? 0
-  const winterMod = climate.heatMod?.winter ?? 0
-  const winter = scalePow().exponent(exp).domain([0, 90]).range([86, -20])(absLat) + winterMod
-  const summer = scalePow().exponent(exp).domain([0, 90]).range([86, 40])(absLat) + summerMod
-  return (
-    scaleLinear()
-      .domain([0, 5])
-      .range(south ? [summer, winter] : [winter, summer])(time) -
-    WORLD.heightToKM(cell.h) * 6.7
-  )
-}
-
-const computeRain = (params: { climate: Climate[keyof Climate]; month: number; cell: Cell }) => {
-  const { month, cell, climate } = params
-  const latitude = cell.y
-  const south = latitude < 0
-  const [summer, winter] = climate.precipitation
-  const time = month > 5 ? 11 - month : month
-  return scaleLinear()
-    .domain([0, 5])
-    .range(south ? [summer, winter] : [winter, summer])(time)
 }
 
 const tempDescriptor = (t: number) => {
@@ -141,10 +109,6 @@ const fairWeather = (): WeatherPhenomena => ({
   wind: window.dice.roll(1, 4)
 })
 
-const desertClimates = Object.entries(CLIMATE.lookup)
-  .filter(([_, { terrain }]) => terrain === 'desert')
-  .map(([type]) => type)
-
 const freezingPoint = 33
 
 const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => WeatherPhenomena> = {
@@ -212,14 +176,15 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
     }
     return { wind, weather }
   },
-  windy: ({ climate }) => {
+  windy: ({ biome }) => {
     let { weather, wind } = fairWeather()
-    const desert = desertClimates.includes(climate)
+    const desert = biome.terrain === 'desert'
+    const zone = BIOME.zone[biome.latitude]
     wind = window.dice.roll(2, desert ? 9 : 7)
     if (wind >= 12 && desert) {
-      if (climate === 'hot desert') {
+      if (zone === 'tropical') {
         weather = 'sand storm'
-      } else if (climate === 'cold desert') {
+      } else if (zone === 'temperate' || biome.latitude === 'boreal') {
         weather = 'dust storm'
       }
     }
@@ -243,7 +208,7 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
 const proceduralWeather = (params: {
   rainChance: number
   temp: number
-  climate: keyof Climate
+  biome: BiomeDetails
   time: TimeOfDay
 }) => {
   const condition = window.dice.weightedChoice<WeatherConditions>(
@@ -265,7 +230,7 @@ const proceduralWeather = (params: {
     clouds: cloudType,
     rain: params.rainChance,
     temp: params.temp,
-    climate: params.climate
+    biome: params.biome
   })
   const windSpeed = windMap(wind)
   const cloudy = weather === 'clear skies' && cloudType !== 'clear skies'
@@ -286,15 +251,14 @@ const proceduralWeather = (params: {
 export const hub__weather = (loc: Hub, month = new Date(window.world.date).getMonth()) => {
   // day temperature
   const cell = window.world.cells[loc.cell]
-  const region = window.world.regions[cell.region]
-  const climate = CLIMATE.lookup[region.climate]
-  const rain = computeRain({ climate, month, cell })
-  const meanTemp = computeHeat({ cell, month, climate })
+  const biome = BIOME.holdridge[cell.biome]
+  const rain = 0 // computeRain({ climate: biome, month, cell })
+  const meanTemp = 0 // computeHeat({ cell, month, climate: biome })
   let localTemp = window.dice.norm(meanTemp, 4)
   const diff = localTemp - meanTemp
   const variance: TemperatureVariance = diff >= 8 ? 'warmer' : diff <= -8 ? 'colder' : 'normal'
   // night temperature
-  const { diurnalHeat } = climate
+  const diurnalHeat = BIOME.diurnalVariation(biome)
   const diurnalVar = Math.max(1, window.dice.norm(...diurnalHeat))
   const time = window.dice.weightedChoice<TimeOfDay>([
     { w: 0.05, v: 'dawn' },
@@ -305,12 +269,7 @@ export const hub__weather = (loc: Hub, month = new Date(window.world.date).getMo
   ])
   const night = time === 'night' || time === 'dusk'
   if (night) localTemp -= diurnalVar
-  const weather = proceduralWeather({
-    rainChance: rain,
-    temp: localTemp,
-    climate: region.climate,
-    time
-  })
+  const weather = proceduralWeather({ rainChance: rain, temp: localTemp, biome, time })
   return {
     ...weather,
     variance,
@@ -335,4 +294,64 @@ export const province__weather = (loc: Province) => {
     }
   }
   return loc.weather
+}
+
+export const WEATHER = {
+  heat: (params: { cell: Cell; month: number }) => {
+    const { month, cell } = params
+    const { summer, winter } = cell.heat
+    const amp = Math.abs(summer - winter) / 2
+    const base = (summer + winter) / 2
+    const shift = summer > winter ? 4 : 10
+    return amp * Math.sin((month - shift) * (Math.PI / 6)) + base
+  },
+  rain: (params: { cell: Cell; month: number }) => {
+    const { month, cell } = params
+    const { summer, winter } = cell.rain
+    const amp = Math.abs(summer - winter) / 2
+    const base = (summer + winter) / 2
+    const shift = summer > winter ? 4 : 10
+    return amp * Math.sin((month - shift) * (Math.PI / 6)) + base
+  },
+  conditions: ({
+    loc,
+    month = new Date(window.world.date).getMonth(),
+    color
+  }: WeatherConditionsParams) => {
+    // day temperature
+    const cell = window.world.cells[loc.cell]
+    const biome = BIOME.holdridge[cell.biome]
+    const rain = scaleLinear(
+      MAP.metrics.rain.rain,
+      [0.92, 0.8, 0.68, 0.54, 0.42, 0.3, 0.18, 0.06]
+    )(WEATHER.rain({ cell, month }))
+    const meanTemp = MATH.conversion.temperature.celsius.fahrenheit(WEATHER.heat({ cell, month }))
+    let localTemp = window.dice.norm(meanTemp, 4)
+    const diff = localTemp - meanTemp
+    const variance: TemperatureVariance = diff >= 8 ? 'warmer' : diff <= -8 ? 'colder' : 'normal'
+    // night temperature
+    const diurnalHeat = BIOME.diurnalVariation(biome)
+    const diurnalVar = Math.max(1, window.dice.norm(...diurnalHeat))
+    const time = window.dice.weightedChoice<TimeOfDay>([
+      { w: 0.05, v: 'dawn' },
+      { w: 0.35, v: 'morning' },
+      { w: 0.35, v: 'afternoon' },
+      { w: 0.05, v: 'dusk' },
+      { w: 0.2, v: 'night' }
+    ])
+    const night = time === 'night' || time === 'dusk'
+    if (night) localTemp -= diurnalVar
+    const weather = proceduralWeather({ rainChance: rain, temp: localTemp, biome, time })
+    return `${decorateText({
+      label: weather.heat.desc,
+      tooltip: `${MAP.metrics.temperature.format(
+        MATH.conversion.temperature.fahrenheit.celsius(localTemp)
+      )}`,
+      color: color
+    })}${
+      variance === 'normal'
+        ? ''
+        : decorateText({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
+    }, ${season(month)}, ${time}, ${weather.conditions}`
+  }
 }

@@ -137,7 +137,7 @@ export const NAVIGATION = {
             const [cx, cy] = [cell.x, cell.y]
             const [dx, dy] = [destination.x, destination.y]
             // start the cost at the distance between cells
-            const cost = MATH.distance([nx, ny], [cx, cy])
+            const cost = MATH.distance.geo([nx, ny], [cx, cy])
             let penalty = 1
             const foreignPath =
               ![destination.region, origin.region].includes(neighbor.region) && type === 'land'
@@ -153,7 +153,7 @@ export const NAVIGATION = {
             const prospect = cost * penalty + totals[prev]
             totals[next] = prospect
             visited[next] = prev
-            const priority = prospect + MATH.distance([nx, ny], [dx, dy])
+            const priority = prospect + MATH.distance.geo([nx, ny], [dx, dy])
             // add cell w/ priority to the queue
             queue.queue({
               idx: next,

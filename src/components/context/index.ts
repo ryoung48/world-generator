@@ -1,10 +1,10 @@
 import { createContext, Dispatch, useContext } from 'react'
 
 import { itemPrice } from '../../models/npcs/equipment'
+import { adventurers } from '../../models/npcs/professions/adventurers'
 import { REGION } from '../../models/regions'
-// import { adventurers } from '../../models/npcs/professions/adventurers'
 import { PROVINCE } from '../../models/regions/provinces'
-import { Dice } from '../../models/utilities/math/dice'
+import { DICE } from '../../models/utilities/math/dice'
 import { ViewActions, ViewState } from './types'
 
 const init: ViewState = {
@@ -36,8 +36,7 @@ export const VIEW = {
       case 'init world': {
         const updated = { ...state, id: action.payload.id }
         // always zoom to the same region on every load
-        const dice = new Dice(updated.id)
-        const region = dice.choice(REGION.nations.filter(region => !region.shattered))
+        const region = DICE.swap(updated.id, () => window.dice.choice(REGION.nations))
         // set starting codex values
         updated.region = region.idx
         updated.province = region.capital
@@ -67,7 +66,7 @@ export const VIEW = {
         return {
           ...state,
           avatar: {
-            pcs: [], // adventurers({ count: 5, province: state.province }),
+            pcs: adventurers({ count: 5, province: state.province }),
             cp: 50
           }
         }

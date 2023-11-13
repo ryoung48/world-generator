@@ -3,10 +3,7 @@ import { Biome } from '../climate/types'
 
 export interface Cell extends Point {
   idx: number
-  // data: Array<[number, number]>
-  // n: number[]
   score: number
-  // mapEdge: boolean
   // coastal attributes
   coastalEdges?: [Point, Point][]
   isCoast?: boolean
@@ -27,7 +24,7 @@ export interface Cell extends Point {
   shallow?: boolean
   rain: { east: number; west: number; winter: number; summer: number }
   heat?: { winter?: number; summer?: number }
-  climate?: Biome
+  biome?: Biome
   // distances
   oceanDist: number
   mountainDist: number

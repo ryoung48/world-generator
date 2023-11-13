@@ -66,3 +66,8 @@ in the party there are three characters:
 * kathra: human wizard who is shy, but kind
 
 how would each of these characters react to the situation
+
+write descriptions for locations in a pre-modern city; keep in mind the following:
+* output the result as a bulleted list
+* write in the following format: term (written in italics all lowercase): description (~100 characters long)
+* each description should include both positive and negative traits

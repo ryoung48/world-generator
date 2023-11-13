@@ -1807,8 +1807,7 @@ const professionRandom = (params: { loc: Province }) => {
     const profession = professions[v]
     const coastalCheck = profession.coastal === undefined || profession.coastal === loc.hub.coastal
     const uniqueCheck = !profession.unique || !used[v]
-    const warCheck =
-      !profession.war || loc.conflict === 'war' || loc.hub.type === 'military outpost'
+    const warCheck = !profession.war || loc.conflict >= 0 || loc.hub.type === 'military outpost'
     const capitalCheck = !profession.capital || loc.capital
     const leaderCheck = !profession.leadership || nation.leadership
     const kingdomCheck = !profession.kingdom || kingdom

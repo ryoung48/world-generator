@@ -1,7 +1,5 @@
-import { cssColors } from '../../../../../components/theme/colors'
 import { ACTOR } from '../../../../npcs'
 import { LANGUAGE } from '../../../../npcs/languages'
-import { decorateText } from '../../../../utilities/text/decoration'
 import { PROVINCE } from '../..'
 import { HUB } from '../../hubs'
 import { Province } from '../../types'
@@ -536,37 +534,315 @@ const court__sites: Record<string, CourtTemplate> = {
       'Wards against divine powers',
       'Dire curse on assailants'
     ]
+  },
+  sorcerous: {
+    title: 'sorcerous {cabal|enclave}',
+    theme: {
+      text: 'the nature of arcane research',
+      types: [
+        'Alchemical, focusing on potion and substance creation',
+        'Astral, dealing with stars and space magic',
+        'Cautious, avoiding dangerous magics',
+        'Experimental, always testing new spells and rituals',
+        'Forbidden, dabbling in dark and banned arts',
+        'Historical, seeking out ancient spells and relics',
+        'Innovative, pushing the boundaries of magic',
+        'Mystical, dealing with spirits and the ethereal',
+        'Practical, focusing on everyday useful magics',
+        'Theoretical, more about study than application',
+        'Traditional, adhering to old rituals and methods',
+        'Warlike, preparing spells for battle and defense'
+      ]
+    },
+    actors: {
+      major: [
+        { title: 'Archmage', veteran: true },
+        { title: 'Battle mage', adult: true },
+        { title: 'Dean of the academy' },
+        { title: 'Elementalist', adult: true },
+        { title: 'Enchanter' },
+        { title: 'Forbidden spellcaster' },
+        { title: 'Magical artifact curator', elderly: true },
+        { title: 'Master of rituals' },
+        { title: 'Necromancer' },
+        { title: 'Researcher of the arcane' },
+        { title: 'Summoner' },
+        { title: 'Young prodigy', youngAdult: true }
+      ],
+      minor: [
+        { title: 'Alchemy apprentice' },
+        { title: 'Crystal ball seer' },
+        { title: 'Enthusiastic student' },
+        { title: 'Golem maker' },
+        { title: 'Herbalist' },
+        { title: 'Magic tool smith' },
+        { title: 'Magical creature caretaker' },
+        { title: 'Portal maintainer' },
+        { title: 'Rune scribe' },
+        { title: 'Spellbook librarian' },
+        { title: 'illusionist entertainer' },
+        { title: 'Wise oracle' }
+      ],
+      power: [
+        'Able to control a powerful magical creature',
+        'Controls access to a library of forbidden spells',
+        'Has a deep bond with powerful elementals',
+        'Has a direct connection to a magical plane',
+        'Holds an artifact of immense power',
+        'Is the sole master of a unique spell',
+        'Possesses vast arcane knowledge',
+        'Renowned for a groundbreaking magical discovery',
+        'Teaches and influences the next generation of mages',
+        "The guild's main mediator with other factions",
+        'Trusted by the local rulers for magical advice',
+        'Wields a staff of ancient origin'
+      ]
+    },
+    conflicts: [
+      'a forbidden ritual gone wrong',
+      'conflict over magical ethics',
+      'debate over sharing magic with non-mages',
+      'discovery of a new magical plane',
+      'guild split over a magical discovery',
+      'invasion of the guild by magical beasts',
+      'member caught selling secrets to outsiders',
+      'political interference in guild matters',
+      'rivalry with another magical institution',
+      'theft of a powerful artifact',
+      'uncontrolled magical experiment',
+      'use of necromancy within the guild'
+    ],
+    consequences: [
+      'a rift could tear the fabric of reality',
+      'a magical catastrophe could occur',
+      'dangerous creatures could be unleashed',
+      'erosion of trust in magic by the public',
+      'straining relations with other magical factions',
+      'magical diseases could spread',
+      'rapid depletion of magical resources',
+      'release of sealed arcane entities',
+      'uncontrolled proliferation of dangerous spells'
+    ],
+    defenses: [
+      'arcane shields protecting the guild',
+      'bound elemental guardians',
+      'mage-guards trained in battle spells',
+      'enchanted golems',
+      'hidden traps using illusion magic',
+      'magically fortified walls',
+      'members skilled in combat spells',
+      'portals to escape or move intruders',
+      'protective wards against intruders',
+      'sentient magical artifacts',
+      'summoned creatures on command'
+    ]
+  },
+  knights: {
+    title: '{knightly order|mercenary company}',
+    theme: {
+      text: 'purpose',
+      types: [
+        'Hunters of undead, outsiders, or other monsters',
+        'Guardians of ancient boundaries',
+        "Agents of the monarch's covert operations",
+        'Seekers of fortune through elite mercenary deeds',
+        "Bearers of an age-old hero's legacy",
+        'Pursuers of potent magical artifacts and sources',
+        'Arbiters of justice and adjudicators of crime',
+        'Hunters of rogue mages and apostates',
+        'Protectors of sacred relics and hallowed grounds',
+        'Restorers of lost and forgotten territories',
+        'Sentinels against ancient, malevolent forces',
+        'Explorers of uncharted and mysterious lands'
+      ]
+    },
+    actors: {
+      major: [
+        { title: 'Order Commander', veteran: true },
+        { title: 'Knowledgeable Old Veteran', veteran: true },
+        { title: 'Reckless Gloryhound' },
+        { title: 'Cynical Quartermaster' },
+        { title: 'Patron’s Spoiled Child', youngAdult: true },
+        { title: 'Enemy Informant' },
+        { title: 'Bone-weary Captain', veteran: true },
+        { title: 'Chipper Medic' },
+        { title: 'Dependable Veteran', veteran: true },
+        { title: 'Cowardly Lieutenant', veteran: true },
+        { title: 'Jovial Blacksmith' },
+        { title: 'Greedy Priest' }
+      ],
+      minor: [
+        { title: 'Eager Recruit', youngAdult: true },
+        { title: 'Ambitious Servant' },
+        { title: 'Fervent Devotee' },
+        { title: 'Frustrated Liaison' },
+        { title: 'Distressed Petitioner' },
+        { title: 'Wealthy Donor' },
+        { title: 'Busy Cook' },
+        { title: 'Lazy Guard' },
+        { title: 'Dutiful Soldier' },
+        { title: 'Distracted Engineer' },
+        { title: 'Worried Relative' }
+      ],
+      power: [
+        'They know all the order’s history and most of its secrets',
+        'They have incredible tactical acumen',
+        'They are brutally efficient on the battlefield',
+        'They keep everything organized and running smoothly',
+        'They have strong ties to one or more of the order’s patrons',
+        'They are blackmailing another major figure in the order',
+        'They are a trusted and admired figure among the troops',
+        'They have powerful magic or enchanted items',
+        'They are extremely intimidating or impressive',
+        'They bought their membership in the order at a high price',
+        'They are owed favors by many influential people',
+        'They are a skilled negotiator and spokesperson'
+      ]
+    },
+    conflicts: [
+      'two leaders have differing interpretations of their creed',
+      'a traitor is feeding information to the order’s enemies',
+      'the order has been working constantly and is exhausted',
+      'a rival order with similar goals is causing problems',
+      'a significant patron is threatening to withdraw funding',
+      'the local ruler is threatening to revoke the order’s charter',
+      'the order is badly short on supplies and equipment',
+      'a member has incurred large debts with dangerous folk',
+      'troops restless from inaction are starting to get rowdy',
+      'the order is preparing for a massive and imminent attack',
+      'someone is romantically entangled with a rival of the order',
+      'a local ruler wants a favor unrelated to the order’s charter',
+      'an officer is pushing their troops too hard',
+      'an influential religious sect has denounced the order',
+      'newly discovered history has caused a crisis of purpose',
+      'bandits have blocked access to or stolen vital supplies',
+      'there’s growing support for a mutiny by disgruntled troops',
+      'a recent battle had disastrous consequences on a village',
+      'someone has embezzled from the order’s coffers',
+      'a dangerous beast has attacked an order campsite',
+      'the order’s commander is an incompetent figurehead',
+      'the order has just discovered a major enemy base',
+      'a recent tactical blunder has shattered unit cohesion',
+      'helping a petitioner would be politically complicated'
+    ],
+    consequences: [
+      'Loss of critical strategic locations to enemies',
+      'Local towns and villages exposed to raids and pillaging',
+      'Power vacuum that rival factions will rush to fill',
+      'Breakdown of law and order in affiliated regions',
+      'Dispersal and fragmentation of surviving members',
+      'Treasures, artifacts, and relics falling into wrong hands',
+      'Loss of trust and respect among allies and benefactors',
+      'Erosion of a longstanding martial legacy and tradition',
+      "Revenge-seeking by enemies emboldened by the order's fall",
+      'Rise of opportunistic warlords in the absence of the order'
+    ],
+    defenses: [
+      'Armored battlements and siege engines',
+      'Battle formations and tactics',
+      'Castle moats and drawbridges',
+      'Dedicated archery units',
+      'Elite personal guard units',
+      'Fortified strongholds in strategic locations',
+      'Guard dogs and beasts of war',
+      'Iron-clad cavalry charges',
+      'Keen-eyed scouts and sentries',
+      'Layered walls and watchtowers'
+    ]
+  },
+  vampiric: {
+    title: 'vampire clan',
+    theme: {
+      text: 'theme',
+      types: [
+        'Ancient, hailing from times immemorial',
+        'Decadent, indulging in every forbidden pleasure',
+        'Enigmatic, with secrets layered deep',
+        'Feral, more beast than humanoid',
+        'Influential, manipulating the world from the shadows',
+        'Majestic, ruling with grace and power',
+        'Nomadic, always moving and leaving chaos in their wake',
+        'Opulent, showcasing their wealth and immortality',
+        'Ritualistic, bound by sacred and arcane practices',
+        'Seductive, luring victims with charm and allure',
+        'Vengeful, bearing ancient grudges and vendettas'
+      ]
+    },
+    actors: {
+      major: [
+        { title: 'Ancient Vampire Elder', elderly: true },
+        { title: 'Charismatic Manipulator' },
+        { title: 'Mysterious Occultist' },
+        { title: 'Scheming Advisor' },
+        { title: 'Vengeful Warlord' },
+        { title: 'Noble turned vampire' },
+        { title: 'Treacherous renegade vampire' },
+        { title: 'Sanguine priest' },
+        { title: 'Vampire hunter turned' },
+        { title: 'Wealthy mortal patron' }
+      ],
+      minor: [
+        { title: 'Blood-bound servant' },
+        { title: 'Captive human, not yet turned' },
+        { title: 'Enthralled musician' },
+        { title: 'Fledgling, new to vampirism' },
+        { title: 'Chained Prisoner' },
+        { title: 'Innocent, unaware of their vampiric lineage' },
+        { title: 'Keeper of forbidden lore' },
+        { title: 'Mesmerized artist' },
+        { title: 'Mortal Sympathizer' },
+        { title: 'Underling schemer' }
+      ],
+      power: [
+        'Ancient artifact that grants power',
+        'Control over other supernatural creatures',
+        'Dominance over a specific territory',
+        'Forbidden blood magic rituals',
+        'Guardianship of sacred relics',
+        'Knowledge of the court’s vulnerabilities',
+        'Lineage tracing back to original vampires',
+        'Mastery over the minds of mortals',
+        'Protection from traditional vampiric weaknesses',
+        'Riches amassed over centuries',
+        'The trust of the vampire monarch',
+        'Unrivaled combat prowess in darkness'
+      ]
+    },
+    conflicts: [
+      'internal power struggle threatens to split the clan',
+      'a forbidden romance with a mortal or rival clan member',
+      'the blood supply is tainted or running low',
+      'a rogue vampire is breaking the masquerade',
+      'an old enemy has resurfaced, seeking revenge',
+      "a prophecy foretells of the clan's downfall",
+      "the clan is at odds with the Vampire Council's decisions",
+      'a clan relic has been stolen and must be retrieved',
+      'distrust and suspicion after a major betrayal',
+      'territorial disputes with neighboring vampire clans',
+      'conflict over the turning of a powerful mortal'
+    ],
+    consequences: [
+      'Erosion of ancient traditions and history',
+      'Unleashing of powerful enemies once kept in check by the clan',
+      'Chaos and infighting among remaining members',
+      'Rise of rival clans to take over territories and resources',
+      'Loss of rare artifacts and relics',
+      'Uncontrolled blood feuds leading to more destruction'
+    ],
+    defenses: [
+      'Ancient wards and protective spells',
+      'Underground labyrinths and hideouts',
+      'Blood-bound guardians and warriors',
+      'Manipulation of mortal law enforcement',
+      'Alliances with other supernatural entities',
+      'Crypts and mausoleums fortified with dark magic',
+      'Vampire spies and informants among mortals',
+      'Summoned creatures of the night',
+      'Elders with immense power and wisdom',
+      'Bewitched mortals serving as eyes and ears'
+    ]
   }
 }
-
-const leadership = [
-  {
-    label: 'autocratic',
-    description: 'one person has largely unchallenged control over the court'
-  },
-  {
-    label: 'figurehead',
-    description: 'a public leader is actually controlled by one or more hidden figures'
-  },
-  {
-    label: 'shared',
-    description:
-      'two or more figures share ultimate decision-making authority, either officially or de facto'
-  },
-  {
-    label: 'consensus',
-    description: 'the court makes decisions by consensus, with everyone needing to mostly-agree'
-  },
-  {
-    label: 'democratic',
-    description:
-      'the court makes decisions by majority rule, either directly or through a leader who requires it'
-  },
-  {
-    label: 'anarchic',
-    description: 'authority is fragmented or currently unsettled, and no one is sure of their power'
-  }
-]
 
 export const court__spawn = (loc: Province) => {
   const village = HUB.village(loc.hub)
@@ -575,6 +851,9 @@ export const court__spawn = (loc: Province) => {
     { w: village ? 0 : 1, v: `mercantile` },
     { w: village ? 1 : 0, v: `familial` },
     { w: village ? 0 : 1, v: `criminal` },
+    { w: village ? 0 : 0.5, v: `sorcerous` },
+    { w: village ? 0 : 0.5, v: `knights` },
+    { w: village ? 0 : 0.5, v: `vampiric` },
     { w: village ? 0.1 : 1, v: `religious` }
   ])
   const court = court__sites[type]
@@ -583,16 +862,11 @@ export const court__spawn = (loc: Province) => {
     .concat(window.dice.sample(court.actors.minor, 3))
   const { local } = PROVINCE.cultures(loc)
   const culture = window.world.cultures[local.culture]
-  const structure = window.dice.choice(leadership)
   const spawned: Court = {
     tag: 'court',
     idx: window.world.courts.length,
     name: LANGUAGE.word.unique({ lang: culture.language, key: 'court', len: 3 }),
-    subtitle: `${window.dice.spin(court.title)} (${decorateText({
-      label: structure.label,
-      tooltip: structure.description,
-      color: cssColors.subtitle
-    })} court)`,
+    subtitle: `${window.dice.spin(court.title)} (court)`,
     theme: {
       label: court.theme.text,
       text: window.dice.choice(court.theme.types)

@@ -22,7 +22,7 @@ export interface Province extends TaggedEntity {
   capital: boolean
   population: number // total
   hub: Hub
-  conflict?: 'war'
+  conflict?: number
   // networking
   // sea|land -> { province -> route table (world) }
   trade: Record<RouteTypes, Record<string, number>>
@@ -46,7 +46,9 @@ export interface Province extends TaggedEntity {
       | 'jungle'
       | 'tundra'
       | 'glacier'
-      | 'taiga'
+      | 'subterranean'
+      | 'coastal'
+      | 'oceanic'
     climate: 'tropical' | 'subtropical' | 'temperate' | 'subarctic' | 'arctic'
   }
   // memory

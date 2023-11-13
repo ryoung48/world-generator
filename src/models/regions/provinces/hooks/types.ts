@@ -34,7 +34,8 @@ export interface HookTemplate {
 
 export type Hooks = {
   tags: {
-    type: 'community' | 'wilderness' | 'ruin' | 'court' | 'religion'
+    type: 'community' | 'wilderness' | 'ruin' | 'court' | 'religion' | 'war'
+    decorated?: string
     subtype: string
     tag: string
     text: string
@@ -45,8 +46,6 @@ export type Hooks = {
     place?: string
   }[]
   mission?: { tag: string; text: string; complication: string; intro: string }
-  court?: number
-  ruin?: number
   // relative difficulty
   // PC cr upon completing the thread
   difficulty: { cr: number; pc?: number }

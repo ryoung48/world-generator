@@ -75,14 +75,16 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
         // increment the land feature index after a completed floodfill
         idx += 1
       }
-      // determine monsoon influenced climates
-      const lands = Object.values(window.world.landmarks).filter(l =>
-        ['island', 'continent'].includes(l.type)
-      )
-      const largest = lands.slice(1).reduce((max, curr) => {
-        return max.size > curr.size ? max : curr
-      }, lands[0])
-      largest.monsoon = true
+      WORLD.reshape()
+      // remove super lakes
+      const water = WORLD.water().length
+      const lakes = WORLD.lakes()
+      WORLD.features('water')
+        .filter(idx => window.world.landmarks[idx].type === 'lake')
+        .forEach(idx => {
+          const lake = window.world.landmarks[idx]
+          if (lake.size / water > 0.005) WORLD.removeLake({ lakes, lake: idx })
+        })
       WORLD.reshape()
     },
     water: (idx: number) => {

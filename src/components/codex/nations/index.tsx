@@ -7,9 +7,10 @@ import { MATH } from '../../../models/utilities/math'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { CLIMATE } from '../../../models/world/climate'
+import { WORLD } from '../../../models/world'
 import { VIEW } from '../../context'
 import { cssColors } from '../../theme/colors'
+import { MAP } from '../../world/common'
 import { CodexPage } from '../common/CodexPage'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
@@ -17,7 +18,6 @@ import { StyledText } from '../common/text/StyledText'
 export function NationView() {
   const { state } = VIEW.context()
   const nation = window.world.regions[state.region]
-  const climate = CLIMATE.lookup[nation.climate]
   const ruling = nation.culture
   const totalPop = REGION.population(nation)
   const urbanPop = REGION.provinces(nation)
@@ -60,19 +60,44 @@ export function NationView() {
         })}`
       : ''
   }`
+  const cellArea = WORLD.cell.area()
+  let area =
+    nation.provinces.reduce((sum, province) => sum + window.world.provinces[province].land, 0) *
+    cellArea
+  if (MAP.metrics.metric) area = MATH.conversion.area.mi.km(area)
+  const units = MAP.metrics.metric ? 'km²' : 'mi²'
+  const { climates, terrain } = REGION.environment(nation)
   return (
     <CodexPage
       title={nation.name}
       subtitle={
         <StyledText
           color={cssColors.subtitle}
-          text={`(${nation.idx}) ${nation.government}${vassal} (${climate.zone.toLowerCase()}, ${
-            nation.development
-          })`}
+          text={`(${nation.idx}) ${nation.government}${vassal} (${nation.development})`}
         ></StyledText>
       }
       content={
         <Grid container>
+          <Grid item xs={6}>
+            <SectionList
+              list={[
+                {
+                  label: 'Area',
+                  content: `${formatters.compact(area)} ${units} (${Math.round(
+                    totalPop / area
+                  )} persons/${units})`
+                },
+                {
+                  label: `Climate`,
+                  content: climates
+                },
+                {
+                  label: `Terrain`,
+                  content: terrain
+                }
+              ]}
+            ></SectionList>
+          </Grid>
           <Grid item xs={6}>
             <SectionList
               list={[
@@ -83,16 +108,6 @@ export function NationView() {
                     100
                   ).toFixed(0)}% Urban)`
                 },
-                {
-                  label: `Climate`,
-                  content: <StyledText text={REGION.biomes(nation)}></StyledText>
-                }
-              ]}
-            ></SectionList>
-          </Grid>
-          <Grid item xs={6}>
-            <SectionList
-              list={[
                 {
                   label: 'Ethnic groups',
                   content: (

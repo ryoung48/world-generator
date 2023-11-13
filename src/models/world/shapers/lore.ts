@@ -1,5 +1,6 @@
 import { range } from 'd3'
 
+import { NATION } from '../../nations'
 import { RELIGION } from '../../npcs/religions'
 import { SPECIES } from '../../npcs/species'
 import { REGION } from '../../regions'
@@ -7,13 +8,12 @@ import { PROVINCE } from '../../regions/provinces'
 import { HUB } from '../../regions/provinces/hubs'
 import { Province } from '../../regions/provinces/types'
 import { DiplomaticRelation, Region } from '../../regions/types'
+import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
+import { WORLD } from '..'
 import { CIVILIZATION } from './civilization'
 
-type RegionalCounters = Record<
-  Region['development'],
-  { target: number; current: number; total: number }
->
+type RegionalCounters = Record<string, { target: number; current: number; total: number }>
 
 const claimRegion = (params: { nation: Region; region: Region }) => {
   const { nation, region } = params
@@ -53,26 +53,68 @@ const claimProvince = (params: { nation: Region; province: Province }) => {
 }
 
 const steppeNomads = (region: Region) =>
-  region.climate.includes('steppe') &&
+  REGION.biome(region).terrain === 'plains' &&
   window.world.landmarks[window.world.cells[window.world.provinces[region.capital].cell].landmark]
     .type === 'continent'
 
 export const LORE = PERFORMANCE.profile.wrapper({
   label: 'LORE',
   o: {
+    _demographics: () => {
+      // go through each region and finalize the cities
+      Object.values(window.world.regions).forEach(region => {
+        const capital = window.world.provinces[region.capital]
+        // find all settlements in the region
+        const cities = REGION.provinces(region)
+        // find all towns in the region
+        const towns = cities.filter(town => !town.capital)
+        // set the capital's population
+        const capitalMod = window.dice.uniform(0.02, 0.03)
+        let pop = REGION.population(region) * capitalMod
+        if ((region.civilized && pop < 10000) || (!region.civilized && pop > 15000))
+          pop = window.dice.uniform(10000, 15000)
+        HUB.setPopulation(capital.hub, pop)
+        // set the next largest city
+        pop = Math.round(pop * window.dice.uniform(0.2, 0.6))
+        towns
+          .sort((a, b) => PROVINCE.cell(b).score - PROVINCE.cell(a).score)
+          .forEach(province => {
+            const rural = window.dice.randint(50, 300)
+            const urban = pop > 300 ? pop : rural
+            HUB.setPopulation(province.hub, urban)
+            const conflict =
+              HUB.urban(province.hub) &&
+              PROVINCE.neighbors({ province }).some(
+                neighbor =>
+                  HUB.urban(neighbor.hub) &&
+                  POINT.distance.geo({ points: [neighbor.hub, province.hub] }) <
+                    WORLD.placement.spacing.provinces * 2
+              )
+            // make each city's population some fraction of the previous city's population
+            if (conflict) HUB.setPopulation(province.hub, rural)
+            else pop = Math.round(pop * (1 - window.dice.uniform(0.2, 0.5)))
+          })
+      })
+    },
     _history: () => {
       const { provinces } = window.world
-      const regions = window.world.regions.filter(r => !r.shattered)
-      const civilized = regions.filter(r => r.development === 'civilized')
-      const frontier = regions.filter(r => r.development === 'frontier')
-      const tribal = regions.filter(r => r.development === 'tribal')
-      const remote = regions.filter(r => r.development === 'remote')
+      const regions = window.world.regions
+      const industrial = regions.filter(r => r.development === 6)
+      const enlightened = regions.filter(r => r.development === 5)
+      const colonial = regions.filter(r => r.development === 4)
+      const mercantile = regions.filter(r => r.development === 3)
+      const feudal = regions.filter(r => r.development === 2)
+      const agrarian = regions.filter(r => r.development === 1)
+      const nomadic = regions.filter(r => r.development === 0)
       // empires
       const imperium: RegionalCounters = {
-        civilized: { target: 0.05, current: 0, total: civilized.length },
-        frontier: { target: 0.05, current: 0, total: frontier.length },
-        tribal: { target: 0.025, current: 0, total: tribal.length },
-        remote: { target: 0, current: 0, total: remote.length }
+        [6]: { target: 0.025, current: 0, total: industrial.length },
+        [5]: { target: 0.025, current: 0, total: enlightened.length },
+        [4]: { target: 0.025, current: 0, total: colonial.length },
+        [3]: { target: 0.05, current: 0, total: mercantile.length },
+        [2]: { target: 0.05, current: 0, total: feudal.length },
+        [1]: { target: 0.025, current: 0, total: agrarian.length },
+        [0]: { target: 0, current: 0, total: nomadic.length }
       }
       const sizeLimit = (region: Region) => {
         const culture = window.world.cultures[region.culture]
@@ -87,9 +129,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
           if (REGION.provinces(region).length > 0 && current / total < target) {
             let completed = false
             while (!completed) {
-              const neighbors = REGION.neighbors({ region }).filter(
-                n => n.size !== 'empire' && !n.shattered
-              )
+              const neighbors = REGION.neighbors({ region }).filter(n => n.size !== 'empire')
               if (neighbors.length === 0) break
               const closest = REGION.find({ ref: region, regions: neighbors, type: 'closest' })
               claimRegion({ nation: region, region: closest })
@@ -107,7 +147,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
         .filter(sizeLimit)
         .forEach(region => {
           const neighbors = REGION.neighbors({ region }).filter(
-            neighbor => REGION.domains(neighbor).length === 1 && !neighbor.shattered
+            neighbor => REGION.domains(neighbor).length === 1
           )
           if (
             REGION.provinces(region).length > 1 &&
@@ -133,9 +173,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
               new Set(
                 REGION.provinces(nation)
                   .map(p =>
-                    PROVINCE.neighbors({ province: p, type: 'foreign' })
-                      .filter(p => !PROVINCE.region(p).shattered)
-                      .map(({ idx }) => idx)
+                    PROVINCE.neighbors({ province: p, type: 'foreign' }).map(({ idx }) => idx)
                   )
                   .flat()
               )
@@ -177,8 +215,8 @@ export const LORE = PERFORMANCE.profile.wrapper({
       regions.forEach(region => {
         const { civilized, coastal, development, size } = region
         const large = size === 'kingdom' || size === 'empire'
-        const nonRemote = development !== 'remote'
-        const nonCivilized = development !== 'civilized'
+        const nonRemote = development !== 0
+        const nonCivilized = development < 4
         const steppe = steppeNomads(region)
         region.government =
           steppe && region.size === 'empire'
@@ -229,10 +267,13 @@ export const LORE = PERFORMANCE.profile.wrapper({
         })
       // wars
       const wars: RegionalCounters = {
-        civilized: { current: 0, total: civilized.length, target: 0.1 },
-        frontier: { current: 0, total: frontier.length, target: 0.1 },
-        tribal: { current: 0, total: tribal.length, target: 0.1 },
-        remote: { current: 0, total: remote.length, target: 0.1 }
+        [6]: { target: 0.1, current: 0, total: industrial.length },
+        [5]: { target: 0.1, current: 0, total: enlightened.length },
+        [4]: { target: 0.1, current: 0, total: colonial.length },
+        [3]: { target: 0.1, current: 0, total: mercantile.length },
+        [2]: { target: 0.1, current: 0, total: feudal.length },
+        [1]: { target: 0.1, current: 0, total: agrarian.length },
+        [0]: { target: 0.1, current: 0, total: nomadic.length }
       }
       window.dice.shuffle(regions).forEach(region => {
         const { current, target, total } = wars[region.development]
@@ -283,7 +324,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
             )
             const battlegrounds = borders.slice(0, Math.max(0.5 * borders.length, 3))
             battlegrounds.forEach(province => {
-              province.conflict = 'war'
+              province.conflict = window.world.conflicts.length
             })
             window.world.conflicts.push({
               type: 'war',
@@ -328,6 +369,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
               })
           })
         })
+      NATION.init()
     },
     _religions: () => {
       RELIGION.spawn()
@@ -367,6 +409,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
         .forEach(p => (p.hub.type = 'colonial outpost'))
     },
     build: () => {
+      LORE._demographics()
       LORE._religions()
       LORE._history()
       // LORE._settlements()

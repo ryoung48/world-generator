@@ -6,7 +6,8 @@ export const entity__tags = [
   'religion',
   'fauna',
   'court',
-  'ruin'
+  'ruin',
+  'wilderness'
 ] as const
 
 // all things that have codex pages

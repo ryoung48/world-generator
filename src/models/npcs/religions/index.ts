@@ -1,5 +1,6 @@
 import { ENTITY } from '../../utilities/entities'
 import { TRAIT } from '../../utilities/traits'
+import { CULTURE } from '../cultures'
 import { Culture } from '../cultures/types'
 import { LANGUAGE } from '../languages'
 import { Religion, ReligionThemes, ReligionTraditions } from './types'
@@ -224,13 +225,17 @@ export const RELIGION = {
         const curr = window.world.cultures[region.culture]
         return curr.neighbors
           .map(c => window.world.cultures[c])
-          .filter(culture => culture.civilized === curr.civilized && culture.religion === undefined)
+          .filter(
+            culture =>
+              CULTURE.civilized(culture) === CULTURE.civilized(curr) &&
+              culture.religion === undefined
+          )
           .map(cultureCapital)
       }
     }).forEach(group => {
       const [center] = group
       const culture = window.world.cultures[center.culture]
-      const tribal = !culture.civilized
+      const tribal = !CULTURE.civilized(culture)
       const religion: Religion = {
         tag: 'religion',
         name: LANGUAGE.word.unique({ lang: culture.language, key: 'religion' }),

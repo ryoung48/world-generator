@@ -1,4 +1,4 @@
-import { AppBar, Box, Button, capitalize, Grid, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Button, Grid, Toolbar, Typography } from '@mui/material'
 import dayjs from 'dayjs'
 import { Dispatch, SetStateAction } from 'react'
 
@@ -33,9 +33,9 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
                   component='div'
                   sx={{ lineHeight: 0.2, color: cssColors.subtitle, fontSize: 10 }}
                 >
-                  {`${capitalize(season(new Date(state.time).getMonth()))}, ${dayjs(
-                    state.time
-                  ).format('YYYY')} (${state?.id || '∞'})`}
+                  {`${season(new Date(state.time).getMonth())}, ${dayjs(state.time).format(
+                    'YYYY'
+                  )} (${state?.id || '∞'})`}
                 </Typography>
               </Grid>
             </Grid>

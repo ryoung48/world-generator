@@ -422,3 +422,35 @@ complications:
 * locked
 * morality
 * personal
+
+loop:
+* trade goods
+* rest at an inn
+* accept a quest (bounty, rescue, exploration, intrigue, heist)
+* enchant items
+* brew potions
+* recruit allies
+* [quest advancement] gather information
+* [quest advancement] navigate wilderness
+--
+* [quest climax] (rescue) free captive from imprisonment
+* [quest climax] (bounty) defeat target
+* [quest climax] (exploration) locate the artifact
+* [quest climax] (intrigue) discover secret
+* [quest climax] (heist) steal object
+--
+* [quest completion] return for reward
+
+urban
+* underground sewer
+* aristocratic estate
+* {stately|luxurious} {consulate|embassy}
+* {splendid|stately} guildhall
+* {splendid|regal} throne room
+* bustling {marketplace|dockyard}
+* magical academy
+* sprawling {slums|shantytown}
+* {disreputable|lavish} tavern
+* floating market
+* overcrowded refugee camp
+* {shabby|decrepit} shrine

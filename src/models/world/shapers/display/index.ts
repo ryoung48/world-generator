@@ -1,4 +1,4 @@
-import { TerrainIcon } from '../../../../components/maps/icons/terrain/types'
+import { TerrainIcon } from '../../../../components/world/icons/terrain/types'
 import { Province } from '../../../regions/provinces/types'
 import { Region } from '../../../regions/types'
 import { POINT } from '../../../utilities/math/points'
@@ -217,7 +217,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
         })
       valid = m =>
         !m.isCoast &&
-        (window.world.regions[m.region].shattered || !CELL.hasRoads(m)) &&
+        !CELL.hasRoads(m) &&
         !used.has(m.idx) &&
         window.dice.random > 0.8 &&
         CELL.neighbors(m).every(i => !used.has(i.idx))
@@ -245,7 +245,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       ]
       const temperateGrass = ['dry forest (warm temperate)']
       const biomes = WORLD.land().filter(p => !p.isMountains && !p.isWater && !p.isCoast)
-      const grass = biomes.filter(p => grasslands.includes(p.climate))
+      const grass = biomes.filter(p => grasslands.includes(p.biome))
       const grassIcons: Display['icons'][number]['type'][] = [
         'grass_5',
         'grass_6',
@@ -260,9 +260,9 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
             y: m.y,
             type: window.dice.choice(
               window.dice.random > 0.8
-                ? savanna.includes(m.climate)
+                ? savanna.includes(m.biome)
                   ? ['savanna_1', 'savanna_2', 'savanna_3', 'savanna_4']
-                  : temperateGrass.includes(m.climate)
+                  : temperateGrass.includes(m.biome)
                   ? ['grass_1', 'grass_2', 'grass_3', 'grass_4']
                   : grassIcons
                 : grassIcons
@@ -281,7 +281,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
         'moist forest (cool temperate)'
       ]
       const forestStyles: Record<number, number> = {}
-      const forest = biomes.filter(p => deciduous.includes(p.climate))
+      const forest = biomes.filter(p => deciduous.includes(p.biome))
       forest.forEach(m => {
         if (valid(m)) {
           used.add(m.idx)
@@ -315,7 +315,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
         'moist forest (boreal)'
       ]
       const borealStyles: Record<number, number> = {}
-      const boreal = biomes.filter(p => coniferous.includes(p.climate))
+      const boreal = biomes.filter(p => coniferous.includes(p.biome))
       boreal.forEach(m => {
         if (valid(m)) {
           used.add(m.idx)
@@ -342,7 +342,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
         'moist forest (subtropical)'
       ]
       const tropicalStyles: Record<number, number> = {}
-      const tropical = biomes.filter(p => jungles.includes(p.climate))
+      const tropical = biomes.filter(p => jungles.includes(p.biome))
       tropical.forEach(m => {
         if (valid(m)) {
           used.add(m.idx)
@@ -384,7 +384,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
         'desert (cool temperate)',
         'desert (boreal)'
       ]
-      const desert = biomes.filter(p => deserts.includes(p.climate))
+      const desert = biomes.filter(p => deserts.includes(p.biome))
       const desertIcons: TerrainIcon[] = [
         'desert_1',
         'desert_2',
@@ -408,16 +408,16 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       })
       // polar
       const polarClimates: Biome[] = [
-        'rain tundra (subarctic)',
-        'wet tundra (subarctic)',
-        'moist tundra (subarctic)',
-        'dry tundra (subarctic)',
-        'desert (arctic)'
+        'rain tundra (subpolar)',
+        'wet tundra (subpolar)',
+        'moist tundra (subpolar)',
+        'dry tundra (subpolar)',
+        'desert (polar)'
       ]
-      const polar = biomes.filter(p => polarClimates.includes(p.climate))
+      const polar = biomes.filter(p => polarClimates.includes(p.biome))
       polar.forEach(m => {
         if (valid(m)) {
-          const glacier = m.climate === 'desert (arctic)'
+          const glacier = m.biome === 'desert (polar)'
           used.add(m.idx)
           display.icons.push({
             x: m.x,
@@ -436,8 +436,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       const seaRoutes = window.dice
         .shuffle(Object.values(window.world.routes.sea))
         .filter(
-          route =>
-            window.world.regions[window.world.provinces[route.src].region].development !== 'remote'
+          route => window.world.regions[window.world.provinces[route.src].region].development !== 0
         )
       const validSeaIcon = (p: Cell) =>
         p.ocean &&

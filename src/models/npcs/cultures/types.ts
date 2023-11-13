@@ -1,9 +1,7 @@
 import { AllColors, ColorHue, Hue } from '../../utilities/color'
 import { TaggedEntity } from '../../utilities/entities/types'
-import { Directions } from '../../utilities/math/points/types'
 import { WeightedDistribution } from '../../utilities/math/types'
 import { Trait } from '../../utilities/traits/types'
-import { Climate } from '../../world/climate/types'
 import { Language } from '../languages/types'
 import { Gender } from '../types'
 
@@ -118,10 +116,7 @@ export interface Culture extends TaggedEntity {
       styles: `${'trimmed' | 'full' | 'thick' | 'braided'} beard`[]
     }
   }
-  zone: Climate[keyof Climate]['zone']
-  side: Directions
   // cultural traits
-  civilized?: boolean
   language?: Language
   lineage: Gender
   religion?: number

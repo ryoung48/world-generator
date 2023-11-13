@@ -1,7 +1,7 @@
 import { range } from 'd3'
 
 import { MATH } from './math'
-import { Dice } from './math/dice'
+import { DICE } from './math/dice'
 
 const huesWarm = ['magenta', 'red', 'vermilion', 'orange', 'amber', 'yellow'] as const
 const huesCool = ['olive', 'green', 'teal', 'blue', 'indigo', 'purple'] as const
@@ -105,8 +105,9 @@ export const COLOR = {
   randomPreset: <T extends string>(params: { tags: T[]; seed: string; dark?: boolean }) => {
     const { tags, seed, dark } = params
     const colors: Partial<Record<T, string>> = {}
-    const dice = new Dice(seed)
-    tags.forEach(tag => (colors[tag] = dark ? dice.darkColor() : dice.color()))
+    DICE.swap(seed, () => {
+      tags.forEach(tag => (colors[tag] = dark ? window.dice.darkColor() : window.dice.color()))
+    })
     return colors as Record<T, string>
   }
 }

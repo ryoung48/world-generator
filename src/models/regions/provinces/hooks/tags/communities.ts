@@ -1218,7 +1218,7 @@ export const communities: HookTemplate = {
       complications: [
         'The guilds have intermarried or entangled themselves with the ostensible rulers',
         'The guilds offer protection from a real or imagined threat',
-        'They guilds hate each other only slightly less than the competition'
+        'The guilds hate each other only slightly less than the competition'
       ],
       things: [
         'Priceless symbolic guild regalia',
@@ -2189,7 +2189,7 @@ export const communities: HookTemplate = {
       ],
       places: ["The exile's luxurious residence", 'Well-stocked armory'],
       constraints: {
-        urban: false
+        urban: true
       }
     },
     'Rigid Castes': {

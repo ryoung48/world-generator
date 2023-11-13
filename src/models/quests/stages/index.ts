@@ -1,9 +1,8 @@
 import { location__spawn } from '../../regions/provinces/locations'
-import { hub__weather } from '../../regions/provinces/weather'
+import { WEATHER } from '../../regions/provinces/weather'
 import { DIFFICULTY } from '../../utilities/difficulty'
 import { MATH } from '../../utilities/math'
 import { dayMS, hourMS } from '../../utilities/math/time'
-import { decorateText } from '../../utilities/text/decoration'
 import { Quest } from '../types'
 import { Challenge, Challenges, Stage } from './types'
 
@@ -231,16 +230,9 @@ export const stage__weather = (params: { quest: Quest; stage: Stage }) => {
   const { quest, stage } = params
   if (!stage.status && window.world.date - stage.setting.memory > dayMS) {
     const loc = window.world.provinces[quest.location]
-    const { season, time, heat, conditions, variance } = hub__weather(loc.hub)
+    const weather = WEATHER.conditions({ loc })
     stage.setting.memory = window.world.date
-    stage.setting.weather = `${decorateText({
-      label: heat.desc,
-      tooltip: `${heat.degrees.toFixed(0)}°F`
-    })}${
-      variance === 'normal'
-        ? ''
-        : decorateText({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
-    }, ${season}, ${time}, ${conditions}`
+    stage.setting.weather = weather
   }
 }
 

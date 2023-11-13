@@ -7,7 +7,6 @@ import { DIFFICULTY } from '../../../models/utilities/difficulty'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
 import { formatters } from '../../../models/utilities/text/formatters'
-import { CLIMATE } from '../../../models/world/climate'
 import { VIEW } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { DataTable, DetailedTableRow } from '../common/DataTable'
@@ -76,9 +75,7 @@ export function ProvincesTable() {
         },
         {
           text: 'Terrain',
-          value: ({ environment, region: ridx }) => {
-            const region = window.world.regions[ridx]
-            const climate = CLIMATE.lookup[region.climate]
+          value: ({ environment }) => {
             return (
               <DetailedTableRow
                 title={titleCase(environment.terrain)}
@@ -86,8 +83,7 @@ export function ProvincesTable() {
                   <StyledText
                     text={decorateText({
                       label: environment.climate,
-                      color: cssColors.subtitle,
-                      tooltip: `${titleCase(region.climate)} (${climate.code})`
+                      color: cssColors.subtitle
                     })}
                   ></StyledText>
                 }

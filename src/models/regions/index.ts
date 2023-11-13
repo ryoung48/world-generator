@@ -1,11 +1,11 @@
 import { ARRAY } from '../utilities/array'
 import { COLOR } from '../utilities/color'
+import { MATH } from '../utilities/math'
 import { titleCase } from '../utilities/text'
 import { decorateText } from '../utilities/text/decoration'
 import { formatters } from '../utilities/text/formatters'
 import { Cell } from '../world/cells/types'
-import { CLIMATE } from '../world/climate'
-import { Climate } from '../world/climate/types'
+import { BIOME } from '../world/climate'
 import { PROVINCE } from './provinces'
 import * as Region from './types'
 
@@ -14,29 +14,96 @@ export const REGION = {
     return REGION.provinces(region).length > 0
   },
   atWar: (region: Region.Region) => REGION.relations({ target: 'at war', region }).length > 0,
+  biome: (region: Region.Region) => {
+    const capital = REGION.capital(region)
+    const cell = PROVINCE.cell(capital)
+    return BIOME.holdridge[cell.biome]
+  },
   biomes: (region: Region.Region) => {
     const biomes = Object.entries(
-      REGION.provinces(region).reduce((dict: Record<string, number>, province) => {
-        const { climate } = window.world.regions[province.region]
-        if (!dict[climate]) dict[climate] = 0
-        dict[climate] += province.land
+      REGION.provinces(region)
+        .map(province =>
+          province.cells.land
+            .map(c => window.world.cells[c])
+            .map(cell => {
+              cell
+              const biome = BIOME.holdridge[cell.biome]
+              return { name: biome.name, zone: cell.isMountains ? 'Mountains' : biome.latitude }
+            })
+        )
+        .flat()
+        .reduce((dict: Record<string, string[]>, { name, zone }) => {
+          if (!dict[zone]) dict[zone] = []
+          dict[zone].push(name)
+          return dict
+        }, {})
+    ).sort((a, b) => b[1].length - a[1].length)
+    const climateSum = biomes.reduce((a, b) => a + b[1].length, 0)
+    return biomes
+      .map(([k, v]) => {
+        const counts = Object.entries(MATH.counter(v)).sort((a, b) => b[1] - a[1])
+        const biomeSum = counts.reduce((a, b) => a + b[1], 0)
+        return `${decorateText({
+          label: `${titleCase(k)}`,
+          tooltip: counts.map(([k, v]) => `${k} (${formatters.percent(v / biomeSum)})`).join(', ')
+        })} (${formatters.percent(v.length / climateSum)})`
+      })
+      .join(', ')
+  },
+  environment: (region: Region.Region) => {
+    const biomes = REGION.provinces(region)
+      .map(province =>
+        province.cells.land
+          .map(c => window.world.cells[c])
+          .map(cell => {
+            cell
+            const biome = BIOME.holdridge[cell.biome]
+            return {
+              climate: cell.isMountains ? undefined : biome.latitude,
+              terrain: cell.isMountains ? 'Mountains' : biome.terrain
+            }
+          })
+      )
+      .flat()
+    const climates = Object.entries(
+      biomes
+        .filter(climate => climate.climate)
+        .reduce((dict: Record<string, number>, { climate }) => {
+          if (!dict[climate]) dict[climate] = 0
+          dict[climate] += 1
+          return dict
+        }, {})
+    ).sort((a, b) => b[1] - a[1])
+    const climateSum = climates.reduce((a, b) => a + b[1], 0)
+    const terrain = Object.entries(
+      biomes.reduce((dict: Record<string, number>, { terrain }) => {
+        if (!dict[terrain]) dict[terrain] = 0
+        dict[terrain] += 1
         return dict
       }, {})
     ).sort((a, b) => b[1] - a[1])
-    const total = biomes.reduce((sum, [_, v]) => sum + v, 0)
-    return biomes
-      .slice(0, 2)
-      .map(
-        ([k, v]) =>
-          `${decorateText({
-            label: titleCase(k),
-            tooltip: CLIMATE.lookup[k as keyof Climate].code
-          })} (${formatters.percent(v / total)})`
-      )
-      .join(', ')
+    const terrainSum = terrain.reduce((a, b) => a + b[1], 0)
+    return {
+      climates: climates
+        .map(([k, v]) => {
+          return `${titleCase(k)} (${formatters.percent(v / climateSum)})`
+        })
+        .slice(0, 2)
+        .join(', '),
+      terrain: terrain
+        .map(([k, v]) => {
+          return `${titleCase(k)} (${formatters.percent(v / terrainSum)})`
+        })
+        .slice(0, 3)
+        .join(', ')
+    }
   },
   borders: (region: Region.Region) => region.borders.map(b => window.world.regions[b]),
   capital: (region: Region.Region) => window.world.provinces[region.capital],
+  climate: (region: Region.Region) => {
+    const biome = REGION.biome(region)
+    return BIOME.zone[biome.latitude]
+  },
   domains: (region: Region.Region) => {
     return REGION.provinces(region)
       .filter(t => t.capital)
@@ -90,7 +157,6 @@ export const REGION = {
   spawn: (cell: Cell) => {
     const idx = window.world.regions.length
     cell.region = idx
-    const side = cell.x > 0 ? 'E' : 'W'
     const color = window.dice.color()
     const hue = COLOR.extractHue(color)
     const region: Region.Region = {
@@ -121,8 +187,8 @@ export const REGION = {
       provinces: [],
       landBorders: [],
       relations: {},
-      side,
-      culture: -1
+      culture: -1,
+      shattered: false
     }
     window.world.regions.push(region)
     return region

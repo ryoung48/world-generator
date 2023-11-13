@@ -1,9 +1,10 @@
 import { REGION } from '../../regions'
+import { PROVINCE } from '../../regions/provinces'
 import { Region } from '../../regions/types'
 import { COLOR } from '../../utilities/color'
 import { TRAIT } from '../../utilities/traits'
-import { CLIMATE } from '../../world/climate'
-import { Climate } from '../../world/climate/types'
+import { BIOME } from '../../world/climate'
+import { BiomeDetails } from '../../world/climate/types'
 import { LANGUAGE } from '../languages'
 import { SPECIES } from '../species'
 import {
@@ -786,12 +787,22 @@ const badTraditions: CultureTraditionsBad = {
   }
 }
 
-const distantClimates: (keyof Climate)[] = ['polar', 'tropical rainforest']
-
-const tribalLands: (keyof Climate)[] = ['hot steppe', 'cold desert', 'cold steppe', 'savanna']
+const distantClimates: BiomeDetails['latitude'][] = ['tropical', 'subpolar', 'polar']
 
 export const CULTURE = {
   arts: { performances, visual },
+  biome: (culture: Culture) => {
+    const origin = window.world.regions[culture.origin]
+    const capital = REGION.capital(origin)
+    return BIOME.holdridge[PROVINCE.cell(capital).biome]
+  },
+  civilized: (culture: Culture) => window.world.regions[culture.origin].civilized,
+  climate: (culture: Culture) => {
+    const origin = window.world.regions[culture.origin]
+    const capital = REGION.capital(origin)
+    const cell = PROVINCE.cell(capital)
+    return cell.isMountains ? 'mountains' : BIOME.holdridge[cell.biome].latitude
+  },
   coastal: (culture: Culture) => CULTURE.regions(culture).some(r => r.coastal),
   cuisine: { flavors, dishes },
   culturize: (culture: Culture, nation: Region) => {
@@ -802,11 +813,14 @@ export const CULTURE = {
       settlement.name ||= LANGUAGE.word.unique({ lang: culture.language, key: 'settlement' })
     })
   },
-  distant: (culture: Culture) => {
+  tribal: (culture: Culture) => {
     const regions = CULTURE.regions(culture)
     const distant = regions.reduce((sum, r) => {
-      const isRemote = distantClimates.includes(r.climate)
-      return sum + (isRemote ? 1 : 0)
+      const capital = REGION.capital(r)
+      const biome = PROVINCE.biome(capital)
+      const cell = PROVINCE.cell(capital)
+      const isRemote = distantClimates.includes(biome.latitude)
+      return sum + (isRemote || cell.isMountains ? 1 : 0)
     }, 0)
     return distant / regions.length > 0.5
   },
@@ -818,8 +832,6 @@ export const CULTURE = {
   },
   finalize: (culture: Culture, species: Culture['species']) => {
     culture.species = species
-    const civil = CULTURE.regions(culture).filter(r => r.civilized).length * 2
-    culture.civilized = civil > culture.regions.length
     culture.language = LANGUAGE.spawn(culture)
     culture.name = LANGUAGE.word.unique({ lang: culture.language, key: 'culture' })
     SPECIES.appearance(culture)
@@ -845,8 +857,10 @@ export const CULTURE = {
     // values
     const coastal = CULTURE.coastal(culture)
     const origin = window.world.regions[culture.origin]
-    const wet = CLIMATE.lookup[origin.climate].terrain === 'forest'
-    const seasonal = culture.zone !== 'tropical'
+    const biome = CULTURE.biome(culture)
+    const zone = BIOME.zone[biome.latitude]
+    const seasonal = zone !== 'tropical'
+    const wet = biome.terrain === 'forest'
     const tribal = !origin.civilized
     culture.values = TRAIT.selection({
       available: CULTURE.values,
@@ -901,7 +915,11 @@ export const CULTURE = {
   regions: (culture: Culture) => culture.regions.map(r => window.world.regions[r]),
   score: (culture: Culture) =>
     CULTURE.regions(culture)
-      .map(r => CLIMATE.lookup[r.climate].population * (r.coastal ? 1.5 : 1))
+      .map(region => REGION.capital(region))
+      .map(
+        capital =>
+          BIOME.holdridge[PROVINCE.cell(capital).biome].habitability * (capital.hub.coastal ? 1 : 0.5)
+      )
       .reduce((sum, pop) => sum + pop, 0) / culture.regions.length,
   spawn: (region: Region) => {
     const idx = window.world.cultures.length
@@ -910,12 +928,8 @@ export const CULTURE = {
       idx,
       origin: region.idx,
       tag: 'culture',
-      zone: CLIMATE.lookup[region.climate].zone,
-      side: region.side,
       neighbors: [],
-      fashion: {
-        color: hue
-      },
+      fashion: { color: hue },
       display: COLOR.randomHue(hue),
       regions: [],
       name: '',
@@ -927,13 +941,5 @@ export const CULTURE = {
     return culture
   },
   traditions: { good: goodTraditions, bad: badTraditions },
-  tribal: (culture: Culture) => {
-    const regions = CULTURE.regions(culture)
-    const grass = regions.reduce((sum, r) => {
-      const hasBiome = tribalLands.includes(r.climate)
-      return sum + (hasBiome ? 1 : 0)
-    }, 0)
-    return grass / regions.length > 0.5
-  },
   values
 }

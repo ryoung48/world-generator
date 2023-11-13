@@ -1,3 +1,5 @@
+import { capitalize } from '@mui/material'
+
 import { ACTOR } from '../../../npcs'
 import { NPCParams } from '../../../npcs/types'
 import { DIFFICULTY } from '../../../utilities/difficulty'
@@ -13,8 +15,10 @@ import { communities } from './tags/communities'
 import { courts } from './tags/courts'
 import { religions } from './tags/religions'
 import { ruins } from './tags/ruins'
+import { wars } from './tags/wars'
 import { wilderness } from './tags/wilderness'
 import { Actor, Hooks, HookSpawnParams } from './types'
+import { WILDERNESS } from './wilderness'
 
 export const decorateTag = (sentence: string, tag: string) => {
   const words = window.dice.spin(sentence).split(' ')
@@ -58,7 +62,8 @@ export const hook__mapping = {
   wilderness: wilderness,
   ruin: ruins,
   religion: religions,
-  court: courts
+  court: courts,
+  war: wars
 } as const
 
 export const hook__elements = (params: { province: Province; hook: Hooks['tags'][number] }) => {
@@ -81,16 +86,14 @@ export const hook__elements = (params: { province: Province; hook: Hooks['tags']
     hook.thing = decorateTag(window.dice.choice(details.things), hook.tag)
     hook.place = decorateTag(window.dice.choice(details.places), hook.tag)
     const isCourt = hook.type === 'court'
-    const court = window.world.courts[province.hooks.court]
-    const ruin = window.world.ruins[province.hooks.ruin]
-    if (isCourt || hook.type === 'ruin') {
-      const entity = isCourt ? court ?? court__spawn(province) : ruin ?? ruin__spawn(province)
-      province.hooks[isCourt ? 'court' : 'ruin'] = entity.idx
-      const matcher = RegExp(hook.type, 'gi')
-      hook.text = hook.text.replace(matcher, match => decorateText({ label: match, link: entity }))
-      hook.complication = hook.complication.replace(matcher, match =>
-        decorateText({ label: match, link: entity })
-      )
+    const isRuin = hook.type === 'ruin'
+    if (isCourt || isRuin || hook.type === 'wilderness') {
+      const entity = isCourt
+        ? court__spawn(province)
+        : isRuin
+        ? ruin__spawn(province)
+        : WILDERNESS.spawn(province)
+      hook.decorated = decorateText({ label: capitalize(hook.type), link: entity })
     }
   }
   return true
@@ -102,22 +105,20 @@ export const hook__spawn = ({ loc, pc }: HookSpawnParams) => {
     const capital = PROVINCE.isCapital(loc)
     const coastal = loc.hub.coastal
     const tribal = !window.world.regions[loc.region].civilized
-    const warfare = loc.conflict === 'war'
+    const warfare = loc.conflict >= 0
     const urban = !village
-    const types = window.dice.weightedSample<Hooks['tags'][number]['type']>(
-      [
+    let count = 2
+    loc.hooks = { tags: [], difficulty: { cr: DIFFICULTY.random(pc) } }
+    while (count-- > 0) {
+      const war = window.world.conflicts[loc.conflict]
+      const type = window.dice.weightedChoice<Hooks['tags'][number]['type']>([
         { v: 'community', w: 1 },
         { v: 'wilderness', w: village ? 1 : 0.5 },
         { v: 'court', w: village ? 0.4 : 0.8 },
         { v: 'religion', w: village ? 0 : 0.2 },
         { v: 'ruin', w: village ? 1 : 0.5 }
-      ],
-      2,
-      false
-    )
-    loc.hooks = { tags: [], difficulty: { cr: DIFFICULTY.random(pc) } }
-    while (types.length > 0) {
-      const type = types.pop()
+      ])
+      if (type === 'war') war.hook = true
       const { hooks, subtype } = hook__mapping[type]
       const [tag] = TRAIT.selection({
         available: hooks,

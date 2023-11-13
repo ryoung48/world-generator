@@ -3,10 +3,9 @@ import { geoOrthographic, GeoProjection } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
 import { REGION } from '../../models/regions'
-import { Province } from '../../models/regions/provinces/types'
 import { delay } from '../../models/utilities/math/time'
 import { WORLD } from '../../models/world'
-import { CLIMATE } from '../../models/world/climate'
+import { BIOME } from '../../models/world/climate'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
@@ -18,7 +17,7 @@ import { DRAW_EMBELLISHMENTS } from './embellishments'
 import { ICON } from './icons'
 import { DRAW_TERRAIN } from './icons/terrain'
 import { DRAW_INFRASTRUCTURE } from './infrastructure'
-import { CachedImages, MapSeason, MapStyle } from './types'
+import { CachedImages, MapClimate, MapSeason, MapStyle, WorldPaintParams } from './types'
 
 function decimalToDMS(lat: number, lon: number): string {
   const convert = (decimalDegree: number, isLatitude: boolean): string => {
@@ -42,7 +41,7 @@ const loadImage = (path: string): Promise<HTMLImageElement> => {
 const loadImages = async () =>
   (
     await Promise.all([
-      ...Object.entries(DRAW_TERRAIN.icons).map(async ([k, v]) => ({
+      ...Object.entries(DRAW_TERRAIN.definitions).map(async ([k, v]) => ({
         img: await loadImage(ICON.path + v.path),
         index: k
       }))
@@ -52,18 +51,17 @@ const loadImages = async () =>
     return dict
   }, {})
 
-const paint = (params: {
-  cachedImages: CachedImages
-  province: Province
-  ctx: CanvasRenderingContext2D
-  style: MapStyle
-  season: MapSeason
-  projection: GeoProjection
-}) => {
-  const { ctx, projection, season, style, province, cachedImages } = params
+const paint = ({
+  ctx,
+  projection,
+  season,
+  climate,
+  style,
+  province,
+  cachedImages
+}: WorldPaintParams) => {
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-  console.log(MAP.scale.derived(projection))
 
   const nation = window.world.regions[province.nation]
   const borders = REGION.neighbors({ region: nation, depth: 2 })
@@ -94,14 +92,25 @@ const paint = (params: {
     )
   )
   DRAW_LANDMARKS.islands({ ctx, projection })
-  DRAW_BORDERS.regions({ ctx, projection, season, style, nations })
+  DRAW_BORDERS.regions({ ctx, projection, season, climate, style, nations, province })
   DRAW_BORDERS.contested({ ctx, projection, nations })
   DRAW_LANDMARKS.lakes({ ctx, projection })
   DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet })
-  DRAW_TERRAIN.draw({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
-  DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet })
+  DRAW_TERRAIN.icons({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
+  DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style })
+  DRAW_EMBELLISHMENTS.avatar({ ctx, projection, province })
+  DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection })
-  DRAW_EMBELLISHMENTS.legend({ ctx, style })
+  DRAW_EMBELLISHMENTS.legend({
+    ctx,
+    style,
+    climate,
+    far: nations.map(r => REGION.domains(r)).flat(),
+    close: [nation]
+      .concat(REGION.neighbors({ region: nation, depth: 1 }))
+      .map(r => REGION.domains(r))
+      .flat()
+  })
 }
 
 let projection: GeoProjection = null
@@ -113,10 +122,10 @@ export function WorldMap() {
     rotation: [0, 0, 0],
     scale: 1
   })
-  const prevTransformRef = useRef<typeof transform>()
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [style, setStyle] = useState<MapStyle>('Nations')
   const [season, setSeason] = useState<MapSeason>('Winter')
+  const [climate] = useState<MapClimate>('Holdridge')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const runPaint = () => {
@@ -129,6 +138,7 @@ export function WorldMap() {
       ctx,
       style,
       season,
+      climate,
       projection
     })
   }
@@ -137,8 +147,7 @@ export function WorldMap() {
     const poly = window.world.cells[window.world.diagram.find(x, y)]
     const province = window.world.provinces[poly.province]
     const nation = window.world.regions[province.nation]
-    const localTransition = transform.scale / MAP.scale.init > MAP.breakpoints.regional
-    if (localTransition) {
+    if (state.view === 'province') {
       dispatch({
         type: 'transition',
         payload: { tag: 'province', idx: province.idx }
@@ -192,20 +201,7 @@ export function WorldMap() {
   }, [])
   useEffect(() => {
     if (Object.keys(cachedImages).length > 0) runPaint()
-  }, [season, style, transform, state.province, state.region])
-  useEffect(() => {
-    const oldScale = prevTransformRef.current?.scale / MAP.scale.init
-    const newScale = transform.scale / MAP.scale.init
-    const globalTransition = oldScale <= MAP.breakpoints.global && newScale > MAP.breakpoints.global
-    const regionalTransition =
-      oldScale > MAP.breakpoints.regional && newScale <= MAP.breakpoints.regional
-    const localTransition =
-      oldScale <= MAP.breakpoints.regional && newScale > MAP.breakpoints.regional
-    if (regionalTransition || localTransition || globalTransition) {
-      transition()
-    }
-    prevTransformRef.current = transform
-  }, [transform])
+  }, [season, climate, style, transform, state.province, state.region])
   useEffect(() => {
     const { x, y, zoom } = state.gps
     if (projection && zoom > 0) {
@@ -215,7 +211,7 @@ export function WorldMap() {
     }
   }, [state.gps])
   const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
-  const climate = CLIMATE.holdridge[cell.climate]
+  const holdridge = BIOME.holdridge[cell.biome]
   return (
     <Grid container>
       <Grid item xs={12} ref={containerRef}>
@@ -237,7 +233,7 @@ export function WorldMap() {
           <Grid item xs={12}>
             {decimalToDMS(cursor.y, cursor.x)}
           </Grid>
-          {cell.heat && (
+          {!cell.isWater && (
             <Grid item xs={12}>
               <span>{`${MAP.metrics.temperature.format(
                 season === 'Summer' ? cell.heat.summer : cell.heat.winter
@@ -246,9 +242,9 @@ export function WorldMap() {
               )}, ${MAP.metrics.elevation.format(WORLD.heightToKM(cell.h))}`}</span>
             </Grid>
           )}
-          {cell.heat && (
-            <Grid item xs={12}>{`${climate.name} (${
-              cell.isMountains ? climate.altitude : climate.latitude
+          {!cell.isWater && (
+            <Grid item xs={12}>{`${holdridge.name} (${
+              cell.isMountains ? holdridge.altitude : holdridge.latitude
             })`}</Grid>
           )}
         </Grid>
@@ -302,6 +298,32 @@ export function WorldMap() {
             ))}
           </ToggleButtonGroup>
         )}
+        {/* {style === 'Climate' && (
+          <ToggleButtonGroup
+            color='primary'
+            exclusive
+            value={climate}
+            onChange={(_, value) => {
+              if (value) setClimate(value)
+            }}
+            size='small'
+            style={{
+              zIndex: 2,
+              position: 'absolute',
+              top: MAP.height - 10,
+              left: MAP.width * 0.64,
+              background: 'rgba(238, 238, 221, 0.5)'
+            }}
+          >
+            {MAP.climates.map(label => (
+              <ToggleButton key={label} value={label}>
+                <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
+                  {label}
+                </span>
+              </ToggleButton>
+            ))}
+          </ToggleButtonGroup>
+        )} */}
         <canvas
           ref={canvasRef}
           style={{

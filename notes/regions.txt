@@ -106,3 +106,47 @@
 * trade dispute: {region} is embroiled in a trade dispute with a neighboring region that has led to a breakdown in diplomatic relations
 * unification war: a charismatic leader attempts to unify a fractured state by subduing all rival claimants
 * witch hunts: magic users are being hunted and executed due to a recent transgression
+
+
+write descriptions (~100 character long) for each of the government styles below:
+* autocratic patriarchy
+* holy republic
+* martial law
+* divine monarchy
+* federalist assembly
+* representative conclave
+* monarchy (currently under stewardship)
+* constitutional republic
+* coalition republic council
+* autocratic republic
+* city-state confederacy
+* absolutist monarchy
+* magocratic republic
+* elective monarchy
+* constitutional monarchy
+* dynastic monarchy
+* autocratic plutocracy
+* kratocratic republic
+* plutocratic council
+* feudal monarchy
+
+write in the style: [term](italics): description
+
+we are going to create 15 fictional plot hooks for a fantasy RPG with the following setting:
+* climate: subtropical
+* terrain: desert
+* hub: small town
+
+write in the style: [term](italics): description
+keep descriptions ~150 characters long
+
+given the following fantasy RPG quest hook:
+
+"Forbidden Texts Trade: Forbidden knowledge is traded by a secret society in the town."
+
+write a quest with 20 steps;
+format the quest as follows:
+[title](italics): introduction (~250 characters long)
+-------------------
+[step #]. [step description]
+

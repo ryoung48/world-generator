@@ -1,4 +1,4 @@
-import type { Climate } from '../../world/climate/types'
+import { ClimateZone } from '../../world/climate/types'
 import { Culture } from '../cultures/types'
 
 export const species__ages = {
@@ -28,11 +28,7 @@ export interface Species {
     piercings?: boolean // defaults to true
     facialHair?: number
   }
-  appearance: (_params: {
-    latitude: number
-    eastern?: boolean
-    zone: Climate[keyof Climate]['zone']
-  }) => {
+  appearance: (_params: { latitude: number; eastern?: boolean; zone: ClimateZone }) => {
     skin: Culture['appearance']['skin']
     hair?: Omit<Culture['appearance']['hair'], 'styles'>
   }

@@ -1,12 +1,15 @@
+import { scaleLinear } from 'd3'
+
 import { MATH } from '../utilities/math'
-import { Dice } from '../utilities/math/dice'
+import { DICE } from '../utilities/math/dice'
 import { POINT } from '../utilities/math/points'
 import { dayMS, daysPerYear } from '../utilities/math/time'
 import { Vertex } from '../utilities/math/voronoi/types'
 import { PERFORMANCE } from '../utilities/performance'
 import { CELL } from './cells'
 import { Cell } from './cells/types'
-import { World, WorldPlacementParams, WorldSpawn } from './types'
+import { BIOME } from './climate'
+import { RemoveLakeParams, World, WorldPlacementParams, WorldSpawn } from './types'
 
 // day of the year 1-365 (not 100% accurate)
 const dayOfYear = (date: number) => {
@@ -17,12 +20,15 @@ const dayOfYear = (date: number) => {
 // sun declination (degrees)
 const sunDeclination = (days = dayOfYear(window.world.date)) => {
   const position = (days / daysPerYear) * 360
-  return Math.asin(Math.sin(MATH.radians(-window.world.tilt)) * Math.cos(MATH.radians(position)))
+  return Math.asin(
+    Math.sin(MATH.conversion.angles.radians(-window.world.tilt)) *
+      Math.cos(MATH.conversion.angles.radians(position))
+  )
 }
 // https://en.wikipedia.org/wiki/Hour_angle
 const hourAngle = (latitude: number) => {
-  const pre = -Math.tan(MATH.radians(latitude)) * Math.tan(sunDeclination())
-  return MATH.degrees(Math.acos(pre > 1 ? 1 : pre < -1 ? -1 : pre))
+  const pre = -Math.tan(MATH.conversion.angles.radians(latitude)) * Math.tan(sunDeclination())
+  return MATH.conversion.angles.degrees(Math.acos(pre > 1 ? 1 : pre < -1 ? -1 : pre))
 }
 
 const _land = () =>
@@ -73,59 +79,119 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         .filter(([, v]) => filter(v))
         .map(([k]) => parseInt(k))
     },
+    habitability: () => {
+      const land = WORLD.land()
+      return (
+        land.map(cell => BIOME.holdridge[cell.biome].habitability).reduce((a, b) => a + b, 0) /
+        land.length
+      )
+    },
     heightToKM: (h: number) =>
       MATH.scale(
         [WORLD.elevation.seaLevel, WORLD.elevation.mountains, WORLD.elevation.max],
         [0, 0.6, 6],
         h
       ),
-    heightToMI: (h: number) => MATH.kmToMi(WORLD.heightToKM(h)),
+    heightToMI: (h: number) => MATH.conversion.distance.km.miles(WORLD.heightToKM(h)),
+    lakes: () => WORLD.water().filter(cell => !cell.ocean),
     land: () => land(),
     mountains() {
       return mountains()
     },
-    placement: ({ blacklist = [], whitelist, count, spacing }: WorldPlacementParams) => {
-      const placed: Cell[] = []
-      // create a quad tree to quickly find the nearest city
-      const tree: Vertex[] = []
-      // everything in the blacklist starts in the quad tree
-      blacklist.forEach(({ x, y }) => {
-        tree.push([x, y])
-      })
-      const closestPoint = (referencePoint: Vertex) =>
-        tree.reduce((acc, curr) => {
-          if (acc === null) return curr
+    placement: {
+      spacing: { regions: 0.1, provinces: 0.023 },
+      limit: (spacing: number) => Math.ceil((spacing * window.world.radius) / WORLD.cell.length()),
+      close: ({ blacklist = [], whitelist, count, spacing }: WorldPlacementParams) => {
+        const limit = WORLD.placement.limit(spacing)
+        const placed: Cell[] = []
+        // create a quad tree to quickly find the nearest city
+        const visited = new Set<number>()
+        // everything in the blacklist starts in the quad tree
+        blacklist.forEach(({ idx }) => {
+          visited.add(idx)
+        })
 
-          const currDistance = MATH.distanceCheap(referencePoint, curr)
-          const accDistance = MATH.distanceCheap(referencePoint, acc)
-
-          return currDistance < accDistance ? curr : acc
-        }, null)
-
-      // place cities by iterating through the (pre-sorted) whitelist
-      for (let i = 0; i < whitelist.length && placed.length < count; i++) {
-        const cell = whitelist[i]
-        const { x, y } = cell
-        const closest = closestPoint([x, y])
-        const dist = closest
-          ? POINT.distance({ points: [{ x: closest[0], y: closest[1] }, cell] })
-          : Infinity
-        if (dist > spacing) {
-          placed.push(cell)
-          tree.push([x, y])
+        // place cities by iterating through the (pre-sorted) whitelist
+        const distance = scaleLinear([0, 0.1, 0.2, 0.6, 1], [2, 1.6, 1.4, 1.2, 1])
+        for (let i = 0; i < whitelist.length && placed.length < count; i++) {
+          const cell = whitelist[i]
+          const { habitability } = BIOME.holdridge[cell.biome]
+          const coast = cell.isCoast ? 0.4 : 0
+          const depth = limit * Math.max(distance(habitability) - coast, 1)
+          const close = CELL.bfsNeighborhood({ start: cell, maxDepth: depth }).some(n =>
+            visited.has(n.idx)
+          )
+          if (!close) {
+            placed.push(cell)
+            visited.add(cell.idx)
+          }
         }
-      }
-      if (placed.length < count) console.log(`placement failure: ${placed.length} / ${count}`)
-      return placed
+        if (placed.length < count) console.log(`placement failure: ${placed.length} / ${count}`)
+        return placed
+      },
+      far: ({ blacklist = [], whitelist, count, spacing }: WorldPlacementParams) => {
+        const placed: Cell[] = []
+        // create a quad tree to quickly find the nearest city
+        const visited: Vertex[] = []
+        // everything in the blacklist starts in the quad tree
+        blacklist.forEach(({ x, y }) => {
+          visited.push([x, y])
+        })
+        const closestPoint = (referencePoint: Vertex) =>
+          visited.reduce((acc, curr) => {
+            if (acc === null) return curr
+
+            const currDistance = MATH.distance.geoCheap(referencePoint, curr)
+            const accDistance = MATH.distance.geoCheap(referencePoint, acc)
+
+            return currDistance < accDistance ? curr : acc
+          }, null)
+
+        // place cities by iterating through the (pre-sorted) whitelist
+        for (let i = 0; i < whitelist.length && placed.length < count; i++) {
+          const cell = whitelist[i]
+          const { x, y } = cell
+          const closest = closestPoint([x, y])
+          const dist = closest
+            ? POINT.distance.geo({ points: [{ x: closest[0], y: closest[1] }, cell] })
+            : Infinity
+          if (dist > spacing) {
+            placed.push(cell)
+            visited.push([x, y])
+          }
+        }
+        if (placed.length < count) console.log(`placement failure: ${placed.length} / ${count}`)
+        return placed
+      },
+      ratio: () => 2 ** (WORLD.land().length / window.world.cells.length / 0.2 - 1)
     },
-    placementRatio: () => WORLD.land().length / window.world.cells.length / 0.2,
+    removeLake: ({ lakes, lake, regional }: RemoveLakeParams) => {
+      const lakeCells = lakes.filter(cell => cell.landmark === lake)
+      const shallow = lakeCells.find(cell => cell.shallow)
+      const { landmark } = CELL.neighbors(shallow).find(cell => cell.landmark !== lake)
+      lakeCells.forEach(cell => {
+        cell.landmark = landmark
+        cell.isWater = false
+        cell.shallow = false
+        cell.h = WORLD.elevation.seaLevel
+        if (regional) regional[cell.region].push(cell)
+        CELL.neighbors(cell)
+          .filter(n => !n.isWater)
+          .forEach(n => {
+            const coast = CELL.neighbors(n).filter(p => p.isWater)
+            n.isCoast = coast.length > 0
+          })
+      })
+      delete window.world.landmarks[lake]
+      window.world.landmarks[landmark].size += lakeCells.length
+    },
     reshape: () => {
       PERFORMANCE.memoize.remove(_land)
       PERFORMANCE.memoize.remove(_water)
     },
     spawn: ({ seed, res }: WorldSpawn) => {
       console.log(seed)
-      window.dice = new Dice(seed)
+      DICE.spawn(seed)
       window.profiles = {
         history: PERFORMANCE.profile.spawn('Total'),
         current: PERFORMANCE.profile.spawn('Total')
@@ -164,11 +230,13 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         },
         coasts: [],
         regions: [],
+        nations: [],
         provinces: [],
         cultures: [],
         religions: [],
         courts: [],
         ruins: [],
+        wilderness: [],
         npcs: [],
         conflicts: [],
         quests: [],

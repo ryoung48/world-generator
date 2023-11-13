@@ -1,12 +1,7 @@
 import { range } from 'd3'
 
-import { cssColors } from '../../../../components/theme/colors'
 import { ACTOR } from '../../../npcs'
-import { properSentences } from '../../../utilities/text'
-import { decorateText } from '../../../utilities/text/decoration'
 import { PROVINCE } from '..'
-import { location__template } from '../locations/temples'
-import { hub__weather } from '../weather'
 import { HUB } from '.'
 import { Hub } from './types'
 
@@ -302,24 +297,6 @@ export const hub__traits = (hub: Hub) => {
             ]
       ),
       locals: range(10).map(() => ACTOR.spawn({ loc: province }).idx),
-      locs: location__template({ province, wilderness: 0.5, count: 10 }).map(site => {
-        const { season, time, heat, conditions, variance } = hub__weather(
-          province.hub,
-          window.dice.randint(0, 11)
-        )
-        return {
-          text: properSentences(`${site.site}.`),
-          setting: `${site.district}, ${decorateText({
-            label: heat.desc,
-            tooltip: `${heat.degrees.toFixed(0)}°F`,
-            color: cssColors.subtitle
-          })}${
-            variance === 'normal'
-              ? ''
-              : decorateText({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
-          }, ${season}, ${time}, ${conditions}`
-        }
-      }),
       terrain: window.dice.spin(PROVINCE.terrain(province))
     }
   }

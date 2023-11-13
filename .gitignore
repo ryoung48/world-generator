@@ -14,6 +14,7 @@ dist
 dist-ssr
 *.local
 .env
+public/assets/vignettes
 
 # Editor directories and files
 .vscode/*

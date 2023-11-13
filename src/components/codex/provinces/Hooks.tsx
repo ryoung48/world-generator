@@ -20,9 +20,11 @@ export function HooksView({ province }: { province: Province }) {
         <b>Mission: </b>
         {province.hooks.mission.text}. <i>{province.hooks.mission.complication}.</i>
       </Grid>
-      {hooks.tags.map(({ tag, text, complication, type }, i) => (
+      {hooks.tags.map(({ tag, text, complication, type, decorated }, i) => (
         <Grid item key={i} xs={12}>
-          <b>{tag}:</b> <i>{capitalize(type)}.</i> {<StyledText text={text}></StyledText>}{' '}
+          <b>{tag}:</b>{' '}
+          <i>{decorated ? <StyledText text={decorated}></StyledText> : capitalize(type)}.</i>{' '}
+          {<StyledText text={text}></StyledText>}{' '}
           <i>
             <StyledText text={complication}></StyledText>.
           </i>

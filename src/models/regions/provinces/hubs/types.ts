@@ -1,4 +1,5 @@
 import { Point } from '../../../utilities/math/points/types'
+import { District } from '../blueprints/types'
 
 export interface Hub extends Point {
   type:
@@ -27,10 +28,10 @@ export interface Hub extends Point {
     design: string
     defenses: string
     locals: number[]
-    locs: { text: string; setting: string }[]
     terrain: string
     commerce: string
   }
+  map?: { seed?: string; density: number; districts: Record<number, District> }
 }
 
 export interface Settlement {

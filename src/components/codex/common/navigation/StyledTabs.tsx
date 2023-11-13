@@ -11,9 +11,10 @@ const classes = {
 export function StyledTabs(props: {
   tabs: { label: string; content: ReactNode }[]
   active: boolean
+  selected?: ReturnType<typeof useState<string>>
 }) {
-  const { tabs, active } = props
-  const [value, setValue] = useState(tabs[0].label)
+  const { tabs, active, selected } = props
+  const [value, setValue] = selected ?? useState(tabs[0].label)
 
   const handleChange = (_: SyntheticEvent, newValue: string) => {
     setValue(newValue)

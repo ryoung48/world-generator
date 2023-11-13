@@ -649,7 +649,7 @@ export const wilderness: HookTemplate = {
       enemies: [
         { title: 'The terrible creature that destroyed it', monstrous: true },
         { title: 'Vengeful wraith of its last ruler', monstrous: true },
-        { title: "Savage chieftain who's taken it for #possessive# seat of rule" }
+        { title: "Savage chieftain who's taken it for #possessive# seat of rule", monstrous: true }
       ],
       friends: [
         { title: 'Shy survivor of the original population' },
@@ -676,8 +676,8 @@ export const wilderness: HookTemplate = {
       text: "There's an enchanted spring in the area, one empowered by an ancient enchantment or warped by ambient currents of magic. The creatures that drink from it might be blessed with some special grace, but it's just as likely that some more sinister consequence comes from imbibing its water. The animal and plant life around it have doubtless been substantially altered by its effects. Most such springwater loses its powers if separated from the main body for very long.",
       enemies: [
         { title: "Beast warped by the spring's power", monstrous: true },
-        { title: 'Ruthless sorcerer experimenting with its effects' },
-        { title: 'Barbaric chieftain using it to advance #possessive# power' }
+        { title: 'Ruthless sorcerer experimenting with its effects', monstrous: true },
+        { title: 'Barbaric chieftain using it to advance #possessive# power', monstrous: true }
       ],
       friends: [
         { title: 'Ancestral guardian of the spring' },
@@ -952,7 +952,7 @@ export const wilderness: HookTemplate = {
     'Pilgrimage Site': {
       text: 'There is some important monument, place, or structure here that attracts pilgrims from far away. It may be a holy site beloved of a local faith, a mythic originpoint for a nearby culture, an oracle or other provider of widely-desired services, or a font of some special favor or benefit that can reward a pilgrim. The site may be under the control of a local government, or it may be too distant or dangerous to be effectively protected or administered by outsiders.',
       enemies: [
-        { title: 'Raider chieftain plundering the pilgrims' },
+        { title: 'Raider chieftain plundering the pilgrims', monstrous: true },
         { title: 'Zealot who has seized control of it for their own sect' },
         {
           title: 'Once-benevolent holy entity that has become hostile for some reason',
@@ -1146,8 +1146,8 @@ export const wilderness: HookTemplate = {
     'Savage Hamlet': {
       text: "There's a village in the area, but its inhabitants are vicious or profoundly unsociable in some way. They may deal violently with outsiders, have abhorrent cultural habits, be the decadent remains of some group cast out for their evil ways. The party should likely have some sort of indication of their nature given to them before the first contact, or else the village should be savage in ways that don't necessarily lead to likely immediate attack.",
       enemies: [
-        { title: 'Brutal village chieftain' },
-        { title: 'Cruel shaman of a dark god' },
+        { title: 'Brutal village chieftain', monstrous: true },
+        { title: 'Cruel shaman of a dark god', monstrous: true },
         { title: "Non-local criminal who's gone native in a bad way" }
       ],
       friends: [

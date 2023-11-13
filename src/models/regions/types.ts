@@ -1,6 +1,4 @@
 import { TaggedEntity } from '../utilities/entities/types'
-import { Directions } from '../utilities/math/points/types'
-import { Climate } from '../world/climate/types'
 
 export type DiplomaticRelation =
   | 'vassal'
@@ -36,7 +34,6 @@ export interface Region extends TaggedEntity {
   tag: 'nation'
   heraldry: { hue: number; color: string; style: 'monochrome' | 'contrast' | 'standard' }
   capital?: number
-  side: Directions
   regional: {
     provinces?: number[]
     land?: number
@@ -46,14 +43,13 @@ export interface Region extends TaggedEntity {
   culture: number
   religion?: number
   // geography
-  climate?: keyof Climate
   coastal: boolean
   borders: number[]
   landBorders: number[]
   relations: Record<number, DiplomaticRelation>
   // society
   provinces: number[]
-  development?: 'civilized' | 'frontier' | 'tribal' | 'remote'
+  development?: number
   civilized?: boolean
   size?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
   government?: typeof governments[number]

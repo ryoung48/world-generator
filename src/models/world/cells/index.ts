@@ -116,7 +116,7 @@ export const CELL = {
     const { cell, distance } = params
     if (cell.coastalEdges?.length > 0) {
       // move location to the coast
-      return cell.coastalEdges.map(points => POINT.isOnEdge({ points, distance }))
+      return cell.coastalEdges.map(points => POINT.isOnEdge.geo({ points, distance }))
     }
     return []
   },

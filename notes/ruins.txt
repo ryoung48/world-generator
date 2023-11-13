@@ -358,6 +358,202 @@ treasure locations:
 * hidden atop a ceiling beam
 * resting atop a desk or table
 
+* abandoned catacombs: a subterranean maze, silent keeper of secrets and the eternal sleep.
+-- npcs --
+silent tomb guardian: Vigilant protector of the dead, revered for dedication, feared for their ruthless enforcement.
+lost soul: Aimlessly wanders the catacombs, offering cryptic guidance but prone to misleading travelers.
+obsessive collector: Seeks relics among the bones, their knowledge vast, their greed for artifacts insatiable.
+mournful spirit: Offers sorrowful tales of the past, comforting but can trap listeners in their lament.
+cryptic hermit: Provides valuable insights into catacomb lore, though often speaks in frustrating riddles.
+cunning trapmaker: Plants protective traps, their ingenuity unmatched but their intent dangerously unclear.
+-- hooks --
+restless spirits: Pacify the disturbed spirits that now wander the catacombs' endless night.
+trap-infested corridors: Navigate through booby-trapped halls that threaten with ancient deadly devices.
+missing historian: Rescue a scholar who ventured into the catacombs and has not returned.
+sacred relic hunt: Search for a long-lost artifact rumored to rest with the catacomb's eldest resident.
+collapsing tunnels: Find a safe route out before the decaying catacombs bury their secrets forever.
+
+* cluttered scavenger's yard: treasures and trinkets lie hidden among debris, hinting at stories untold.
+* creepy abandoned asylum: corridors echo with a chilling past, though rebellion against oblivion persists.
+-- npcs --
+forlorn ghost: Wanders halls reliving their tragedy, their presence haunting, yet they reveal secret passages.
+fearless investigator: Hunts for the asylum's dark truths, their courage admirable but often reckless to a fault.
+crazed squatter: Claims the asylum as their domain, unpredictable, sometimes guiding, sometimes hindering.
+melancholic former patient: Offers glimpses into the asylum's routines, their stories insightful yet fragmented.
+skeptical debunker: Aims to disprove the hauntings, their logic a beacon, but their skepticism sometimes blinding.
+
+* crowded soup kitchen: steam fogs the air, where hunger meets the generosity of communal pots.
+-- npcs --
+weary cook: Tirelessly stirs vast pots, their warmth inviting, though lines on their face show the toll.
+hopeful patron: Waits with gratitude, their patience a lesson, yet their eyes betray the hardship of many meals missed.
+distracted server: Hands out bread with a smile, their presence comforting, though often they are lost in thought.
+vigilant overseer: Keeps the peace, their watchful eyes ensuring order, but their stern demeanor can be off-putting.
+eager volunteer: Brings energy to serving food, their enthusiasm uplifting, though sometimes their naivety shows.
+grizzled regular: Shares street wisdom over soup, their advice invaluable, but tinted with a cynicism born of experience.
+
+* crumbling tenement block: units expose brick and mortar, still, resilient flowers poke through the cracks.
+-- npcs --
+resilient tenant: Makes a home amid decay, their resourcefulness inspiring, yet weariness creeps into their actions.
+curious child: Explores broken hallways with wonder, their laughter a balm, but their innocence is at risk.
+old caretaker: Attempts repairs with old tools, their dedication evident, but often they are overwhelmed by the disrepair.
+scheming landlord: Collects dues with avarice, their business acumen clear, but lacking empathy for the tenants.
+aspiring artist: Finds beauty in the ruin, painting vibrant murals, though they struggle to make ends meet.
+community organizer: Rallies the block for improvements, their leadership is inspiring, but faced with constant setbacks.
+-- hooks --
+spiritual cleanse: Rid the tenement of malevolent spirits causing illness and despair among the inhabitants.
+landlord's ledger: Uncover proof of the landlord's exploitation to turn the tides of power to the tenants' favor.
+community rally: Organize the tenants to stand up against city officials threatening to demolish their homes.
+
+* decayed shantytown: huts huddle together, their vibrancy shining through the patchwork of repairs.
+-- npcs -- 
+community elder: Shares tales of shantytown resilience, their spirit unbroken, though sadness lines their face.
+ingenious builder: Erects homes from scrap, their creativity a marvel, yet they are always busy, never resting.
+streetwise urchin: Navigates narrow alleys with ease, their knowledge of the town unmatched, but trust doesn’t come easily.
+overworked healer: Tends to the sick with limited supplies, their care tender, though exhaustion is ever-present.
+barter queen: Trades goods with a sharp tongue, their deal-making essential, though not always fair.
+watchful guardian: Protects the shantytown's meager wealth, their diligence a comfort, but the strain is evident in their eyes.
+-- hooks --
+healer's assistant: Assist the overworked healer in creating a life-saving potion from rare herbs within the slum.
+water of life: Secure a clean water source for the shantytown while negotiating with hostile entities.
+bandit's bargain: Protect the shantytown from a bandit gang without engaging in a destructive battle.
+lost child: Navigate the maze-like alleys to find a lost child before nightfall brings danger.
+
+* degraded opium den: haze clouds the air, a veil over weary eyes seeking ephemeral escape.
+* derelict public park: weeds conquer paths, but the laughter of the past plays on the rusting swings.
+* deserted puppet theatre: velvet fades and wood warps, yet the stage waits in silent hope for joy's return.
+* deserted street of homes: doors creak open to silence, but the remnants of life echo in the emptiness.
+* dilapidated dockyard: planks groan underfoot, while aged ropes and anchors speak of seafaring legacies.
+* dilapidated pottery shop: shelves dust-covered, but each pot, each shard, holds the curve of its maker's hands.
+-- npcs --
+aged potter: Crafted wares with love, now broods over the shop’s decay, helpful yet bitter about their obscurity.
+curious archaeologist: Searches for historical pieces, their enthusiasm infectious but often recklessly destructive.
+apprentice without a master: Desperate to learn the craft, eager but sadly lacking in skill without proper guidance.
+nostalgic collector: Reminisces about the shop’s heyday, offering valuable stories but prone to nostalgic falsehoods.
+desperate seller: Tries to offload the shop’s contents, their sales pitch inviting, their desperation evident.
+artistic soul: Sees beauty in every shard, their vision inspiring, but their head too often in the clouds.
+-- hooks --
+forgotten formula: Uncover the recipe for a legendary clay mixture said to grant the pottery mystical properties.
+spirit of the craftsman: Communicate with the ghost of the potter, seeking closure for their unfinished work.
+cursed shard: A broken piece of pottery is causing misfortune; determine its origin and remedy its curse.
+protect the legacy: Prevent opportunistic looters from stealing what remains of the precious pottery.
+hidden masterpiece: Amongst the mundane, steal a pot that holds the essence of the shop's lost glory.
+restore the kiln: Rebuild the ancient kiln, deciphering its peculiar design to rekindle its flame.
+
+* dingy blacksmith's forge: soot stains every surface, while the rhythmic hammering sings of creation.
+* dingy candle maker's workshop: wax drips form a grimy coat, yet the glow of crafted candles offers light.
+* disorganized bazaar: stalls sprawl in confusion, yet the chaos hides a symphony of commerce and deals.
+* disreputable tavern: dimly lit, with a reputation that taints, yet its warmth offers a strange solace.
+* fetid sewer system: murky waters flow beneath, in a network that, despite the odor, has stood the test of time.
+* forgotten beggar's alley: neglected by time, yet the walls hold the secrets of the city's silent witnesses.
+* forgotten city cemetery: tombstones lean, forgotten, guarding the eternal sleep of souls once cherished.
+* grimy fish market: scales and guts litter the stone, but the daily catch feeds families aplenty.
+* grimy tannery: stench clings to the air, but leather hung neatly shows the crafters' enduring pride.
+
+* grimy textile mill: fabric of the community woven in dust-laden beams, amid the drone of relentless machinery.
+-- npcs --
+diligent weaver: Creates beautiful textiles with unmatched skill, but is often critical of others' work.
+dye master: Stained hands mix vats of vibrant color, a defiance of the mill's pervasive drabness.
+millwright: Fixes machinery with an oiled wrench, their ingenuity keeping the heart of production alive.
+cloth inspector: Eyes scan for flaws, finding perfection in the mesh of warp and weft despite the grime.
+ambitious apprentice: Eager to learn and brimming with ideas, but their overconfidence sometimes leads to mistakes.
+gruff overseer: keeps the mill running on time, respected for their efficacy, feared for their harshness.
+-- hooks --
+purge the pests: Clear out a nest of textile-eating creatures without damaging the precious fabrics.
+rescue operation: Save workers from a section of the mill that is on the brink of collapse.
+smuggle supplies: Sneak in much-needed dyes and materials past a group of corrupt officials blockading the mill.
+lost technique: Recover the instructions for a legendary weaving technique thought lost to time.
+thwart sabotage: Uncover which competitor is responsible for sabotaging looms and bring them to justice.
+
+* hazardous alchemist's lab: bottles clutter, risk abounds, within these walls, magic and science dance close.
+* hidden thieves' den: concealed by shadows, a hub of whispers and trade, with an oddly homely hearth.
+
+* infested refugee camp: tents crowd, misery palpable, but human spirit and hope brew stronger beneath.
+-- npcs --
+camp elder: shares wisdom and smiles, a pillar of resilience against a backdrop of struggle.
+weary medic: Provides care with unwavering compassion, though visibly strained by the overwhelming needs.
+inspirational teacher: Educates with a passion, though their impatience for change can cause friction.
+water carrier: bears heavy loads with a steadfast stride, ensuring every tent gets its share.
+soup kitchen cook: stirs a giant pot, their seasoned hands serving sustenance as well as solace.
+overburdened leader: Coordinates the camp’s affairs, their resolve strong but their temper short.
+-- hooks --
+heal the afflicted: Craft a cure for a disease that is running rampant through the overcrowded tents.
+protect the weak: Defend the camp from a raid by bandits looking to prey on the vulnerable refugees.
+find fresh water: Locate and secure a new clean water source after the camp’s well is contaminated.
+rebuild homes: Organize and defend workers as they try to rebuild parts of the camp destroyed by fire.
+spiritual solace: Offer comfort and resolve a crisis of faith among the camp's disheartened residents.
+
+* narrow alleyways: oppressive shadows loom, still, they weave a maze of secrets and histories.
+* narrow smugglers' tunnel: walls constrict, air stales, yet it pulses with the thrill of illicit passage.
+* neglected orphanage: fading murals peeling from walls, yet echoes of lost laughter linger in the air.
+* overcrowded communal well: lines form at dawn, the water's murk not dimming the vital lifeline it provides.
+* overcrowded marketplace: aisles bustle with life, goods overflow, though paths are narrowed by haggling bodies.
+* overgrown beggar's square: neglect has its grip, but the square's heart beats in the cadence of footsteps past.
+* overused ferry dock: planks wear thin with stories, bearing the weight of countless partings and reunions.
+* polluted settlement pond: algae skim the surface, yet it mirrors the resilience of those who rely on it.
+* ramshackle bridge: timbers creak dangerously, yet it remains a steadfast connector of divided lands.
+* ramshackle watchtower: its view has narrowed, but the sightline remains a vigilant guard over time's passage.
+* rancid slaughterhouse: bloodied floors unsettle, yet the place feeds many, sustaining the cycle of life.
+* rat-infested warehouse: gnawed crates are piled high, sheltering goods that still hold value within.
+* rickety apartment: floors may sag, the risk runs high, yet each room is a sanctuary to someone.
+* rotting settlement dump: refuse overwhelms, but even here, the cycle of use and reuse quietly turns.
+* ruined settlement gate: once grand, now breached, but still whispers of entry to a place of storied past.
+* run-down windmill: sails turn slowly, wear evident, but the grindstone still produces flour for the hungry.
+
+* rusting scrapyard: A metal graveyard humming with latent tales, under a patina of inevitable decay.
+-- npcs --
+scavenger: Ever watchful, they deftly navigate the piles, plucking treasures from the tangled refuse.
+tinkerer: Amidst clinking sounds, they fuse old with new, breathing life into the most derelict of metals.
+metal artist: With a visionary's gaze, they twist and shape scrap into sculptures that tell of rebirth.
+salvage merchant: A skilled haggler, they trade in the currency of rust, valuing weight in stories over gold.
+inventor: Surrounded by blueprints, they dream up contraptions, seeing potential in every twisted relic.
+-- hooks --
+metallic menace: Dismantle a construct made from the discarded metal, now awakened with a vengeful spark.
+toxic pools: Navigate hazardous areas where rainfall has turned rust into dangerous, caustic pools.
+thief's treasure trove: Locate a notorious thief's hidden stash amidst the sprawling metal wasteland.
+cursed cache: Break the curse on a stash of items that bring misfortune to anyone who touches them.
+thief in the night: Set a trap for the elusive thief who has been stealing crucial parts from the scrapyard.
+stolen steel: Prevent bandits from raiding the yard for metal to forge into weapons for their nefarious plans.
+
+* shabby shrine: a testament to faith, draped in time's dust, still a beacon for those seeking solace
+-- npcs --
+caretaker: Moves quietly, dusting off icons, their belief as steadfast as the ancient stones.
+pilgrim: Kneels often, whispers prayers, eyes alight with a devotion that outshines the shrine's gloom.
+storyteller: Recounts the legends, voice a soothing balm against the wear of time upon old walls.
+hermit: In tattered robes, they meditate daily, an anchor of calm in the shrine's faded embrace.
+flower seller: Sells blooms at the entrance, their colors a silent promise of life amidst the decay.
+-- hooks --
+rekindle the faith: Convince a wayward priest to return to the shrine and restore its dwindling congregation.
+holy relic recovery: Retrieve a stolen sacred object from a den of thieves to re-sanctify the shrine.
+candlelit vigil: Protect the shrine from desecrators during an all-night vigil on a holy day.
+divine message: Decipher cryptic omens that have started appearing on the shrine’s walls.
+ancient rite: Perform a long-forgotten ritual to appease the restless spirits of the ancient gods.
+
+* squalid caravan park: spaces jostle with life, a testament to the journeyers' relentless optimism.
+* worn-out settlement walls: stones may crumble, but they stand as proud sentinels of history's tales.
 
 
 
+
+create 6 npcs for each pre-modern locations below: 
+* shabby shrine: faith wanes in its aura, but the flicker of candles keeps ancient gods alight.
+* infested refugee camp: tents crowd, misery palpable, but human spirit and hope brew stronger beneath.
+* grimy textile mill: threads weave through grimed looms, fabricating beauty from the surrounding grime.
+
+keep in mind the following:
+* output the result as a bulleted list
+* write in the following format: occupation (written in italics all lowercase): description (~100 characters long)
+* each description should be race and gender agnostic
+* each description should include both positive and negative traits
+
+I am procedurally generating scenes in a fantasy RPG where players are presented with a description of the location and a list of actions they can take; 
+
+actions could involve dealing with nearby hazards, gathering information, resting, trading, searching for treasure, etc. 
+
+each action has consequences - i.e. advancing or hindering a quest, accepting a new quest, loss of health, gold or party morale, etc.
+
+after selecting an action, consequences are applied and the game moves to the next scene.
+
+create a table that lists potential actions and their respective consequences; 
+
+actions should be appropriate for a {infested|overcrowded} refugee camp in the slums
+action should be appropriate for a fantasy RPG

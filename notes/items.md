@@ -68,3 +68,109 @@ keep in mind the following:
 * the descriptions should be short, 1-2 sentences
 * the descriptions should not mention any names of people, places, deities, or organizations
 * the descriptions should be written in the same style as the example description
+
+
+below is a list of trade goods fit for 1444:
+
+amber: fossilized tree resin often used in jewelry for its warm luster.
+beer & ale: intoxicating drinks, popular in many cultures.
+beans & legumes: protein-rich plant seeds, diverse and nutritious.
+ceramics: fired clay objects, from pottery to art.
+cheese: fermented milk product, with many varieties.
+citrus fruits: tangy fruits, like oranges and lemons.
+cloth: woven fabric, used for clothing and various textiles.
+coal: black rock, burned for heating and industry.
+cocoa: beans for making chocolate, a luxurious treat.
+coffee: beans ground to brew a stimulating drink.
+copper: malleable red-brown metal, for tools and ornaments.
+coral: skeletons of marine polyps, used in jewelry, decoration, and art.
+cotton: soft fiber, spun for light, breathable textiles.
+creatures (exotic): rare animals, for display or as pets.
+dates: edible sweet fruits, grown in tropical regions.
+distilled spirits: refined forms of alcohol, often aged.
+dyes: substances for coloring fabrics and other materials.
+fish: aquatic creatures, harvested for food; fresh or preserved.
+fur: animal pelts, used for warm clothing and luxury garments.
+gems: precious stones finely cut and polished for jewelry or decoration.
+glass: transparent material, for windows and vessels.
+gold: precious yellow metal, for coinage and jewelry.
+grain: cereal crops, a staple for food and making bread.
+honey & wax: bee products, for sweetening and candles.
+incense: aromatic resins, burned for fragrance or ritual.
+iron: strong metal, essential for weapons and tools.
+ivory: hard white material from tusks, for art and luxury items.
+jade: green ornamental mineral, often carved.
+jams & preserves: sweetened fruit preparations, long-lasting.
+livestock: domesticated animals, for meat, labor, or products.
+marble and stone: quarried for construction and artistic endeavors.
+medicinal herbs: plants known for their remedial properties.
+naval supplies: materials for shipbuilding and maritime use.
+olive oil: a rich oil commonly used in cooking and lamps.
+oysters and clams: shellfish valued for their meat and pearls.
+paper: thin material, for writing and recording information.
+perfumes: fragrant liquids, for personal and ritual use.
+porcelain: fine ceramic ware, delicate and beautifully crafted.
+reagents (arcane): metals, crystals, and essences used for rituals and spells.
+opium: narcotic resin, used for pain relief and recreation.
+rugs & carpets: woven or knotted textiles, for decor and function.
+salt: essential mineral, for food preservation and seasoning.
+silk: delicate fiber from silkworms, for luxurious textiles.
+silver: lustrous white metal, for coins and fine goods.
+slaves: unfree people, traded and exploited for labor.
+spices: aromatic substances, for flavoring food and medicine.
+sugar: sweet crystalline substance, for food and confectionery.
+tea: dried leaves, steeped to make a popular drink.
+timber: processed wood, for building and fuel.
+tobacco: dried leaves, smoked or chewed for leisure.
+tropical wood: hardwood, for fine furniture and carving.
+whale products: materials from whales, like oil or baleen.
+wine: fermented grape drink, prized for taste and ritual.
+wool: sheep's hair, spun into yarn for garments.
+
+assign trade goods from the list above to each of the biomes below:
+
+  | 'rain forest (tropical)'
+  | 'wet forest (tropical)'
+  | 'moist forest (tropical)'
+  | 'dry forest (tropical)'
+  | 'very dry forest (tropical)'
+  | 'thorn woodland (tropical)'
+  | 'desert scrub (tropical)'
+  | 'desert (tropical)'
+  | 'rain forest (subtropical)'
+  | 'wet forest (subtropical)'
+  | 'moist forest (subtropical)'
+  | 'dry forest (subtropical)'
+  | 'thorn steppe (subtropical)'
+  | 'desert scrub (subtropical)'
+  | 'desert (subtropical)'
+  | 'rain forest (warm temperate)'
+  | 'wet forest (warm temperate)'
+  | 'moist forest (warm temperate)'
+  | 'dry forest (warm temperate)'
+  | 'thorn steppe (warm temperate)'
+  | 'desert scrub (warm temperate)'
+  | 'desert (warm temperate)'
+  | 'rain forest (cool temperate)'
+  | 'wet forest (cool temperate)'
+  | 'moist forest (cool temperate)'
+  | 'steppe (cool temperate)'
+  | 'desert scrub (cool temperate)'
+  | 'desert (cool temperate)'
+  | 'rain forest (boreal)'
+  | 'wet forest (boreal)'
+  | 'moist forest (boreal)'
+  | 'dry scrub (boreal)'
+  | 'desert (boreal)'
+  | 'rain tundra (subpolar)'
+  | 'wet tundra (subpolar)'
+  | 'moist tundra (subpolar)'
+  | 'dry tundra (subpolar)'
+  | 'glacier (polar)'
+  | 'coastal (tropical)'
+  | 'coastal (temperate)'
+  | 'coastal (arctic)'
+  | 'mountains'
+
+make sure all trade goods have representation in at least one biome
+output as a bullet list with each item formated as: biome (in italics): common separated list of trade goods

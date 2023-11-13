@@ -7,7 +7,7 @@ import { HookTemplate } from '../types'
 export const ruins: HookTemplate = {
   hooks: {
     'Abandoned Traps': {
-      text: 'This ruin is crusted over with dangerous snares and security measures, the relics of some kind of internal struggle or an expected invasion that may never have come. Most of the traps are likely still functional, and the entire place might be a snare..',
+      text: 'This ruin is crusted over with dangerous snares and security measures, the relics of some kind of internal struggle or an expected invasion that may never have come. Most of the traps are likely still functional, and the entire place might be a snare.',
       enemies: [
         { title: 'Golem trap-maintainer', monstrous: true },
         { title: 'Confused undead guardian', monstrous: true },
@@ -224,7 +224,7 @@ export const ruins: HookTemplate = {
       text: "There's a phenomenon to the ruin that makes it tremendously dangerous at certain intervals. Fluxes of ancient radiation, swarms of quick-breeding dangerous vermin, withering geomantic conjunctions, or cyclically-awakened preserved inhabitants might make the place exceedingly deadly for intruders there at that time. The natives may or may not know about the cycle, and if it's a very long one, they might not have been around to see it happen.",
       enemies: [
         { title: 'Outsider determined to trigger the cycle' },
-        { title: 'Native leader who wants to weaponize it' },
+        { title: 'Native leader who wants to weaponize it', monstrous: true },
         { title: 'Outside researcher with no care for the consequences' }
       ],
       friends: [
@@ -423,7 +423,7 @@ export const ruins: HookTemplate = {
       text: "The ruin recently experienced a serious incursion of outsiders, whether adventurers, bandits, government forces, angry villagers, or other hostiles. These intruders were repulsed, perhaps with significant loss of native life, and the ruin was considerably disrupted by the fighting. Important native leaders might have been killed or wounded, treasures might have been looted, or slaves and hostages might've been taken.",
       enemies: [
         { title: 'Desperate intruder leader still in the ruin' },
-        { title: 'Bloodthirsty native leader craving vengeance' },
+        { title: 'Bloodthirsty native leader craving vengeance', monstrous: true },
         { title: "Dead leader's heir full of terrible ideas" }
       ],
       friends: [
@@ -507,7 +507,7 @@ export const ruins: HookTemplate = {
       text: 'Some potent enchantment or other ancient magic has gone berserk or rotten in the ruin, tainting the occupants and making the place dangerous to inhabitants. Whatever the magic once did, it now does it too much, or in the wrong way, or at a grim cost to those within. The natives either cannot escape, or have no place better to go, or are somehow dependent on the twisted magic.',
       enemies: [
         { title: 'Magically mutated abomination', monstrous: true },
-        { title: 'Native chieftain full of tainted power' },
+        { title: 'Native chieftain full of tainted power', monstrous: true },
         { title: 'Outside sorcerer making reckless use of the magic' }
       ],
       friends: [
@@ -706,10 +706,10 @@ export const ruins: HookTemplate = {
     'Hospitable Natives': {
       text: "While not all denizens of the ruin are friendly, there's at least one faction that's known to be willing to host guests and negotiate for favors. This group may be made up of bandits, exiles, hermits, or other social outcasts who find even the most dubious human visitors preferable to their neighbors, or they might be “civilized” humanoids who find it profitable to parley as well as raid.",
       enemies: [
-        { title: 'Sinister chieftain with ulterior motives' },
-        { title: 'Xenophobic rebel who hates outsiders' },
+        { title: 'Sinister chieftain with ulterior motives', monstrous: true },
+        { title: 'Xenophobic rebel who hates outsiders', monstrous: true },
         { title: 'Outsider adventurer bent on exploiting their hospitality' },
-        { title: 'Crazed outcast plotting revenge' }
+        { title: 'Crazed outcast plotting revenge', monstrous: true }
       ],
       friends: [
         { title: 'Wide-eyed native urchin', monstrous: true },
@@ -772,7 +772,7 @@ export const ruins: HookTemplate = {
       friends: [
         { title: 'Innocent native suffering from the sickness' },
         { title: 'Outsider medical missionary' },
-        { title: 'Hapless chieftain trying to hold things together' }
+        { title: 'Hapless chieftain trying to hold things together', monstrous: true }
       ],
       complications: [
         'The ruin has been sealed off by the outside world',
@@ -878,7 +878,7 @@ export const ruins: HookTemplate = {
       text: 'The ruin is cursed, and everything in it is somehow tainted or troubled by the malediction. There must be a strong reason for the natives to remain, or else the curse itself induces them to stay. The curse may be the result of some ancient crime, a enchantment gone wrong, a lost war against a magical foe, or a “blessing” in one age that is less appreciated in the modern day. The curse usually takes some time to trigger on intruders, but it may be induced by certain actions.',
       enemies: [
         { title: 'Vile sorcerer feeding on the energies' },
-        { title: 'Embittered chieftain hating all uncursed' },
+        { title: 'Embittered chieftain hating all uncursed', monstrous: true },
         { title: 'Hapless victim made a monster by the curse', monstrous: true }
       ],
       friends: [
@@ -907,7 +907,7 @@ export const ruins: HookTemplate = {
       enemies: [
         { title: 'Demented ruin spirit', monstrous: true },
         { title: 'Sorcerer trying to bend the site to their will' },
-        { title: "Native chieftain who worships the ruin's genius as a god" }
+        { title: "Native chieftain who worships the ruin's genius as a god", monstrous: true }
       ],
       friends: [
         { title: 'Friendly ruin sub-organism', monstrous: true },

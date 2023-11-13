@@ -8,4 +8,5 @@ export interface Ruin extends TaggedEntity {
   enigmas: string
   treasures: string
   mood: string
+  locations: string
 }

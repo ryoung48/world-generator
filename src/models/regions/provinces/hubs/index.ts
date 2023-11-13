@@ -1,3 +1,5 @@
+import { MATH } from '../../../utilities/math'
+import { WORLD } from '../../../world'
 import { CELL } from '../../../world/cells'
 import { Cell } from '../../../world/cells/types'
 import { Hub, Settlement } from './types'
@@ -73,22 +75,18 @@ const hubs: Record<Hub['type'], Settlement> = {
  */
 const placement = (params: { cell: Cell }) => {
   const { cell } = params
+  const spacing = WORLD.placement.spacing.provinces
+  const limit = WORLD.placement.limit(spacing) + 1
   const coastalPlacement = CELL.moveToCoast({
     cell,
     distance: 0.5
   })
   for (const point of coastalPlacement) {
-    // const collision = Array.from(
-    //   new Set(
-    //     CELL.bfsNeighborhood({ start: cell, maxDepth: 2 })
-    //       .map(cell => cell.province)
-    //       .filter(p => window.world.provinces[p] && p !== cell.province)
-    //   )
-    // )
-    //   .map(p => window.world.provinces[p].hub)
-    //   .some(hub => POINT.distance({ points: [hub, point] }) <= 10)
-    // if (!collision) return { point, coastal: true }
-    return { point, coastal: true }
+    const collision = CELL.bfsNeighborhood({ start: cell, maxDepth: limit })
+      .filter(n => n.idx !== cell.idx && CELL.isHub(n))
+      .map(p => window.world.provinces[p.province].hub)
+      .some(hub => MATH.distance.geo([point.x, point.y], [hub.x, hub.y]) < spacing)
+    if (!collision) return { point, coastal: true }
   }
   return { point: { x: cell.x, y: cell.y }, coastal: false }
 }
@@ -101,6 +99,7 @@ export const HUB = {
     const { alias } = hubs[hub.type]
     return text.replaceAll(HUB.site, alias)
   },
+  monastic: (hub: Hub) => hubs[hub.type].alias === 'monastery',
   move: (hub: Hub, cell: Cell) => {
     const oldCell = window.world.cells[hub.cell]
     const oldProvinceIdx = oldCell.province
@@ -116,6 +115,7 @@ export const HUB = {
     hub.y = point.y
     hub.coastal = coastal
   },
+  province: (hub: Hub) => window.world.provinces[hub.province],
   seaside: (hub: Hub) => window.world.cells[hub.cell].beach,
   setPopulation: (hub: Hub, pop: number) => {
     hub.population = Math.ceil(pop)
@@ -151,6 +151,6 @@ export const HUB = {
     const region = window.world.regions[province.region]
     return village && !region.civilized
   },
-  village: (hub: Hub) => hub.population < hubs['small town'].population,
-  monastic: (hub: Hub) => hubs[hub.type].alias === 'monastery'
+  urban: (hub: Hub) => hub.population >= hubs['small town'].population,
+  village: (hub: Hub) => hub.population < hubs['small town'].population
 }

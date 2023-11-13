@@ -7,18 +7,16 @@ let context: Performance.ProfileNode
 const _cache: Performance.MemoCache = { store: {} }
 
 export const PERFORMANCE = {
-  decorate: <T, K extends unknown[]>({ f, name, dirty, set }: Performance.PerfDecorate<T, K>) => {
+  decorate: <T, K extends unknown[]>({ f, name, dirty }: Performance.PerfDecorate<T, K>) => {
     return PERFORMANCE.profile.decorate({
-      f: PERFORMANCE.memoize.decorate({ f, dirty, set }),
+      f: PERFORMANCE.memoize.decorate({ f, dirty }),
       name
     })
   },
   memoize: {
     clear: () => Object.keys(_cache.store).forEach(key => (_cache.store[key] = {})),
-    decorate: <T, K extends unknown[]>({ f, dirty, set }: Performance.MemoDecorate<T, K>) => {
+    decorate: <T, K extends unknown[]>({ f, dirty }: Performance.MemoDecorate<T, K>) => {
       if (_cache.store[f.toString()] === undefined) _cache.store[f.toString()] = {}
-      const setter: Performance.MemoDecorate<T, K>['set'] =
-        set ?? ((cache, result, ...args) => (cache[PERFORMANCE.memoize.key(args)] = result))
       return (...args: K) => {
         const cache = _cache.store[f.toString()] as Record<string, T>
         const key = PERFORMANCE.memoize.key(args)
@@ -26,7 +24,7 @@ export const PERFORMANCE = {
         let result = cache[key]
         if (result !== undefined) return result
         result = f(...args)
-        setter(cache, result, ...args)
+        cache[PERFORMANCE.memoize.key(args)] = result
         return result
       }
     },

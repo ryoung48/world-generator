@@ -1,4 +1,4 @@
-import { MAP } from '../../../components/maps/common'
+import { MAP } from '../../../components/world/common'
 import { CULTURE } from '../../npcs/cultures'
 import { REGION } from '../../regions'
 import { PROVINCE } from '../../regions/provinces'
@@ -53,45 +53,38 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
       const templateBlacklist = NAVIGATION.blacklist.blacklist
       let blacklist = { ...templateBlacklist }
       // connect island nations
-      window.world.regions
-        .filter(region => !region.shattered)
-        .forEach(region => {
-          const regionCapital = window.world.provinces[region.capital]
-          const neighbors = REGION.neighbors({ region })
-          REGION.borders(region)
-            .filter(n => !neighbors.includes(n) && !region.shattered)
-            .forEach(n => {
-              const nCapital = window.world.provinces[n.capital]
-              const land =
-                PROVINCE.cell(regionCapital).landmark === PROVINCE.cell(nCapital).landmark
-              const provinceConnected = !land || n.landBorders.includes(region.idx)
-              if (provinceConnected) connectRegions(region, n, blacklist)
-            })
-        })
+      window.world.regions.forEach(region => {
+        const regionCapital = window.world.provinces[region.capital]
+        const neighbors = REGION.neighbors({ region })
+        REGION.borders(region)
+          .filter(n => !neighbors.includes(n))
+          .forEach(n => {
+            const nCapital = window.world.provinces[n.capital]
+            const land = PROVINCE.cell(regionCapital).landmark === PROVINCE.cell(nCapital).landmark
+            const provinceConnected = !land || n.landBorders.includes(region.idx)
+            if (provinceConnected) connectRegions(region, n, blacklist)
+          })
+      })
       // connect really isolated regions if all else fails
       blacklist = { ...templateBlacklist }
-      window.world.regions
-        .filter(region => !region.shattered)
-        .forEach(region => {
-          if (REGION.neighbors({ region }).length < 1) {
-            const capitals = REGION.borders(region)
-              .filter(region => !region.shattered)
-              .map(REGION.capital)
-            if (capitals.length < 1) return
-            const province = PROVINCE.find({
-              provinces: capitals,
-              ref: window.world.provinces[region.capital],
-              type: 'closest'
-            })
-            const nation = PROVINCE.nation(province)
-            connectRegions(region, nation, blacklist)
-          }
-        })
+      window.world.regions.forEach(region => {
+        if (REGION.neighbors({ region }).length < 1) {
+          const capitals = REGION.borders(region).map(REGION.capital)
+          if (capitals.length < 1) return
+          const province = PROVINCE.find({
+            provinces: capitals,
+            ref: window.world.provinces[region.capital],
+            type: 'closest'
+          })
+          const nation = PROVINCE.nation(province)
+          connectRegions(region, nation, blacklist)
+        }
+      })
     },
     _extendedVoyages: () => {
       // iterate through all water bodies
       const allPorts = window.world.provinces
-        .filter(city => city.hub.coastal && !PROVINCE.region(city).shattered)
+        .filter(city => city.hub.coastal)
         .map(city => window.world.cells[city.hub.cell])
       const { blacklist } = NAVIGATION.blacklist
       WORLD.features('water').forEach(i => {
@@ -146,74 +139,67 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
     },
     _networks: () => {
       const { blacklist } = NAVIGATION.blacklist
-      window.world.regions
-        .filter(region => !region.shattered)
-        .forEach(r => {
-          // create the main arteries that connect to the capital
-          const capital = window.world.provinces[r.capital]
-          PROVINCE.attach({ province: capital, idx: capital.idx })
-          // connect settlements that are not part of main arteries
-          const unconnected = REGION.provinces(r).filter(province => !PROVINCE.connected(province))
-          PROVINCE.sort({ provinces: unconnected, ref: capital, type: 'closest' }).forEach(
-            province => {
-              // check if not previously PROVINCE.connected
-              if (!PROVINCE.connected(province)) {
-                // create a road to the closest PROVINCE.connected city
-                const connections = REGION.provinces(r).filter(c => PROVINCE.connected(c))
-                let closest = PROVINCE.find({
-                  provinces: connections,
-                  ref: province,
-                  type: 'closest'
-                })
-                const type = determinePathType(province, closest)
-                // we need to pick two ports to connect islands
-                if (type === 'sea') {
-                  const former = closest
-                  const waterSources = Array.from(PROVINCE.cell(province).waterSources ?? [])
-                  const commonSea = PROVINCE.sharedWaterSource(province, closest)
-                  if (!commonSea) {
-                    closest = PROVINCE.find({
-                      provinces: connections.filter(c => PROVINCE.sharedWaterSource(province, c)),
-                      ref: province,
-                      type: 'closest'
-                    })
-                  }
-                  // if two ports don't exist, connect by any means necessary
-                  if (waterSources.length < 1 || !closest) {
-                    closest = former
-                  }
+      window.world.regions.forEach(r => {
+        // create the main arteries that connect to the capital
+        const capital = window.world.provinces[r.capital]
+        PROVINCE.attach({ province: capital, idx: capital.idx })
+        // connect settlements that are not part of main arteries
+        const unconnected = REGION.provinces(r).filter(province => !PROVINCE.connected(province))
+        PROVINCE.sort({ provinces: unconnected, ref: capital, type: 'closest' }).forEach(
+          province => {
+            // check if not previously PROVINCE.connected
+            if (!PROVINCE.connected(province)) {
+              // create a road to the closest PROVINCE.connected city
+              const connections = REGION.provinces(r).filter(c => PROVINCE.connected(c))
+              let closest = PROVINCE.find({
+                provinces: connections,
+                ref: province,
+                type: 'closest'
+              })
+              const type = determinePathType(province, closest)
+              // we need to pick two ports to connect islands
+              if (type === 'sea') {
+                const former = closest
+                const waterSources = Array.from(PROVINCE.cell(province).waterSources ?? [])
+                const commonSea = PROVINCE.sharedWaterSource(province, closest)
+                if (!commonSea) {
+                  closest = PROVINCE.find({
+                    provinces: connections.filter(c => PROVINCE.sharedWaterSource(province, c)),
+                    ref: province,
+                    type: 'closest'
+                  })
                 }
-                NAVIGATION.addTradeRoute({ src: province, dst: closest, blacklist, type })
-                PROVINCE.attach({ province, idx: closest.idx })
+                // if two ports don't exist, connect by any means necessary
+                if (waterSources.length < 1 || !closest) {
+                  closest = former
+                }
               }
+              NAVIGATION.addTradeRoute({ src: province, dst: closest, blacklist, type })
+              PROVINCE.attach({ province, idx: closest.idx })
             }
-          )
-        })
+          }
+        )
+      })
     },
     _roads: (roadType: RouteTypes) => {
       const { blacklist } = NAVIGATION.blacklist
       // iterate through all settlements
-      window.world.provinces
-        .filter(src => !PROVINCE.region(src).shattered)
-        .forEach(src => {
-          Object.keys(src.trade[roadType])
-            .map(n => window.world.provinces[parseInt(n)])
-            .filter(
-              dst =>
-                src.trade[roadType][dst.idx] === -1 &&
-                !blacklist[src.idx].includes(dst.idx) &&
-                !PROVINCE.region(dst).shattered
-            )
-            .forEach(dst => {
-              NAVIGATION.addTradeRoute({
-                src,
-                dst,
-                limit: pathing[roadType],
-                blacklist,
-                type: roadType
-              })
+      window.world.provinces.forEach(src => {
+        Object.keys(src.trade[roadType])
+          .map(n => window.world.provinces[parseInt(n)])
+          .filter(
+            dst => src.trade[roadType][dst.idx] === -1 && !blacklist[src.idx].includes(dst.idx)
+          )
+          .forEach(dst => {
+            NAVIGATION.addTradeRoute({
+              src,
+              dst,
+              limit: pathing[roadType],
+              blacklist,
+              type: roadType
             })
-        })
+          })
+      })
     },
     build: () => {
       INFRASTRUCTURE._roads('land')

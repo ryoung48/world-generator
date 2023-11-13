@@ -1,10 +1,12 @@
 import { mean } from 'd3'
 
+import { REGION } from '../../../models/regions'
 import { PROVINCE } from '../../../models/regions/provinces'
 import { ARRAY } from '../../../models/utilities/array'
 import { Vertex } from '../../../models/utilities/math/voronoi/types'
 import { WORLD } from '../../../models/world'
-import { CLIMATE } from '../../../models/world/climate'
+import { BIOME } from '../../../models/world/climate'
+import { Biome } from '../../../models/world/climate/types'
 import { DISPLAY } from '../../../models/world/shapers/display'
 import { RegionSegment } from '../../../models/world/shapers/display/types'
 import { MAP } from '../common'
@@ -35,12 +37,17 @@ let provinceBorders: Record<
     elevation: string
     heat: { summer: string; winter: string }
     rain: { summer: string; winter: string }
-    climate: string
+    biome: Biome
+    pop: string
   }
 > = {}
 
 export const DRAW_BORDERS = {
-  contested: ({ nations, projection, ctx }: Omit<DrawBorderParams, 'season' | 'style'>) => {
+  contested: ({
+    nations,
+    projection,
+    ctx
+  }: Omit<DrawBorderParams, 'season' | 'style' | 'province' | 'climate' | 'cachedImages'>) => {
     // wars
     const scale = MAP.scale.derived(projection)
     const pathGen = MAP.path.curveClosed(projection)
@@ -65,20 +72,42 @@ export const DRAW_BORDERS = {
           })
       })
   },
-  regions: ({ ctx, style, season, nations: drawnBorders, projection }: DrawBorderParams) => {
+  regions: ({ ctx, style, season, climate, nations, projection, province }: DrawBorderParams) => {
     const { regions } = window.world.display
+    const selected = PROVINCE.nation(province)
     const scale = MAP.scale.derived(projection)
     const path = MAP.path.curveClosed(projection)
     const regionStyle = style === 'Nations'
-    if (drawnBorders.some(nation => !regionBorders[nation.idx])) {
+    if (nations.some(nation => !regionBorders[nation.idx])) {
       regionBorders = {
-        ...DISPLAY.borders.regions(drawnBorders),
+        ...DISPLAY.borders.regions(nations),
         ...regionBorders
       }
     }
+    if (Object.keys(provinceBorders).length === 0) {
+      window.world.provinces.forEach(province => {
+        const cells = province.cells.land.map(c => window.world.cells[c])
+        const h = WORLD.heightToKM(mean(cells.map(c => c.h)))
+        const holdridge = ARRAY.mode(cells.map(cell => cell.biome))[0]
+        provinceBorders[province.idx] = {
+          path: DISPLAY.borders.provinces([province]),
+          elevation: MAP.metrics.elevation.color(h),
+          heat: {
+            summer: MAP.metrics.temperature.color(mean(cells.map(c => c.heat.summer))),
+            winter: MAP.metrics.temperature.color(mean(cells.map(c => c.heat.winter)))
+          },
+          rain: {
+            summer: MAP.metrics.rain.color(mean(cells.map(c => c.rain.summer ?? 0))),
+            winter: MAP.metrics.rain.color(mean(cells.map(c => c.rain.winter ?? 0)))
+          },
+          biome: holdridge,
+          pop: MAP.metrics.population.color(PROVINCE.populationDensity(province))
+        }
+      })
+    }
     // base coloration
     ctx.lineWidth = scale * 2
-    drawnBorders.forEach(nation => {
+    nations.forEach(nation => {
       ctx.fillStyle = '#f7eedc'
       regionBorders[nation.idx].forEach(border => {
         ctx.save()
@@ -93,7 +122,8 @@ export const DRAW_BORDERS = {
       style !== 'Elevation' &&
       style !== 'Temperature' &&
       style !== 'Rain' &&
-      style !== 'Climate'
+      style !== 'Climate' &&
+      style !== 'Population'
     ) {
       // regional areas
       ctx.lineWidth = scale * 0.5
@@ -104,46 +134,31 @@ export const DRAW_BORDERS = {
           ? window.world.cultures[region.culture].display
           : style === 'Religions'
           ? window.world.religions[region.religion].display
-          : CLIMATE.lookup[region.climate].display
+          : MAP.metrics.development.color(MAP.metrics.development.scale(region.development))
         const color = base
         ctx.fillStyle = color.replace('%)', `%, ${regionStyle ? 0.25 : 0.5})`)
         ctx.strokeStyle = color.replace('%)', '%, 0.15)')
         regions[region.idx].forEach(border => {
           const p = MAP.polygon({ points: border.path, path, direction: 'inner' })
           ctx.fill(p)
-          regionStyle && !region.shattered && ctx.stroke(p)
+          regionStyle && ctx.stroke(p)
         })
       })
     } else {
-      if (Object.keys(provinceBorders).length === 0) {
-        window.world.provinces.forEach(province => {
-          const cells = province.cells.land.map(c => window.world.cells[c])
-          const h = WORLD.heightToKM(mean(cells.map(c => c.h)))
-          const climate = CLIMATE.holdridge[ARRAY.mode(cells.map(cell => cell.climate))[0]]
-          provinceBorders[province.idx] = {
-            path: DISPLAY.borders.provinces([province]),
-            elevation: MAP.metrics.elevation.color(h),
-            heat: {
-              summer: MAP.metrics.temperature.color(mean(cells.map(c => c.heat.summer))),
-              winter: MAP.metrics.temperature.color(mean(cells.map(c => c.heat.winter)))
-            },
-            rain: {
-              summer: MAP.metrics.rain.color(mean(cells.map(c => c.rain.summer ?? 0))),
-              winter: MAP.metrics.rain.color(mean(cells.map(c => c.rain.winter ?? 0)))
-            },
-            climate: climate.color
-          }
-        })
-      }
       window.world.provinces.forEach(province => {
         const styles = provinceBorders[province.idx]
         styles.path.forEach(border => {
           ctx.save()
           const p = MAP.polygon({ points: border, path, direction: 'inner' })
           ctx.clip(p)
+          const biome = BIOME.holdridge[styles.biome]
           ctx.fillStyle =
             style === 'Climate'
-              ? styles.climate
+              ? climate === 'Holdridge'
+                ? biome.color
+                : biome.koppen.color
+              : style === 'Population'
+              ? styles.pop
               : style === 'Elevation'
               ? styles.elevation
               : style === 'Rain'
@@ -158,19 +173,37 @@ export const DRAW_BORDERS = {
         })
       })
     }
+    if (style !== 'Nations') return
     // nation borders
     ctx.lineWidth = (regionStyle ? 2 : 1) * scale
-    drawnBorders
-      .filter(region => !region.shattered)
+    nations.forEach(nation => {
+      regionBorders[nation.idx].forEach(border => {
+        ctx.save()
+        const p = MAP.polygon({ points: border.path, path, direction: 'inner' })
+        ctx.clip(p)
+        ctx.filter = `blur(${scale}px)`
+        ctx.strokeStyle = nation.shattered
+          ? 'black'
+          : window.world.regions[border.r].heraldry.color.replace('%)', '%, 0.75)')
+        ctx.stroke(p)
+        if (selected.idx === nation.idx) ctx.stroke(p)
+        ctx.restore()
+      })
+    })
+    REGION.nations
+      .filter(nation => nation.shattered)
       .forEach(nation => {
-        regionBorders[nation.idx].forEach(border => {
-          ctx.save()
-          const p = MAP.polygon({ points: border.path, path, direction: 'inner' })
-          ctx.clip(p)
-          ctx.filter = `blur(${scale}px)`
-          ctx.strokeStyle = window.world.regions[border.r].heraldry.color.replace('%)', '%, 0.75)')
-          ctx.stroke(p)
-          ctx.restore()
+        REGION.provinces(nation).forEach(province => {
+          const styles = provinceBorders[province.idx]
+          styles.path.forEach(border => {
+            ctx.save()
+            ctx.filter = `blur(${scale}px)`
+            const p = MAP.polygon({ points: border, path, direction: 'inner' })
+            ctx.fillStyle = `hsl(46, 58%, 93%)`
+            ctx.fill(p)
+            ctx.fill(p)
+            ctx.restore()
+          })
         })
       })
   }

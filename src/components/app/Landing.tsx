@@ -2,7 +2,7 @@ import { Button, Grid, IconButton, Step, StepLabel, Stepper, TextField } from '@
 import { Fire } from 'mdi-material-ui'
 import { Dispatch, SetStateAction, useState } from 'react'
 
-import { Dice, generateId, randomChoice } from '../../models/utilities/math/dice'
+import { DICE } from '../../models/utilities/math/dice'
 import { delay } from '../../models/utilities/math/time'
 import { PERFORMANCE } from '../../models/utilities/performance'
 import { WORLD } from '../../models/world'
@@ -131,7 +131,6 @@ const generator = async (params: {
   update: Dispatch<SetStateAction<number>>
 }) => {
   const { seed, res, update } = params
-  window.dice = new Dice(seed)
   update(0)
   await delay(catchup)
   window.world = WORLD.spawn({ seed, res })
@@ -155,7 +154,7 @@ const generator = async (params: {
 }
 
 export function Landing() {
-  const [seed, setSeed] = useState(generateId())
+  const [seed, setSeed] = useState(DICE.id())
   const [res, setRes] = useState(4)
   const [active, setActive] = useState(-1)
   const { dispatch } = VIEW.context()
@@ -187,7 +186,7 @@ export function Landing() {
                 color='primary'
                 size='large'
                 disabled={generating}
-                onClick={() => setSeed(randomChoice(goodSeeds))}
+                onClick={() => setSeed(DICE.choice(goodSeeds))}
               >
                 <Fire fontSize='inherit'></Fire>
               </IconButton>

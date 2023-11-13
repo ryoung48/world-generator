@@ -4,6 +4,7 @@ import { Actor } from '../npcs/types'
 import { Quest } from '../quests/types'
 import { Court } from '../regions/provinces/hooks/courts/types'
 import { Ruin } from '../regions/provinces/hooks/ruins/types'
+import { Wilderness } from '../regions/provinces/hooks/wilderness/types'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
 import { GeoVoronoiDiagram } from '../utilities/math/voronoi/types'
@@ -30,7 +31,6 @@ export interface World {
     {
       name: string
       type: 'ocean' | 'lake' | 'continent' | 'island'
-      monsoon?: boolean
       water: boolean
       size: number
     }
@@ -42,22 +42,25 @@ export interface World {
     { path: number[]; length: number; src: number; dst: number; imperial?: boolean }[]
   >
   // entities
+  nations: { ruler: number[]; subjects: number[][] }[]
   regions: Region[]
   conflicts: {
     type: 'war' | 'rebellion'
     provinces: number[]
     regions: number[]
+    hook?: boolean
   }[]
   provinces: Province[]
   cultures: Culture[]
   religions: Religion[]
   courts: Court[]
   ruins: Ruin[]
+  wilderness: Wilderness[]
   npcs: Actor[]
   uniqueNames: Record<string, boolean>
   quests: Quest[]
   // planet info
-  radius: number
+  radius: number // miles
   date: number
   firstNewMoon: number // first new moon on record
   lunarCycle: number // synodic month (days)
@@ -73,3 +76,5 @@ export type WorldPlacementParams = {
   whitelist: Cell[]
   blacklist?: Cell[]
 }
+
+export type RemoveLakeParams = { lakes: Cell[]; lake: number; regional?: Record<number, Cell[]> }

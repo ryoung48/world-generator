@@ -1,4 +1,5 @@
-import { Climate } from '../../../world/climate/types'
+import { BiomeDetails } from '../../../world/climate/types'
+import { Province } from '../types'
 
 export type TimeOfDay = 'dawn' | 'morning' | 'afternoon' | 'dusk' | 'night'
 
@@ -27,7 +28,7 @@ export interface WeatherParams {
   rain: number
   temp: number
   clouds: CloudTypes
-  climate: keyof Climate
+  biome: BiomeDetails
 }
 
 export interface WeatherPhenomena {
@@ -59,4 +60,10 @@ export interface WeatherPhenomena {
     | 'blizzard'
     | 'sand storm'
     | 'dust storm'
+}
+
+export type WeatherConditionsParams = {
+  loc: Province
+  month?: number
+  color?: string
 }

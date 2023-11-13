@@ -84,7 +84,7 @@ const DescribeCulture = ({ idx }: { idx: number }) => {
           title={culture.name}
           subtitle={
             <span>
-              <StyledText text={`${culture.species} (${culture.zone})`}></StyledText>
+              <StyledText text={`${culture.species} (${CULTURE.climate(culture)})`}></StyledText>
             </span>
           }
         ></DetailedTableRow>
@@ -210,7 +210,41 @@ const DescribeRuin = ({ idx }: { idx: number }) => {
       </Grid>
       <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
         <span>
-          <b>treasures:</b> {ruin.treasures}
+          <b>locations:</b> <StyledText text={ruin.locations}></StyledText>
+        </span>
+      </Grid>
+    </Grid>
+  )
+}
+
+const DescribeWilderness = ({ idx }: { idx: number }) => {
+  const wilderness = window.world.wilderness[idx]
+  return (
+    <Grid container style={{ fontSize: 14 }}>
+      <Grid item xs={12}>
+        <DetailedTableRow
+          title={wilderness.name}
+          subtitle={<span>{wilderness.subtype} (wilderness)</span>}
+        ></DetailedTableRow>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>mood:</b> {wilderness.mood}
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>weather:</b> <StyledText text={`${wilderness.weather}`}></StyledText>
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>hazards:</b> <StyledText text={`${wilderness.hazards}`}></StyledText>
+        </span>
+      </Grid>
+      <Grid item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+        <span>
+          <b>locations:</b> <StyledText text={wilderness.locations}></StyledText>
         </span>
       </Grid>
     </Grid>
@@ -285,7 +319,8 @@ export function StyledText(props: { text: string; color?: string }) {
             cat === 'culture' ||
             cat === 'religion' ||
             cat === 'court' ||
-            cat === 'ruin'
+            cat === 'ruin' ||
+            cat === 'wilderness'
           const onClick =
             entity__tags.includes(tag) && !detailedTooltip
               ? () => dispatch({ type: 'transition', payload: { tag, idx, zoom: true } })
@@ -330,6 +365,8 @@ export function StyledText(props: { text: string; color?: string }) {
                       <DescribeCourt idx={idx} />
                     ) : cat === 'ruin' ? (
                       <DescribeRuin idx={idx} />
+                    ) : cat === 'wilderness' ? (
+                      <DescribeWilderness idx={idx}></DescribeWilderness>
                     ) : (
                       <DescribeReligion idx={idx} />
                     )

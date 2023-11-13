@@ -181,6 +181,7 @@ export type Quirk =
   | 'traveler'
   | 'troublesome friend'
   | 'underworld connection'
+  | 'vampiric'
   | 'verbiage'
   | 'vigorous'
   | 'war veteran'

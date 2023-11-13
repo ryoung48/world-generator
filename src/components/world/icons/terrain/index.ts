@@ -18,7 +18,7 @@ const terrain: Record<TerrainIcon, IconDef> = {
 }
 
 export const DRAW_TERRAIN = {
-  draw: ({ ctx, cachedImages, projection, regions, lands }: DrawTerrainIconParams) => {
+  icons: ({ ctx, cachedImages, projection, regions, lands }: DrawTerrainIconParams) => {
     const scale = MAP.scale.derived(projection)
     const pathGen = MAP.path.linear(projection)
     const globalScale = scale <= MAP.breakpoints.global
@@ -42,7 +42,7 @@ export const DRAW_TERRAIN = {
     ctx.save()
     sortedIcons.forEach(i => {
       const img = cachedImages[i.type]
-      const icon = DRAW_TERRAIN.icons[i.type]
+      const icon = DRAW_TERRAIN.definitions[i.type]
       const geojson = MAP.geojson.point(i)
       const center = pathGen.centroid(MAP.geojson.features([geojson]))
       ICON.draw({
@@ -59,5 +59,5 @@ export const DRAW_TERRAIN = {
     })
     ctx.restore()
   },
-  icons: terrain
+  definitions: terrain
 }

@@ -1,46 +1,3 @@
-import { Region } from '../../regions/types'
-
-export type Climate = Record<
-  | 'tropical rainforest'
-  | 'tropical monsoon'
-  | 'savanna'
-  | 'hot steppe'
-  | 'hot desert'
-  | 'cold desert'
-  | 'cold steppe'
-  | 'subtropical'
-  | 'temperate monsoon'
-  | 'mediterranean'
-  | 'oceanic'
-  | 'laurentian'
-  | 'manchurian'
-  | 'subarctic'
-  | 'siberian'
-  | 'polar'
-  | 'ice cap',
-  {
-    zone: 'arctic' | 'temperate' | 'tropical'
-    code: string
-    display: string
-    population: number
-    scorePenalty: number
-    heatMod?: { summer: number; winter: number }
-    diurnalHeat: [number, number]
-    precipitation: [number, number]
-    affixes: string[]
-    terrain: 'forest' | 'plains' | 'desert' | 'arctic'
-    arid?: boolean
-  }
->
-
-export type ClimateClassifyParams = {
-  region: Region
-  location: 'inland' | 'west_coast' | 'east_coast'
-  latitude: number
-  continent: boolean
-  monsoon: boolean
-}
-
 export type Biome =
   | 'rain forest (tropical)'
   | 'wet forest (tropical)'
@@ -75,15 +32,35 @@ export type Biome =
   | 'moist forest (boreal)'
   | 'dry scrub (boreal)'
   | 'desert (boreal)'
-  | 'rain tundra (subarctic)'
-  | 'wet tundra (subarctic)'
-  | 'moist tundra (subarctic)'
-  | 'dry tundra (subarctic)'
-  | 'desert (arctic)'
+  | 'rain tundra (subpolar)'
+  | 'wet tundra (subpolar)'
+  | 'moist tundra (subpolar)'
+  | 'dry tundra (subpolar)'
+  | 'desert (polar)'
 
+export type ClimateZone = 'arctic' | 'temperate' | 'tropical'
 export type BiomeDetails = {
+  idx: number
   name: string
-  latitude: string
-  altitude: string
+  latitude:
+    | 'tropical' // 20
+    | 'subtropical' // 30
+    | 'warm temperate' // 40
+    | 'cool temperate' // 50
+    | 'boreal' // 60
+    | 'subpolar' // 75
+    | 'polar'
+  altitude:
+    | 'lowlands'
+    | 'highlands'
+    | 'lower montane'
+    | 'montane'
+    | 'subalpine'
+    | 'alpine'
+    | 'ice cap'
   color: string
+  habitability: number
+  diurnalVariation: 'low' | 'standard' | 'high'
+  terrain: 'forest' | 'plains' | 'desert' | 'tundra' | 'glacier'
+  koppen: { color: string; code: string }
 }

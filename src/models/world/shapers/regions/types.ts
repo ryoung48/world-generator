@@ -1,5 +1,4 @@
 import { Region } from '../../../regions/types'
-import { Cell } from '../../cells/types'
 
 export type RegionBorders = Record<number, Record<number, Set<number>>> // region -> region -> cells
 export type RegionAddBordersParams = {
@@ -9,4 +8,3 @@ export type RegionAddBordersParams = {
   c1: number
   c2: number
 }
-export type RemoveLakeParams = { lakes: Cell[]; lake: number }

@@ -87,3 +87,20 @@
 * flavors: spicy & hot, sweet & tangy, savory & umami, bitter & aromatic, salty & crisp
 * ingredients: root vegetables, leafy greens, freshwater fish, assorted grains, wild berries
 
+-- negative --
+* toxic adornments: use of hazardous materials in jewelry and clothing for status
+* volatile elixirs: crafting of powerful but often unstable concoctions for various uses
+* burdensome armors: heavy protective wear that often leads to exhaustion and injury
+* ritual pollution: disposal of ritual materials contaminates local ecosystems
+* wandering exiles: banishment practices for minor offenses, often unjust
+* sacrificial torrents: offerings of valuable items or creatures to water bodies, depleting resources
+* ritual intoxication: some rituals involve substances that can be harmful or addictive
+
+-- positive --
+* vegetative sculpting: growing plants into living structures for habitation and ceremony
+* symbiotic farming: agriculture that relies on native fauna to naturally cultivate flora without tilling land
+* artisan enclaves: communities dedicated to perfecting and teaching their crafts
+* floating markets: trade centers established on interconnected rafts and boats on waterways
+* shadow theater: storytelling through the play of puppets and shapes against illuminated backdrops
+* fusion cuisine: culinary practices that blend different regional flavors, celebrating diversity
+* bioluminescent guidance: paths and public spaces lit by natural organisms, reducing light pollution

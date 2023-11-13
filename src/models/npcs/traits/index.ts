@@ -708,6 +708,9 @@ const quirks: Record<Quirk, QuirkDetails> = {
     tooltip:
       'has been seen meeting with known criminals, hinting at a possible secret alliance or obligation'
   },
+  vampiric: {
+    tooltip: 'has a pale complexion and an insatiable craving for blood'
+  },
   verbiage: {
     text: '{evasive when questioned|uses {flowery language|metaphors}|never directly {denies|refuses} anything|overuses of a particular word or phrase|constantly curses and uses crude language}'
   },
@@ -760,7 +763,7 @@ const rollQuirks = ({
   const species = SPECIES.lookup[window.world.cultures[culture].species]
   const { strata, official, quirks: _quirks = {}, martial } = PROFESSION.lookup[profession]
   const params = {
-    coastal: loc.hub.coastal,
+    coastal: window.world.cells[loc.hub.cell].beach,
     foreigner: local.culture !== culture && ruling.culture !== culture,
     callous: personality.some(trait => trait === 'callous'),
     compassionate: personality.some(trait => trait === 'compassionate'),

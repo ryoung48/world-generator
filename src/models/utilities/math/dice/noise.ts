@@ -42,8 +42,8 @@ class Simplex {
     const data: number[] = []
     let [high, low] = [-Infinity, Infinity]
     for (const { x: lon, y: lat } of points) {
-      const latRadians = MATH.radians(lat)
-      const lonRadians = MATH.radians(lon - 180)
+      const latRadians = MATH.conversion.angles.radians(lat)
+      const lonRadians = MATH.conversion.angles.radians(lon - 180)
       const x = Math.cos(latRadians) * Math.cos(lonRadians)
       const y = Math.cos(latRadians) * Math.sin(lonRadians)
       const z = Math.sin(latRadians)
