@@ -1,5 +1,5 @@
 import { TaggedEntity } from '../utilities/entities/types'
-import { Hooks } from './provinces/hooks/types'
+import type { Hooks } from './provinces/hooks/types'
 
 export type DiplomaticRelation =
   | 'vassal'

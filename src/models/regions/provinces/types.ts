@@ -6,7 +6,7 @@ import { Cell } from '../../world/cells/types'
 import type { RouteTypes } from '../../world/types'
 import { Region } from '../types'
 import type { Hooks } from './hooks/types'
-import { Hub } from './hubs/types'
+import type { Hub } from './hubs/types'
 
 export interface Demographics {
   common: WeightedDistribution<number>

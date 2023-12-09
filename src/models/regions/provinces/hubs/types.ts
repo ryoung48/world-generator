@@ -1,5 +1,5 @@
-import { Point } from '../../../utilities/math/points/types'
-import { District } from '../blueprints/types'
+import type { Point } from '../../../utilities/math/points/types'
+import type { District } from '../blueprints/types'
 
 export interface Hub extends Point {
   type:

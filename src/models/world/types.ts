@@ -12,7 +12,7 @@ import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
 import { GeoVoronoiDiagram } from '../utilities/math/voronoi/types'
 import { Cell } from './cells/types'
-import { Display } from './shapers/display/types'
+import type { Display } from './shapers/display/types'
 
 export interface CoastalEdge {
   water: number

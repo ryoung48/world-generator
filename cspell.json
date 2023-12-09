@@ -1,4 +1,7 @@
 {
+    "ignorePaths": [
+        "src/models/regions/provinces/hooks/**"
+    ],
     "ignoreWords": [],
     "words": [
         "aeternus",
@@ -6,6 +9,7 @@
         "arcanists",
         "archmage",
         "archmages",
+        "avant",
         "baeuracrats",
         "batesian",
         "battlemage",
@@ -46,6 +50,7 @@
         "equipables",
         "estoc",
         "estocs",
+        "fermentables",
         "firbolg",
         "fisherwoman",
         "flatbreads",
@@ -54,6 +59,7 @@
         "genasi",
         "ggdr",
         "gnoll",
+        "greataxe",
         "greatsword",
         "greatswords",
         "grimoire",
@@ -90,6 +96,7 @@
         "multicephalous",
         "myrmecophage",
         "ngrx",
+        "nivo",
         "npc's",
         "npcs",
         "nstr",
@@ -152,11 +159,13 @@
         "wagoneering",
         "warband",
         "warchief",
+        "warhammer",
         "waterskin",
         "waystation",
         "waystations",
         "weaponsmith",
         "whitesmithing",
+        "wildrhymer",
         "windsong",
         "worldbuilding",
         "xenoformed",

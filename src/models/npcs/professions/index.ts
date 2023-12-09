@@ -479,8 +479,8 @@ const professions: Record<Profession, ProfessionDetails> = {
       'salty tongue': {
         tooltip: 'speaks using dockyard slang, confusing outsiders but fitting in with locals'
       },
-      "harbourmaster's favour": {
-        tooltip: 'in good terms with the harbourmaster, could gain favors or insider information'
+      "harbormaster's favour": {
+        tooltip: 'in good terms with the harbormaster, could gain favors or insider information'
       },
       'driftwood carver': {
         tooltip:

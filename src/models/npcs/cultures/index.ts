@@ -311,7 +311,7 @@ const flavors: CultureFlavors = {
   'salty and dried': {
     text: 'flavors from sun-dried or smoked ingredients'
   },
-  'sharp and garlicy': {
+  'sharp and garlicky': {
     text: 'predominant notes of garlic in both raw and cooked dishes'
   },
   'herbal and green': {
@@ -918,7 +918,8 @@ export const CULTURE = {
       .map(region => REGION.capital(region))
       .map(
         capital =>
-          BIOME.holdridge[PROVINCE.cell(capital).biome].habitability * (capital.hub.coastal ? 1 : 0.5)
+          BIOME.holdridge[PROVINCE.cell(capital).biome].habitability *
+          (capital.hub.coastal ? 1 : 0.5)
       )
       .reduce((sum, pop) => sum + pop, 0) / culture.regions.length,
   spawn: (region: Region) => {
