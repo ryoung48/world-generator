@@ -1,6 +1,6 @@
 import { range } from 'd3'
 
-import { NATION } from '../../nations'
+import { EVENTS } from '../../history/events'
 import { RELIGION } from '../../npcs/religions'
 import { SPECIES } from '../../npcs/species'
 import { REGION } from '../../regions'
@@ -94,6 +94,11 @@ export const LORE = PERFORMANCE.profile.wrapper({
             if (conflict) HUB.setPopulation(province.hub, rural)
             else pop = Math.round(pop * (1 - window.dice.uniform(0.2, 0.5)))
           })
+
+        // settlement wealth
+        cities.forEach(c => {
+          c.wealth = (30 * c.hub.population + c.population * 0.1) / 3000
+        })
       })
     },
     _history: () => {
@@ -265,75 +270,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
         .forEach(region => {
           region.leadership = { male: 'great khan', female: 'great khan' }
         })
-      // wars
-      const wars: RegionalCounters = {
-        [6]: { target: 0.1, current: 0, total: industrial.length },
-        [5]: { target: 0.1, current: 0, total: enlightened.length },
-        [4]: { target: 0.1, current: 0, total: colonial.length },
-        [3]: { target: 0.1, current: 0, total: mercantile.length },
-        [2]: { target: 0.1, current: 0, total: feudal.length },
-        [1]: { target: 0.1, current: 0, total: agrarian.length },
-        [0]: { target: 0.1, current: 0, total: nomadic.length }
-      }
-      window.dice.shuffle(regions).forEach(region => {
-        const { current, target, total } = wars[region.development]
-        if (
-          current / total < target &&
-          REGION.provinces(region).length > 1 &&
-          !REGION.atWar(region)
-        ) {
-          const neighbors = REGION.neighbors({ region }).filter(
-            neighbor =>
-              REGION.provinces(region).length > 1 &&
-              !neighbor.relations[region.idx] &&
-              !REGION.atWar(neighbor)
-          )
-          const prospects = window.dice.shuffle(
-            REGION.sort({ ref: region, regions: neighbors, type: 'closest' }).slice(0, 3)
-          )
-          if (prospects.length > 0) {
-            const [belligerent] = prospects
-            belligerent.relations[region.idx] = 'at war'
-            region.relations[belligerent.idx] = 'at war'
-            wars[region.development].current++
-            const regionBorders = REGION.provinces(region).filter(p =>
-              PROVINCE.neighboringRegions([p]).includes(belligerent.idx)
-            )
-            const belligerentBorders = REGION.provinces(belligerent).filter(p =>
-              PROVINCE.neighboringRegions([p]).includes(region.idx)
-            )
-            const contested = regionBorders.concat(belligerentBorders)
-            const borders = window.dice.shuffle(
-              window.dice.weightedChoice([
-                {
-                  v: contested,
-                  w: 0.3
-                },
-                {
-                  v:
-                    REGION.provinces(region) > REGION.provinces(belligerent)
-                      ? belligerentBorders
-                      : regionBorders,
-                  w: 0.3
-                },
-                {
-                  v: window.dice.choice([belligerentBorders, regionBorders]),
-                  w: 0.3
-                }
-              ])
-            )
-            const battlegrounds = borders.slice(0, Math.max(0.5 * borders.length, 3))
-            battlegrounds.forEach(province => {
-              province.conflict = window.world.conflicts.length
-            })
-            window.world.conflicts.push({
-              type: 'war',
-              provinces: battlegrounds.map(p => p.idx),
-              regions: [region.idx, belligerent.idx]
-            })
-          }
-        }
-      })
       // diplomacy
       regions.forEach(region => {
         REGION.neighbors({ region })
@@ -369,7 +305,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
               })
           })
         })
-      NATION.init()
+      EVENTS.init()
     },
     _religions: () => {
       RELIGION.spawn()

@@ -14,6 +14,7 @@ import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/StyledText'
 import { HooksView } from './Hooks'
 import { PlayerCharacterView } from './PCs'
+// import { QuestList } from './quests'
 
 export function ProvinceView() {
   const { state } = VIEW.context()
@@ -31,7 +32,9 @@ export function ProvinceView() {
       subtitle={
         <StyledText
           color={cssColors.subtitle}
-          text={`(${province.idx}) ${province.hub.type}, ${PROVINCE.nation(province).name}`}
+          text={`(${province.idx}) ${province.hub.type}, ${decorateText({
+            link: PROVINCE.nation(province)
+          })}`}
         ></StyledText>
       }
       content={
@@ -130,7 +133,8 @@ export function ProvinceView() {
                 <Divider>Hooks</Divider>
               </Grid>
               <Grid item xs={12} mt={1}>
-                <HooksView province={province}></HooksView>
+                <HooksView entity={province}></HooksView>
+                {/* <QuestList></QuestList> */}
               </Grid>
             </Fragment>
           )}

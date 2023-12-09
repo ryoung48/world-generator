@@ -18,6 +18,8 @@
     "@emotion/react": "^11.10.0",
     "@emotion/styled": "^11.10.0",
     "@mui/material": "^5.9.3",
+    "@nivo/core": "^0.84.0",
+    "@nivo/stream": "^0.84.0",
     "@tippyjs/react": "^4.2.6",
     "@types/json-schema": "^7.0.12",
     "d3": "^7.6.1",

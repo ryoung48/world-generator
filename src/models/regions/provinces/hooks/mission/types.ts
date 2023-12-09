@@ -34,7 +34,7 @@ export const missions = {
     text: 'Acquire sensitive information',
     variations: [
       'Embed yourself as a mole within a rival organization',
-      "Steal or copy plans for an enemy's new weapon or strategy.",
+      "Steal or copy plans for an enemy's new weapon or strategy",
       'Identify a double agent within your own ranks',
       'Infiltrate a gathering to overhear plans or secrets',
       'Perform surveillance on a person or location of interest',

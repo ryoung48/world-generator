@@ -176,6 +176,10 @@ export const MAP = {
         })),
       units: () => `persons/${metric ? 'km²' : 'mi²'}`
     },
+    strength: {
+      scale: d3.scaleLinear([0, 2000, 4000, 8000, 16000], [0, 0.25, 0.5, 0.75, 1]),
+      color: (wealth: number) => d3.interpolateReds(MAP.metrics.wealth.scale(wealth))
+    },
     rain: {
       rain,
       scale: d3.scaleLinear(rain, MATH.scaleDiscrete(rain.length)),
@@ -205,6 +209,10 @@ export const MAP = {
           text: MAP.metrics.temperature.format(heat)
         })),
       units: () => (metric ? '°C' : '°F')
+    },
+    wealth: {
+      scale: d3.scaleLinear([0, 100, 500, 1000, 2000], [0, 0.25, 0.5, 0.75, 1]),
+      color: (wealth: number) => d3.interpolateGreens(MAP.metrics.wealth.scale(wealth))
     }
   },
   polygon: (params: DrawPolygonParams) => {
@@ -234,6 +242,7 @@ export const MAP = {
     'Nations',
     'Cultures',
     'Population',
+    'Wealth',
     'Elevation',
     'Temperature',
     'Rain',

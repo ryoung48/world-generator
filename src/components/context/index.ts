@@ -16,6 +16,7 @@ const init: ViewState = {
   time: Date.now(),
   avatar: { pcs: [], cp: 0 },
   loading: false,
+  paused: true,
   view: 'nation'
 }
 
@@ -27,9 +28,7 @@ export const ViewContext = createContext(
 )
 
 export const VIEW = {
-  context: () => {
-    return useContext(ViewContext)
-  },
+  context: () => useContext(ViewContext),
   init,
   reducer: (state: ViewState, action: ViewActions): ViewState => {
     switch (action.type) {
@@ -60,6 +59,7 @@ export const VIEW = {
           updated.view = 'province'
           if (zoom) updated.gps = { x: target.hub.x, y: target.hub.y, zoom: 50 }
         }
+        updated.time = window.world.date
         return updated
       }
       case 'start adventure': {
@@ -90,6 +90,9 @@ export const VIEW = {
         const old = equipment.findIndex(e => e.slot === item.slot)
         equipment.splice(old, 1, item)
         return { ...state, avatar: { ...state.avatar, cp: state.avatar.cp - itemPrice(item) } }
+      }
+      case 'toggle pause': {
+        return { ...state, paused: !state.paused }
       }
     }
   }

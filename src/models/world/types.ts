@@ -1,3 +1,6 @@
+import PriorityQueue from 'js-priority-queue'
+
+import { WorldEvent } from '../history/events/types'
 import { Culture } from '../npcs/cultures/types'
 import { Religion } from '../npcs/religions/types'
 import { Actor } from '../npcs/types'
@@ -42,14 +45,8 @@ export interface World {
     { path: number[]; length: number; src: number; dst: number; imperial?: boolean }[]
   >
   // entities
-  nations: { ruler: number[]; subjects: number[][] }[]
+  nations: { idx: number; ruler: number[]; subjects: number[][]; conflict: number[][] }[]
   regions: Region[]
-  conflicts: {
-    type: 'war' | 'rebellion'
-    provinces: number[]
-    regions: number[]
-    hook?: boolean
-  }[]
   provinces: Province[]
   cultures: Culture[]
   religions: Religion[]
@@ -59,6 +56,7 @@ export interface World {
   npcs: Actor[]
   uniqueNames: Record<string, boolean>
   quests: Quest[]
+  future: PriorityQueue<WorldEvent>
   // planet info
   radius: number // miles
   date: number

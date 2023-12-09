@@ -1,0 +1,260 @@
+we are going to write a dungeon crawl; create a list of rooms to represent the dungeon, with each room having different encounters and challenges
+
+each room should have:
+* a setting describing the room
+* the challenge in the room, with two of the following:
+  * a combat encounter
+  * a hazard
+  * a treasure location
+  * an enigma
+
+for combat encounters, use the same style as the examples below:
+* Cruelly Outsider-warped original humans
+* Outsider monster that once ruled here
+* Swarm or pack of scavenger-beasts
+* Blighted intruders that sacked the Deep
+* Outsiders descended from the local lords
+* Degenerate or crazed native humans
+* Outcast surfacers lairing in the Deep
+* Non-human sentients who now live here
+* Undead relics of former inhabitants
+* Still-sane human heirs of the original folk
+* Surfacer colonists forgotten by their kin
+* Automaton servitors now lacking their lord
+* Altered human servitors of the former owner
+* Magic-forged monstrous beast
+* Adventurers searching for loot
+* Heirs of the last human inhabitants
+* Cult dedicated to a now-dead faith
+* Summoned creature that broke its fetters
+* Magical automaton servitors of the ruler
+* Decorative magic animals gone feral
+* Necromancer and their undead servitors
+* Outsider prisoners gone native here
+* Restless dead of the inhabitants
+* Zealots in service to a long-dead mage
+* Local bandits or highwaymen
+* Cult of some unacceptable god
+* Deposed noble and their retinue
+* Adventurers trying to plunder the place
+* Troops garrisoned there by the local ruler
+* Remnants of the original inhabitants
+* Sorcerer of detestable inclinations
+* Refugees or runaway peasants
+* Vicious local monster lairing here
+* Foreign raiders using it as a base
+* Whatever ruined the place is still here
+* Interlopers with some tie to the original place
+* Animate and lethal plant life
+* Remnants of the Outsiders who made it
+* Adventurers daring the perilous terrain
+* Human natives trapped here for generations
+* Humanoids adapted to life there
+* Blighted raiders semi-native to the place
+* Automatons built to serve or fight the arratu
+* Outsider ruler still controlling a site within
+* Undead shades of swallowed cities or lands
+* Vicious alien fauna
+* Human cultist-servitors of the Outsiders
+* Explorers searching for a route through
+* Alpha predator of the area
+* Intelligent monstrous beings
+* Swarms or packs of dangerous beasts
+* Violently reclusive local natives
+* Remnant of a destroyed state
+* Survivors of a displaced ethnic group
+* Demihumans who prefer isolation
+* Bestially savage tribals, perhaps inhuman
+* Expedition from a surrounding nation
+* Prospectors or resource-hunters
+* Spirit or elemental related to the wilderness
+* Sorcerers, cultists, or other solitude-lovers
+
+for hazards, use the same style as the examples below:
+* Tripwire alarm or other alerts
+* Unstable floor that crumbles under weight
+* Dangerous fumes or miasma
+* Trapped containers or portals
+* Explosive dust or gases
+* An object makes a loud noise if disturbed
+* Damaged supports that give way in combat
+* Dangerously high or deep water
+* Trap set on a path of travel
+* Device here is dangerously broken in use
+* Trap that seals intruders into an area
+* Treacherous footing over dangerous terrain
+* Uncontrolled flames or dangerous heat
+* Torch-extinguishing winds or vapors
+* Ordinary-seeming object harms handlers
+* Crushingly heavy object is going to tip over
+* A savage foe can be attracted by accident
+* Something here is cursed by dark powers
+* Seeming treasure is used as bait for a trap
+* A contagious disease is on something here
+
+for enigmas, use the same style as the examples below:
+* Magical fountain or pool
+* Control that opens paths elsewhere
+* Spatial warp between locations
+* Enchanted statue or art object
+* Magically-animated room components
+* Substance with physically impossible traits
+* Altered or augmented gravity
+* Zone that empowers foes or magic types
+* Magical ward or seal on a summoned thing
+* Oracular object or far-scrying device
+* Standing magical effect in the area
+* Temporal distortion or visions of other times
+* Sounds being shifted over long distances
+* Zones of darkness or blinding light
+* Enchanted seals visibly locking up loot
+* Magical or elemental force emitting unit
+* Enchantment tailored to the site’s original use
+* Unnatural heat or chill in an area
+* Magically-altered plant life here
+* Restorative magical device
+* Books or records from the site’s owners
+* Unique furniture related to the site’s past
+* Trophies or prizes taken by the owners
+* Portraits or tapestries related to the site’s past
+* Ornate, imposing, but harmless doors
+* Daily life debris from the inhabitants
+* Worthless ancient personal effects
+* Odd-looking but normal household goods
+* Shrines or hedge ritual remains of inhabitants
+* Corpses of fallen intruders
+* Bones and other food remnants
+* Statuary or carvings related to the site
+* Signs of recent bloodshed and battle
+* Empty cabinets or containers
+* A discharged or broken trap
+* Remnants of an inhabitant social event
+* Mouldering or ruined goods or supplies
+* Half-completed work done by inhabitants
+* Once-valuable but now-ruined object
+* Broken or expended once-magical object 
+* A hapless civilian being held for ransom or sacrifice
+* The corpse of an outsider, freshly killed
+* A hideously tormented victim of the inhabitants
+* A crippled, youthful, or elderly site inhabitant
+
+for treasure locations, use the same style as the examples below:
+* Stored in a visible chest or coffer
+* Hidden in a pool of liquid
+* Behind a stone in the wall
+* Underneath a floor tile
+* Hidden inside a creature’s body
+* Inside an ordinary furniture drawer
+* Slid beneath a bed or other furnishing
+* Placed openly on a shelf for display
+* Hidden in a pile of other junk
+* Tucked into a secret furniture space
+* Slid behind a tapestry or painting
+* Heavy, protective locked chest or safe
+* Buried under heavy or dangerous debris
+* In the pockets of clothes stored here
+* The treasure’s a creature’s precious body part
+* Scattered carelessly on the floor
+* Tucked into a pillow or cushion
+* Hung on a statue or display frame
+* Hidden atop a ceiling beam
+* Resting atop a desk or table
+
+keep in mind the following:
+* the setting should be appropriate for a grimdark fantasy game; this setting should not include the room name
+* the dungeon should have exactly 8 rooms
+* a room does not need to be an interior location; it could be a forest grove, a mountain pass, a village, etc.
+* do not mention any fantasy races such as elves, dwarves, goblins, orcs, ogres, etc.
+* all settings, encounters, hazards, treasure locations, and enigmas should be rewritten to be related to the following themes: "corrupted forest" & "undeath"
+* the last room should have a "boss" encounter
+
+output the result as a markdown snippet formatted in the following schema:
+  ```json
+  {
+    "type": "ruin" | "hostile encampment" | "corrupted wilds"
+    "history": string; // should be 75-125 characters in length and should describe the history of the location and its inhabitants
+    "rooms": {
+        "setting": string;
+        "encounters"?: string;
+        "hazards"?: string;
+        "treasure locations"?: string;
+        "enigmas"?: string;
+    }[]
+  }
+  ```
+
+
+locations:
+
+isolated rural estate of nobility
+townhouse of minor gentry
+massive tenement or slum tower
+rural grange with outbuildings
+compact fortified village
+hidden shelter against calamity
+mazey urban residential block
+rubble-wrought makeshift village
+ancient arcology or fragment of it
+outpost of refugees or recluses
+sprawling slum of shanties and huts
+inhabited natural feature or cave
+grand fortress of major significance
+hidden bunker or strongpoint
+remote frontier keep
+secret operations base
+isolated watchtower
+battered front-line fortress
+military training camp
+gatehouse controlling a vital pass
+half-subterranean entrenchments
+military cache or storehouse
+battlefield littered with fortifications
+fortified waystation
+illicit manufactory for illegal goods
+mine or open pit for excavation
+sacred shrine for holy product
+overgrown ancient plantation
+destroyed camp or extraction site
+managed woodland gone feral
+inexplicable ancient manufactory
+farm for now-feral valuable beasts
+outsider goods production site
+repurposed ancient manufactory
+magical production facility
+fishery or salt extraction site
+lost pilgrimage destination
+fortified frontier monastery
+tomb of some mighty ancient
+prison-monastery for heretics
+shrine repurposed for a newer god
+fragment of megastructure temple
+inexplicable sacred structure
+place of some holy trial or test
+outsider fane to an alien god
+prison for a sealed demonic force
+pilgrim hospital or waystation
+holy archive or relic-fortress
+inscrutable outsider art structure
+library or ancient archive
+ancient culture's gathering site
+resort for nobles at ease
+monument complex to lost glories
+enormous musical structure
+abandoned school or study center
+massive ceremonial structure
+indoctrination camp or prison
+preserved “heritage” village-resort
+museum of a lost nation
+taboo site of dark magic
+psychic or tech communications site
+subterranean transit tunnels
+canal or aqueduct control center
+weather-control working ruin
+reality-stabilizing working ruin
+ancient road through an obstacle
+massive bridge or tunnel
+huge ancient dam
+ancient power production center
+outsider xenoforming engine
+semi-ruined teleportation node
+now-incomprehensible wreckage

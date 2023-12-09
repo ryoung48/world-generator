@@ -28,6 +28,7 @@ export interface Province extends TaggedEntity {
   trade: Record<RouteTypes, Record<string, number>>
   neighbors: number[]
   artery: number[]
+  wealth?: number
   // geography
   cells: { land: number[] }
   islands: Record<number, number>
@@ -72,3 +73,4 @@ export type ProvinceFindOrderParams = { candidate: number; selected: number }
 export type ProvinceSpawnParams = { cell: Cell; capital?: boolean }
 export type ProvinceAttachParams = { province: Province; idx: number }
 export type ProvinceMoveParams = { province: Province; nation: Region }
+export type ProvinceClaim = { nation: Region; province: Province }

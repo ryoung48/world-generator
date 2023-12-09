@@ -562,12 +562,12 @@ export const ruins: HookTemplate = {
     'Freshly Looted': {
       text: 'This ruin has been recently plundered, either by adventurers, organized invaders, or a specific faction within the site itself. Many creatures are either dead or driven off, and the rewards for exploration are limited. But as the site is newly-emptied, numerous outside groups or warbands are likely in the process of moving in, cleaning out the remnants of surviving inhabitants and setting up their own bases there.',
       enemies: [
-        { title: 'Conquering Blighted warchief' },
+        { title: 'Conquering Blighted warchief', monstrous: true },
         { title: 'Ruthless bandit adventurer who likes the place' },
         { title: 'Vengeance-mad chief of a rabble of survivors' }
       ],
       friends: [
-        { title: 'Sympathetic native driven out of the site' },
+        { title: 'Sympathetic native driven out of the site', monstrous: true },
         { title: 'Frustrated adventurer denied a chance to loot' },
         { title: 'Local official charged with investigating the place' }
       ],
@@ -765,9 +765,9 @@ export const ruins: HookTemplate = {
     'Infectious Miasma': {
       text: "A contagious disease has infected the natives and might plague any intruders as well. The sickness isn't fatal, but it may induce physical or mental changes that make life in the outside world difficult; the ruin itself might be an environment optimized for the afflicted. Conversely, the ruin might be a leprosarium or place of exile for those who catch some virulent plague or socially-despised illness.",
       enemies: [
-        { title: 'Tyrant physician-chief who controls treatment', veteran: true },
-        { title: 'Ruler maddened by the illness', veteran: true },
-        { title: 'Plague priest determined to spread the disease', veteran: true }
+        { title: 'Tyrant physician-chief who controls treatment', monstrous: true },
+        { title: 'Ruler maddened by the illness', monstrous: true },
+        { title: 'Plague priest determined to spread the disease', monstrous: true }
       ],
       friends: [
         { title: 'Innocent native suffering from the sickness' },
@@ -793,12 +793,12 @@ export const ruins: HookTemplate = {
     'Invincible Delusion': {
       text: "The natives of this ruin are totally convinced of something that is simply not the case: their ancient empire never fell, their god has commanded them to live a certain troublesome way, they are the only true humans left in the world, or some other delusion that's likely to cause problems. They've developed rationalizations to explain obvious contradictions to their error, many of which involve hostile responses to bearers of iniquitous falsehood. There may be something about the ruin that's enforcing this delusion.",
       enemies: [
-        { title: 'Hypnotically charismatic leader' },
+        { title: 'Hypnotically charismatic leader', monstrous: true },
         { title: 'Crazed ancient lich-ruler', monstrous: true },
-        { title: 'Leader who knows the truth but profits by the error' }
+        { title: 'Leader who knows the truth but profits by the error', monstrous: true }
       ],
       friends: [
-        { title: 'Native with suspicions' },
+        { title: 'Native with suspicions', monstrous: true },
         { title: 'Outsider trying to convince them' },
         { title: "Outsider whom they've mistakenly incorporated into their error" }
       ],
@@ -827,7 +827,7 @@ export const ruins: HookTemplate = {
       ],
       friends: [
         { title: 'Desperate young adventurer' },
-        { title: 'Native good maker trying to avoid disaster' },
+        { title: 'Native good maker trying to avoid disaster', monstrous: true },
         { title: "Victim of the good's hazards" }
       ],
       complications: [

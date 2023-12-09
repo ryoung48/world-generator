@@ -2,7 +2,7 @@ import { IconButton } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 import { REGION } from '../../../models/regions'
-import { hook__spawn } from '../../../models/regions/provinces/hooks'
+import { HOOK } from '../../../models/regions/provinces/hooks'
 import { DIFFICULTY } from '../../../models/utilities/difficulty'
 import { titleCase } from '../../../models/utilities/text'
 import { decorateText } from '../../../models/utilities/text/decoration'
@@ -50,7 +50,7 @@ export function ProvincesTable() {
         {
           text: 'Quest',
           value: province => {
-            const hooks = hook__spawn({ loc: province, pc })
+            const hooks = HOOK.spawn({ entity: province, pc })
             const { tier, odds } = DIFFICULTY.odds({ pc, ...hooks.difficulty })
             return (
               <DetailedTableRow
@@ -96,7 +96,7 @@ export function ProvincesTable() {
       rowsPerPage={itemsPerPage}
       expand={{
         content: province => {
-          return <HooksView province={province}></HooksView>
+          return <HooksView entity={province}></HooksView>
         },
         expanded: [expanded, setExpanded]
       }}

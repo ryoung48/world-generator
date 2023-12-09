@@ -345,26 +345,20 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
       }
 
       const currentMod = scaleLinear()
-        .domain([0, 5, 20, 35, 50, 60, 70, 80, 90])
-        .range([0, 0, 0.5, 0, 0.5, 1, 0.5, 0, 0])
-      const coastal = WORLD.distance.coastal()
-      const continental = WORLD.cell.scale() * 25
-      const continentMod = scaleLinear().domain([0, 90]).range([0, 1])
+        .domain([0, 20, 30, 40, 50, 60, 70, 80, 90])
+        .range([0, 0, 0.5, 1, 1, 1, 0.5, 0, 0])
       const lakes = WORLD.lakes()
       WORLD.land()
         .concat(lakes)
         .forEach(cell => {
           const lat = Math.abs(cell.y)
-          const east = cell.rain.east > cell.rain.west
-          const key = lat > 30 ? (east ? 'cold' : 'hot') : east ? 'hot' : 'cold'
-          const current = (key === 'hot' ? 1 : -1) * currentMod(lat) * 0
-          const extreme = continentMod(lat) * 0
+          const current = currentMod(lat)
           const summerMod = scaleLinear()
-            .domain([0, coastal, continental])
-            .range([key === 'hot' ? 0 : current, 0, extreme])(cell.oceanDist)
+            .domain([0, 0.25, 0.5, 0.75, 1])
+            .range([4, 2, 0, -2 * current, -4 * current])(cell.rain.summer)
           const winterMod = scaleLinear()
-            .domain([0, coastal, continental])
-            .range([current, 0, -extreme])(cell.oceanDist)
+            .domain([0, 0.25, 0.5, 0.75, 1])
+            .range([-4, -2, 0, 2 * current, 4 * current])(cell.rain.winter)
           const elevation = cell.isWater ? 0 : WORLD.heightToKM(cell.h) * 6.5
           cell.heat = { winter: 0, summer: 0 }
           cell.heat.winter =

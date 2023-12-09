@@ -71,3 +71,86 @@ write descriptions for locations in a pre-modern city; keep in mind the followin
 * output the result as a bulleted list
 * write in the following format: term (written in italics all lowercase): description (~100 characters long)
 * each description should include both positive and negative traits
+
+-- rural --
+* old well: a stone well, often visited by villagers, echoing with the sound of water
+* blacksmith's forge: a smoky, clanging workshop, glowing with the heat of the forge
+* local tavern: a cozy inn filled with the din of conversation and smell of ale
+* farmer's field: vast fields, filled with the sounds of livestock and the smell of fresh earth
+* village elder's home: a respected, slightly larger house, with a sense of history and wisdom
+* forgotten graveyard: overgrown with moss, eerie silence, gravestones tilting at odd angles
+
+-- urban --
+* royal palace: an imposing structure, echoing with the footsteps of courtiers and guards
+* city gates: large, fortified gates, bustling with travelers and the sound of commerce
+* guild hall: a busy, opulent building filled with artisans and the hum of conversation
+* cathedral: a grand, sacred place with soaring ceilings and the scent of incense
+* merchant district: a lively area with shops displaying a myriad of goods and colorful signs
+* crowded marketplace: a vibrant, noisy space teeming with vendors and the aroma of spices
+* seedy tavern: a dimly lit, raucous inn filled with rough characters and the smell of stale ale
+* desolate alleyway: a narrow passage, echoing with distant footsteps and reeking of decay
+* underground sewers: a dark, damp labyrinth below the streets, filled with echoes and musty smells
+* aristocratic estate: a lavish residence, surrounded by gardens and the sound of luxury
+* busy docks: a bustling waterfront with ships, seagulls, and the briny scent of the sea
+* underground gambling den: a hidden, smoky room filled with the clatter of dice and hushed voices
+* ornate theater: a grand venue, alive with the drama of performances and applause
+* foreign quarter: a diverse district, buzzing with different languages and exotic smells
+* opulent ballroom: a lavish hall in a noble's house, resonating with music and dance
+* crowded inn: a popular lodging, filled with the chatter of travelers and the aroma of cooking
+* wretched slum: a maze of cramped, squalid dwellings, teeming with desperation
+
+-- swamp --
+* abandoned campsite: remnants of a fire, with a lingering scent of smoke
+* abandoned cabin: a crumbling hut, its wood rotting, slowly being consumed by the encroaching forest
+* ancient tree grove: a circle of towering, old trees, their branches intertwined
+* bandit ambush spot: a narrow path, with thick underbrush for hiding
+* beast's lair: bones scattered around, deep growls echoing from within
+* crumbling watchtower: a once-tall tower, now sinking slowly into the marsh
+* fetid bubbling spring: a natural spring, emitting sulfurous gases and bubbles
+* flooded cavern: echoing drips, filled with clear, cold water
+* flooded mineshaft: the entrance to an old mine, now filled with murky water
+* foggy crossroads: constantly shrouded in mist, with faint, eerie whispers
+* forgotten shrine: a neglected shrine, its carvings eroded, exuding an air of lost faith
+* hidden glade: a desolate clearing, choked by surrounding dark trees, devoid of sunlight
+* lost caravan: remnants of a merchant's wagon, half-submerged and forgotten
+* marsh hermit's hut: a small, moss-covered cabin with a smoky, earthy aroma
+* moss-covered boulders: massive stones, shrouded in decaying moss, a symbol of forgotten times
+* mossy cave entrance: a cave mouth, hidden by dense foliage and moss
+* mysterious willow grove: a cluster of willow trees, their branches draped low over the water
+* old stone bridge: mossy, weathered stones, often cloaked in fog
+* overgrown path: once a road, now barely discernible under the foliage
+* rotting wooden bridge: an old, unstable bridge crossing a murky waterway
+* ruined fortress: the remains of a stone fortress, overgrown with vines and moss
+* ruined tower: crumbling, covered in ivy, with a mysterious, cold draft
+* smuggler's boat: half-sunken, with mysterious cargo still on board
+* stagnant pond: a still body of water, covered in a thick layer of algae
+* sunken chapel: partially submerged, with stained glass glinting underwater
+* sunken graveyard: ancient, moss-covered tombstones emerging from shallow waters
+* witch's lair: a dense thicket with an unsettling, sweetly pungent smell
+
+-- tundra --
+* frozen lake: a vast, icy expanse, glimmering under the cold sun
+* abandoned campsite: remnants of a camp, with a faded fire pit and scattered belongings
+* snow-covered hillock: a small hill, blanketed in snow, standing solitary in the vastness
+* icy cave: a chilling, echoing cave with walls glistening with ice
+* wind-swept plains: vast, open plains, where the wind howls unceasingly
+* desolate ridge: a high ridge offering a view of the stark, icy landscape
+* ravine: a deep, narrow gap with steep icy sides, cutting through the land
+
+-- mountains --
+* mountain pass: a narrow, winding path cutting through steep slopes
+* abandoned mine: an old, deserted mine entrance, with a musty, earthy smell
+* cliffside cave: a cave mouth visible on a steep cliff, shadowed and foreboding
+* ancient shrine: a weathered stone structure, adorned with faded carvings
+* deep gorge: a steep-sided chasm, with the sound of a river echoing from below
+* isolated hermitage: a small dwelling, tucked away in a remote mountain area
+
+User
+make a list of 25 quest locations that might be found in an rural village; keep in mind the following:
+* the setting must make sense for a medieval / renaissance era
+* the locations must be generic
+* each location should have a description and a title
+* the description should be 75-125 characters in length and should describe the appearance of the location (looks, sounds, smells, etc.)
+* the output must be formatted as a bulleted list with each item as <title> (in italics): <description>
+* all output should be lowercase; do not end with a period
+* do not mention the word "village" in any title or description

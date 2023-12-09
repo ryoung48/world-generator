@@ -93,7 +93,7 @@ export const DRAW_INFRASTRUCTURE = {
         const culture = window.world.cultures[region.culture]
         const center = pathGen.centroid(MAP.geojson.features([capital]))
         const major =
-          style === 'Nations'
+          style !== 'Cultures'
             ? loc.idx === nation.capital && !nation.shattered
             : culture.origin === region.idx
         if (major) {

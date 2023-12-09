@@ -104,3 +104,32 @@
 * shadow theater: storytelling through the play of puppets and shapes against illuminated backdrops
 * fusion cuisine: culinary practices that blend different regional flavors, celebrating diversity
 * bioluminescent guidance: paths and public spaces lit by natural organisms, reducing light pollution
+
+--
+* barbaric
+* warmonger
+* diplomatic
+* xenophobic
+* isolationist
+* cosmopolitan
+* swamp/forest/plains/desert/mountainous/arctic
+* decadence
+* intrigue
+* revanchism
+* stewardship
+* artificers
+* mercantile
+* cultivation
+* seafaring
+* nomadic
+* sorcerous
+* zealous
+* atheist
+* avian/mammalian/reptilian/arthropod
+* fungal/verdant
+* mutant
+* eldritch
+* undeath
+* cybernetic
+
+

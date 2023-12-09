@@ -1,3 +1,4 @@
+import { HISTORY } from '../../history'
 import { ARRAY } from '../../utilities/array'
 import { POINT } from '../../utilities/math/points'
 import { VORONOI } from '../../utilities/math/voronoi'
@@ -120,7 +121,13 @@ export const CELL = {
     }
     return []
   },
-  nation: (cell: Cell) => CELL.province(cell).nation,
+  nation: (cell: Cell) => {
+    if (HISTORY.active()) {
+      const current = HISTORY.current()
+      return current.ruler[cell.province]
+    }
+    return CELL.province(cell).nation
+  },
   neighbors: (cell: Cell, depth = 1): Cell[] => {
     const neighbors = window.world.diagram.neighbors[cell.idx].map(n => window.world.cells[n])
     if (depth > 1)

@@ -1,4 +1,5 @@
 import { TaggedEntity } from '../utilities/entities/types'
+import { Hooks } from './provinces/hooks/types'
 
 export type DiplomaticRelation =
   | 'vassal'
@@ -55,6 +56,8 @@ export interface Region extends TaggedEntity {
   government?: typeof governments[number]
   leadership?: { male: string; female: string }
   shattered?: boolean
+  hooks?: Hooks
+  exhaustion: number
 }
 
 export type RegionNeighborsParams = { region: Region; depth?: number }
@@ -65,3 +68,4 @@ export type RegionFindParams = {
 }
 export type RegionSortParams = RegionFindParams
 export type RegionRelationsParams = { target: DiplomaticRelation; region: Region }
+export type RegionClaim = { nation: Region; region: Region }

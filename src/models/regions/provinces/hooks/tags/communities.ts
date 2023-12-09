@@ -751,14 +751,14 @@ export const communities: HookTemplate = {
     'Demihuman Populace': {
       text: "A particular breed of demihuman are either the majority here or have the dominant positions in the community. Architecture, local laws, and social customs are all tuned to suit them, and they may not be particularly forgiving or friendly to humans. Communities that are not outright independent usually make an arm's-length submission to a local lord.",
       enemies: [
-        { title: 'Demihuman official who grudges baselines' },
+        { title: 'Demihuman official who grudges baselines', monstrous: true },
         { title: 'Baseline local who grudges the demihumans' },
         { title: 'Outsider preying on the demihumans' }
       ],
       friends: [
-        { title: 'Curious young native', youth: true },
-        { title: 'Canny local diplomat to humans' },
-        { title: 'Native with a need for baseline help' }
+        { title: 'Curious young native', youth: true, monstrous: true },
+        { title: 'Canny local diplomat to humans', monstrous: true },
+        { title: 'Native with a need for baseline help', monstrous: true }
       ],
       complications: [
         'Their human suzerain wants to erase all independence from them',
@@ -1042,7 +1042,7 @@ export const communities: HookTemplate = {
       text: "Some locals are planted on valuable land, either because it's the last scrap of territory inside the walls that hasn't been extensively developed, or because it has access to good water, or perhaps it lies on some auspicious geomantic nexus. Others want them gone, and they're ready to use both fair means and foul to evict the troublesome locals",
       enemies: [
         { title: 'Heartless merchant' },
-        { title: 'Sorcerer needing a particular sit' },
+        { title: 'Sorcerer needing a particular site' },
         { title: 'Dweller beneath the streets' }
       ],
       friends: [
@@ -1789,7 +1789,7 @@ export const communities: HookTemplate = {
         { title: 'Reformer seeking a complete purge of them' }
       ],
       friends: [
-        { title: 'Blighted leader' },
+        { title: 'Blighted leader', monstrous: true },
         { title: 'Troubled local' },
         { title: 'Native seeking to take over the work niche the Blighted are filling' }
       ],

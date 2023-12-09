@@ -1,3 +1,4 @@
+import { HISTORY } from '../history'
 import { ARRAY } from '../utilities/array'
 import { COLOR } from '../utilities/color'
 import { MATH } from '../utilities/math'
@@ -49,6 +50,35 @@ export const REGION = {
         })} (${formatters.percent(v.length / climateSum)})`
       })
       .join(', ')
+  },
+  claim: ({ nation, region }: Region.RegionClaim) => {
+    const current = HISTORY.current()
+    const provinces = REGION.provinces(region)
+    const domains = REGION.domains(region).filter(r => r.idx !== region.idx)
+    current.subjects[region.idx] = []
+    provinces
+      .filter(p => p.region === region.idx)
+      .forEach(p => PROVINCE.claim({ nation, province: p }))
+    domains.forEach(domain => {
+      provinces
+        .filter(p => p.region === domain.idx)
+        .forEach(p => PROVINCE.claim({ nation: domain, province: p }))
+    })
+    // leftovers
+    const candidates = domains.concat([nation])
+    provinces
+      .filter(p => PROVINCE.nation(p).idx === region.idx)
+      .forEach(province => {
+        const neighbors = PROVINCE.neighbors({ province, type: 'foreign' })
+        const best = candidates.reduce(
+          (selected, candidate) => {
+            const matches = neighbors.filter(n => PROVINCE.nation(n).idx === candidate.idx).length
+            return matches > selected.d ? { d: matches, region: candidate } : selected
+          },
+          { d: -Infinity, region: nation }
+        )
+        PROVINCE.claim({ province, nation: best.region })
+      })
   },
   environment: (region: Region.Region) => {
     const biomes = REGION.provinces(region)
@@ -142,6 +172,10 @@ export const REGION = {
     return REGION.provinces(region).reduce((sum, province) => sum + province.population, 0)
   },
   provinces: (region: Region.Region) => {
+    if (HISTORY.active()) {
+      const current = HISTORY.current()
+      return current.subjects[region.idx].map(p => window.world.provinces[p])
+    }
     return region.provinces.map(p => window.world.provinces[p])
   },
   relations: (params: Region.RegionRelationsParams) =>
@@ -188,9 +222,16 @@ export const REGION = {
       landBorders: [],
       relations: {},
       culture: -1,
-      shattered: false
+      shattered: false,
+      exhaustion: 0
     }
     window.world.regions.push(region)
     return region
+  },
+  strength: (region: Region.Region) => {
+    return (
+      REGION.provinces(region).reduce((sum, province) => sum + province.wealth, 0) *
+      (1 - region.exhaustion)
+    )
   }
 }

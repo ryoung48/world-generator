@@ -99,24 +99,24 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
   label: 'DISPLAY',
   o: {
     borders: {
-      regions: (nations: Region[]) => {
-        const regions: { path: [number, number][]; r: number }[] = []
+      regions: (regions: Region[]) => {
+        const paths: { path: [number, number][]; r: number }[] = []
         const borders: Record<string, RegionSegment[]> = {}
         // iterate though all regions
         const borderCells = WORLD.borders()
-        Object.values(nations).forEach(r => {
+        Object.values(regions).forEach(r => {
           borders[r.idx] = []
           // find all borders & coastline cells
           const land = borderCells.filter(cell => r.idx === CELL.nation(cell))
           CELL.boundary({
             cells: land,
             boundary: cell => cell.isWater || CELL.nation(cell) !== r.idx
-          }).forEach(path => regions.push({ path, r: r.idx }))
+          }).forEach(path => paths.push({ path, r: r.idx }))
         })
         PERFORMANCE.profile.apply({
           label: 'curve',
           f: () => {
-            regions.forEach(({ path, r }) => {
+            paths.forEach(({ path, r }) => {
               borders[r].push({ path, r })
             })
           }

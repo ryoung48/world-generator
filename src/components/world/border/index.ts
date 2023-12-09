@@ -1,5 +1,6 @@
 import { mean } from 'd3'
 
+import { HISTORY } from '../../../models/history'
 import { REGION } from '../../../models/regions'
 import { PROVINCE } from '../../../models/regions/provinces'
 import { ARRAY } from '../../../models/utilities/array'
@@ -29,7 +30,7 @@ const stripesPattern = (ctx: CanvasRenderingContext2D, scale: number) => {
   }
 }
 
-let regionBorders: Record<number, RegionSegment[]> = {}
+let nationBorders: Record<number, Record<number, RegionSegment[]>> = {}
 let provinceBorders: Record<
   number,
   {
@@ -39,6 +40,7 @@ let provinceBorders: Record<
     rain: { summer: string; winter: string }
     biome: Biome
     pop: string
+    wealth: string
   }
 > = {}
 
@@ -52,25 +54,20 @@ export const DRAW_BORDERS = {
     const scale = MAP.scale.derived(projection)
     const pathGen = MAP.path.curveClosed(projection)
     ctx.lineCap = 'round'
-    const conflictZones = new Set(nations.map(region => region.idx))
-    window.world.conflicts
-      .filter(conflict => conflict.regions.some(r => conflictZones.has(r)))
-      .forEach(conflict => {
-        DISPLAY.borders
-          .provinces(
-            conflict.provinces
-              .map(p => window.world.provinces[p])
-              .filter(province => nations.includes(PROVINCE.nation(province)))
-          )
-          .forEach(path => {
-            ctx.save()
-            const p = MAP.polygon({ points: path, path: pathGen, direction: 'inner' })
-            ctx.clip(p)
-            ctx.setLineDash([])
-            stripesPattern(ctx, scale)
-            ctx.restore()
-          })
+    const current = HISTORY.current()
+    nations.forEach(nation => {
+      const battlegrounds = REGION.provinces(nation).filter(
+        province => current.conflict[province.idx].length > 0
+      )
+      DISPLAY.borders.provinces(battlegrounds).forEach(path => {
+        ctx.save()
+        const p = MAP.polygon({ points: path, path: pathGen, direction: 'inner' })
+        ctx.clip(p)
+        ctx.setLineDash([])
+        stripesPattern(ctx, scale)
+        ctx.restore()
       })
+    })
   },
   regions: ({ ctx, style, season, climate, nations, projection, province }: DrawBorderParams) => {
     const { regions } = window.world.display
@@ -78,10 +75,12 @@ export const DRAW_BORDERS = {
     const scale = MAP.scale.derived(projection)
     const path = MAP.path.curveClosed(projection)
     const regionStyle = style === 'Nations'
-    if (nations.some(nation => !regionBorders[nation.idx])) {
-      regionBorders = {
+    const current = HISTORY.current()
+    if (!nationBorders[current.idx]) nationBorders[current.idx] = {}
+    if (nations.some(nation => !nationBorders[current.idx][nation.idx])) {
+      nationBorders[current.idx] = {
         ...DISPLAY.borders.regions(nations),
-        ...regionBorders
+        ...nationBorders[current.idx]
       }
     }
     if (Object.keys(provinceBorders).length === 0) {
@@ -101,7 +100,8 @@ export const DRAW_BORDERS = {
             winter: MAP.metrics.rain.color(mean(cells.map(c => c.rain.winter ?? 0)))
           },
           biome: holdridge,
-          pop: MAP.metrics.population.color(PROVINCE.populationDensity(province))
+          pop: MAP.metrics.population.color(PROVINCE.populationDensity(province)),
+          wealth: '' // MAP.metrics.wealth.color(province.wealth)
         }
       })
     }
@@ -109,7 +109,7 @@ export const DRAW_BORDERS = {
     ctx.lineWidth = scale * 2
     nations.forEach(nation => {
       ctx.fillStyle = '#f7eedc'
-      regionBorders[nation.idx].forEach(border => {
+      nationBorders[current.idx][nation.idx].forEach(border => {
         ctx.save()
         const p = MAP.polygon({ points: border.path, path, direction: 'inner' })
         ctx.clip(p)
@@ -132,8 +132,8 @@ export const DRAW_BORDERS = {
           ? region.heraldry.color
           : style === 'Cultures'
           ? window.world.cultures[region.culture].display
-          : style === 'Religions'
-          ? window.world.religions[region.religion].display
+          : style === 'Wealth'
+          ? MAP.metrics.strength.color(REGION.strength(REGION.nation(region)))
           : MAP.metrics.development.color(MAP.metrics.development.scale(region.development))
         const color = base
         ctx.fillStyle = color.replace('%)', `%, ${regionStyle ? 0.25 : 0.5})`)
@@ -177,7 +177,7 @@ export const DRAW_BORDERS = {
     // nation borders
     ctx.lineWidth = (regionStyle ? 2 : 1) * scale
     nations.forEach(nation => {
-      regionBorders[nation.idx].forEach(border => {
+      nationBorders[current.idx][nation.idx].forEach(border => {
         ctx.save()
         const p = MAP.polygon({ points: border.path, path, direction: 'inner' })
         ctx.clip(p)

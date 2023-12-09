@@ -14,6 +14,7 @@ export type ViewState = {
   avatar: Avatar
   loading: boolean
   view: TaggedEntity['tag']
+  paused: boolean
 }
 
 export type ViewActions =
@@ -24,3 +25,4 @@ export type ViewActions =
   | { type: 'refresh journal' }
   | { type: 'loading'; payload: boolean }
   | { type: 'purchase'; payload: { npc: Actor; item: Item } }
+  | { type: 'toggle pause' }

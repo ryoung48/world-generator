@@ -1,3 +1,4 @@
+import { Region } from '../../types'
 import { Province } from '../types'
 
 export interface Actor {
@@ -51,4 +52,4 @@ export type Hooks = {
   difficulty: { cr: number; pc?: number }
 }
 
-export type HookSpawnParams = { loc: Province; pc: number }
+export type HookSpawnParams = { entity: Province | Region; pc: number }

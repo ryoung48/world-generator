@@ -2,7 +2,9 @@ import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { geoOrthographic, GeoProjection } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
+import { EVENTS } from '../../models/history/events'
 import { REGION } from '../../models/regions'
+import { PROVINCE } from '../../models/regions/provinces'
 import { delay } from '../../models/utilities/math/time'
 import { WORLD } from '../../models/world'
 import { BIOME } from '../../models/world/climate'
@@ -63,7 +65,7 @@ const paint = ({
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
 
-  const nation = window.world.regions[province.nation]
+  const nation = PROVINCE.nation(province)
   const borders = REGION.neighbors({ region: nation, depth: 2 })
   const nations = [nation].concat(borders)
   const nationSet = new Set(nations.map(n => n.idx))
@@ -128,6 +130,8 @@ export function WorldMap() {
   const [climate] = useState<MapClimate>('Holdridge')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
+  const animationRef = useRef<number | null>(null)
+  const [counter, setCounter] = useState(0)
   const runPaint = () => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
@@ -146,7 +150,7 @@ export function WorldMap() {
     const { x, y } = cursor
     const poly = window.world.cells[window.world.diagram.find(x, y)]
     const province = window.world.provinces[poly.province]
-    const nation = window.world.regions[province.nation]
+    const nation = PROVINCE.nation(province)
     if (state.view === 'province') {
       dispatch({
         type: 'transition',
@@ -210,6 +214,30 @@ export function WorldMap() {
       setCursor({ x, y })
     }
   }, [state.gps])
+  useEffect(() => {
+    const animate = () => {
+      animationRef.current = requestAnimationFrame(animate)
+      setCounter((counter + 1) % 240)
+      if (counter === 0 && !state.paused) {
+        EVENTS.tick()
+        const region = window.world.regions[state.region]
+        if (state.view === 'nation') {
+          const nation = REGION.nation(region)
+          dispatch({
+            type: 'transition',
+            payload: { tag: 'nation', idx: nation.idx }
+          })
+        }
+        runPaint()
+      }
+    }
+    // start animation
+    animationRef.current = requestAnimationFrame(animate)
+    // cleanup
+    return () => {
+      cancelAnimationFrame(animationRef.current ?? 0)
+    }
+  }, [counter])
   const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
   const holdridge = BIOME.holdridge[cell.biome]
   return (

@@ -63,7 +63,7 @@
 * aesthetics: beauty, art, creativity
 * household: ancestry, hearth, domestic
 * life: cultivation, fertility, abundance
-* death: endings, transformation, afterlife
+* death: endings, undeath, afterlife
 * ruin: disaster, collapse, chaos
 * light: salvation, forgiveness, rebirth
 * industry: diligence, craftsmanship, innovation
@@ -71,7 +71,7 @@
 * eldritch: otherworldly, alien, strange
 * authority: law, order, discipline
 * shadows: darkness, secrets, hidden truths
-* knowledge: wisdom, learning, insight
+* knowledge: wisdom, learning, arcana
 * hatred: anger, malice, vengeance
 * empathy: compassion, kindness, connection
 * luck: fortune, chance, serendipity
@@ -86,3 +86,34 @@
 * state religion: the government has an official religion, which is supported and enforced by the state; other religions are often suppressed or persecuted
 * fundamentalist: the government is dominated by religious leaders, who enforce strict adherence to religious laws and customs
 * secular: the government is officially neutral toward religion, and does not favor any particular faith; religious freedom is generally respected
+
+
+fire
+earth
+water
+sky
+
+subterranean
+mountainous
+jungle
+forest
+marsh
+plains
+desert
+tundra
+glacier
+
+beast (mammalian|reptilian|avian|arthropod)
+undeath
+mutant
+fungal
+verdant
+
+blood
+shadows
+moon
+sun
+zeal
+
+artistic
+artisan

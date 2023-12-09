@@ -1,5 +1,7 @@
 import { scaleLinear } from 'd3'
+import PriorityQueue from 'js-priority-queue'
 
+import { WorldEvent } from '../history/events/types'
 import { MATH } from '../utilities/math'
 import { DICE } from '../utilities/math/dice'
 import { POINT } from '../utilities/math/points'
@@ -206,7 +208,6 @@ export const WORLD = PERFORMANCE.profile.wrapper({
       const minutes = window.dice.randint(0, 59)
       const date = new Date(year, month, day, hours, minutes).getTime()
       const firstNewMoon = date - dayMS * window.dice.randint(0, 30)
-      // dimensions
       const world: World = {
         id: seed,
         resolution: res,
@@ -238,8 +239,8 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         ruins: [],
         wilderness: [],
         npcs: [],
-        conflicts: [],
         quests: [],
+        future: new PriorityQueue<WorldEvent>({ comparator: (a, b) => a.time - b.time }),
         uniqueNames: {},
         radius: 3.959e3, // miles
         date,

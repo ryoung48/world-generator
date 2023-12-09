@@ -171,12 +171,12 @@ export const wilderness: HookTemplate = {
     'Blighted Tribe': {
       text: 'A tribe of Blighted live in the hex. They may be violent war-creatures naturally hostile to normal humanity or beings cursed with some trait or nature that makes it impossible for them to live in civilization. Relations are unlikely to be warm in either case, but the latter might be persuaded to parley if the party can work around their limitations and win their trust.',
       enemies: [
-        { title: 'Brutal Blighted war-chief' },
+        { title: 'Brutal Blighted war-chief', monstrous: true },
         { title: 'Outsider using them as living tools', monstrous: true },
         { title: 'Human hunter bent on slaughtering inoffensive Blighted' }
       ],
       friends: [
-        { title: 'Native not so Blighted as their brethren' },
+        { title: 'Native not so Blighted as their brethren', monstrous: true },
         { title: 'Human trader who deals with them' },
         { title: 'Local human who knows their ways' }
       ],

@@ -1,5 +1,6 @@
 import PriorityQueue from 'js-priority-queue'
 
+import { HISTORY } from '../../history'
 import { ARRAY } from '../../utilities/array'
 import { MATH } from '../../utilities/math'
 import { POINT } from '../../utilities/math/points'
@@ -52,9 +53,18 @@ export const PROVINCE = {
   biomes: (province: Province.Province) =>
     province.cells.land.map(c => window.world.cells[c].biome),
   isBorder: (province: Province.Province) => {
-    return PROVINCE.neighbors({ province, type: 'foreign' }).length > 0
+    const neighbors = province.neighbors.map(n => window.world.provinces[n])
+    return neighbors.some(n => PROVINCE.nation(n) !== PROVINCE.nation(province))
   },
   cell: (province: Province.Province) => window.world.cells[province.hub.cell],
+  claim: ({ nation, province }: Province.ProvinceClaim) => {
+    const current = HISTORY.current()
+    const region = PROVINCE.nation(province)
+    if (region.idx === nation.idx) return
+    current.ruler[province.idx] = nation.idx
+    current.subjects[region.idx] = current.subjects[region.idx].filter(p => p !== province.idx)
+    current.subjects[nation.idx].push(province.idx)
+  },
   climate: (province: Province.Province): Province.Province['environment']['climate'] => {
     const lat = Math.abs(province.hub.y)
     return lat < 23
@@ -157,7 +167,13 @@ export const PROVINCE = {
     nation.provinces.push(province.idx)
     province.nation = nation.idx
   },
-  nation: (province: Province.Province) => window.world.regions[province.nation],
+  nation: (province: Province.Province) => {
+    if (HISTORY.active()) {
+      const current = HISTORY.current()
+      return window.world.regions[current.ruler[province.idx]]
+    }
+    return window.world.regions[province.nation]
+  },
   neighboringRegions: (provinces: Province.Province[]) =>
     ARRAY.unique(
       provinces
