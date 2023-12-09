@@ -1,5 +1,5 @@
 import { Point } from '../../../../utilities/math/points/types'
-import { Block, District, DistrictTemplate } from '../types'
+import type { Block, District, DistrictTemplate } from '../types'
 
 type workshops =
   | 'cobbler'

@@ -1,13 +1,13 @@
-import { Delaunay, Voronoi } from 'd3'
+import type { Delaunay, Voronoi } from 'd3'
 
-import { Culture } from '../../../npcs/cultures/types'
-import { ProfessionDetails } from '../../../npcs/professions/types'
-import { Dice } from '../../../utilities/math/dice'
-import { Point } from '../../../utilities/math/points/types'
-import { WeightedDistribution } from '../../../utilities/math/types'
-import { Vertex } from '../../../utilities/math/voronoi/types'
-import { Hub } from '../hubs/types'
-import { Building } from './buildings/types'
+import type { Culture } from '../../../npcs/cultures/types'
+import type { ProfessionDetails } from '../../../npcs/professions/types'
+import type { Dice } from '../../../utilities/math/dice'
+import type { Point } from '../../../utilities/math/points/types'
+import type { WeightedDistribution } from '../../../utilities/math/types'
+import type { Vertex } from '../../../utilities/math/voronoi/types'
+import type { Hub } from '../hubs/types'
+import type { Building } from './buildings/types'
 
 export interface Structure {
   path: string
