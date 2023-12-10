@@ -11,7 +11,6 @@ import { DiplomaticRelation, Region } from '../../regions/types'
 import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
 import { WORLD } from '..'
-import { CIVILIZATION } from './civilization'
 
 type RegionalCounters = Record<string, { target: number; current: number; total: number }>
 
@@ -103,7 +102,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
     },
     _history: () => {
       const { provinces } = window.world
-      const regions = window.world.regions
+      const regions = REGION.nations
       const industrial = regions.filter(r => r.development === 6)
       const enlightened = regions.filter(r => r.development === 5)
       const colonial = regions.filter(r => r.development === 4)
@@ -193,13 +192,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
             if (target) claimProvince({ nation, province: target })
           })
         }
-      })
-      //shattered
-      Object.entries(CIVILIZATION.shattered).forEach(([r, subjects]) => {
-        const epicenter = window.world.regions[parseInt(r)]
-        subjects.forEach(subject => {
-          claimRegion({ nation: epicenter, region: window.world.regions[subject] })
-        })
       })
       // realm titles
       regions
@@ -309,7 +301,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
     },
     _religions: () => {
       RELIGION.spawn()
-      window.world.regions.forEach(region => {
+      REGION.nations.forEach(region => {
         const { religion: ridx } = window.world.cultures[region.culture]
         const religion = window.world.religions[ridx]
         region.religion = religion.idx

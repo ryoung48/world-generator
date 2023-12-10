@@ -1,5 +1,3 @@
-import { scaleLinear } from 'd3'
-
 import { CULTURE } from '../../../npcs/cultures'
 import { REGION } from '../../../regions'
 import { PROVINCE } from '../../../regions/provinces'
@@ -52,7 +50,9 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
             const type = n.isCoast || poly.isCoast ? 'sea' : 'land'
             const [p1, p2] = [CELL.province(n), CELL.province(poly)]
             const coastal = p1.hub.coastal && p2.hub.coastal
-            if (type !== 'sea' || coastal) {
+            const validTrade = type !== 'sea' || coastal
+            const desolate = PROVINCE.region(p1).desolate || PROVINCE.region(p2).desolate
+            if (validTrade && !desolate) {
               p1.trade[type][p2.idx] = -1
               p2.trade[type][p1.idx] = -1
             }
@@ -73,7 +73,7 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
             cellArea *
             25
         })
-        CULTURE.culturize(culture, region)
+        if (culture) CULTURE.culturize(culture, region)
       })
     },
     _checkIslands: () => {
@@ -118,9 +118,7 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
     },
     _settlements: () => {
       const base = 2400
-      const habitability = scaleLinear([0, 0.2, 1], [0.3, 0.6, 1])(WORLD.habitability())
       const count = Math.floor(base * WORLD.placement.ratio())
-      console.log(habitability, WORLD.placement.ratio(), count)
       const spacing = WORLD.placement.spacing.provinces
       const regionSettlements: Record<string, Cell[]> = {}
       // compute geography scores & count land

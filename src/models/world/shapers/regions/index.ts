@@ -606,8 +606,8 @@ export const REGIONAL = PERFORMANCE.profile.wrapper({
         })
         region.borders = Array.from(borders)
         region.landBorders = Array.from(landBorders)
-        // const { terrain } = BIOME.holdridge[cell.biome]
-        // region.shattered = !region.coastal && (terrain === 'desert' || terrain === 'glacier')
+        const { terrain } = BIOME.holdridge[cell.biome]
+        region.desolate = terrain === 'glacier'
       })
     },
     build: () => {

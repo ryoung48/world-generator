@@ -242,7 +242,6 @@ export const MAP = {
     'Nations',
     'Cultures',
     'Population',
-    'Wealth',
     'Elevation',
     'Temperature',
     'Rain',

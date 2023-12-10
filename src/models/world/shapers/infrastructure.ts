@@ -53,11 +53,11 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
       const templateBlacklist = NAVIGATION.blacklist.blacklist
       let blacklist = { ...templateBlacklist }
       // connect island nations
-      window.world.regions.forEach(region => {
+      REGION.nations.forEach(region => {
         const regionCapital = window.world.provinces[region.capital]
         const neighbors = REGION.neighbors({ region })
         REGION.borders(region)
-          .filter(n => !neighbors.includes(n))
+          .filter(n => !n.desolate && !neighbors.includes(n))
           .forEach(n => {
             const nCapital = window.world.provinces[n.capital]
             const land = PROVINCE.cell(regionCapital).landmark === PROVINCE.cell(nCapital).landmark
@@ -67,7 +67,7 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
       })
       // connect really isolated regions if all else fails
       blacklist = { ...templateBlacklist }
-      window.world.regions.forEach(region => {
+      REGION.nations.forEach(region => {
         if (REGION.neighbors({ region }).length < 1) {
           const capitals = REGION.borders(region).map(REGION.capital)
           if (capitals.length < 1) return
@@ -84,7 +84,7 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
     _extendedVoyages: () => {
       // iterate through all water bodies
       const allPorts = window.world.provinces
-        .filter(city => city.hub.coastal)
+        .filter(city => city.hub.coastal && !PROVINCE.region(city).desolate)
         .map(city => window.world.cells[city.hub.cell])
       const { blacklist } = NAVIGATION.blacklist
       WORLD.features('water').forEach(i => {
@@ -118,7 +118,7 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
     },
     _finalize: () => {
       // final relations
-      window.world.regions.forEach(region => {
+      REGION.nations.forEach(region => {
         const provinces = REGION.provinces(region)
         region.regional.provinces = provinces.map(r => r.idx)
         region.regional.coastal = provinces.some(province => province.ocean > 0)
@@ -139,7 +139,7 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
     },
     _networks: () => {
       const { blacklist } = NAVIGATION.blacklist
-      window.world.regions.forEach(r => {
+      REGION.nations.forEach(r => {
         // create the main arteries that connect to the capital
         const capital = window.world.provinces[r.capital]
         PROVINCE.attach({ province: capital, idx: capital.idx })

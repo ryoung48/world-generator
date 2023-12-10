@@ -151,6 +151,7 @@ export function WorldMap() {
     const poly = window.world.cells[window.world.diagram.find(x, y)]
     const province = window.world.provinces[poly.province]
     const nation = PROVINCE.nation(province)
+    if (nation.desolate) return
     if (state.view === 'province') {
       dispatch({
         type: 'transition',

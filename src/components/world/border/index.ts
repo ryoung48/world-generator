@@ -14,6 +14,7 @@ import { MAP } from '../common'
 import { DrawBorderParams } from './types'
 
 const contested = 'rgba(225, 0, 0, 0.4)'
+const glacial = 'hsl(180, 71%, 96%)'
 
 const stripesPattern = (ctx: CanvasRenderingContext2D, scale: number) => {
   const color1 = 'transparent'
@@ -131,7 +132,7 @@ export const DRAW_BORDERS = {
         const base = regionStyle
           ? region.heraldry.color
           : style === 'Cultures'
-          ? window.world.cultures[region.culture].display
+          ? window.world.cultures[region.culture]?.display ?? glacial
           : style === 'Wealth'
           ? MAP.metrics.strength.color(REGION.strength(REGION.nation(region)))
           : MAP.metrics.development.color(MAP.metrics.development.scale(region.development))
@@ -182,7 +183,7 @@ export const DRAW_BORDERS = {
         const p = MAP.polygon({ points: border.path, path, direction: 'inner' })
         ctx.clip(p)
         ctx.filter = `blur(${scale}px)`
-        ctx.strokeStyle = nation.shattered
+        ctx.strokeStyle = nation.desolate
           ? 'black'
           : window.world.regions[border.r].heraldry.color.replace('%)', '%, 0.75)')
         ctx.stroke(p)
@@ -190,8 +191,8 @@ export const DRAW_BORDERS = {
         ctx.restore()
       })
     })
-    REGION.nations
-      .filter(nation => nation.shattered)
+    window.world.regions
+      .filter(nation => nation.desolate)
       .forEach(nation => {
         REGION.provinces(nation).forEach(province => {
           const styles = provinceBorders[province.idx]
@@ -199,7 +200,7 @@ export const DRAW_BORDERS = {
             ctx.save()
             ctx.filter = `blur(${scale}px)`
             const p = MAP.polygon({ points: border, path, direction: 'inner' })
-            ctx.fillStyle = `hsl(46, 58%, 93%)`
+            ctx.fillStyle = glacial
             ctx.fill(p)
             ctx.fill(p)
             ctx.restore()

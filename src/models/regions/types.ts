@@ -55,7 +55,7 @@ export interface Region extends TaggedEntity {
   size?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
   government?: typeof governments[number]
   leadership?: { male: string; female: string }
-  shattered?: boolean
+  desolate?: boolean
   hooks?: Hooks
   exhaustion: number
 }

@@ -159,7 +159,7 @@ export const REGION = {
     return nation
   },
   get nations() {
-    return Object.values(window.world.regions).filter(REGION.active)
+    return Object.values(window.world.regions).filter(n => !n.desolate && REGION.active(n))
   },
   neighbors: ({ region, depth = 1 }: Region.RegionNeighborsParams): Region.Region[] =>
     ARRAY.bfs({
@@ -222,7 +222,7 @@ export const REGION = {
       landBorders: [],
       relations: {},
       culture: -1,
-      shattered: false,
+      desolate: false,
       exhaustion: 0
     }
     window.world.regions.push(region)

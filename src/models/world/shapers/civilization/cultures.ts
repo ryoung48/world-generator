@@ -43,13 +43,16 @@ const setDevelopment = (region: Region, development: Region['development']) => {
 }
 
 const assignCultures = () => {
+  const nations = REGION.nations
   ENTITY.partitionBFS({
-    items: window.world.regions,
-    target: window.world.regions.length * 0.012,
+    items: nations,
+    target: nations.length * 0.012,
     // regions in the same culture must have the same climate
     neighbors: region =>
-      REGION.borders(region).filter(n => REGION.climate(n) === REGION.climate(region)),
-    relaxed: REGION.borders
+      REGION.borders(region).filter(
+        n => REGION.climate(n) === REGION.climate(region) && !n.desolate
+      ),
+    relaxed: region => REGION.borders(region).filter(n => !n.desolate)
   }).forEach(group => {
     const [origin] = group
     const culture = CULTURE.spawn(origin)

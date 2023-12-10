@@ -1,25 +1,24 @@
+import { REGION } from '../../../regions'
+import { PROVINCE } from '../../../regions/provinces'
 import { PERFORMANCE } from '../../../utilities/performance'
 import { NAVIGATION } from '../../navigation'
 import { CULTURAL } from './cultures'
 import { URBANIZATION } from './urbanization'
 
-const shattered: Record<number, number[]> = {}
-
 export const CIVILIZATION = PERFORMANCE.profile.wrapper({
   label: 'CIVILIZATION',
   o: {
-    shattered,
     _imperialRoads: () => {
       const cache: Record<number, Record<number, boolean>> = {}
       const { blacklist } = NAVIGATION.blacklist
-      window.world.regions.forEach(region => {
+      REGION.nations.forEach(region => {
         const src = window.world.provinces[region.capital]
         const targets = region.landBorders
           .map(i => {
             const border = window.world.regions[i]
             return window.world.provinces[border.capital]
           })
-          .filter(target => !cache[src.idx]?.[target.idx])
+          .filter(target => !cache[src.idx]?.[target.idx] && !PROVINCE.region(target).desolate)
         targets.forEach(dst => {
           if (!cache[src.idx]) cache[src.idx] = {}
           cache[src.idx][dst.idx] = true

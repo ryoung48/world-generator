@@ -18,7 +18,7 @@ const regionalPath =
       }) &&
       route.provinces.every(idx => {
         const province = window.world.provinces[idx]
-        return !PROVINCE.nation(province).shattered
+        return !PROVINCE.nation(province).desolate
       })
     )
   }
@@ -50,7 +50,7 @@ export const DRAW_INFRASTRUCTURE = {
         pathGen(
           MAP.geojson.features(
             capitals.filter(
-              p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).shattered
+              p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).desolate
             )
           )
         )
@@ -63,7 +63,7 @@ export const DRAW_INFRASTRUCTURE = {
         pathGen(
           MAP.geojson.features(
             provinces.filter(
-              p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).shattered
+              p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).desolate
             )
           )
         )
@@ -71,7 +71,7 @@ export const DRAW_INFRASTRUCTURE = {
     )
     const offset = 0.25 * scale
     provinces
-      .filter(p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).shattered)
+      .filter(p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).desolate)
       .forEach(province => {
         const center = pathGen.centroid(MAP.geojson.features([province]))
         const loc = window.world.provinces[province.properties.idx]
@@ -94,7 +94,7 @@ export const DRAW_INFRASTRUCTURE = {
         const center = pathGen.centroid(MAP.geojson.features([capital]))
         const major =
           style !== 'Cultures'
-            ? loc.idx === nation.capital && !nation.shattered
+            ? loc.idx === nation.capital && !nation.desolate
             : culture.origin === region.idx
         if (major) {
           ctx.font = `${(cultureView ? 8 : 5) * scale * base}px ${fontFamily}`
@@ -133,7 +133,7 @@ export const DRAW_INFRASTRUCTURE = {
             iconSize
           )
           ctx.restore()
-        } else if (!cultureView) {
+        } else if (!cultureView && !nation.desolate) {
           ctx.font = `${4.5 * scale * base}px ${fontFamily}`
           ctx.fillStyle = 'rgba(0,0,0,0.5)'
           ctx.fillText(region.name, center[0], center[1] + offset * 18)
