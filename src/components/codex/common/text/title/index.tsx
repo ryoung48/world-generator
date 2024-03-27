@@ -3,17 +3,18 @@ import { Box, Grid } from '@mui/material'
 
 import { style__subtitle } from '../../../../theme'
 import { cssColors } from '../../../../theme/colors'
+import { fonts } from '../../../../theme/fonts'
 import { CodexTitleProps } from './types'
 
 const classes = {
   title: css`
-    font-family: 'serif';
     color: ${cssColors.primary};
     font-weight: 600;
-    font-size: 40px;
+    font-size: 50px;
   `,
   subtitle: css`
     padding-top: 3px;
+    font-family: ${fonts.content};
   `
 }
 

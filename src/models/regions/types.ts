@@ -1,5 +1,6 @@
 import { TaggedEntity } from '../utilities/entities/types'
-import type { Hooks } from './provinces/hooks/types'
+import { Trait } from '../utilities/traits/types'
+import { FindParams } from '../utilities/types'
 
 export type DiplomaticRelation =
   | 'vassal'
@@ -10,29 +11,9 @@ export type DiplomaticRelation =
   | 'suspicious'
   | 'at war'
 
-export const governments = [
-  'autocratic monarchy',
-  'colonial overlord',
-  'feudal monarchy',
-  'fragmented warlords',
-  'free cities',
-  'free city',
-  'holy orders',
-  'imperial bureaucracy',
-  'merchant republic',
-  'nomadic tribes',
-  'steppe horde',
-  'sky cities',
-  'sorcerous cabal',
-  'splintered cults',
-  'theocratic authority',
-  'tribal confederacy',
-  'tribal monarchy',
-  'undead remnants'
-] as const
-
 export interface Region extends TaggedEntity {
   tag: 'nation'
+  name: string
   heraldry: { hue: number; color: string; style: 'monochrome' | 'contrast' | 'standard' }
   capital?: number
   regional: {
@@ -43,29 +24,74 @@ export interface Region extends TaggedEntity {
   }
   culture: number
   religion?: number
+  difficulty?: number
   // geography
   coastal: boolean
   borders: number[]
   landBorders: number[]
   relations: Record<number, DiplomaticRelation>
+  war?: number
   // society
   provinces: number[]
   development?: number
   civilized?: boolean
   size?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
-  government?: typeof governments[number]
+  government?: string
   leadership?: { male: string; female: string }
+  traits?: {
+    tag:
+      | 'splendid discovery'
+      | 'faith strengthened'
+      | 'heroic heir'
+      | "rival's downfall"
+      | 'farmland expansion'
+      | 'trade route'
+      | 'monster vanquished'
+      | 'bountiful harvest'
+      | 'minister deposed'
+      | 'academy founded'
+      | 'uprising crushed'
+      | 'peace forged'
+      | 'peace pact'
+      | 'victorious military'
+      | 'working activated'
+      | 'artifact aid'
+      | 'unrest calmed'
+      | 'cult purged'
+      | 'diplomacy ties'
+      | 'beloved lord'
+      | 'farmland depletion'
+      | 'vermin swarm'
+      | 'rebel stirring'
+      | 'internal backing'
+      | 'leadership failure'
+      | 'faith crisis'
+      | 'outraged riots'
+      | 'cult attraction'
+      | 'horde threat'
+      | 'ancient peril'
+      | 'artifact malcontents'
+      | 'coffers bare'
+      | 'aristocratic push'
+      | 'mine depleted'
+      | 'sinister influence'
+      | 'hunger plague'
+      | 'monster migration'
+      | 'war preparations'
+      | 'national exhaustion'
+      | 'savage grudge'
+    text: string
+  }[]
   desolate?: boolean
-  hooks?: Hooks
   exhaustion: number
 }
 
 export type RegionNeighborsParams = { region: Region; depth?: number }
-export type RegionFindParams = {
-  regions: Region[]
-  ref: Region
-  type: 'closest' | 'furthest'
-}
+export type RegionFindParams = FindParams<Region>
 export type RegionSortParams = RegionFindParams
 export type RegionRelationsParams = { target: DiplomaticRelation; region: Region }
 export type RegionClaim = { nation: Region; region: Region }
+
+export interface RegionTrait extends Trait<Region['traits'][number]['tag'], {}> {
+  text: string
+}

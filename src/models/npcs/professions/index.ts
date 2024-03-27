@@ -1,9 +1,8 @@
+import { PLACE } from '../../regions/places'
 import { PROVINCE } from '../../regions/provinces'
-import { HUB } from '../../regions/provinces/hubs'
-import { Province } from '../../regions/provinces/types'
-import { MATH } from '../../utilities/math'
 import { WeightedDistribution } from '../../utilities/math/types'
-import { Gender, LifePhase } from '../types'
+import { TRAIT } from '../../utilities/traits'
+import { ActorSpawnParams, LifePhase } from '../types'
 import { Profession, ProfessionDetails } from './types'
 
 const nobleQuirks = {
@@ -14,7 +13,7 @@ const nobleQuirks = {
     tooltip: 'fine arts, literature, music, history, etc'
   },
   'loyal household': {
-    tooltip: 'well-treated servants would defend aristocrat'
+    tooltip: 'well-treated servants would defend the household'
   },
   'bored easily': {
     tooltip: 'needs constant entertainment and excitement'
@@ -37,7 +36,6 @@ const nobleQuirks = {
 const professions: Record<Profession, ProfessionDetails> = {
   custom: { strata: 'middle', lifestyle: 'modest' },
   // tribal
-  chieftain: { strata: 'middle', lifestyle: 'comfortable', unique: true, age: 'veteran' },
   shaman: { strata: 'middle', lifestyle: 'modest', unique: true, age: 'veteran' },
   'tribal elder': { strata: 'middle', lifestyle: 'modest', age: 'master' },
   'tribal warrior': { strata: 'lower', lifestyle: 'modest', martial: true },
@@ -55,49 +53,6 @@ const professions: Record<Profession, ProfessionDetails> = {
     unique: true,
     culture: 'foreign',
     lifestyle: 'comfortable'
-  },
-  'guard (colonial)': { title: 'guard', strata: 'lower', lifestyle: 'modest', culture: 'foreign' },
-  'settler (colonial)': {
-    title: 'settler',
-    strata: 'lower',
-    lifestyle: 'modest',
-    culture: 'foreign'
-  },
-  'sailor (colonial)': {
-    title: 'sailor',
-    strata: 'lower',
-    lifestyle: 'poor',
-    culture: 'foreign'
-  },
-  'artisan (colonial)': {
-    title: 'artisan',
-    strata: 'middle',
-    lifestyle: 'comfortable',
-    culture: 'foreign'
-  },
-  'innkeeper (colonial)': {
-    title: 'innkeeper',
-    strata: 'middle',
-    lifestyle: 'comfortable',
-    culture: 'foreign'
-  },
-  'merchant (colonial)': {
-    strata: 'middle',
-    lifestyle: 'comfortable',
-    culture: 'foreign'
-  },
-  'ship captain (colonial)': {
-    title: 'ship captain (colonial)',
-    strata: 'middle',
-    lifestyle: 'comfortable',
-    culture: 'foreign'
-  },
-  'governor (colonial)': {
-    title: 'governor',
-    strata: 'middle',
-    lifestyle: 'prosperous',
-    culture: 'foreign',
-    unique: true
   },
   // lower class
   peasant: {
@@ -402,7 +357,7 @@ const professions: Record<Profession, ProfessionDetails> = {
     title: 'sailor ({deckhand|deckhand|deckhand|{cannoneer|navigator|helmsman}})',
     strata: 'lower',
     lifestyle: 'poor',
-    coastal: true,
+    constraints: { coastal: true },
     quirks: {
       inked: {
         tooltip: 'covered in elaborate nautical tattoos'
@@ -443,7 +398,7 @@ const professions: Record<Profession, ProfessionDetails> = {
   'dock worker': {
     strata: 'lower',
     lifestyle: 'poor',
-    coastal: true,
+    constraints: { coastal: true },
     quirks: {
       'cargo examiner': {
         tooltip: 'can tell the contents of sealed crates by touch, smell, or shake'
@@ -788,7 +743,7 @@ const professions: Record<Profession, ProfessionDetails> = {
     }
   },
   guard: {
-    title: `guard (${HUB.site})`,
+    title: `guard`,
     lifestyle: 'modest',
     strata: 'lower',
     official: true,
@@ -1164,7 +1119,7 @@ const professions: Record<Profession, ProfessionDetails> = {
   'soldier (military)': {
     strata: 'lower',
     lifestyle: 'poor',
-    war: true,
+    constraints: { war: true },
     martial: true,
     quirks: {
       'desertion aversion': {
@@ -1340,7 +1295,7 @@ const professions: Record<Profession, ProfessionDetails> = {
     }
   },
   'guard captain': {
-    title: `guard captain (${HUB.site})`,
+    title: `guard captain`,
     strata: 'middle',
     lifestyle: 'comfortable',
     unique: true,
@@ -1356,7 +1311,7 @@ const professions: Record<Profession, ProfessionDetails> = {
     martial: true
   },
   'master criminal': {
-    title: 'master {assassin|thief|forger|smuggler}',
+    title: '{master {assassin|thief|forger|smuggler}|brothel owner}',
     strata: 'middle',
     lifestyle: 'comfortable',
     age: 'veteran',
@@ -1460,7 +1415,7 @@ const professions: Record<Profession, ProfessionDetails> = {
   weaver: { strata: 'middle', lifestyle: 'modest' },
   brewer: { title: '{brewer|vintner|distiller}', strata: 'middle', lifestyle: 'comfortable' },
   leatherworker: { strata: 'middle', lifestyle: 'comfortable' },
-  shipwright: { strata: 'middle', lifestyle: 'comfortable', coastal: true },
+  shipwright: { strata: 'middle', lifestyle: 'comfortable', constraints: { coastal: true } },
   jeweler: { title: '{jeweler|silversmith|goldsmith}', strata: 'middle', lifestyle: 'comfortable' },
   butcher: { strata: 'middle', lifestyle: 'modest' },
   baker: { strata: 'middle', lifestyle: 'modest' },
@@ -1479,17 +1434,22 @@ const professions: Record<Profession, ProfessionDetails> = {
   'ship captain (merchant)': {
     strata: 'middle',
     lifestyle: 'comfortable',
-    coastal: true,
+    constraints: { coastal: true },
     age: 'veteran'
   },
   'dock master': {
     title: '{dock|harbor} master',
     strata: 'middle',
     lifestyle: 'comfortable',
-    coastal: true,
+    constraints: { coastal: true },
     age: 'veteran'
   },
-  'officer (military)': { strata: 'middle', lifestyle: 'comfortable', war: true, martial: true },
+  'officer (military)': {
+    strata: 'middle',
+    lifestyle: 'comfortable',
+    constraints: { war: true },
+    martial: true
+  },
   // upper class
   'aristocrat (minor)': {
     strata: 'upper',
@@ -1504,7 +1464,7 @@ const professions: Record<Profession, ProfessionDetails> = {
   oligarch: { strata: 'upper', lifestyle: 'rich', age: 'veteran', official: true },
   'crime lord': { strata: 'upper', lifestyle: 'prosperous', age: 'veteran', unique: true },
   magistrate: {
-    title: `magistrate (${HUB.site})`,
+    title: `magistrate`,
     age: 'master',
     strata: 'upper',
     lifestyle: 'rich',
@@ -1530,7 +1490,7 @@ const professions: Record<Profession, ProfessionDetails> = {
     strata: 'upper',
     lifestyle: 'rich',
     unique: true,
-    war: true,
+    constraints: { war: true },
     martial: true,
     age: 'master'
   },
@@ -1563,39 +1523,29 @@ const professions: Record<Profession, ProfessionDetails> = {
     strata: 'upper',
     lifestyle: 'rich',
     culture: 'native',
-    capital: true,
-    leadership: true,
-    kingdom: true,
+    constraints: { capital: true, leadership: true, kingdom: true },
     unique: true,
     age: 'novice'
   },
   suzerain: {
-    title: ({ loc, gender }) => {
-      const nation = PROVINCE.nation(loc)
+    title: ({ province, gender }) => {
+      const nation = PROVINCE.nation(province)
       return nation.leadership[gender]
     },
     strata: 'upper',
     lifestyle: 'rich',
     culture: 'native',
-    capital: true,
-    leadership: true,
+    constraints: { capital: true, leadership: true, kingdom: true },
     unique: true,
     age: 'veteran'
   }
 }
 
 const communities: Record<
-  | 'tribal'
-  | 'rural'
-  | 'urban'
-  | 'monastic'
-  | 'trading outpost'
-  | 'colonial outpost'
-  | 'military outpost',
+  'tribal' | 'rural' | 'urban' | 'monastic' | 'military outpost',
   WeightedDistribution<Profession>
 > = {
   tribal: [
-    { v: 'chieftain', w: 1 },
     { v: 'shaman', w: 1 },
     { v: 'tribal warrior', w: 1 },
     { v: 'tribal elder', w: 1 },
@@ -1605,22 +1555,6 @@ const communities: Record<
     { v: 'herdsman', w: 1 },
     { v: 'missionary', w: 0.05 },
     { v: 'foreigner (merchant)', w: 0.05 }
-  ],
-  'colonial outpost': [
-    { v: 'hunter', w: 1 },
-    { v: 'merchant', w: 1 },
-    { v: 'servant', w: 1 },
-    { v: 'peasant', w: 1 },
-    { v: 'artisan (colonial)', w: 1 },
-    { v: 'governor (colonial)', w: 1 },
-    { v: 'sailor (colonial)', w: 1 },
-    { v: 'settler (colonial)', w: 1 },
-    { v: 'merchant (colonial)', w: 1 },
-    { v: 'ship captain (colonial)', w: 1 },
-    { v: 'guard (colonial)', w: 1 },
-    { v: 'artisan (colonial)', w: 1 },
-    { v: 'innkeeper (colonial)', w: 1 },
-    { v: 'foreigner (merchant)', w: 5 }
   ],
   'military outpost': [
     { v: 'peasant', w: 1 },
@@ -1634,22 +1568,6 @@ const communities: Record<
     { v: 'leatherworker', w: 0.1 },
     { v: 'herbalist', w: 1 },
     { v: 'officer (military)', w: 5 }
-  ],
-  'trading outpost': [
-    { v: 'chieftain', w: 1 },
-    { v: 'shaman', w: 1 },
-    { v: 'tribal warrior', w: 1 },
-    { v: 'tribal elder', w: 1 },
-    { v: 'tribal artisan', w: 1 },
-    { v: 'hunter', w: 1 },
-    { v: 'forager', w: 1 },
-    { v: 'herdsman', w: 1 },
-    { v: 'bodyguard', w: 1 },
-    { v: 'missionary', w: 1 },
-    { v: 'innkeeper', w: 1 },
-    { v: 'caravan trader', w: 0.5 },
-    { v: 'caravan master', w: 0.5 },
-    { v: 'foreigner (merchant)', w: 5 }
   ],
   monastic: [
     { v: 'peasant', w: 5 },
@@ -1764,8 +1682,7 @@ const communities: Record<
     { v: 'ethnarch (minority)', w: 0.1 },
     { v: 'diplomat', w: 1 },
     { v: 'courtier', w: 1 },
-    { v: 'prince', w: 0.5 },
-    { v: 'suzerain', w: 0.5 }
+    { v: 'prince', w: 0.5 }
   ]
 }
 
@@ -1782,72 +1699,58 @@ const ages: Record<ProfessionDetails['age'], WeightedDistribution<LifePhase>> = 
   ]
 }
 
-const professionRandom = (params: { loc: Province }) => {
-  const { loc } = params
+const professionRandom = (place: ActorSpawnParams['place']) => {
   const community =
-    communities[
-      loc.hub.type === 'trading outpost'
-        ? 'trading outpost'
-        : loc.hub.type === 'colonial outpost'
-        ? 'colonial outpost'
-        : HUB.tribal(loc.hub)
-        ? 'tribal'
-        : loc.hub.type === 'military outpost'
-        ? 'military outpost'
-        : HUB.monastic(loc.hub)
-        ? 'monastic'
-        : HUB.village(loc.hub)
-        ? 'rural'
-        : 'urban'
-    ]
-  const used = MATH.counter(loc.actors.map(i => window.world.npcs[i].profession.key))
-  const nation = PROVINCE.nation(loc)
+    communities[place.type === 'hub' ? 'urban' : place.type === 'village' ? 'rural' : 'tribal']
+  const province = PLACE.province(place)
+  const actors = PROFESSION.actors(place).map(actor => actor.profession.key)
+  const used = new Set(actors)
+  const nation = PROVINCE.nation(province)
   const kingdom = nation.size === 'empire' || nation.size === 'kingdom'
-  const distribution = community.map(({ v, w }) => {
-    const profession = professions[v]
-    const coastalCheck = profession.coastal === undefined || profession.coastal === loc.hub.coastal
-    const uniqueCheck = !profession.unique || !used[v]
-    const warCheck = !profession.war || loc.conflict >= 0 || loc.hub.type === 'military outpost'
-    const capitalCheck = !profession.capital || loc.capital
-    const leaderCheck = !profession.leadership || nation.leadership
-    const kingdomCheck = !profession.kingdom || kingdom
-    const weight = w * 10 ** -(used[v] ?? 0)
-    return {
-      v,
-      w:
-        coastalCheck && uniqueCheck && warCheck && capitalCheck && leaderCheck && kingdomCheck
-          ? weight
-          : 0
-    }
+  const coastal = place.coastal
+  const war = province.conflict >= 0
+  const capital = place.type === 'hub' && province.capital
+  const leadership = nation.leadership !== undefined
+  const [selected] = TRAIT.selection({
+    available: community.reduce((acc: Partial<Record<Profession, ProfessionDetails>>, { v, w }) => {
+      acc[v] = professions[v]
+      acc[v].weight = w
+      return acc
+    }, {}),
+    used: actors,
+    current: community.filter(({ v }) => professions[v].unique && used.has(v)).map(({ v }) => v),
+    constraints: { coastal, kingdom, leadership, capital, war }
   })
-  return window.dice.weightedChoice(distribution)
+  return selected
 }
 
 export const PROFESSION = {
+  actors: (place: ActorSpawnParams['place']) =>
+    place.type === 'hub' || place.type === 'village' || place.type === 'camp'
+      ? place.locals?.map(i => window.world.npcs[i]) ?? []
+      : [],
   lookup: professions,
-  spawn: (params: { loc: Province; gender: Gender; profession?: Profession }) => {
-    const { loc, gender } = params
-    const key = params.profession ?? professionRandom({ loc })
+  spawn: (params: Pick<ActorSpawnParams, 'profession' | 'place' | 'gender'>) => {
+    const { place, gender } = params
+    const key = params.profession ?? professionRandom(place)
     const profession = PROFESSION.lookup[key]
-    const title = HUB.fillSite({
-      text: !profession.title
-        ? key
-        : typeof profession.title === 'string'
-        ? profession.title
-        : typeof profession.title === 'function'
-        ? profession.title({ loc, gender })
-        : profession.title[gender],
-      hub: loc.hub
-    })
+    const province = PLACE.province(place)
+    const title = !profession.title
+      ? key
+      : typeof profession.title === 'string'
+      ? profession.title
+      : typeof profession.title === 'function'
+      ? profession.title({ province, gender })
+      : profession.title[gender]
     return {
       key,
       title: window.dice.spin(title),
       culture: profession.culture,
       age: window.dice.weightedChoice<LifePhase>(
         ages[profession.age] ?? [
-          { v: 'young adult', w: 0.1 },
+          { v: 'young adult', w: 0.05 },
           { v: 'adult', w: 0.4 },
-          { v: 'middle age', w: 0.4 },
+          { v: 'middle age', w: 0.45 },
           { v: 'old', w: 0.1 }
         ]
       )

@@ -3,8 +3,8 @@ import { ReactNode } from 'react'
 
 const classes = {
   list: css`
-    font-size: 12px;
-    line-height: 20px;
+    font-size: 10px;
+    line-height: 15.1px;
   `,
   label: css`
     font-weight: 600;

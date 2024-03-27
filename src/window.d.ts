@@ -1,6 +1,6 @@
+import { World } from './models/types'
 import { Dice } from './models/utilities/math/dice'
 import { Profiles } from './models/utilities/performance'
-import { World } from './models/world/types'
 
 declare global {
   // eslint-disable-next-line no-unused-vars

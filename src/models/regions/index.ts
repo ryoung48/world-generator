@@ -1,14 +1,138 @@
-import { HISTORY } from '../history'
+import { CLIMATE } from '../cells/climate'
+import { Cell } from '../cells/types'
 import { ARRAY } from '../utilities/array'
 import { COLOR } from '../utilities/color'
 import { MATH } from '../utilities/math'
-import { titleCase } from '../utilities/text'
-import { decorateText } from '../utilities/text/decoration'
-import { formatters } from '../utilities/text/formatters'
-import { Cell } from '../world/cells/types'
-import { BIOME } from '../world/climate'
+import { TEXT } from '../utilities/text'
 import { PROVINCE } from './provinces'
 import * as Region from './types'
+
+const traits: Record<Region.Region['traits'][number]['tag'], Region.RegionTrait> = {
+  'splendid discovery': {
+    text: 'a splendid mine or resource has been found',
+    conflicts: ['mine depleted']
+  },
+  'faith strengthened': {
+    text: 'a pious saint is strengthening a major faith',
+    conflicts: ['faith crisis']
+  },
+  'heroic heir': {
+    text: 'a noble heir shows signs of heroic greatness',
+    conflicts: ['leadership failure', 'beloved lord']
+  },
+  "rival's downfall": {
+    text: 'a major rival has recently suffered a calamity',
+    conflicts: ['war preparations']
+  },
+  'farmland expansion': {
+    text: 'new farmland has been opened up recently',
+    conflicts: ['farmland depletion', 'hunger plague']
+  },
+  'trade route': { text: 'a new trade route has been forged' },
+  'monster vanquished': {
+    text: 'a horrible monster was slain or driven off',
+    conflicts: ['monster migration', 'vermin swarm']
+  },
+  'bountiful harvest': {
+    text: 'good harvests have enriched the people',
+    conflicts: ['hunger plague', 'farmland depletion']
+  },
+  'minister deposed': {
+    text: 'a wicked minister has been deposed',
+    conflicts: ['sinister influence']
+  },
+  'academy founded': { text: 'a new academy has recently opened' },
+  'uprising crushed': {
+    text: 'a bandit or rebel uprising has been crushed',
+    conflicts: ['rebel stirring']
+  },
+  'peace forged': {
+    text: 'two rival lords have started to make peace',
+    conflicts: ['peace pact', 'savage grudge']
+  },
+  'peace pact': {
+    text: 'an old enemy has agreed to a peace pact',
+    conflicts: ['peace forged', 'war preparations']
+  },
+  'victorious military': { text: 'the military won a recent smashing victory' },
+  'working activated': { text: 'a helpful working has been activated' },
+  'artifact aid': {
+    text: 'a powerful artifact is helping the ruler',
+    conflicts: ['artifact malcontents']
+  },
+  'unrest calmed': {
+    text: 'an old source of unrest has been calmed',
+    conflicts: ['outraged riots']
+  },
+  'cult purged': {
+    text: 'a dark cult has been revealed and purged',
+    conflicts: ['cult attraction']
+  },
+  'diplomacy ties': { text: 'new diplomatic ties have been made' },
+  'beloved lord': {
+    text: 'a new lord has risen, loved by his people',
+    conflicts: ['heroic heir', 'leadership failure']
+  },
+  'farmland depletion': {
+    text: 'farmland is becoming worn-out and depleted',
+    conflicts: ['farmland expansion', 'bountiful harvest']
+  },
+  'vermin swarm': {
+    text: 'verminous monsters are swarming',
+    conflicts: ['monster vanquished', 'monster migration']
+  },
+  'rebel stirring': {
+    text: 'a rebel front is stirring up trouble',
+    conflicts: ['uprising crushed']
+  },
+  'internal backing': { text: 'an outside power is backing internal strife' },
+  'leadership failure': {
+    text: 'the leadership is inept and distracted',
+    conflicts: ['heroic heir', 'beloved lord']
+  },
+  'faith crisis': {
+    text: 'a religious reformer is breaking old compacts',
+    conflicts: ['faith strengthened']
+  },
+  'outraged riots': { text: 'an evil is provoking outraged rioting', conflicts: ['unrest calmed'] },
+  'cult attraction': {
+    text: 'dark cults are attracting the ambitious',
+    conflicts: ['cult purged']
+  },
+  'horde threat': { text: 'a blighted horde is threatening the borders' },
+  'ancient peril': { text: 'an ancient ruin has disgorged some peril' },
+  'artifact malcontents': {
+    text: 'malcontents have obtained a potent artifact',
+    conflicts: ['artifact aid']
+  },
+  'coffers bare': { text: 'luxuriance has left the nation’s coffers bare' },
+  'aristocratic push': { text: 'local aristocrats are pushing for independence' },
+  'mine depleted': {
+    text: 'an important mine has run out or been harmed',
+    conflicts: ['splendid discovery']
+  },
+  'sinister influence': {
+    text: 'a sinister favorite has infatuated the leader',
+    conflicts: ['minister deposed']
+  },
+  'hunger plague': {
+    text: 'a recurring plant plague is causing hunger',
+    conflicts: ['farmland expansion', 'bountiful harvest']
+  },
+  'monster migration': {
+    text: 'fearsome monsters are migrating into the land',
+    conflicts: ['vermin swarm', 'monster vanquished']
+  },
+  'war preparations': {
+    text: 'a rival is preparing for war or raiding',
+    conflicts: ['peace pact', "rival's downfall"]
+  },
+  'national exhaustion': { text: 'a grand national plan is exhausting the people' },
+  'savage grudge': {
+    text: 'a savage grudge has erupted between lords',
+    conflicts: ['peace forged']
+  }
+}
 
 export const REGION = {
   active: (region: Region.Region) => {
@@ -18,7 +142,7 @@ export const REGION = {
   biome: (region: Region.Region) => {
     const capital = REGION.capital(region)
     const cell = PROVINCE.cell(capital)
-    return BIOME.holdridge[cell.biome]
+    return CLIMATE.holdridge[cell.climate]
   },
   biomes: (region: Region.Region) => {
     const biomes = Object.entries(
@@ -28,7 +152,7 @@ export const REGION = {
             .map(c => window.world.cells[c])
             .map(cell => {
               cell
-              const biome = BIOME.holdridge[cell.biome]
+              const biome = CLIMATE.holdridge[cell.climate]
               return { name: biome.name, zone: cell.isMountains ? 'Mountains' : biome.latitude }
             })
         )
@@ -44,41 +168,14 @@ export const REGION = {
       .map(([k, v]) => {
         const counts = Object.entries(MATH.counter(v)).sort((a, b) => b[1] - a[1])
         const biomeSum = counts.reduce((a, b) => a + b[1], 0)
-        return `${decorateText({
-          label: `${titleCase(k)}`,
-          tooltip: counts.map(([k, v]) => `${k} (${formatters.percent(v / biomeSum)})`).join(', ')
-        })} (${formatters.percent(v.length / climateSum)})`
+        return `${TEXT.decorate({
+          label: `${TEXT.titleCase(k)}`,
+          tooltip: counts
+            .map(([k, v]) => `${k} (${TEXT.formatters.percent(v / biomeSum)})`)
+            .join(', ')
+        })} (${TEXT.formatters.percent(v.length / climateSum)})`
       })
       .join(', ')
-  },
-  claim: ({ nation, region }: Region.RegionClaim) => {
-    const current = HISTORY.current()
-    const provinces = REGION.provinces(region)
-    const domains = REGION.domains(region).filter(r => r.idx !== region.idx)
-    current.subjects[region.idx] = []
-    provinces
-      .filter(p => p.region === region.idx)
-      .forEach(p => PROVINCE.claim({ nation, province: p }))
-    domains.forEach(domain => {
-      provinces
-        .filter(p => p.region === domain.idx)
-        .forEach(p => PROVINCE.claim({ nation: domain, province: p }))
-    })
-    // leftovers
-    const candidates = domains.concat([nation])
-    provinces
-      .filter(p => PROVINCE.nation(p).idx === region.idx)
-      .forEach(province => {
-        const neighbors = PROVINCE.neighbors({ province, type: 'foreign' })
-        const best = candidates.reduce(
-          (selected, candidate) => {
-            const matches = neighbors.filter(n => PROVINCE.nation(n).idx === candidate.idx).length
-            return matches > selected.d ? { d: matches, region: candidate } : selected
-          },
-          { d: -Infinity, region: nation }
-        )
-        PROVINCE.claim({ province, nation: best.region })
-      })
   },
   environment: (region: Region.Region) => {
     const biomes = REGION.provinces(region)
@@ -87,7 +184,7 @@ export const REGION = {
           .map(c => window.world.cells[c])
           .map(cell => {
             cell
-            const biome = BIOME.holdridge[cell.biome]
+            const biome = CLIMATE.holdridge[cell.climate]
             return {
               climate: cell.isMountains ? undefined : biome.latitude,
               terrain: cell.isMountains ? 'Mountains' : biome.terrain
@@ -116,13 +213,13 @@ export const REGION = {
     return {
       climates: climates
         .map(([k, v]) => {
-          return `${titleCase(k)} (${formatters.percent(v / climateSum)})`
+          return `${TEXT.titleCase(k)} (${TEXT.formatters.percent(v / climateSum)})`
         })
         .slice(0, 2)
         .join(', '),
       terrain: terrain
         .map(([k, v]) => {
-          return `${titleCase(k)} (${formatters.percent(v / terrainSum)})`
+          return `${TEXT.titleCase(k)} (${TEXT.formatters.percent(v / terrainSum)})`
         })
         .slice(0, 3)
         .join(', ')
@@ -132,16 +229,16 @@ export const REGION = {
   capital: (region: Region.Region) => window.world.provinces[region.capital],
   climate: (region: Region.Region) => {
     const biome = REGION.biome(region)
-    return BIOME.zone[biome.latitude]
+    return CLIMATE.zone[biome.latitude]
   },
   domains: (region: Region.Region) => {
     return REGION.provinces(region)
       .filter(t => t.capital)
       .map(p => window.world.regions[p.region])
   },
-  find: ({ ref, regions, type }: Region.RegionFindParams) => {
+  find: ({ ref, group, type }: Region.RegionFindParams) => {
     const found = PROVINCE.find({
-      provinces: regions.map(neighbor => window.world.provinces[neighbor.capital]),
+      group: group.map(neighbor => window.world.provinces[neighbor.capital]),
       ref: window.world.provinces[ref.capital],
       type
     })
@@ -172,19 +269,18 @@ export const REGION = {
     return REGION.provinces(region).reduce((sum, province) => sum + province.population, 0)
   },
   provinces: (region: Region.Region) => {
-    if (HISTORY.active()) {
-      const current = HISTORY.current()
-      return current.subjects[region.idx].map(p => window.world.provinces[p])
-    }
     return region.provinces.map(p => window.world.provinces[p])
   },
   relations: (params: Region.RegionRelationsParams) =>
     Object.entries(params.region.relations)
       .filter(([_, relation]) => relation === params.target)
       .map(([r]) => window.world.regions[parseInt(r)]),
-  sort: ({ ref, regions, type }: Region.RegionSortParams) =>
+  religion: (region: Region.Region) => {
+    return window.world.religions[region.religion]
+  },
+  sort: ({ ref, group, type }: Region.RegionSortParams) =>
     PROVINCE.sort({
-      provinces: regions.map(neighbor => window.world.provinces[neighbor.capital]),
+      group: group.map(neighbor => window.world.provinces[neighbor.capital]),
       ref: window.world.provinces[ref.capital],
       type
     }).map(province => window.world.regions[province.region]),
@@ -228,10 +324,5 @@ export const REGION = {
     window.world.regions.push(region)
     return region
   },
-  strength: (region: Region.Region) => {
-    return (
-      REGION.provinces(region).reduce((sum, province) => sum + province.wealth, 0) *
-      (1 - region.exhaustion)
-    )
-  }
+  traits
 }

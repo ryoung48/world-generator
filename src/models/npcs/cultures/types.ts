@@ -1,7 +1,7 @@
 import { AllColors, ColorHue, Hue } from '../../utilities/color'
-import { TaggedEntity } from '../../utilities/entities/types'
 import { WeightedDistribution } from '../../utilities/math/types'
 import { Trait } from '../../utilities/traits/types'
+import { FindParams } from '../../utilities/types'
 import { Language } from '../languages/types'
 import { Gender } from '../types'
 
@@ -11,7 +11,6 @@ type CulturalValue =
   | 'ancestry'
   | 'arcana'
   | 'austerity'
-  | 'beasts'
   | 'bravery'
   | 'charity'
   | 'cultivation'
@@ -42,7 +41,6 @@ type CulturalValue =
   | 'purity'
   | 'revanchism'
   | 'sacrifice'
-  | 'seafaring'
   | 'stewardship'
   | 'stoicism'
   | 'subterfuge'
@@ -51,28 +49,34 @@ type CulturalValue =
   | 'wealth'
   | 'zeal'
 
-export type CultureValues = Record<CulturalValue, Trait<CulturalValue, { coastal?: boolean }>>
-
-export type CulturePerformances = Record<
-  string,
-  Trait<string, { seasonal?: boolean; wet?: boolean }>
+export type CultureValues = Record<
+  CulturalValue,
+  Trait<CulturalValue, { coastal?: boolean }> & { text: string }
 >
-export type CultureVisual = Record<
-  string,
-  Trait<string, { tribal?: boolean; wet?: boolean; coastal?: boolean }>
->
-
-export type CultureDishes = Record<string, Trait<string, { coastal?: boolean; wet?: boolean }>>
-export type CultureFlavors = Record<string, Trait<string, { coastal?: boolean }>>
 
 export type CultureTraditionsGood = Record<
   string,
-  Trait<string, { coastal?: boolean; seasonal?: boolean; wet?: boolean; tribal?: boolean }>
+  Trait<
+    string,
+    {
+      coastal?: boolean
+      seasonal?: boolean
+      wet?: boolean
+      tribal?: boolean
+      mountains?: boolean
+      plains?: boolean
+      desert?: boolean
+    }
+  > & { text: string }
 >
-export type CultureTraditionsBad = Record<string, Trait<string, { tribal?: boolean }>>
+export type CultureTraditionsBad = Record<
+  string,
+  Trait<string, { tribal?: boolean }> & { text: string }
+>
 
-export interface Culture extends TaggedEntity {
-  tag: 'culture'
+export interface Culture {
+  idx: number
+  name: string
   // neighboring cultures
   neighbors: number[]
   // origin region
@@ -121,11 +125,10 @@ export interface Culture extends TaggedEntity {
   lineage: Gender
   religion?: number
   values: CulturalValue[]
-  motifs?: string
   fashion: { color: Hue; scheme?: string }
-  cuisine?: { dish: string; flavor: string }
-  art?: { performance: string; visual: string }
   traditions?: { good: string; bad: string }
   // display colors (for maps)
   display: string
 }
+
+export type CultureSortParams = FindParams<Culture>

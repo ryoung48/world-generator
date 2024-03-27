@@ -399,6 +399,7 @@ injured guide, the only one familiar with the terrain
 * overgrown coastal road, leading to ruins
 * forsaken lighthouse, its beam long extinguished
 * moss-covered statue, arms outstretched to the sea
+* abandoned lighthouse, rumored to be cursed
 
 * venomous sea creatures, hiding in shallow waters
 * crumbling cliff edges, eroded by relentless waves
@@ -541,7 +542,7 @@ injured guide, the only one familiar with the terrain
 * sudden underground flooding, waters rising fast
 * ancient machinery, humming back to life
 
-I would like to create locations for the following ruin types:
+I would like to create rooms for the following ruin types:
 
 * massive bridge or tunnel
 * huge ancient dam
@@ -550,28 +551,32 @@ I would like to create locations for the following ruin types:
 * semi-ruined teleportation node
 * now-incomprehensible wreckage
 
-for each location:
-* do not give locations names, instead give them a description (e.g. "cozy tavern, with a large fireplace and a bar")
+for each room:
+* do not give rooms names, instead give them a description (e.g. "cozy tavern, with a large fireplace and a bar")
 * keep the writing style the same as the example, with at exactly one comma separating the short description from the longer description
-* locations descriptions should be no more than 60 characters and all lowercase; do not end with a period
-* make sure each location clearly relates to their respective ruin type
+* rooms descriptions should be no more than 60 characters and all lowercase; do not end with a period
+* make sure each room clearly relates to their respective ruin type
 * each description should follow with a short description of how it relates to the theme
-* remember, these locations are RUINS
+* remember, these rooms are RUINS
 
 output the result as markdown with the following format: 
 ```json
 {
     [ruin type]: {
-        "locations": { "name": string; "description": string; "explanation" string }[] // 12 per ruin type
+        "rooms": { 
+        "name": string; // three words at most
+        "description": string; 
+        "explanation" string 
+        }[] // 12 per ruin type
     }
 }
 ```
 
-an example location would look like:
+an example room would look like:
 ```json
 {
     "outsider fane to an alien god": {
-        "locations": [{
+        "rooms": [{
             "name": "shattered altar",
             "description": "once the focal point of worship",
             "explanation": "this was where the alien god was revered and offerings were placed"

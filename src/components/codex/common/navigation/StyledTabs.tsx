@@ -4,7 +4,7 @@ import { ReactNode, SyntheticEvent, useState } from 'react'
 
 const classes = {
   tabs: css`
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   `
 }
 
@@ -32,7 +32,7 @@ export function StyledTabs(props: {
         className={classes.tabs}
       >
         {tabs.map(({ label }, i) => (
-          <Tab key={i} value={label} label={label}></Tab>
+          <Tab sx={{ padding: 0 }} key={i} value={label} label={label}></Tab>
         ))}
       </Tabs>
       {tabs.map(({ content, label }, i) => (

@@ -1,0 +1,12 @@
+export type TempleIcon =
+  | 'temple_1'
+  | 'temple_2'
+  | 'temple_3'
+  | 'temple_4'
+  | 'temple_5'
+  | 'temple_6'
+  | 'temple_7'
+  | 'temple_8'
+  | 'temple_9'
+  | 'temple_10'
+  | 'temple_11'

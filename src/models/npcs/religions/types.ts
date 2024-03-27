@@ -1,4 +1,3 @@
-import { TaggedEntity } from '../../utilities/entities/types'
 import { Trait } from '../../utilities/traits/types'
 import { Culture } from '../cultures/types'
 
@@ -12,38 +11,33 @@ type ReligionTradition =
   | 'caste system'
   | 'celestial omens'
   | 'charitable'
-  | 'dire sacrifices'
-  | 'divine bloodlines'
+  | 'crusading'
+  | 'blood sacrifices'
   | 'doctrinal schools'
-  | 'dualistic'
-  | 'ecstatic trance'
   | 'entropic cult'
   | 'esoteric doctrine'
   | 'ethnic creed'
   | 'fertility rituals'
-  | 'funerary rites'
-  | 'geomancy'
   | 'green pact'
+  | 'heathen tax'
   | 'heavenly hymns'
   | 'holy grounds'
-  | 'initiation rites'
-  | 'lay clergy'
   | 'localized variation'
-  | 'marriage ceremonies'
   | 'martyrdom'
   | 'material luxuriance'
   | 'missionary zeal'
-  | 'monastic clergy'
   | 'mutilated clergy'
   | 'nature veneration'
+  | 'otherworldly patrons'
+  | 'pacifism'
   | 'penitential practices'
   | 'polarized genders'
   | 'polyamory'
   | 'purification rituals'
   | 'religious laws'
   | 'remnant faith'
-  | 'ritual scarification'
   | 'sacred pilgrimage'
+  | 'sky burials'
   | 'soul reincarnation'
   | 'spirit possession'
   | 'syncretic'
@@ -83,21 +77,23 @@ type ReligionTheme =
   | 'water'
   | 'wilderness'
 
-export interface Religion extends TaggedEntity {
-  tag: 'religion'
-  type: 'philosophy' | 'monotheistic' | 'polytheistic' | 'ancestor worship' | 'spirit worship'
+export interface Religion {
+  idx: number
+  name: string
+  type:
+    | 'monotheistic'
+    | 'polytheistic'
+    | 'ancestor worship'
+    | 'animistic'
+    | 'dualistic'
+    | 'nontheistic'
+    | 'atheistic'
   display: string
   cultures: number[]
-  leadership: 'hierocratic' | 'multicephalous' | 'autonomous'
+  leadership: string
   clergy: string
   themes: { tag: ReligionTheme; text: string }[]
   traditions: { tag: ReligionTradition; text: string }[]
-}
-
-export const religion__leadership = {
-  hierocratic: 'a single pontiff presides over a highly organized clerical hierarchy',
-  multicephalous: 'multiple pontiffs control different realms of the faith',
-  autonomous: 'there is no central authority, and each priest is independent of the others'
 }
 
 export interface ReligionSpawnParams {
@@ -117,7 +113,10 @@ export type ReligionTraditions = Record<
       major?: boolean
       coastal?: boolean
     }
-  >
+  > & { text: string }
 >
 
-export type ReligionThemes = Record<ReligionTheme, Trait<ReligionTheme, { coastal?: boolean }>>
+export type ReligionThemes = Record<
+  ReligionTheme,
+  Trait<ReligionTheme, { coastal?: boolean }> & { text: string }
+>

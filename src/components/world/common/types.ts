@@ -14,6 +14,20 @@ export interface CircleParams {
   }
 }
 
+export interface CrossParams {
+  point: Point
+  radius: number
+  ctx: CanvasRenderingContext2D
+  color: string
+  width: number
+}
+
+export interface DrawFeaturesParams {
+  point: Point
+  scale: number
+  ctx: CanvasRenderingContext2D
+}
+
 export type DrawPolygonParams = {
   points: Vertex[]
   direction: 'inner' | 'outer'
@@ -23,4 +37,12 @@ export type DrawPolygonParams = {
 export type DrawMapParams = {
   ctx: CanvasRenderingContext2D
   projection: GeoProjection
+}
+
+export type SettlementParams = {
+  ctx: CanvasRenderingContext2D
+  point: Point
+  scale: number
+  population: number
+  capital?: boolean
 }

@@ -1,7 +1,7 @@
 import { range } from 'd3'
 
 import { ARRAY } from '../../array'
-import { parseOutermostBrackets } from '../../text'
+import { TEXT } from '../../text'
 import { MATH } from '..'
 import { Directions } from '../points/types'
 import { WeightedDistribution } from '../types'
@@ -158,7 +158,7 @@ export class Dice {
     return DICE.id(this.random)
   }
   public spin(text: string): string {
-    return parseOutermostBrackets(text).reduce((spun, match) => {
+    return TEXT.parseOutermostBrackets(text).reduce((spun, match) => {
       return spun.replace(
         match,
         this.choice(this.spin(match.substring(1, match.length - 1)).split('|'))

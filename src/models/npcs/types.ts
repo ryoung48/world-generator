@@ -1,5 +1,4 @@
 import type { Province } from '../regions/provinces/types'
-import type { TaggedEntity } from '../utilities/entities/types'
 import type { Item } from './equipment/types'
 import type { Profession } from './professions/types'
 import type { Personality, Quirk } from './traits/types'
@@ -18,8 +17,9 @@ export type LifePhase = typeof lifeCycle[number]
 
 export type Gender = 'male' | 'female'
 
-export interface Actor extends TaggedEntity {
-  tag: 'actor'
+export interface Actor {
+  idx: number
+  name: string
   profession: { key: Profession; title: string }
   culture: number
   gender: Gender
@@ -33,9 +33,9 @@ export interface Actor extends TaggedEntity {
   outfit?: string
 }
 
-export interface NPCParams {
-  loc: Province
-  context?: { ref?: Actor; role: 'friend' | 'enemy' }
+export interface ActorSpawnParams {
+  place: Province['places'][number]
+  role?: 'friend' | 'enemy'
   profession?: Profession
   age?: Actor['age']
   gender?: Gender

@@ -1,9 +1,30 @@
 import { ENTITY } from '../../utilities/entities'
+import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
 import { CULTURE } from '../cultures'
 import { Culture } from '../cultures/types'
 import { LANGUAGE } from '../languages'
 import { Religion, ReligionThemes, ReligionTraditions } from './types'
+
+const clergy: Record<string, string> = {
+  'affluent clergy': 'wealthier individuals sustaining costly or demanding religious practices',
+  'hereditary clergy': 'selected from certain bloodlines or groups for faithful service',
+  'lay clergy': 'common believers recognized for their technical ability and moral standing',
+  'monastic clergy': 'individuals living apart from society, maintaining ritualistic distance',
+  'occult clergy': 'sorcerers who serve the faith as part of their magical studies',
+  'ordained clergy': 'experts in some aspect of the faith, trained in complex rites'
+}
+
+const leadership: Record<string, string> = {
+  autonomous:
+    "each holy person independently leads their sect's branch, attracting followers as they can",
+  multicephalous:
+    'multiple pontiffs, each with subordinate clergy, may cooperate or compete with others',
+  hierocratic: 'a sole pontiff oversees upper clergy and temple heads, who manage minor clergy',
+  congregational: 'independent congregations with clergy directed by parishioner consensus',
+  patronage: 'wealthy lay believers fund temples, directing clergy through financial influence',
+  egalitarian: 'no formal clergy; believers may assume teaching roles without distinct status'
+}
 
 const cultureCapital = (culture: Culture) => window.world.regions[culture.origin]
 
@@ -40,22 +61,16 @@ const traditions: ReligionTraditions = {
   charitable: {
     text: 'the clergy feels responsible for the well-being of the poor and hosts a plethora of charity programs, which provide food, shelter, and medical care'
   },
-  'dire sacrifices': {
-    text: 'the religion requires regular sacrifices and offerings in exchange for divine favor; the sacrifices are often gruesome and involve the slaughter of animals or even humans'
+  crusading: {
+    text: 'the religion is known for mandating holy wars to defend or spread the faith, often led by religious figures or zealots',
+    conflicts: ['pacifism']
   },
-  'divine bloodlines': {
-    text: 'the ruling class claims to be descended from the gods, and their divine heritage is used to justify their rule; the clergy is often closely related to the ruling families',
-    conflicts: ['underclass']
+  'blood sacrifices': {
+    text: 'the religion requires regular sacrifices and offerings in exchange for divine favor; the sacrifices are often gruesome and involve the slaughter of animals or even humans'
   },
   'doctrinal schools': {
     text: "the religion is divided into different schools of thought, each with its own interpretation of the faith's core tenets; these schools often compete with each other for influence",
     constraints: { tribal: false }
-  },
-  dualistic: {
-    text: 'the religion divides the world into two opposing forces, {good and evil|light and darkness|order and chaos}; adherents sometimes argue over the specific qualities and roles of each force '
-  },
-  'ecstatic trance': {
-    text: 'followers induce trance-like states, often through rhythmic music or the consumption of mind-altering substances, in order to experience direct communion with the divine or spiritual realms'
   },
   'entropic cult': {
     text: 'the religion believes that the world is slowly decaying and will eventually be destroyed; the faithful believe that they must perform good deeds to slow the decay',
@@ -71,18 +86,13 @@ const traditions: ReligionTraditions = {
   'fertility rituals': {
     text: 'the faithful engage in rituals and ceremonies aimed at promoting fertility and successful harvests; these rites often involve elaborate dances, feasting, and offerings to deities'
   },
-  'funerary rites': {
-    text: 'the faithful have elaborate rituals for the dead, including burial practices, mourning periods, and commemorative ceremonies',
-    conflicts: ['ancestral tombs']
-  },
-  geomancy: {
-    text: 'the religion incorporates the study and manipulation of earth energies; followers believe that certain locations possess unique spiritual power and can be harnessed for various purposes',
-    constraints: { tribal: true }
-  },
   'green pact': {
     text: 'the religion forbids the destruction of plant life and requires the followers to favor meat oriented diets; cannibalism is sometimes practiced in remote areas',
     conflicts: ['nature veneration'],
     constraints: { tribal: true }
+  },
+  'heathen tax': {
+    text: 'practitioners of minority religions are not allowed to serve in the military and are required to pay a special tax, leading to tensions and discrimination'
   },
   'heavenly hymns': {
     text: 'the faith is known for its beautiful and elaborate hymns, chants, and songs; the faithful believe that music is essential to understanding the divine'
@@ -90,17 +100,8 @@ const traditions: ReligionTraditions = {
   'holy grounds': {
     text: 'followers believe that certain locations are sacred and must be protected at all costs; these locations are often heavily fortified'
   },
-  'initiation rites': {
-    text: 'the religion requires a rigorous series of rituals and tests to be performed before one can be considered a full member of the faith'
-  },
-  'lay clergy': {
-    text: 'the religion allows common followers to serve as clergy, without the need for extensive training or initiation rites; this often results in a more egalitarian and inclusive religious community'
-  },
   'localized variation': {
     text: 'the faith has substantially different manifestations in different locations, each branch harmonized with local cultures and habits'
-  },
-  'marriage ceremonies': {
-    text: 'the faithful have elaborate rituals for marriage, often involving feasts, music, dancing, and other festivities'
   },
   martyrdom: {
     text: 'the followers of the religion venerate those who have died for their faith, and martyrdom is considered the highest form of devotion'
@@ -113,16 +114,19 @@ const traditions: ReligionTraditions = {
     constraints: { tribal: false },
     conflicts: ['ethnic creed']
   },
-  'monastic clergy': {
-    text: 'the clergy of the religion are required to live in isolated monasteries and devote their lives to prayer and contemplation; they are often credited with being holier than the secular clergy who work in the world',
-    constraints: { tribal: false }
-  },
   'mutilated clergy': {
     text: 'clergy of the faith are required to undergo some grievous mutilation or physical scarring as a sign of their devotion.'
   },
   'nature veneration': {
     text: 'followers hold a deep respect for the natural world and seek harmony with their surroundings; vegetarian diets are common among the faithful',
     conflicts: ['green pact']
+  },
+  'otherworldly patrons': {
+    text: 'the faith is the result of a pact with supernatural entities from different realms, these beings bestow blessings and guidance in exchange for devotion'
+  },
+  pacifism: {
+    text: 'this faith strictly advocates non-violence, teaching that all conflict is spiritually harmful and must be avoided',
+    conflicts: ['crusading', 'warrior monks']
   },
   'penitential practices': {
     text: 'the followers of the religion engage in acts of penance and self-mortification to atone for their sins and demonstrate their devotion',
@@ -146,12 +150,11 @@ const traditions: ReligionTraditions = {
     text: 'this faith is a dying religion; its last remaining followers are fiercely protective of their traditions and beliefs',
     constraints: { major: false }
   },
-  'ritual scarification': {
-    text: 'followers practice ritual scarification to mark important life events and demonstrate their devotion to the faith; the scars are often elaborate and intricate',
-    constraints: { tribal: true }
-  },
   'sacred pilgrimage': {
     text: 'the faithful of {region} undertake a dangerous pilgrimage to a holy site, enduring great hardship and risking their lives in the process'
+  },
+  'sky burials': {
+    text: 'the faithful practice aerial funerary rites, exposing bodies to the elements and birds, believing in a spiritual ascent'
   },
   'soul reincarnation': {
     text: 'followers believe that each soul is reborn after death based on their actions in life; the most virtuous souls eventually transcend the cycle of death and birth'
@@ -171,11 +174,12 @@ const traditions: ReligionTraditions = {
     constraints: { tribal: true }
   },
   underclass: {
-    text: 'there exists a local religion that is mostly practiced by poor, oppressed, marginalized, and unimportant; it serves {to comfort and console the downtrodden|as a weapon of revolt and change}',
-    conflicts: ['aristocratic', 'divine bloodlines', 'caste system']
+    text: 'the faith is mostly practiced by poor, oppressed, marginalized, and unimportant; it serves {to comfort and console the downtrodden|as a weapon of revolt and change}',
+    conflicts: ['aristocratic', 'caste system']
   },
   'warrior monks': {
-    text: 'the clergy of the religion are trained in both religious and martial arts, acting as protectors of the faith and their communities'
+    text: 'the clergy of the religion are trained in both religious and martial arts, acting as protectors of the faith and their communities',
+    conflicts: ['pacifism']
   },
   'venal clergy': {
     text: 'the religion is led by a corrupt and decadent clergy, who are more interested in worldly pleasures than spiritual matters',
@@ -215,16 +219,52 @@ const themes: ReligionThemes = {
 }
 
 export const RELIGION = {
+  describe: (religion: Religion) => {
+    const content = [
+      {
+        label: 'organization',
+        text: `${TEXT.decorate({
+          label: religion.leadership,
+          tooltip: leadership[religion.leadership]
+        })}${
+          religion.leadership === 'egalitarian'
+            ? ''
+            : `, ${TEXT.decorate({
+                label: religion.clergy,
+                tooltip: clergy[religion.clergy]
+              })}`
+        }`
+      },
+      {
+        label: 'themes',
+        text: religion.themes
+          .map(({ tag, text }) => TEXT.decorate({ label: tag, tooltip: text }))
+          .join(', ')
+      },
+      {
+        label: 'traditions',
+        text: religion.traditions
+          .map(({ tag, text }) => TEXT.decorate({ label: tag, tooltip: text }))
+          .join(', ')
+      }
+    ]
+    return {
+      title: religion.name,
+      subtitle: `(${religion.idx}) ${religion.type}`,
+      content
+    }
+  },
   spawn: () => {
     const { cultures } = window.world
     const regions = cultures.map(cultureCapital)
     ENTITY.partitionBFS({
       items: regions,
-      target: 5,
+      target: 3,
       neighbors: region => {
         const curr = window.world.cultures[region.culture]
         return curr.neighbors
           .map(c => window.world.cultures[c])
+          .filter(c => c !== undefined)
           .filter(
             culture =>
               CULTURE.civilized(culture) === CULTURE.civilized(curr) &&
@@ -237,32 +277,27 @@ export const RELIGION = {
       const culture = window.world.cultures[center.culture]
       const tribal = !CULTURE.civilized(culture)
       const religion: Religion = {
-        tag: 'religion',
         name: LANGUAGE.word.unique({ lang: culture.language, key: 'religion' }),
         idx: window.world.religions.length,
         type: window.dice.weightedChoice<Religion['type']>([
-          { w: tribal ? 0 : 1, v: 'philosophy' },
-          { w: 1, v: 'monotheistic' },
-          { w: 2, v: 'polytheistic' },
-          { w: 1, v: 'ancestor worship' },
-          { w: tribal ? 1 : 0, v: 'spirit worship' }
+          { w: tribal ? 0 : 0.5, v: 'atheistic' },
+          { w: tribal ? 0 : 1, v: 'nontheistic' },
+          { w: tribal ? 0.5 : 1, v: 'monotheistic' },
+          { w: 0.25, v: 'dualistic' },
+          { w: 1, v: 'polytheistic' },
+          { w: tribal ? 0.5 : 0, v: 'ancestor worship' },
+          { w: tribal ? 1 : 0, v: 'animistic' }
         ]),
         display: window.dice.color(),
         cultures: [],
         traditions: [],
         themes: [],
-        clergy: window.dice.spin(
-          '{restricted to {men|women}|no gender restrictions} (celibacy is {required|encouraged|optional})'
-        ),
-        leadership: window.dice.weightedChoice<Religion['leadership']>([
-          { w: 1, v: 'hierocratic' },
-          { w: 2, v: 'multicephalous' },
-          { w: 3, v: 'autonomous' }
-        ])
+        clergy: window.dice.choice(Object.keys(clergy)),
+        leadership: window.dice.choice(Object.keys(leadership))
       }
       window.world.religions.push(religion)
       const ancestral = religion.type === 'ancestor worship'
-      const spirits = religion.type === 'spirit worship'
+      const spirits = religion.type === 'animistic'
       const organized = religion.leadership !== 'autonomous'
       const coastal =
         group.filter(region => region.coastal).length >
@@ -274,6 +309,11 @@ export const RELIGION = {
         used: window.world.religions.map(r => r.traditions.map(({ tag }) => tag)).flat(),
         constraints: { tribal, ancestral, spirits, organized, major, coastal },
         samples: 2
+      }).map(trait => {
+        return {
+          tag: trait,
+          text: window.dice.spin(traditions[trait].text)
+        }
       })
       religion.themes = TRAIT.selection({
         available: themes,
@@ -281,6 +321,11 @@ export const RELIGION = {
         used: window.world.religions.map(r => r.themes.map(theme => theme.tag)).flat(),
         constraints: { coastal },
         samples: 3
+      }).map(trait => {
+        return {
+          tag: trait,
+          text: themes[trait].text
+        }
       })
       const cultures = group.map(region => window.world.cultures[region.culture])
       cultures.forEach(culture => {

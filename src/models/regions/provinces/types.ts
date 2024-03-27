@@ -1,12 +1,15 @@
+import { Cell } from '../../cells/types'
 import { Item } from '../../npcs/equipment/types'
-import type { Quest } from '../../quests/types'
+import { Camp } from '../places/camp/types'
+import { Hub } from '../places/hub/types'
+import { Ruin } from '../places/ruin/types'
+import { Village } from '../places/village/types'
+import { Wilderness } from '../places/wilderness/types'
+import { Region } from '../types'
+import type { RouteTypes } from '../../types'
 import { TaggedEntity } from '../../utilities/entities/types'
 import { WeightedDistribution } from '../../utilities/math/types'
-import { Cell } from '../../world/cells/types'
-import type { RouteTypes } from '../../world/types'
-import { Region } from '../types'
-import type { Hooks } from './hooks/types'
-import type { Hub } from './hubs/types'
+import { FindParams } from '../../utilities/types'
 
 export interface Demographics {
   common: WeightedDistribution<number>
@@ -21,14 +24,14 @@ export interface Province extends TaggedEntity {
   region: number
   capital: boolean
   population: number // total
-  hub: Hub
   conflict?: number
+  places: (Hub | Village | Camp | Ruin | Wilderness)[]
   // networking
   // sea|land -> { province -> route table (world) }
   trade: Record<RouteTypes, Record<string, number>>
   neighbors: number[]
   artery: number[]
-  wealth?: number
+  difficulty?: number
   // geography
   cells: { land: number[] }
   islands: Record<number, number>
@@ -36,38 +39,13 @@ export interface Province extends TaggedEntity {
   land: number
   ocean: number
   mountains: number
-  environment?: {
-    terrain:
-      | 'marsh'
-      | 'forest'
-      | 'plains'
-      | 'desert'
-      | 'hills'
-      | 'mountainous'
-      | 'jungle'
-      | 'tundra'
-      | 'glacier'
-      | 'subterranean'
-      | 'coastal'
-      | 'oceanic'
-    climate: 'tropical' | 'subtropical' | 'temperate' | 'subarctic' | 'arctic'
-  }
   // memory
-  weather?: { text: string; memory: number }
   demographics?: number
   market?: { goods: Item[]; memory: number }
-  // quests
-  hooks?: Hooks
-  quest?: Quest
-  actors: number[]
 }
 
 export type ProvinceNeighborParams = { province: Province; type?: 'local' | 'foreign' }
-export type ProvinceFindParams = {
-  provinces: Province[]
-  ref: Province
-  type: 'closest' | 'furthest'
-}
+export type ProvinceFindParams = FindParams<Province>
 export type ProvinceSortParams = ProvinceFindParams
 export type ProvinceFindOrderParams = { candidate: number; selected: number }
 export type ProvinceSpawnParams = { cell: Cell; capital?: boolean }

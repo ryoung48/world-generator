@@ -81,7 +81,7 @@ class Simplex {
   }
 }
 
-export default {
+export const SIMPLEX = {
   simplex: (res: number, params: NoiseParameters, seed: string) =>
     new Simplex(res, params, seed).billow(),
   sphere: (points: Point[], params: NoiseParameters, seed: string) =>

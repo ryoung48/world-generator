@@ -15,6 +15,6 @@ export const cssColors = {
     hard: '#630000',
     deadly: 'gray'
   },
-  subtitle: '#9e9e9e',
+  subtitle: '#8e8e8e',
   black: 'black'
 }

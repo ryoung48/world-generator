@@ -1,7 +1,7 @@
 import { Avatar } from '../../../components/context/types'
 import { Province } from '../../regions/provinces/types'
 import { dayMS } from '../../utilities/math/time'
-import { decorateText } from '../../utilities/text/decoration'
+import { TEXT } from '../../utilities/text'
 import { Item } from './types'
 
 export const armor = {
@@ -40,7 +40,7 @@ export const tiers = [
 ]
 
 export const decorateItem = (item: Item) =>
-  decorateText({
+  TEXT.decorate({
     label: item.name,
     tooltip: tiers[item.tier].name,
     underlineColor: tiers[item.tier].color

@@ -39,7 +39,16 @@ export const HERALDRY = {
             },
             backColor: COLOR.hslToHex(hue, 42, 28)
           }
-        : {})
+        : {
+            lightness: {
+              color: [0.2, 0.6],
+              grayscale: [0.3, 0.6]
+            },
+            saturation: {
+              color: 0.5,
+              grayscale: 0.0
+            }
+          })
     }
   },
   draw: (params: {

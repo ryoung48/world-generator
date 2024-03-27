@@ -1,11 +1,14 @@
+import { cssColors } from '../../components/theme/colors'
+import { PLACE } from '../regions/places'
 import { PROVINCE } from '../regions/provinces'
-import { decorateText } from '../utilities/text/decoration'
+import { TEXT } from '../utilities/text'
 import { Culture } from './cultures/types'
+import { decorateItem } from './equipment'
 import { LANGUAGE } from './languages'
 import { PROFESSION } from './professions'
 import { SPECIES } from './species'
 import { NPC_TRAITS } from './traits'
-import { Actor, Gender, LifePhase, NPCParams } from './types'
+import { Actor, ActorSpawnParams, Gender, LifePhase } from './types'
 
 const outfits = {
   poor: '{rugged|patched|faded}',
@@ -29,10 +32,12 @@ const assignAppearance = (params: { culture: Culture; age: LifePhase; gender: Ge
     SPECIES.lookup[species].traits.skin
   }`
   return `${
-    appearance.skin.texture ? decorateText({ label: skin, tooltip: appearance.skin.texture }) : skin
+    appearance.skin.texture
+      ? TEXT.decorate({ label: skin, tooltip: appearance.skin.texture })
+      : skin
   }${
     appearance.hair
-      ? `, ${decorateText({
+      ? `, ${TEXT.decorate({
           label: `${window.dice.choice(appearance.hair.textures)} ${
             age === 'old' ? 'gray' : window.dice.choice(appearance.hair.colors)
           } hair`,
@@ -48,11 +53,12 @@ const assignAppearance = (params: { culture: Culture; age: LifePhase; gender: Ge
 
 export const ACTOR = {
   gender: () => window.dice.choice<Gender>(['male', 'female']),
-  spawn: (params: NPCParams) => {
-    const { loc, context } = params
+  spawn: (params: ActorSpawnParams) => {
+    const { place, role } = params
     const gender = params?.gender ?? ACTOR.gender()
-    const profession = PROFESSION.spawn({ loc, gender, profession: params.profession })
-    const { common, native, foreign } = PROVINCE.demographics(loc)
+    const profession = PROFESSION.spawn({ place, gender, profession: params.profession })
+    const province = PLACE.province(place)
+    const { common, native, foreign } = PROVINCE.demographics(province)
     const cidx = window.dice.weightedChoice(
       params.foreign || profession.culture === 'foreign'
         ? foreign
@@ -63,7 +69,6 @@ export const ACTOR = {
     const culture = window.world.cultures[cidx]
     const age = params.age ?? profession.age
     const npc: Actor = {
-      tag: 'actor',
       idx: window.world.npcs.length,
       name: LANGUAGE.word.firstName(culture.language, gender),
       culture: culture.idx,
@@ -75,10 +80,33 @@ export const ACTOR = {
       appearance: assignAppearance({ culture, age, gender }),
       health: 1
     }
-    NPC_TRAITS.spawn({ loc, npc, context })
+    NPC_TRAITS.spawn({ place, npc, role })
     assignOutfit({ npc })
     window.world.npcs.push(npc)
-    loc.actors.push(npc.idx)
     return npc
+  },
+  describe: (actor: Actor) => {
+    const culture = window.world.cultures[actor.culture]
+    const content = [
+      { label: 'appearance', text: actor.appearance },
+      { label: 'personality', text: actor.personality.join(', ') },
+      { label: 'quirks', text: actor.quirks.map(({ text }) => text).join(', ') }
+    ]
+    if (actor.equipment)
+      content.push({
+        label: 'equipment',
+        text: Object.values(actor.equipment)
+          .map(item => decorateItem(item))
+          .join(', ')
+      })
+    return {
+      title: actor.name,
+      subtitle: `${actor.age}, ${actor.gender} ${TEXT.decorate({
+        label: culture.species,
+        tooltip: culture.name,
+        color: cssColors.subtitle
+      })}, ${actor.profession.title}`,
+      content
+    }
   }
 }

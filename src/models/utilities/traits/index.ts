@@ -7,11 +7,12 @@ export const TRAIT = {
     current,
     constraints,
     used,
-    samples = 1
+    samples = 1,
+    usagePenalty = (used: number) => 1 / 10 ** (used || 0)
   }: TraitSelectionArgs<Tags, Args>) => {
     const _used = MATH.counter(used ?? [])
     const _current = [...current]
-    const result: { tag: Tags; text: string }[] = []
+    const result: Tags[] = []
     while (result.length < samples) {
       const selected = window.dice.weightedChoice(
         Object.keys(available).map(_tag => {
@@ -23,17 +24,14 @@ export const TRAIT = {
             const _key = key as keyof Args
             return trait.constraints?.[_key] !== undefined && trait.constraints[_key] !== value
           })
+          const weight = trait.weight ?? 1
           return {
-            w: conflict || invalid ? 0 : 1 / (_used[_tag as Tags] * 10 || 1),
+            w: conflict || invalid ? 0 : usagePenalty(_used[_tag as Tags]) * weight,
             v: _tag as Tags
           }
         })
       )
-      const text = available[selected].text
-      result.push({
-        tag: selected,
-        text: window.dice.spin(typeof text === 'string' ? text : text?.(constraints) ?? selected)
-      })
+      result.push(selected)
       _current.push(selected)
     }
     return result

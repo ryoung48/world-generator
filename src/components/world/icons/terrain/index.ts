@@ -1,4 +1,4 @@
-import { CELL } from '../../../../models/world/cells'
+import { CELL } from '../../../../models/cells'
 import { MAP } from '../../common'
 import { ICON } from '..'
 import { IconDef } from '../types'
@@ -25,7 +25,7 @@ export const DRAW_TERRAIN = {
     const sortedIcons = window.world.display.icons
       .filter(m => {
         const cell = window.world.cells[m.cell]
-        const valid = !CELL.isHub(cell) || scale <= 20
+        const valid = !CELL.place(cell) || scale <= 20
         const province = window.world.provinces[cell.province]
         const contained = regions.has(province.region)
         const drawnLand = cell.isWater || lands.has(cell.landmark)

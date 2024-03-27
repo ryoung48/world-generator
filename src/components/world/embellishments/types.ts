@@ -1,12 +1,16 @@
+import { Place } from '../../../models/regions/places/types'
 import { Province } from '../../../models/regions/provinces/types'
-import { Region } from '../../../models/regions/types'
 import { Point } from '../../../models/utilities/math/points/types'
 import { DrawMapParams } from '../common/types'
-import { MapClimate, MapStyle } from '../types'
+import { CachedImages, MapStyle } from '../types'
 
 export type DrawLegendParams = {
   ctx: CanvasRenderingContext2D
-  items: { color: string; text: string }[]
+  items: {
+    color?: string
+    text: string
+    shape?: (_params: { ctx: CanvasRenderingContext2D; point: Point; scale: number }) => void
+  }[]
   alignment: 'right' | 'left'
   position: Point
   width?: number
@@ -14,10 +18,9 @@ export type DrawLegendParams = {
 
 export type DrawLegendsParams = {
   ctx: CanvasRenderingContext2D
-  climate: MapClimate
+  province: Province
   style: MapStyle
-  close: Region[]
-  far: Region[]
+  nationSet: Set<number>
 }
 
 export type HighlightLocationParams = {
@@ -27,4 +30,15 @@ export type HighlightLocationParams = {
   color: string
 }
 
-export type DrawAvatarParams = DrawMapParams & { province: Province }
+export type DrawAvatarParams = Omit<DrawMapParams, 'nationSet'> & {
+  place: Place
+}
+
+export type CultureLegendParams = {
+  nationSet: Set<number>
+  province: Province
+}
+
+export interface DrawCloudParams extends DrawMapParams {
+  cachedImages: CachedImages
+}

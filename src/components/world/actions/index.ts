@@ -37,7 +37,6 @@ export const ACTION = {
         ),
         q1 = versor.multiply(q0, versor.delta(v0, v1)),
         rotation = versor.rotation(q1)
-      // rotation[2] = 0
       projection.rotate(rotation)
       onMove({ rotation, scale })
     }

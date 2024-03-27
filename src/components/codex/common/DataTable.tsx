@@ -47,8 +47,9 @@ const classes = {
     }
   `,
   header: css`
-    font-size: 12px !important;
+    font-size: 10px !important;
     font-weight: 600 !important;
+    padding: 1px 16px 1px 16px !important;
   `,
   cell: css`
     padding: 1px 16px 1px 16px !important;
@@ -102,7 +103,10 @@ function ExpandableRow<T extends Object>(props: {
       </TableRow>
       {open && (
         <TableRow className={classes.expanded}>
-          <TableCell style={{ padding: 15 }} colSpan={headers.length + 1}>
+          <TableCell
+            style={{ padding: 15, lineHeight: 1.3, fontSize: 10 }}
+            colSpan={headers.length + 1}
+          >
             <Box>{expand.content(row)}</Box>
           </TableCell>
         </TableRow>
@@ -171,12 +175,12 @@ export function DataTable<T extends Object>(props: {
   )
 }
 
-export function DetailedTableRow(props: { title: ReactNode; subtitle: ReactNode; link?: boolean }) {
-  const { title, subtitle, link } = props
+export function DetailedTableRow(props: { title: ReactNode; subtitle: ReactNode }) {
+  const { title, subtitle } = props
   return (
-    <Grid container m={0} direction='column' style={{ lineHeight: link ? 1.3 : 1.2 }}>
+    <Grid container m={0} direction='column' style={{ lineHeight: 1.3, fontSize: 10 }}>
       <Grid item>{title}</Grid>
-      <Grid item className={style__subtitle} style={{ fontSize: 10 }}>
+      <Grid item className={style__subtitle} style={{ fontSize: 9 }}>
         {subtitle}
       </Grid>
     </Grid>

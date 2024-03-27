@@ -1,7 +1,7 @@
 import { range } from 'd3'
 
 import { PERFORMANCE } from '../../utilities/performance'
-import { titleCase } from '../../utilities/text'
+import { TEXT } from '../../utilities/text'
 import { Cluster, Language, PhonemeCatalog, STOP_CHAR, vowelRules } from './types'
 
 const aVowels = ['a', 'ä', 'å', 'á', 'â', 'ā']
@@ -366,7 +366,7 @@ const morpheme = PERFORMANCE.profile.decorate({
 export const CLUSTER = {
   endVowels,
   simple: (cluster: Cluster, src: Language, template: string) =>
-    titleCase(
+    TEXT.titleCase(
       syllable(cluster, src, { template, currWord: [], usedLongVowel: true, usedDigraph: true })
     ),
   spawn: (args: Partial<Cluster> & { src: Language }) => {
@@ -444,6 +444,6 @@ export const CLUSTER = {
       usedDigraph = updates.usedDigraph
     })
     // finalize word
-    return titleCase(word.flat().join(''))
+    return TEXT.titleCase(word.flat().join(''))
   }
 }

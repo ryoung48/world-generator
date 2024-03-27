@@ -169,28 +169,6 @@
 * ancient seal believed to bind a powerful {spirit|demon}
 * looted artifacts from a destroyed {temple|palace|city}
 
--- hooks --
-* A ship with valuable cargo has been wrecked. Find the wreck and retrieve the cargo.
-* A pirate crew has been raiding local trade routes. Find their hideout and stop them.
-* A slaver ring has kidnapped several villagers. Infiltrate their operation and free the slaves.
-* A dangerous spell scroll has been stolen from a wizard's tower. Recover the scroll before it is used for evil.
-* Track and hunt a dangerous beast that has been terrorizing the countryside.
-* A scholar needs you to find and translate an ancient text. Navigate the dangerous location it resides in.
-* Guide a priest or priestess to a sacred shrine while facing various trials along the way.
-* A merchant is traveling to the next town and needs protection from highwaymen.
-* Locals have been hearing strange noises from an old mansion. Investigate and put any restless spirits to rest.
-* A local healer needs rare herbs that can only be found in a dangerous location.
-* Bandits are harassing caravans on a critical trade route. Clear out the bandit camp.
-* A cult is trying to summon an otherworldly entity. Infiltrate the cult and prevent the summoning.
-* The creatures of a local forest have become aggressive due to a curse. Find the source of the curse and dispel it.
-* Caravans are disappearing along a certain route. Investigate and deal with whatever is causing this.
-* A sage asks you to retrieve a series of magical artifacts from various dangerous locations.
-* A local noble has been kidnapped. Track down the kidnappers and rescue the noble.
-* A ghost haunts a local noble's mansion. Figure out what the ghost wants and help it find peace.
-* A local noble has been cursed. Find the source of the curse and dispel it.
-* An alchemist needs rare ingredients for a powerful potion. Gather these ingredients from dangerous locales.
-* A knight under a curse seeks death in combat. Fight the knight, or find another way to lift the curse.
-
 * mobility: acrobatics, dodging hazards, moving quickly through difficult terrain
 * stealth: hiding, moving quietly, pickpocketing, lockpicking, disguises
 * investigation: searching locations, finding people, solving puzzles
@@ -270,7 +248,7 @@ perception:
 * hear the faint {whispering|rustling} of nearby hidden enemies
 * hear a distant cry for help masked by the ambient sounds of the area
 * notice signs of recent passage in the area
-* detect the subtle scent of a rare herb hidden among common foliage
+* [wilderness] detect the subtle scent of a rare herb hidden among common foliage
 * recognize an inconsistency in the pattern of a room's decorations
 * spot an almost invisible {mark|inscription} made on a {map|manuscript|artifact}
 * [urban] notice the slight discoloration of a drink, warning of poison
@@ -296,7 +274,7 @@ survival:
 * [wilderness] calm a spooked pack animal to prevent it from bolting
 * [wilderness] harvest and prepare a medicinal herb to counteract a venomous bite
 * [wilderness] calm and heal a wounded creature without causing more harm
-* diagnose a disease by recognizing its symptoms
+* [wilderness] diagnose a disease by recognizing its symptoms
 persuasion:
 * convince a hostile npc to {stand down|help you|spare the lives of innocents|reveal their employer's identity}
 * {trick|bribe|intimidate|charm} a reluctant npc into {revealing a secret|giving you an item|letting you pass|look the other way}
@@ -578,21 +556,3 @@ friendly informants: locals sympathetic to the quest's cause willingly provide d
 overworked guards: guards are overworked and often tired, leading to less vigilance and easier observation
 neglected defenses: the area's defenses are poorly maintained or neglected, presenting obvious weaknesses
 abandoned structures: nearby abandoned buildings provide discreet locations for extended observation
-
-craft a rescue quest for a grimdark fantasy RPG; keep in mind the following:
-* the quest patron must be an aristocrat
-* the quest will be split into stage; each stage will have its own challenges
-* the region is primarily tropical desert and the main hub is a small village
-* do not mention any places or npcs with proper names
-* the quest should have between 5 - 10 stages
-* the output should returned as markdown with the following format:
-```json
-{
-    "description": string; // this is the primary objective of the quest
-    "stages": {
-        "description": string; // what is the challenge that needs to be overcome during this stage?
-        "location": string; // description of the location where the stage takes place; should be 75-125 characters in length and should describe the appearance of the location (looks, sounds, smells, etc.)
-        "transition": string; // how does the completion of this stage transition into the next stage? (not needed if this is the last stage)
-    }[]
-}
-```

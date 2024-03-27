@@ -3,20 +3,16 @@ import { createContext, Dispatch, useContext } from 'react'
 import { itemPrice } from '../../models/npcs/equipment'
 import { adventurers } from '../../models/npcs/professions/adventurers'
 import { REGION } from '../../models/regions'
-import { PROVINCE } from '../../models/regions/provinces'
 import { DICE } from '../../models/utilities/math/dice'
-import { ViewActions, ViewState } from './types'
+import { LoadingParams, ViewActions, ViewState } from './types'
 
 const init: ViewState = {
   id: '',
-  region: 0,
-  province: 0,
-  journal: [],
+  loc: { province: 0, place: 0 },
   gps: { x: 0, y: 0, zoom: 0 },
   time: Date.now(),
   avatar: { pcs: [], cp: 0 },
   loading: false,
-  paused: true,
   view: 'nation'
 }
 
@@ -37,28 +33,17 @@ export const VIEW = {
         // always zoom to the same region on every load
         const region = DICE.swap(updated.id, () => window.dice.choice(REGION.nations))
         // set starting codex values
-        updated.region = region.idx
-        updated.province = region.capital
+        updated.loc = { province: region.capital, place: 0 }
         updated.time = window.world.date
         return updated
       }
       case 'transition': {
-        const { tag, idx, zoom } = action.payload
+        const { tag, province, place, zoom } = action.payload
+        const target = window.world.provinces[province].places[place]
         const updated = { ...state }
-        if (tag === 'nation') {
-          const target = window.world.regions[idx]
-          const capital = window.world.provinces[target.capital]
-          updated.province = target.capital
-          updated.region = target.idx
-          updated.view = 'nation'
-          if (zoom) updated.gps = { x: capital.hub.x, y: capital.hub.y, zoom: 10 }
-        } else if (tag === 'province') {
-          const target = window.world.provinces[idx]
-          updated.province = target.idx
-          updated.region = PROVINCE.nation(target).idx
-          updated.view = 'province'
-          if (zoom) updated.gps = { x: target.hub.x, y: target.hub.y, zoom: 50 }
-        }
+        updated.loc = { province, place }
+        updated.view = tag
+        if (zoom) updated.gps = { x: target.x, y: target.y, zoom: tag === 'nation' ? 10 : 50 }
         updated.time = window.world.date
         return updated
       }
@@ -66,7 +51,7 @@ export const VIEW = {
         return {
           ...state,
           avatar: {
-            pcs: adventurers({ count: 5, province: state.province }),
+            pcs: adventurers({ count: 5, province: state.loc.province }),
             cp: 50
           }
         }
@@ -79,21 +64,20 @@ export const VIEW = {
       case 'loading': {
         return { ...state, loading: action.payload }
       }
-      case 'refresh journal': {
-        return { ...state, journal: window.world.quests.map(quest => quest.idx) }
-      }
       case 'purchase': {
         const { item, npc } = action.payload
-        const loc = window.world.provinces[state.province]
+        const loc = window.world.provinces[state.loc.province]
         loc.market.goods = loc.market.goods.filter(g => g !== item)
         const { equipment } = npc
         const old = equipment.findIndex(e => e.slot === item.slot)
         equipment.splice(old, 1, item)
         return { ...state, avatar: { ...state.avatar, cp: state.avatar.cp - itemPrice(item) } }
       }
-      case 'toggle pause': {
-        return { ...state, paused: !state.paused }
-      }
     }
+  },
+  loading: async ({ action, dispatch }: LoadingParams) => {
+    dispatch({ type: 'loading', payload: true })
+    await action()
+    dispatch({ type: 'loading', payload: false })
   }
 }

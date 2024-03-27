@@ -1,4 +1,4 @@
-import { properList } from '../text'
+import { TEXT } from '../text'
 
 export const months = [
   'January',
@@ -57,7 +57,7 @@ export const describeDuration = (time: number) => {
   if (days > 0) duration.push(`${days} day${days === 1 ? '' : 's'}`)
   if (hours > 0) duration.push(`${hours} hour${hours === 1 ? '' : 's'}`)
   if (minutes > 0) duration.push(`${minutes} minute${minutes === 1 ? '' : 's'}`)
-  return properList(duration, 'and')
+  return TEXT.formatters.list(duration, 'and')
 }
 
 export function delay(ms: number) {

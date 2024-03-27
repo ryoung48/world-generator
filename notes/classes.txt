@@ -57,10 +57,10 @@
 * [1] vanguard: charge into battle, knocking aside enemies in your path
 * [1] bulwark: take a defensive stance, increasing your defenses for a short time
 * [1] tactician: shout out orders, increasing the damage and speed of nearby allies
-* [2] executioner: deal a massive damage to an enemy that is near death
+* [2] executioner: deal massive damage to an enemy that is near death
 * [2] last stand: stand back up after being knocked out with temporary defensive bonuses
 * [2] sunder armor: your attacks have a small chance to weaken an enemy's armor
-* [2] sentinel: protect a nearby ally, intercepting attacks and reducing damage taken
+* [2] sentinel: protect a nearby allies, intercepting attacks and reducing damage taken
 
 -- monk --
 * [1] stunning blow: A head-targeting strike designed to disrupt an enemies' ability to react, stunning them

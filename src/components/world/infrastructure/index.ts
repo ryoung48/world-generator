@@ -1,7 +1,8 @@
 import * as jdenticon from 'jdenticon'
 
+import { PLACE } from '../../../models/regions/places'
 import { PROVINCE } from '../../../models/regions/provinces'
-import { RouteTypes, World } from '../../../models/world/types'
+import { RouteTypes, World } from '../../../models/types'
 import { HERALDRY } from '../../codex/common/Heraldry'
 import { fonts } from '../../theme/fonts'
 import { MAP } from '../common'
@@ -24,7 +25,7 @@ const regionalPath =
   }
 
 export const DRAW_INFRASTRUCTURE = {
-  provinces: ({ ctx, projection, nationSet, style }: DrawInfraParams) => {
+  provinces: ({ ctx, projection, nationSet }: DrawInfraParams) => {
     const scale = MAP.scale.derived(projection)
     ctx.textAlign = 'center'
     ctx.shadowColor = 'white'
@@ -32,79 +33,49 @@ export const DRAW_INFRASTRUCTURE = {
     ctx.strokeStyle = 'black'
     const base = 1
     ctx.lineWidth = 0.05 * scale
-    const provinces = window.world.provinces
-      .filter(province => nationSet.has(PROVINCE.nation(province).idx))
-      .map(province => {
-        const geojson = MAP.geojson.point(province.hub)
-        geojson.properties = { idx: province.idx }
-        return geojson
-      })
+    const provinces = window.world.provinces.map(province => {
+      const geojson = MAP.geojson.point(PROVINCE.hub(province))
+      geojson.properties = { idx: province.idx }
+      return geojson
+    })
     const radius = 0.2 * scale
-    // capital provinces
-    const capitals = provinces.filter(p =>
-      PROVINCE.isCapital(window.world.provinces[p.properties.idx])
-    )
     const pathGen = MAP.path.linear(projection).pointRadius(radius * 2)
-    ctx.stroke(
-      new Path2D(
-        pathGen(
-          MAP.geojson.features(
-            capitals.filter(
-              p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).desolate
-            )
-          )
-        )
-      )
-    )
-    // regular provinces
-    pathGen.pointRadius(radius)
-    ctx.fill(
-      new Path2D(
-        pathGen(
-          MAP.geojson.features(
-            provinces.filter(
-              p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).desolate
-            )
-          )
-        )
-      )
-    )
     const offset = 0.25 * scale
     provinces
       .filter(p => !PROVINCE.nation(window.world.provinces[p.properties.idx]).desolate)
       .forEach(province => {
-        const center = pathGen.centroid(MAP.geojson.features([province]))
         const loc = window.world.provinces[province.properties.idx]
-        const capital = PROVINCE.isCapital(loc)
-        ctx.font = 1 * scale * base + 'px ' + fontFamily
-        ctx.fillText(loc.name, center[0], center[1] - offset * (capital ? 4.5 : 4))
-        ctx.font = 0.5 * scale * base + 'px ' + fontFamily
-        ctx.fillText(loc.hub.type, center[0], center[1] - offset * (capital ? 2.5 : 1.5))
+        if (nationSet.has(PROVINCE.nation(loc).idx)) {
+          const center = pathGen.centroid(MAP.geojson.features([province]))
+          const capital = PROVINCE.isCapital(loc)
+          const hub = PROVINCE.hub(loc)
+          MAP.settlement({
+            ctx,
+            point: { x: center[0], y: center[1] },
+            scale,
+            capital,
+            population: hub.population
+          })
+          const city = hub.population > 10e3
+          ctx.fillStyle = 'black'
+          ctx.font = (city ? 1 : 0.8) * scale * base + 'px ' + fontFamily
+          ctx.fillText(hub.name, center[0], center[1] - offset * (city ? 2.25 : 2))
+        }
       })
     // region titles
     if (scale > MAP.breakpoints.regional) return
-    const cultureView = style === 'Cultures'
     provinces
       .filter(province => window.world.provinces[province.properties.idx].capital)
       .forEach(capital => {
         const loc = window.world.provinces[capital.properties.idx]
         const nation = PROVINCE.nation(loc)
         const region = PROVINCE.region(loc)
-        const culture = window.world.cultures[region.culture]
         const center = pathGen.centroid(MAP.geojson.features([capital]))
-        const major =
-          style !== 'Cultures'
-            ? loc.idx === nation.capital && !nation.desolate
-            : culture.origin === region.idx
+        const major = loc.idx === nation.capital && !nation.desolate
         if (major) {
-          ctx.font = `${(cultureView ? 8 : 5) * scale * base}px ${fontFamily}`
+          ctx.font = `${5 * scale * base}px ${fontFamily}`
           ctx.fillStyle = 'black'
-          ctx.fillText(
-            cultureView ? culture.name : region.name,
-            center[0],
-            center[1] + offset * 20 * base
-          )
-          if (cultureView) return
+          ctx.fillText(region.name, center[0], center[1] + offset * 20 * base)
           ctx.save()
           const tempCanvas = document.createElement('canvas')
           const initialSize = 100
@@ -133,22 +104,63 @@ export const DRAW_INFRASTRUCTURE = {
             iconSize
           )
           ctx.restore()
-        } else if (!cultureView && !nation.desolate) {
+        } else if (!nation.desolate) {
           ctx.font = `${4.5 * scale * base}px ${fontFamily}`
           ctx.fillStyle = 'rgba(0,0,0,0.5)'
           ctx.fillText(region.name, center[0], center[1] + offset * 18)
         }
       })
   },
+  places: ({ ctx, projection, nationSet }: Omit<DrawInfraParams, 'style'>) => {
+    const scale = MAP.scale.derived(projection)
+    if (scale <= MAP.breakpoints.regional) return
+    ctx.textAlign = 'center'
+    ctx.shadowColor = 'white'
+    ctx.fillStyle = 'black'
+    ctx.strokeStyle = 'black'
+    const mod = 0.5
+    ctx.lineWidth = 0.05 * scale * mod
+    const places = window.world.provinces
+      .filter(province => nationSet.has(PROVINCE.nation(province).idx))
+      .map(province => province.places)
+      .flat()
+      .map(place => {
+        const geojson = MAP.geojson.point(place)
+        const province = PLACE.province(place)
+        geojson.properties = { idx: place.idx, province: province.idx }
+        return geojson
+      })
+    const pathGen = MAP.path.linear(projection)
+    const offset = 0.3 * scale
+    const base = 1 * mod
+    places.forEach(_place => {
+      const center = pathGen.centroid(MAP.geojson.features([_place]))
+      const province = window.world.provinces[_place.properties.province]
+      const loc = province.places[_place.properties.idx]
+      if (loc.type === 'hub') return
+      if (loc.type === 'ruin') {
+        MAP.ruins({ point: { x: center[0], y: center[1] }, scale, ctx })
+      } else if (loc.type === 'wilderness') {
+        MAP.wilderness({ point: { x: center[0], y: center[1] }, scale, ctx })
+      } else if (loc.type.includes('camp')) {
+        MAP.camp({ point: { x: center[0], y: center[1] }, scale, ctx })
+      } else {
+        MAP.rural({ point: { x: center[0], y: center[1] }, scale, ctx })
+      }
+      ctx.fillStyle = 'black'
+      ctx.font = 1 * scale * base + 'px ' + fontFamily
+      ctx.fillText(loc.name ?? 'Point', center[0], center[1] - offset * 2.1 * mod)
+    })
+  },
   roads: ({ ctx, projection, nationSet }: Omit<DrawInfraParams, 'style'>) => {
     const scale = MAP.scale.derived(projection)
-    const path = MAP.path.linear(projection)
+    const path = MAP.path.curve(projection)
     const { routes } = window.world.display
     ctx.save()
     const mod = scale > MAP.breakpoints.regional ? 0.5 : 1
-    ctx.lineCap = 'square'
+    ctx.lineCap = 'butt'
     let width = 0.25 * scale * mod
-    let dashes = [1 * scale * mod, 1 * scale * mod]
+    let dashes = [1 * scale * mod, 0.5 * scale * mod]
     ctx.lineWidth = width
     ctx.setLineDash(dashes)
     const roadFilter = regionalPath(nationSet)

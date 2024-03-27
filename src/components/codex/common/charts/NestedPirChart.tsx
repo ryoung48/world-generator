@@ -2,7 +2,7 @@ import { Button, Grid } from '@mui/material'
 import { useState } from 'react'
 import { Pie } from 'react-chartjs-2'
 
-import { pieChart__construct } from '../../common/charts'
+import { CHARTS } from '../../common/charts'
 import { NestedPieData, PieTooltip } from './types'
 
 type CustomTitle = (_node: NestedPieData) => string
@@ -24,7 +24,7 @@ export function NestedPieChart(props: {
     setContext([])
     return <span>nothing here :)</span>
   }
-  const pieData = pieChart__construct(current.children)
+  const pieData = CHARTS.pie.data(current.children)
   return (
     <Grid container justifyContent='center'>
       <Grid item xs={12} sx={{ textAlign: 'center' }}>

@@ -1,4 +1,4 @@
-import { ClimateZone } from '../../world/climate/types'
+import { ClimateZone } from '../../cells/climate/types'
 import { Culture } from '../cultures/types'
 
 export const species__ages = {

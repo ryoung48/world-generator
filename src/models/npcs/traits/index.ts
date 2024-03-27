@@ -1,16 +1,15 @@
 import { range } from 'd3'
 
 import { PROVINCE } from '../../regions/provinces'
-import { HUB } from '../../regions/provinces/hubs'
-import { Province } from '../../regions/provinces/types'
-import { decorateText } from '../../utilities/text/decoration'
+import { PLACE } from '../../regions/places'
+import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
 import { PROFESSION } from '../professions'
 import { SPECIES } from '../species'
-import { Actor, NPCParams } from '../types'
-import { Personality, Quirk, QuirkDetails } from './types'
+import { ActorSpawnParams } from '../types'
+import { Personality, Quirk, QuirkDetails, QuirkParams } from './types'
 
-const rollPersonality = (params: { count: number; role?: NPCParams['context']['role'] }) => {
+const rollPersonality = (params: { count: number; role?: ActorSpawnParams['role'] }) => {
   const { count, role } = params
   const preference =
     role === 'friend'
@@ -160,6 +159,9 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   'blithe idealist': {
     tooltip: 'has grand ambitions and is willing to sacrifice everything to achieve it'
+  },
+  blighted: {
+    tooltip: 'shows subtle signs of sorcerous mutations'
   },
   blunt: {
     constraints: { compassionate: false },
@@ -588,7 +590,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   provincial: {
     conflicts: ['traveler', 'homesick'],
-    constraints: { foreigner: false },
+    constraints: { foreigner: false, seafarer: false },
     tooltip: 'has never left the province'
   },
   'religious patron': {
@@ -747,23 +749,16 @@ const quirks: Record<Quirk, QuirkDetails> = {
   }
 }
 
-const rollQuirks = ({
-  loc,
-  npc,
-  context
-}: {
-  loc: Province
-  npc: Actor
-  context?: NPCParams['context']
-}) => {
+const rollQuirks = ({ place, npc, role }: QuirkParams) => {
   const { personality, culture, age } = npc
   const { key: profession } = npc.profession
-  const { local, ruling } = PROVINCE.cultures(loc)
+  const province = PLACE.province(place)
+  const { local, ruling } = PROVINCE.cultures(province)
   const { appearance } = window.world.cultures[culture]
   const species = SPECIES.lookup[window.world.cultures[culture].species]
   const { strata, official, quirks: _quirks = {}, martial } = PROFESSION.lookup[profession]
   const params = {
-    coastal: window.world.cells[loc.hub.cell].beach,
+    coastal: window.world.cells[place.cell].beach,
     foreigner: local.culture !== culture && ruling.culture !== culture,
     callous: personality.some(trait => trait === 'callous'),
     compassionate: personality.some(trait => trait === 'compassionate'),
@@ -796,48 +791,51 @@ const rollQuirks = ({
     poor: strata === 'lower',
     comfortable: strata === 'middle',
     rich: strata === 'upper',
-    enemy: context?.['role'] === 'enemy',
+    enemy: role === 'enemy',
     artistic: profession.includes('artist'),
     academic: profession.includes('scholar') || profession.includes('lawyer'),
     musician: profession.includes('musician'),
     seafarer: profession.includes('sailor') || profession.includes('ship captain'),
     chef: profession.includes('chef'),
     poet: profession.includes('poet'),
-    criminal: profession.includes('criminal'),
+    criminal: profession.includes('criminal') || profession.includes('crime'),
     aristocrat: profession.includes('aristocrat'),
     clergy: profession.includes('priest'),
     merchant: profession.includes('merchant'),
     thin: window.world.cultures[culture].species === 'elf',
-    urban: !HUB.village(loc.hub)
+    urban: place.type === 'hub'
   }
   const available = { ...quirks, ..._quirks }
+  const actors = PROFESSION.actors(place)
   const selected = TRAIT.selection({
     available,
     current: [],
-    used: loc.actors.map(i => window.world.npcs[i].quirks.map(({ tag }) => tag)).flat(),
+    used: actors.map(actor => actor.quirks.map(({ tag }) => tag)).flat(),
     constraints: params,
     samples: 2
   })
   return selected.map(quirk => {
-    const details = available[quirk.tag]
+    const details = available[quirk]
+    const text = window.dice.spin(
+      typeof details.text === 'string' ? details.text : details.text?.(params) ?? quirk
+    )
     return {
-      ...quirk,
+      tag: quirk,
       text: details.tooltip
-        ? decorateText({
-            label: quirk.text,
+        ? TEXT.decorate({
+            label: text,
             tooltip: window.dice.spin(
               typeof details.tooltip === 'string' ? details.tooltip : details.tooltip(params)
             )
           })
-        : quirk.text
+        : text
     }
   })
 }
 
 export const NPC_TRAITS = {
-  spawn: (params: { loc: Province; npc: Actor; context?: NPCParams['context'] }) => {
-    const { npc, loc, context } = params
-    npc.personality = rollPersonality({ count: 3, role: context?.role })
-    npc.quirks = rollQuirks({ npc, loc, context })
+  spawn: ({ npc, place, role }: QuirkParams) => {
+    npc.personality = rollPersonality({ count: 3, role })
+    npc.quirks = rollQuirks({ npc, place, role })
   }
 }

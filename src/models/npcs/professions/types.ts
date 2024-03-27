@@ -1,11 +1,11 @@
 import { Province } from '../../regions/provinces/types'
-import { QuirkParams } from '../traits/types'
+import { Trait } from '../../utilities/traits/types'
+import { QuirkConstraints } from '../traits/types'
 import { Gender } from '../types'
 
 const _professions = [
   'custom',
   // tribal
-  'chieftain',
   'shaman',
   'tribal warrior',
   'tribal elder',
@@ -25,15 +25,6 @@ const _professions = [
   'quartermaster (military)',
   'soldier (military)',
   'officer (military)',
-  // colonial
-  'governor (colonial)',
-  'settler (colonial)',
-  'sailor (colonial)',
-  'merchant (colonial)',
-  'ship captain (colonial)',
-  'guard (colonial)',
-  'artisan (colonial)',
-  'innkeeper (colonial)',
   // lower
   'peasant',
   'village elder',
@@ -111,22 +102,25 @@ const _professions = [
   'suzerain'
 ] as const
 export type Profession = typeof _professions[number]
-export type ProfessionDetails = {
+export interface ProfessionDetails
+  extends Trait<
+    Profession,
+    { war?: boolean; capital?: boolean; kingdom?: boolean; leadership?: boolean; coastal?: boolean }
+  > {
   title?:
     | string
     | { male: string; female: string }
-    | ((_params: { loc: Province; gender: Gender }) => string)
+    | ((_params: { province: Province; gender: Gender }) => string)
   strata: 'lower' | 'middle' | 'upper'
   lifestyle: 'poor' | 'modest' | 'comfortable' | 'prosperous' | 'rich'
-  coastal?: boolean
   official?: boolean
   martial?: boolean
-  leadership?: boolean
-  kingdom?: boolean
   culture?: 'foreign' | 'native'
   age?: 'novice' | 'veteran' | 'master'
   unique?: boolean
-  war?: boolean
-  capital?: boolean
-  quirks?: Record<string, { text?: string; constraints?: Partial<QuirkParams>; tooltip?: string }>
+
+  quirks?: Record<
+    string,
+    { text?: string; constraints?: Partial<QuirkConstraints>; tooltip?: string }
+  >
 }

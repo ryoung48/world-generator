@@ -1,6 +1,5 @@
-import { AppBar, Box, Button, Grid, IconButton, Toolbar, Typography } from '@mui/material'
+import { AppBar, Box, Button, Grid, Toolbar, Typography } from '@mui/material'
 import dayjs from 'dayjs'
-import { Pause, Play } from 'mdi-material-ui'
 import { Dispatch, SetStateAction } from 'react'
 
 import { ARRAY } from '../../models/utilities/array'
@@ -41,7 +40,7 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
               </Grid>
             </Grid>
             <Grid item xs={3} container justifyContent='end' alignContent='center'>
-              <Grid item px={2}>
+              {/* <Grid item px={2}>
                 <IconButton
                   color='primary'
                   disabled={!state.id}
@@ -54,7 +53,7 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
                     <Play fontSize='inherit'></Play>
                   )}
                 </IconButton>
-              </Grid>
+              </Grid> */}
               <Grid item px={1}>
                 <Button
                   onClick={() => {

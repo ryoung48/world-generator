@@ -5,15 +5,13 @@ import { Backdrop, CircularProgress, Grid, ThemeProvider } from '@mui/material'
 import { Container } from '@mui/system'
 import { useReducer, useState } from 'react'
 
-import { NationView } from '../codex/nations'
-import { ProvinceView } from '../codex/provinces'
 import { VIEW, ViewContext } from '../context'
+import { StatisticsView } from '../statistics'
 import { theme } from '../theme'
 import { WorldMap } from '../world'
 import { Footer } from './Footer'
 import { Header } from './Header'
 import { Landing } from './Landing'
-import { PerformanceView } from './Performance'
 
 function App() {
   const [state, dispatch] = useReducer(VIEW.reducer, VIEW.init)
@@ -26,16 +24,12 @@ function App() {
           {!state?.id && <Landing></Landing>}
           {state?.id && !stats && (
             <Grid container justifyContent='center' pt={12} spacing={3}>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <WorldMap></WorldMap>
-              </Grid>
-              <Grid item xs={5}>
-                {state.view === 'nation' && <NationView></NationView>}
-                {state.view === 'province' && <ProvinceView></ProvinceView>}
               </Grid>
             </Grid>
           )}
-          {state?.id && stats && <PerformanceView></PerformanceView>}
+          {state?.id && stats && <StatisticsView></StatisticsView>}
           <Backdrop
             sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }}
             open={state.loading}

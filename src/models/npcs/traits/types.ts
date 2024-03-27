@@ -1,3 +1,5 @@
+import type { Actor, ActorSpawnParams } from '../types'
+
 export type Personality =
   | 'compassionate'
   | 'callous'
@@ -47,6 +49,7 @@ export type Quirk =
   | 'blackmailer'
   | 'black sheep'
   | 'blithe idealist'
+  | 'blighted'
   | 'blunt'
   | 'brawler'
   | 'brilliant'
@@ -191,7 +194,7 @@ export type Quirk =
   | 'well-read'
   | 'xenophobic'
 
-export interface QuirkParams {
+export interface QuirkConstraints {
   compassionate: boolean
   callous: boolean
   generous: boolean
@@ -236,8 +239,10 @@ export interface QuirkParams {
 }
 
 export type QuirkDetails = {
-  text?: string | ((_params: Partial<QuirkParams>) => string)
-  tooltip?: string | ((_params: Partial<QuirkParams>) => string)
-  constraints?: Partial<QuirkParams>
+  text?: string | ((_params: Partial<QuirkConstraints>) => string)
+  tooltip?: string | ((_params: Partial<QuirkConstraints>) => string)
+  constraints?: Partial<QuirkConstraints>
   conflicts?: Quirk[]
 }
+
+export type QuirkParams = { npc: Actor } & Pick<ActorSpawnParams, 'place' | 'role'>

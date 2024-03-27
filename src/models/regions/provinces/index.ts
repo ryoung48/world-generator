@@ -1,15 +1,15 @@
 import PriorityQueue from 'js-priority-queue'
 
-import { HISTORY } from '../../history'
+import { WORLD } from '../..'
+import { CELL } from '../../cells'
 import { ARRAY } from '../../utilities/array'
 import { MATH } from '../../utilities/math'
 import { POINT } from '../../utilities/math/points'
 import { dayMS } from '../../utilities/math/time'
 import { PERFORMANCE } from '../../utilities/performance'
-import { decorateText } from '../../utilities/text/decoration'
-import { WORLD } from '../../world'
-import { BIOME } from '../../world/climate'
-import { HUB } from './hubs'
+import { TEXT } from '../../utilities/text'
+import { HUB } from '../places/hub'
+import { Hub } from '../places/hub/types'
 import * as Province from './types'
 
 const distanceTo = (c1: Province.Province, c2: Province.Province) => {
@@ -35,7 +35,7 @@ export const PROVINCE = {
       if (!visited[curr.idx]) {
         visited[curr.idx] = true
         const neighbors = PROVINCE.sort({
-          provinces: PROVINCE.neighbors({ province: curr, type: 'local' }),
+          group: PROVINCE.neighbors({ province: curr, type: 'local' }),
           ref: curr,
           type: 'closest'
         }).filter(n => !PROVINCE.connected(n))
@@ -46,37 +46,18 @@ export const PROVINCE = {
       }
     }
   },
-  biome: (province: Province.Province) => {
+  climate: (province: Province.Province) => {
     const cell = PROVINCE.cell(province)
-    return BIOME.holdridge[cell.biome]
+    return CELL.climate(cell)
   },
-  biomes: (province: Province.Province) =>
-    province.cells.land.map(c => window.world.cells[c].biome),
+  coastal: (province: Province.Province) => {
+    return PROVINCE.hub(province).coastal
+  },
   isBorder: (province: Province.Province) => {
     const neighbors = province.neighbors.map(n => window.world.provinces[n])
     return neighbors.some(n => PROVINCE.nation(n) !== PROVINCE.nation(province))
   },
-  cell: (province: Province.Province) => window.world.cells[province.hub.cell],
-  claim: ({ nation, province }: Province.ProvinceClaim) => {
-    const current = HISTORY.current()
-    const region = PROVINCE.nation(province)
-    if (region.idx === nation.idx) return
-    current.ruler[province.idx] = nation.idx
-    current.subjects[region.idx] = current.subjects[region.idx].filter(p => p !== province.idx)
-    current.subjects[nation.idx].push(province.idx)
-  },
-  climate: (province: Province.Province): Province.Province['environment']['climate'] => {
-    const lat = Math.abs(province.hub.y)
-    return lat < 23
-      ? 'tropical'
-      : lat < 35
-      ? 'subtropical'
-      : lat < 60
-      ? 'temperate'
-      : lat < 75
-      ? 'subarctic'
-      : 'arctic'
-  },
+  cell: (province: Province.Province) => window.world.cells[PROVINCE.hub(province).cell],
   connected: (province: Province.Province) =>
     province.artery.length > 0 || PROVINCE.isCapital(province),
   cultures: (province: Province.Province) => {
@@ -86,15 +67,21 @@ export const PROVINCE = {
   },
   decorate: (provinces: Province.Province[]) =>
     provinces
-      .sort((a, b) => b.hub.population - a.hub.population)
-      .map(province => decorateText({ link: province, tooltip: province.hub.type }))
+      .sort((a, b) => PROVINCE.hub(b).population - PROVINCE.hub(a).population)
+      .map(province =>
+        TEXT.decorate({
+          link: province,
+          label: PROVINCE.hub(province).name,
+          tooltip: PROVINCE.hub(province).subtype
+        })
+      )
       .join(', '),
   demographics: PERFORMANCE.decorate({
     name: 'PROVINCE.demographics',
     f: (province: Province.Province): Province.Demographics => {
       const common: Record<string, number> = {}
       window.world.cultures.forEach(k => (common[k.idx] = 0))
-      const { hub } = province
+      const hub = PROVINCE.hub(province)
       const popScale = MATH.scale([0, 100000], [20, 200], hub.population)
       const origins = MATH.scale([0, 100000], [0.9, 0.6], hub.population)
       const network = PROVINCE.network(province)
@@ -145,20 +132,24 @@ export const PROVINCE = {
       return dirty
     }
   }),
-  find: ({ provinces, ref, type }: Province.ProvinceFindParams): Province.Province => {
+  find: ({ group, ref, type }: Province.ProvinceFindParams): Province.Province => {
     const closest = ({ candidate, selected }: Province.ProvinceFindOrderParams) =>
       candidate < selected
     const furthest = ({ candidate, selected }: Province.ProvinceFindOrderParams) =>
       candidate > selected
     const order = type === 'closest' ? closest : furthest
     const start = closest ? Infinity : -Infinity
-    return provinces.reduce(
+    return group.reduce(
       (selected, province) => {
         const d = distanceTo(ref, province)
         return order({ candidate: d, selected: selected.d }) ? { d, province: province } : selected
       },
       { d: start, province: undefined }
     ).province
+  },
+  hub: (province: Province.Province) => {
+    const hub = province.places[0]
+    return hub as unknown as Hub
   },
   isCapital: (province: Province.Province) => {
     return PROVINCE.nation(province).capital === province.idx
@@ -167,13 +158,7 @@ export const PROVINCE = {
     nation.provinces.push(province.idx)
     province.nation = nation.idx
   },
-  nation: (province: Province.Province) => {
-    if (HISTORY.active()) {
-      const current = HISTORY.current()
-      return window.world.regions[current.ruler[province.idx]]
-    }
-    return window.world.regions[province.nation]
-  },
+  nation: (province: Province.Province) => window.world.regions[province.nation],
   neighboringRegions: (provinces: Province.Province[]) =>
     ARRAY.unique(
       provinces
@@ -229,11 +214,11 @@ export const PROVINCE = {
     const waterSources = Array.from(c1Cell.waterSources ?? [])
     return waterSources.some(w => c2Cell.waterSources?.has?.(w))
   },
-  sort: ({ provinces, ref, type }: Province.ProvinceSortParams) => {
+  sort: ({ group, ref, type }: Province.ProvinceSortParams) => {
     const closest = (a: number, b: number) => a - b
     const furthest = (a: number, b: number) => b - a
     const order = type === 'closest' ? closest : furthest
-    return provinces.sort((a, b) => {
+    return group.sort((a, b) => {
       const aDist = distanceTo(ref, a)
       const bDist = distanceTo(ref, b)
       return order(aDist, bDist)
@@ -246,13 +231,11 @@ export const PROVINCE = {
     const province: Province.Province = {
       idx,
       tag: 'province',
-      name: '',
       capital: capital,
       region: cell.region,
       nation: cell.region,
       cell: cell.idx,
       trade: { land: {}, sea: {} },
-      hub: HUB.spawn({ cell }),
       cells: { land: [] },
       islands: {},
       lakes: {},
@@ -262,32 +245,12 @@ export const PROVINCE = {
       population: 0,
       neighbors: [],
       artery: [],
-      actors: []
+      places: []
     }
-    if (capital) {
-      region.capital = province.idx
-    }
+    if (capital) region.capital = province.idx
     region.provinces.push(province.idx)
     window.world.provinces.push(province)
+    HUB.spawn(cell)
     return province
-  },
-  terrain: (province: Province.Province): Province.Province['environment']['terrain'] => {
-    // Get the cell for the given province, along with other information needed
-    const cell = window.world.cells[province.hub.cell]
-    const mountainous = province.mountains > 0
-    const biome = PROVINCE.biome(province)
-    const zone = BIOME.zone[biome.latitude]
-    const glacial = biome.latitude === 'polar'
-    // Generate a chance of a marsh given certain criteria
-    const coastal = window.world.cells[province.hub.cell].beach && window.dice.random > 0.8
-    const lakeside = Object.keys(province.lakes).length > 0
-    if (cell.isMountains) return 'mountainous'
-    if (!coastal && window.dice.random > 0.9) return 'subterranean'
-    if (mountainous && window.dice.random > 0.8) return 'mountainous'
-    if (!province.hub.coastal && window.dice.random > 0.8) return 'hills'
-    if (coastal && window.dice.random > 0.5) return window.dice.choice(['oceanic', 'coastal'])
-    if (!glacial && (coastal || lakeside)) return 'marsh'
-    if (biome.terrain === 'forest') return zone === 'tropical' ? 'jungle' : 'forest'
-    return biome.terrain
   }
 }

@@ -62,3 +62,7 @@ lets measure the success of a nation using the following weights (values between
 * diplomatic: alliances, treaties, embassies, etc.
 * cultural: art, literature, language, religion, etc.
 * domestic: laws, governance, social cohesion, etc.
+
+
+-- actions --
+* declare war

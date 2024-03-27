@@ -1,4 +1,5 @@
-import { decorateText } from '../../../utilities/text/decoration'
+import { PROVINCE } from '../../../regions/provinces'
+import { TEXT } from '../../../utilities/text'
 import { ACTOR } from '../..'
 import { accessories, armor, tiers, weapons } from '../../equipment'
 import { Actor } from '../../types'
@@ -584,6 +585,7 @@ const kits: AdventurerKit = {
 }
 
 export const adventurers = ({ count, province }: AdventurerParams): number[] => {
+  const hub = PROVINCE.hub(window.world.provinces[province])
   return window.dice
     .weightedSample(
       Object.keys(classes).map(_key => {
@@ -594,7 +596,7 @@ export const adventurers = ({ count, province }: AdventurerParams): number[] => 
     )
     .map(profession => {
       const npc = ACTOR.spawn({
-        loc: window.world.provinces[province],
+        place: hub,
         profession: 'custom',
         age: 'young adult',
         pc: true
@@ -613,7 +615,7 @@ export const adventurers = ({ count, province }: AdventurerParams): number[] => 
 }
 
 export const decorateAbility = (ability: Actor['abilities'][number]): string => {
-  return decorateText({
+  return TEXT.decorate({
     label: ability.tag,
     tooltip: ability.text,
     underlineColor: tiers[ability.tier].color

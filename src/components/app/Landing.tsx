@@ -1,16 +1,16 @@
 import { Button, Grid, Step, StepLabel, Stepper, TextField } from '@mui/material'
 import { Dispatch, SetStateAction, useState } from 'react'
 
+import { WORLD } from '../../models'
+import { CIVILIZATION } from '../../models/shapers/civilization'
+import { CONTINENTS } from '../../models/shapers/continents'
+import { DISPLAY } from '../../models/shapers/display'
+import { INFRASTRUCTURE } from '../../models/shapers/infrastructure'
+import { LORE } from '../../models/shapers/lore'
+import { REGIONAL } from '../../models/shapers/regions'
 import { DICE } from '../../models/utilities/math/dice'
 import { delay } from '../../models/utilities/math/time'
 import { PERFORMANCE } from '../../models/utilities/performance'
-import { WORLD } from '../../models/world'
-import { CIVILIZATION } from '../../models/world/shapers/civilization'
-import { CONTINENTS } from '../../models/world/shapers/continents'
-import { DISPLAY } from '../../models/world/shapers/display'
-import { INFRASTRUCTURE } from '../../models/world/shapers/infrastructure'
-import { LORE } from '../../models/world/shapers/lore'
-import { REGIONAL } from '../../models/world/shapers/regions'
 import { VIEW } from '../context'
 
 const catchup = 500
