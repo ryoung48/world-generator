@@ -1,5 +1,5 @@
-import { ACTOR } from '../../../npcs'
-import { ActorSpawnParams } from '../../../npcs/types'
+import { ACTOR } from '../../../actors'
+import { ActorSpawnParams } from '../../../actors/types'
 import { TEXT } from '../../../utilities/text'
 import { TRAIT } from '../../../utilities/traits'
 import { Province } from '../../provinces/types'

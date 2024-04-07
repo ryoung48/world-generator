@@ -38,9 +38,6 @@ const _land = () =>
   })
 const land = PERFORMANCE.memoize.decorate({ f: _land })
 
-const _mountains = () => land().filter(p => p.mountain !== undefined)
-const mountains = PERFORMANCE.memoize.decorate({ f: _mountains })
-
 const _water = () =>
   window.world.cells.filter(e => {
     return e.h < WORLD.elevation.seaLevel
@@ -103,11 +100,8 @@ export const WORLD = PERFORMANCE.profile.wrapper({
     heightToMI: (h: number) => MATH.conversion.distance.km.miles(WORLD.heightToKM(h)),
     lakes: () => WORLD.water().filter(cell => !cell.ocean),
     land: () => land(),
-    mountains() {
-      return mountains()
-    },
     placement: {
-      spacing: { regions: 0.1, provinces: 0.023 },
+      spacing: { regions: 0.1, provinces: 0.023, oceans: 1 },
       limit: (spacing: number) => Math.ceil((spacing * window.world.radius) / WORLD.cell.length()),
       close: ({ blacklist = [], whitelist, count, spacing }: WorldPlacementParams) => {
         const placed: Cell[] = []
@@ -237,11 +231,11 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         coasts: [],
         regions: [],
         provinces: [],
+        heritages: [],
         cultures: [],
         religions: [],
         oceanRegions: [],
-        rivers: [],
-        npcs: [],
+        actors: [],
         wars: [],
         uniqueNames: {},
         radius: 3.959e3, // miles

@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material'
 
-import { ToggleButtons } from '../codex/common/navigation/ToggleButtons'
+import { ToggleButtons } from '../common/navigation/ToggleButtons'
 import { ClimateChart } from './climate'
 import { PerformanceView } from './performance'
 import { Stat } from './types'

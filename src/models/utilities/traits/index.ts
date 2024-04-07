@@ -4,7 +4,7 @@ import { TraitSelectionArgs } from './types'
 export const TRAIT = {
   selection: <Tags extends string, Args>({
     available,
-    current,
+    current = [],
     constraints,
     used,
     samples = 1,

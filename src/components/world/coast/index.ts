@@ -1,7 +1,7 @@
 import { WORLD } from '../../../models'
 import { Cell } from '../../../models/cells/types'
 import { WEATHER } from '../../../models/cells/weather'
-import { DISPLAY } from '../../../models/shapers/display'
+import { SHAPER_DISPLAY } from '../../../models/shapers/display'
 import { MAP } from '../common'
 import { DrawMapParams } from '../common/types'
 import { DrawOceanParams } from './types'
@@ -58,7 +58,8 @@ export const DRAW_LANDMARKS = {
     ctx.lineCap = 'round'
     ctx.fillStyle = '#e3f1f2'
     seaIce(month).forEach(region => {
-      if (!_iceCache[region.idx]) _iceCache[region.idx] = DISPLAY.borders.oceanRegions([region])
+      if (!_iceCache[region.idx])
+        _iceCache[region.idx] = SHAPER_DISPLAY.borders.oceanRegions([region])
       _iceCache[region.idx].forEach(borders => {
         borders.slice(0, 1).forEach(border => {
           ctx.save()
@@ -78,7 +79,7 @@ export const DRAW_LANDMARKS = {
     const hemisphere = { north: (cell: Cell) => cell.y >= 0, south: (cell: Cell) => cell.y < 0 }
     const extent = (m: number, color: string, filter: (_cell: Cell) => boolean) => {
       const regions = seaIce(m)
-      const filtered = DISPLAY.borders.seaIceExtent(
+      const filtered = SHAPER_DISPLAY.borders.seaIceExtent(
         regions.filter(r => filter(window.world.cells[r.cell]))
       )
       ctx.strokeStyle = color
@@ -143,56 +144,5 @@ export const DRAW_LANDMARKS = {
         ctx.restore()
       })
     })
-  },
-  rivers: ({ ctx, projection }: DrawMapParams) => {
-    const scale = MAP.scale.derived(projection)
-    const path = MAP.path.curve(projection)
-    ctx.lineCap = 'round'
-    ctx.strokeStyle = '#407f96'
-    ctx.lineWidth = 0.25 * scale
-    // const maxWidth = scaleLinear([1, 25], [0.2, 0.8])
-    // window.world.rivers.forEach(river => {
-    //   const max = maxWidth(river.segments.length)
-    //   const riverWidth = scaleLinear([0, river.segments.length], [0.2, max])
-    //   if (river.idx === 0) console.log(river)
-    //   river.segments
-    //     .map((s, i) => {
-    //       const prev = river.segments[i - 1] ?? []
-    //       const next = river.segments[i + 1] ?? []
-    //       return prev.concat(s).concat(next)
-    //     })
-    //     .forEach((s, i) => {
-    //       ctx.lineWidth = riverWidth(i) * scale
-    //       const segment = path(MAP.geojson.line(s))
-    //       ctx.stroke(new Path2D(segment))
-    //     })
-    // })
-
-    const rivers = path(MAP.geojson.multiline(window.world.rivers.map(r => r.segments.flat())))
-    ctx.stroke(new Path2D(rivers))
-
-    // 9srd99qn8v
-
-    // const segments = window.world.rivers
-    //   .map(r =>
-    //     r.segments.map(s => {
-    //       const geo = MAP.geojson.point({
-    //         x: s[0],
-    //         y: s[1]
-    //       })
-    //       geo.properties = { idx: r.idx, p: s }
-    //       return geo
-    //     })
-    //   )
-    //   .flat()
-    // ctx.fillStyle = 'white'
-    // ctx.fill(new Path2D(path(MAP.geojson.features(segments))))
-    // ctx.fillStyle = 'black'
-    // const fontFamily = fonts.maps
-    // segments.forEach(seg => {
-    //   const center = path.centroid(MAP.geojson.features([seg]))
-    //   ctx.font = 1 * scale + 'px ' + fontFamily
-    //   ctx.fillText(seg.properties.idx, center[0], center[1])
-    // })
   }
 }

@@ -1,8 +1,8 @@
 import { range } from 'd3'
 
+import { ACTOR } from '../../../actors'
 import { CELL } from '../../../cells'
 import { Cell } from '../../../cells/types'
-import { ACTOR } from '../../../npcs'
 import { PLACE } from '..'
 import { HOOK } from '../hooks'
 import { Village } from './types'

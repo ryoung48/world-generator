@@ -1,4 +1,4 @@
-import { ACTOR } from '../npcs'
+import { ACTOR } from '../actors'
 import { PLACE } from '../regions/places'
 import { Hub } from '../regions/places/hub/types'
 import { Quest } from './types'

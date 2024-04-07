@@ -2,12 +2,12 @@ import { Button, Grid, Step, StepLabel, Stepper, TextField } from '@mui/material
 import { Dispatch, SetStateAction, useState } from 'react'
 
 import { WORLD } from '../../models'
-import { CIVILIZATION } from '../../models/shapers/civilization'
-import { CONTINENTS } from '../../models/shapers/continents'
-import { DISPLAY } from '../../models/shapers/display'
-import { INFRASTRUCTURE } from '../../models/shapers/infrastructure'
+import { CIVILIZATION_BUILDER } from '../../models/shapers/civilization'
+import { SHAPER_CONTINENTS } from '../../models/shapers/continents'
+import { SHAPER_DISPLAY } from '../../models/shapers/display'
+import { SHAPER_INFRASTRUCTURE } from '../../models/shapers/infrastructure'
 import { LORE } from '../../models/shapers/lore'
-import { REGIONAL } from '../../models/shapers/regions'
+import { SHAPER_REGIONS } from '../../models/shapers/regions'
 import { DICE } from '../../models/utilities/math/dice'
 import { delay } from '../../models/utilities/math/time'
 import { PERFORMANCE } from '../../models/utilities/performance'
@@ -24,20 +24,20 @@ const generator = async (params: {
   update(0)
   await delay(catchup)
   window.world = WORLD.spawn({ seed, res })
-  CONTINENTS.build()
+  SHAPER_CONTINENTS.build()
   update(1)
   await delay(catchup)
-  REGIONAL.build()
+  SHAPER_REGIONS.build()
   update(2)
   await delay(catchup)
-  CIVILIZATION.build()
+  CIVILIZATION_BUILDER.build()
   update(3)
   await delay(catchup)
-  INFRASTRUCTURE.build()
+  SHAPER_INFRASTRUCTURE.build()
   update(4)
   await delay(catchup)
   LORE.build()
-  DISPLAY.build()
+  SHAPER_DISPLAY.build()
   update(5)
   await delay(catchup)
   PERFORMANCE.profile.switch(window.profiles.current)

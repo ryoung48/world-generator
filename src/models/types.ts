@@ -1,11 +1,13 @@
+import { Actor } from './actors/types'
 import { Cell } from './cells/types'
-import { Culture } from './npcs/cultures/types'
-import { Religion } from './npcs/religions/types'
-import { Actor } from './npcs/types'
+import { Culture } from './heritage/cultures/types'
+import { Religion } from './heritage/religions/types'
+import { Heritage } from './heritage/types'
 import { Province } from './regions/provinces/types'
 import { Region } from './regions/types'
+import { War } from './regions/wars/types'
 import type { Display } from './shapers/display/types'
-import { GeoVoronoiDiagram, Vertex } from './utilities/math/voronoi/types'
+import { GeoVoronoiDiagram } from './utilities/math/voronoi/types'
 
 export interface CoastalEdge {
   water: number
@@ -25,13 +27,14 @@ export interface World {
   landmarks: Record<
     number,
     {
-      name: string
+      name?: string
       type: 'ocean' | 'lake' | 'continent' | 'island'
       water: boolean
       size: number
+      cell: number
     }
   >
-  mountains: number[]
+  mountains: { size: number; cell: number; name?: string }[]
   coasts: CoastalEdge[]
   routes: Record<
     RouteTypes,
@@ -40,22 +43,19 @@ export interface World {
   // entities
   regions: Region[]
   provinces: Province[]
+  heritages: Heritage[]
   cultures: Culture[]
   religions: Religion[]
-  npcs: Actor[]
-  oceanRegions: { idx: number; cell: number; borders: number[] }[]
-  rivers: { idx: number; segments: Vertex[][] }[]
-  uniqueNames: Record<string, boolean>
-  wars: {
+  actors: Actor[]
+  oceanRegions: {
     idx: number
-    tag: 'war'
-    name: string
-    losses: string
-    belligerents: string
-    reasons: { tag: string; text: string }[]
-    provinces: number[]
-    status: 'decisive' | 'stalemated' | 'struggling'
+    cell: number
+    borders: number[]
+    neighbors: number[]
+    ocean: number
   }[]
+  uniqueNames: Record<string, boolean>
+  wars: War[]
   // planet info
   radius: number // miles
   date: number

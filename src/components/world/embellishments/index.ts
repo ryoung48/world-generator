@@ -1,14 +1,11 @@
 import { geoGraticule10, range, scaleLinear } from 'd3'
 
-import { CULTURE } from '../../../models/npcs/cultures'
 import { PROVINCE } from '../../../models/regions/provinces'
-import { ARRAY } from '../../../models/utilities/array'
 import { MATH } from '../../../models/utilities/math'
 import { fonts } from '../../theme/fonts'
 import { MAP } from '../common'
 import { DrawMapParams } from '../common/types'
 import {
-  CultureLegendParams,
   DrawAvatarParams,
   DrawCloudParams,
   DrawLegendParams,
@@ -81,27 +78,6 @@ const locHighlight = (params: HighlightLocationParams) => {
   ctx.restore()
 }
 
-const cultureLegend = ({ nationSet, province }: CultureLegendParams) => {
-  const region = PROVINCE.region(province)
-  return CULTURE.sort({
-    ref: window.world.cultures[region.culture],
-    group: ARRAY.unique(
-      window.world.provinces
-        .filter(province => nationSet.has(PROVINCE.nation(province).idx))
-        .map(province => {
-          const region = PROVINCE.region(province)
-          return region.culture
-        })
-    ).map(i => window.world.cultures[i]),
-    type: 'closest'
-  }).map(culture => {
-    return {
-      text: culture.name.toLowerCase(),
-      color: culture.display.replace('%)', `%,  0.5)`)
-    }
-  })
-}
-
 export const DRAW_EMBELLISHMENTS = {
   clouds: ({ ctx, projection, cachedImages }: DrawCloudParams) => {
     ctx.save()
@@ -130,8 +106,8 @@ export const DRAW_EMBELLISHMENTS = {
     ctx.stroke(path)
     ctx.restore()
   },
-  legend: ({ ctx, style, province, nationSet }: DrawLegendsParams) => {
-    const height = ctx.canvas.height * 0.25
+  legend: ({ ctx, style, province }: DrawLegendsParams) => {
+    const height = ctx.canvas.height * 0.3
     const width = ctx.canvas.width * 0.025
     const climate = PROVINCE.climate(province)
     const items =
@@ -143,23 +119,27 @@ export const DRAW_EMBELLISHMENTS = {
         ? MAP.metrics.elevation.legend()
         : style === 'Religions'
         ? MAP.metrics.religion.legend()
+        : style === 'Governments'
+        ? MAP.metrics.government.legend()
         : style === 'Population'
         ? MAP.metrics.population.legend()
-        : style === 'Development'
-        ? MAP.metrics.development.legend()
         : style === 'Climate'
         ? MAP.metrics.climate.legend(climate.latitude)
-        : style === 'Cultures'
-        ? cultureLegend({ nationSet, province })
-        : style === 'Nations'
-        ? MAP.metrics.settlement.legend()
-        : []
+        : // : style === 'Nations'
+          // ? MAP.metrics.settlement.legend()
+          []
     drawLegend({
       ctx,
       items,
       alignment: 'left',
       position: { x: width, y: height },
-      width: style === 'Nations' || style === 'Climate' || style === 'Religions' ? 12 : 10
+      width:
+        style === 'Nations' ||
+        style === 'Climate' ||
+        style === 'Religions' ||
+        style === 'Population'
+          ? 12
+          : 10
     })
   },
   scale: ({ ctx, projection }: DrawMapParams) => {

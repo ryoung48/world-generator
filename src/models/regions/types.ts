@@ -1,4 +1,4 @@
-import { TaggedEntity } from '../utilities/entities/types'
+import { TaggedEntity } from '../utilities/text/types'
 import { Trait } from '../utilities/traits/types'
 import { FindParams } from '../utilities/types'
 
@@ -24,19 +24,16 @@ export interface Region extends TaggedEntity {
   }
   culture: number
   religion?: number
-  difficulty?: number
   // geography
-  coastal: boolean
   borders: number[]
   landBorders: number[]
   relations: Record<number, DiplomaticRelation>
   war?: number
   // society
   provinces: number[]
-  development?: number
   civilized?: boolean
-  size?: 'free city' | 'barony' | 'duchy' | 'kingdom' | 'empire'
-  government?: string
+  size?: 'city-state' | 'principality' | 'kingdom' | 'empire'
+  government?: 'autocratic' | 'republic' | 'oligarchic' | 'confederation' | 'fragmented'
   leadership?: { male: string; female: string }
   traits?: {
     tag:

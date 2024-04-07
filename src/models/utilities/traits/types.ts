@@ -6,7 +6,7 @@ export type Trait<Tags extends string, Constraints> = {
 
 export type TraitSelectionArgs<Tags extends string, Args> = {
   available: Partial<Record<Tags, Trait<Tags, Args>>>
-  current: Tags[]
+  current?: Tags[]
   used?: Tags[]
   constraints?: Required<Args>
   samples?: number

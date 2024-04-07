@@ -23,10 +23,7 @@ export interface Cell extends Point {
   beach?: boolean
   ocean?: boolean
   oceanRegion?: number
-  oceanBorder?: boolean
   shallow?: boolean
-  river?: number
-  nRiver?: number
   rain: { east: number; west: number; winter: number; summer: number }
   heat?: { winter?: number; summer?: number }
   climate?: ClimateKey

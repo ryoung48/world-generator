@@ -21,7 +21,6 @@ export const DRAW_TERRAIN = {
   icons: ({ ctx, cachedImages, projection, regions, lands }: DrawTerrainIconParams) => {
     const scale = MAP.scale.derived(projection)
     const pathGen = MAP.path.linear(projection)
-    const globalScale = scale <= MAP.breakpoints.global
     const sortedIcons = window.world.display.icons
       .filter(m => {
         const cell = window.world.cells[m.cell]
@@ -29,8 +28,7 @@ export const DRAW_TERRAIN = {
         const province = window.world.provinces[cell.province]
         const contained = regions.has(province.region)
         const drawnLand = cell.isWater || lands.has(cell.landmark)
-        const globalMountains = globalScale && cell.isMountains
-        const shouldDraw = globalMountains || (contained && drawnLand)
+        const shouldDraw = cell.isMountains || (contained && drawnLand)
         return valid && shouldDraw
       })
       .sort((a, b) => {

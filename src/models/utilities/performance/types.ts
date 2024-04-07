@@ -1,4 +1,4 @@
-import { PieData } from '../../../components/codex/common/charts/types'
+import { PieData } from '../../../components/common/charts/types'
 import { GenericFunction } from '../types'
 
 export interface ProfileNode extends PieData {

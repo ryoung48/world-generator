@@ -288,7 +288,7 @@ const holdridge: Record<ClimateKey, Climate> = {
     latitude: 'cool temperate',
     altitude: 'montane',
     color: '#81C181',
-    habitability: 0.7143,
+    habitability: 0.4543,
     terrain: 'plains',
     diurnalVariation: 'standard',
     koppen: { color: '#FFDB63', code: 'BSk' }

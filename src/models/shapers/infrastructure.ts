@@ -1,14 +1,13 @@
 import { WORLD } from '..'
 import { CELL } from '../cells'
 import { NAVIGATION } from '../cells/navigation'
-import { CULTURE } from '../npcs/cultures'
 import { REGION } from '../regions'
 import { PROVINCE } from '../regions/provinces'
 import { Province } from '../regions/provinces/types'
 import { Region } from '../regions/types'
 import { RouteTypes } from '../types'
 import { PERFORMANCE } from '../utilities/performance'
-import { DISPLAY } from './display'
+import { SHAPER_DISPLAY } from './display'
 
 const pathing: Record<RouteTypes, number> = {
   sea: 0.00015,
@@ -45,7 +44,7 @@ function connectRegions(r1: Region, r2: Region, blacklist: { [index: string]: nu
     NAVIGATION.addTradeRoute({ src: foreign, dst: guest, blacklist, type })
 }
 
-export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
+export const SHAPER_INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
   label: 'INFRASTRUCTURE',
   o: {
     _connectIslands: () => {
@@ -130,19 +129,7 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
         region.regional.provinces = provinces.map(r => r.idx)
         region.regional.coastal = provinces.some(province => province.ocean > 0)
       })
-      window.world.display.regions = DISPLAY.borders.regions(window.world.regions)
-      // finalize cultural relations
-      window.world.cultures.forEach(c => {
-        c.neighbors = Array.from(
-          new Set(
-            CULTURE.regions(c)
-              .map(r => REGION.neighbors({ region: r }))
-              .flat()
-              .filter(r => r.culture !== c.idx)
-              .map(r => r.culture)
-          )
-        )
-      })
+      window.world.display.regions = SHAPER_DISPLAY.borders.regions(window.world.regions)
     },
     _networks: () => {
       const { blacklist } = NAVIGATION.blacklist
@@ -207,12 +194,12 @@ export const INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
       })
     },
     build: () => {
-      INFRASTRUCTURE._roads('land')
-      INFRASTRUCTURE._roads('sea')
-      INFRASTRUCTURE._extendedVoyages()
-      INFRASTRUCTURE._networks()
-      INFRASTRUCTURE._connectIslands()
-      INFRASTRUCTURE._finalize()
+      SHAPER_INFRASTRUCTURE._roads('land')
+      SHAPER_INFRASTRUCTURE._roads('sea')
+      SHAPER_INFRASTRUCTURE._extendedVoyages()
+      SHAPER_INFRASTRUCTURE._networks()
+      SHAPER_INFRASTRUCTURE._connectIslands()
+      SHAPER_INFRASTRUCTURE._finalize()
     }
   }
 })

@@ -2,9 +2,9 @@ import { range, scaleLinear } from 'd3'
 
 import { Avatar } from '../../components/context/types'
 import { cssColors } from '../../components/theme/colors'
-import { slots } from '../npcs/equipment'
-import { Item } from '../npcs/equipment/types'
-import { Actor } from '../npcs/types'
+import { slots } from '../actors/equipment'
+import { Item } from '../actors/equipment/types'
+import { Actor } from '../actors/types'
 import { MATH } from './math'
 
 export type Difficulty = 'trivial' | 'easy' | 'medium' | 'hard' | 'deadly' | 'insanity'
@@ -70,7 +70,7 @@ export const DIFFICULTY = {
   },
   avatar: {
     cr: ({ pcs }: Avatar) =>
-      pcs.map(p => DIFFICULTY.actor.cr(window.world.npcs[p])).reduce((sum, cr) => sum + cr, 0),
+      pcs.map(p => DIFFICULTY.actor.cr(window.world.actors[p])).reduce((sum, cr) => sum + cr, 0),
     lvl: (avatar: Avatar) => DIFFICULTY.lvl(DIFFICULTY.avatar.cr(avatar))
   },
   cr: (level: number) => crScale(level),

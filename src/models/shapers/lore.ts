@@ -2,10 +2,9 @@ import { range } from 'd3'
 
 import { WORLD } from '..'
 import { CELL } from '../cells'
-import { CULTURE } from '../npcs/cultures'
-import { LANGUAGE } from '../npcs/languages'
-import { RELIGION } from '../npcs/religions'
-import { SPECIES } from '../npcs/species'
+import { CULTURE } from '../heritage/cultures'
+import { LANGUAGE } from '../heritage/languages'
+import { SPECIES } from '../heritage/species'
 import { REGION } from '../regions'
 import { CAMP } from '../regions/places/camp'
 import { HUB } from '../regions/places/hub'
@@ -15,12 +14,10 @@ import { WILDERNESS } from '../regions/places/wilderness'
 import { PROVINCE } from '../regions/provinces'
 import { Province } from '../regions/provinces/types'
 import { DiplomaticRelation, Region } from '../regions/types'
+import { WAR } from '../regions/wars'
 import { POINT } from '../utilities/math/points'
 import { PERFORMANCE } from '../utilities/performance'
-import { TEXT } from '../utilities/text'
 import { TRAIT } from '../utilities/traits'
-
-type RegionalCounters = Record<string, { target: number; current: number; total: number }>
 
 const claimRegion = (params: { nation: Region; region: Region }) => {
   const { nation, region } = params
@@ -59,50 +56,15 @@ const claimProvince = (params: { nation: Region; province: Province }) => {
   region.provinces = region.provinces.filter(p => p !== province.idx)
 }
 
-const steppeNomads = (region: Region) =>
-  REGION.biome(region).terrain === 'plains' &&
-  window.world.landmarks[window.world.cells[window.world.provinces[region.capital].cell].landmark]
-    .type === 'continent'
-
-const regionsByTech = () => {
-  const regions = window.world.regions.filter(r => !r.desolate)
-  const industrial = regions.filter(r => r.development === 6)
-  const enlightened = regions.filter(r => r.development === 5)
-  const colonial = regions.filter(r => r.development === 4)
-  const mercantile = regions.filter(r => r.development === 3)
-  const feudal = regions.filter(r => r.development === 2)
-  const agrarian = regions.filter(r => r.development === 1)
-  const nomadic = regions.filter(r => r.development === 0)
-  return {
-    regions,
-    industrial,
-    enlightened,
-    colonial,
-    mercantile,
-    feudal,
-    agrarian,
-    nomadic
-  }
-}
-
 export const LORE = PERFORMANCE.profile.wrapper({
   label: 'LORE',
   o: {
     _conflict: () => {
-      const { regions, industrial, enlightened, colonial, mercantile, feudal, agrarian, nomadic } =
-        regionsByTech()
-      const target = 0.1
-      const wars: RegionalCounters = {
-        [6]: { target, current: 0, total: industrial.length },
-        [5]: { target, current: 0, total: enlightened.length },
-        [4]: { target, current: 0, total: colonial.length },
-        [3]: { target, current: 0, total: mercantile.length },
-        [2]: { target, current: 0, total: feudal.length },
-        [1]: { target, current: 0, total: agrarian.length },
-        [0]: { target, current: 0, total: nomadic.length }
-      }
+      const regions = REGION.nations
+      const target = 0.15
+      const wars = { target, current: 0, total: regions.length }
       window.dice.shuffle(regions).forEach(region => {
-        const { current, target, total } = wars[region.development]
+        const { current, target, total } = wars
         if (
           current / total < target &&
           REGION.provinces(region).length > 1 &&
@@ -121,227 +83,8 @@ export const LORE = PERFORMANCE.profile.wrapper({
             const [belligerent] = prospects
             belligerent.relations[region.idx] = 'at war'
             region.relations[belligerent.idx] = 'at war'
-            wars[region.development].current++
-            const regionBorders = REGION.provinces(region).filter(p =>
-              PROVINCE.neighboringRegions([p]).includes(belligerent.idx)
-            )
-            const belligerentBorders = REGION.provinces(belligerent).filter(p =>
-              PROVINCE.neighboringRegions([p]).includes(region.idx)
-            )
-            const borders = window.dice.weightedChoice([
-              {
-                v:
-                  REGION.provinces(region) > REGION.provinces(belligerent)
-                    ? belligerentBorders
-                    : regionBorders,
-                w: 1
-              },
-              {
-                v: window.dice.choice([belligerentBorders, regionBorders]),
-                w: 1
-              }
-            ])
-            const battlegrounds = window.dice
-              .shuffle(borders)
-              .slice(0, Math.max(0.5 * borders.length, 3))
-            const idx = window.world.wars.length
-            belligerent.war = idx
-            region.war = idx
-            const [attacker, defender] =
-              borders === regionBorders ? [belligerent, region] : [region, belligerent]
-            battlegrounds.forEach(province => {
-              province.conflict = idx
-            })
-            const sameCulture = attacker.culture === defender.culture
-            const attackerIsAtheist = REGION.religion(attacker).type === 'atheistic'
-            const sameSpecies =
-              window.world.cultures[attacker.culture].species ===
-              window.world.cultures[defender.culture].species
-            const civilized = attacker.civilized && defender.civilized
-            window.world.wars.push({
-              idx,
-              tag: 'war',
-              name: LANGUAGE.word.simple({
-                lang: window.world.cultures[attacker.culture].language,
-                key: 'war'
-              }),
-              belligerents: `${TEXT.decorate({
-                label: attacker.name.toLowerCase(),
-                tooltip: 'invader'
-              })}, ${TEXT.decorate({
-                label: defender.name.toLowerCase(),
-                tooltip: 'defender'
-              })}`,
-              provinces: battlegrounds.map(p => p.idx),
-              status: window.dice.choice(['decisive', 'stalemated', 'struggling']),
-              losses: window.dice.spin('{low|heavy} casualties, {mild|severe} destruction'),
-              reasons: window.dice
-                .weightedSample(
-                  [
-                    {
-                      v: {
-                        tag: `raider's haven`,
-                        text: 'raiders are taking refuge in their lands'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `pillager's harvest`,
-                        text: 'their lands are rich and bountiful, ripe for the taking'
-                      },
-                      w: !attacker.civilized ? 1 : 0
-                    },
-                    {
-                      v: {
-                        tag: `resource dispute`,
-                        text: 'ownership of a resource site is disputed'
-                      },
-                      w: 3
-                    },
-                    {
-                      v: {
-                        tag: `territorial expansion`,
-                        text: 'we seek to expand our sphere of influence'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `ancestral homelands`,
-                        text: 'they hold territories that were previously ours'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `artifact theft`,
-                        text: 'they stole an important {cultural|religious} relic'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `water obstructions`,
-                        text: 'they are building a dam that will affect our water supply'
-                      },
-                      w: defender.civilized ? 1 : 0
-                    },
-                    {
-                      v: {
-                        tag: `criminal shelter`,
-                        text: '{an usurper is|{criminals|rebels} are} being sheltered there'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: { tag: `holy crusade`, text: 'a troublemaking religion is based there' },
-                      w: attackerIsAtheist ? 0 : 1
-                    },
-                    {
-                      v: {
-                        tag: `religious reclamation`,
-                        text: 'there are disputes over holy sites along the border'
-                      },
-                      w: attackerIsAtheist ? 0 : 1
-                    },
-                    {
-                      v: {
-                        tag: `pilgrimage disruption`,
-                        text: "they're hindering our people's pilgrimage to a sacred site"
-                      },
-                      w: attackerIsAtheist ? 0 : 1
-                    },
-                    {
-                      v: {
-                        tag: `throne claim`,
-                        text: 'our rulers have a political claim on their throne'
-                      },
-                      w: sameSpecies ? 1 : 0
-                    },
-                    {
-                      v: { tag: `marital discord`, text: 'a diplomatic marriage is going sour' },
-                      w: sameSpecies ? 1 : 0
-                    },
-                    {
-                      v: { tag: `past strife`, text: 'a past war’s savagery has left deep scars' },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `cultural encroachment`,
-                        text: 'their culture is supplanting local beliefs'
-                      },
-                      w: sameCulture ? 0 : 1
-                    },
-                    {
-                      v: {
-                        tag: `ethnic liberation`,
-                        text: 'they’re persecuting co-ethnics close to our border'
-                      },
-                      w: sameCulture ? 0 : 1
-                    },
-                    {
-                      v: {
-                        tag: `broken alliance`,
-                        text: 'they broke off an important alliance pact'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `trade blockade`,
-                        text: 'border tariffs and taxes are blocking trade'
-                      },
-                      w: civilized ? 1 : 0
-                    },
-                    {
-                      v: {
-                        tag: `smuggling crackdown`,
-                        text: 'our merchants have been executed for alleged smuggling'
-                      },
-                      w: attacker.civilized ? 1 : 0
-                    },
-                    {
-                      v: {
-                        tag: `beast incursion`,
-                        text: 'they drove a terrible beast into this land'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `enchantment wreckage`,
-                        text: 'an enchantment of theirs caused problems here'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `spy network`,
-                        text: 'a spy ring has been discovered gathering information and sowing discord'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `assassination suspicions`,
-                        text: 'they’re suspected of backing assassinations'
-                      },
-                      w: 1
-                    },
-                    {
-                      v: {
-                        tag: `insurgency support`,
-                        text: 'they’re supporting rebel groups in our lands'
-                      },
-                      w: 1
-                    }
-                  ],
-                  2
-                )
-                .map(({ tag, text }) => ({ tag, text: window.dice.spin(text) }))
-            })
+            wars.current++
+            WAR.spawn({ defender: region, attacker: belligerent })
           }
         }
       })
@@ -367,7 +110,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
         })
     },
     _demographics: () => {
-      window.world.cultures.forEach(culture => CULTURE.finalize(culture))
       // go through each region and finalize the cities
       Object.values(window.world.regions).forEach(region => {
         const capital = window.world.provinces[region.capital]
@@ -408,41 +150,31 @@ export const LORE = PERFORMANCE.profile.wrapper({
     },
     _history: () => {
       const { provinces } = window.world
-      const { regions, industrial, enlightened, colonial, mercantile, feudal, agrarian, nomadic } =
-        regionsByTech()
+      const regions = REGION.nations
       // empires
-      const imperium: RegionalCounters = {
-        [6]: { target: 0.025, current: 0, total: industrial.length },
-        [5]: { target: 0.025, current: 0, total: enlightened.length },
-        [4]: { target: 0.025, current: 0, total: colonial.length },
-        [3]: { target: 0.05, current: 0, total: mercantile.length },
-        [2]: { target: 0.05, current: 0, total: feudal.length },
-        [1]: { target: 0.025, current: 0, total: agrarian.length },
-        [0]: { target: 0, current: 0, total: nomadic.length }
-      }
+      const imperium = { target: 0.02, current: 0, total: regions.length }
       const sizeLimit = (region: Region) => {
         const culture = window.world.cultures[region.culture]
-        const species = SPECIES.lookup[culture.species]
-        return culture.species !== 'ogre' && species.traits.height !== 'small'
+        const species = CULTURE.species(culture)
+        const details = SPECIES.lookup[CULTURE.species(culture)]
+        return species !== 'ogre' && details.traits.height !== 'small'
       }
       window.dice
         .shuffle(regions)
         .filter(sizeLimit)
         .forEach(region => {
-          const { current, target, total } = imperium[region.development]
+          const { current, target, total } = imperium
           if (REGION.provinces(region).length > 0 && current / total < target) {
             let completed = false
             while (!completed) {
-              const neighbors = REGION.neighbors({ region }).filter(
-                n => n.size !== 'empire' && n.development <= region.development
-              )
+              const neighbors = REGION.neighbors({ region }).filter(n => n.size !== 'empire')
               if (neighbors.length === 0) break
               const closest = REGION.find({ ref: region, group: neighbors, type: 'closest' })
               claimRegion({ nation: region, region: closest })
               completed = REGION.domains(region).length > 5
             }
             if (REGION.domains(region).length >= 5) {
-              imperium[region.development].current++
+              imperium.current++
               region.size = 'empire'
             }
           }
@@ -453,8 +185,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
         .filter(sizeLimit)
         .forEach(region => {
           const neighbors = REGION.neighbors({ region }).filter(
-            neighbor =>
-              REGION.domains(neighbor).length === 1 && region.development >= neighbor.development
+            neighbor => REGION.domains(neighbor).length === 1
           )
           if (
             REGION.provinces(region).length > 1 &&
@@ -499,71 +230,23 @@ export const LORE = PERFORMANCE.profile.wrapper({
       // realm titles
       regions.forEach(region => {
         if (REGION.provinces(region).length === 1) {
-          region.size = 'free city'
+          region.size = 'city-state'
         } else if (REGION.provinces(region).length <= 10) {
-          region.size = 'duchy'
+          region.size = 'principality'
         } else if (REGION.provinces(region).length <= 30) {
           region.size = 'kingdom'
         } else region.size = 'empire'
       })
       //government
-      const used = new Set<Region['government']>()
       regions.forEach(region => {
-        const { civilized, coastal, development, size } = region
-        const large = size === 'kingdom' || size === 'empire'
-        const nonRemote = development !== 0
-        const nonCivilized = development < 4
-        const steppe = steppeNomads(region)
-        region.government =
-          steppe && region.size === 'empire'
-            ? 'steppe horde'
-            : window.dice.weightedChoice([
-                { w: nonRemote ? 2 : 0, v: 'autocratic monarchy' },
-                { w: nonRemote ? 2 : 0, v: 'feudal monarchy' },
-                { w: nonCivilized ? 0 : 1, v: 'fragmented warlords' },
-                {
-                  w: nonRemote && size !== 'empire' && coastal ? 1 : 0,
-                  v: 'city-state confederation'
-                },
-                {
-                  w: nonRemote && size !== 'empire' && coastal ? 1 : 0,
-                  v: 'plutocratic council'
-                },
-                { w: nonRemote && !large ? 1 : 0, v: 'holy orders' },
-                { w: civilized && large ? 2 : 0, v: 'imperial bureaucracy' },
-                { w: civilized ? 0 : 2, v: 'fragmented tribes' },
-                { w: nonRemote && nonCivilized && !large ? 1 : 0, v: 'sorcerous council' },
-                { w: nonRemote && nonCivilized && !large ? 1 : 0, v: 'splintered cults' },
-                { w: nonRemote ? 2 : 0, v: 'theocratic authority' },
-                { w: civilized ? 0 : 2, v: 'tribal confederacy' }
-              ])
-        used.add(region.government)
+        region.government = window.dice.weightedChoice([
+          { w: region.civilized ? 3 : 1, v: 'autocratic' },
+          { w: region.civilized ? 1 : 0, v: 'republic' },
+          { w: region.civilized ? 2 : 1, v: 'oligarchic' },
+          { w: region.civilized ? 0.5 : 1, v: 'confederation' },
+          { w: region.civilized ? 0 : 1, v: 'fragmented' }
+        ])
       })
-      // leadership
-      const monarchies: Region['government'][] = [
-        'autocratic monarchy',
-        'feudal monarchy',
-        'imperial bureaucracy',
-        'theocratic authority'
-      ]
-      regions
-        .filter(region => monarchies.includes(region.government))
-        .forEach(region => {
-          region.leadership =
-            region.size === 'empire'
-              ? { male: 'emperor', female: 'empress' }
-              : region.size === 'kingdom'
-              ? { male: 'king', female: 'queen' }
-              : region.size === 'duchy'
-              ? { male: 'duke', female: 'duchess' }
-              : { male: 'baron', female: 'baroness' }
-        })
-      const steppeHorde: Region['government'][] = ['steppe horde']
-      regions
-        .filter(region => steppeHorde.includes(region.government))
-        .forEach(region => {
-          region.leadership = { male: 'great khan', female: 'great khan' }
-        })
       // diplomacy
       regions.forEach(region => {
         REGION.neighbors({ region })
@@ -590,34 +273,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
           tag,
           text: REGION.traits[tag].text
         }))
-      })
-    },
-    _religions: () => {
-      RELIGION.spawn()
-      REGION.nations.forEach(region => {
-        const { religion: ridx } = window.world.cultures[region.culture]
-        const religion = window.world.religions[ridx]
-        region.religion = religion.idx
-      })
-    },
-    _difficulty: () => {
-      const queue = window.dice.sample(window.world.regions, 6)
-      queue.forEach(region => {
-        region.difficulty = 0
-      })
-      while (queue.length > 0) {
-        const region = queue.shift()
-        REGION.neighbors({ region }).forEach(neighbor => {
-          if (neighbor.difficulty === undefined) {
-            neighbor.difficulty = Math.min(region.difficulty + 1, 8)
-            queue.push(neighbor)
-          }
-        })
-      }
-      window.world.provinces.forEach(province => {
-        const region = PROVINCE.region(province)
-        const base = region.desolate ? 8 : region.difficulty
-        province.difficulty = base + window.dice.random
       })
     },
     _places: () => {
@@ -664,8 +319,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
     },
     build: () => {
       LORE._demographics()
-      LORE._difficulty()
-      LORE._religions()
       LORE._history()
       LORE._conflict()
       // LORE._places()

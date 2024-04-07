@@ -1,10 +1,10 @@
 import { Grid } from '@mui/material'
 
-import { ACTOR } from '../../../../models/npcs'
+import { ACTOR } from '../../../../models/actors'
 import { PLACE } from '../../../../models/regions/places'
 import { VILLAGE } from '../../../../models/regions/places/village'
 import { TEXT } from '../../../../models/utilities/text'
-import { StyledText } from '../../common/text/styled'
+import { StyledText } from '../../../common/text/styled'
 import { HooksView } from '../hooks'
 import { VillageViewParams } from './types'
 
@@ -27,7 +27,7 @@ export function VillageView({ village }: VillageViewParams) {
         <StyledText
           text={village.locals
             .map(i => {
-              const npc = window.world.npcs[i]
+              const npc = window.world.actors[i]
               return `${TEXT.decorate({ label: npc.name, details: ACTOR.describe(npc) })}`
             })
             .join(', ')}

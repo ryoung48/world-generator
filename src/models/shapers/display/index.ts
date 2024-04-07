@@ -96,7 +96,7 @@ const road = (params: {
   roadSegment({ route, path: path.slice(i, k), imperial })
 }
 
-export const DISPLAY = PERFORMANCE.profile.wrapper({
+export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
   label: 'DISPLAY',
   o: {
     borders: {
@@ -454,9 +454,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       // ships
       const seaRoutes = window.dice
         .shuffle(Object.values(window.world.routes.sea))
-        .filter(
-          route => window.world.regions[window.world.provinces[route.src].region].development !== 0
-        )
+        .filter(route => Math.abs(PROVINCE.hub(window.world.provinces[route.src]).y) < 70)
       const validSeaIcon = (p: Cell) =>
         p.ocean &&
         !p.shallow &&
@@ -493,7 +491,7 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       // land (ocean)
       const islands = drawCoasts({
         landmarks: WORLD.features('land'),
-        coastFilter: i => e => e.land === i && e.water === 1
+        coastFilter: i => e => e.land === i && window.world.landmarks[e.water].type === 'ocean'
       })
       PERFORMANCE.profile.apply({
         label: 'curve',
@@ -545,10 +543,10 @@ export const DISPLAY = PERFORMANCE.profile.wrapper({
       })
     },
     build: () => {
-      DISPLAY._islands()
-      DISPLAY._lakes()
-      DISPLAY._roads()
-      DISPLAY._icons()
+      SHAPER_DISPLAY._islands()
+      SHAPER_DISPLAY._lakes()
+      SHAPER_DISPLAY._roads()
+      SHAPER_DISPLAY._icons()
     }
   }
 })

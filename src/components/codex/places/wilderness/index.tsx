@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import { PLACE } from '../../../../models/regions/places'
 import { WILDERNESS } from '../../../../models/regions/places/wilderness'
 import { TEXT } from '../../../../models/utilities/text'
-import { StyledText } from '../../common/text/styled'
+import { StyledText } from '../../../common/text/styled'
 import { HooksView } from '../hooks'
 import { WildernessViewParams } from './types'
 

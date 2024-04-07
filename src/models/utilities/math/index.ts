@@ -1,7 +1,8 @@
 import { geoDistance, range, scaleLinear, scalePow } from 'd3'
 
+import { WeightedDistribution } from './dice/types'
 import { Directions } from './points/types'
-import { DegreeToPerimeterParams, WeightedDistribution } from './types'
+import { DegreeToPerimeterParams } from './types'
 
 export const MATH = {
   buildDistribution: <T>(map: WeightedDistribution<T>, qty = 1): WeightedDistribution<T> => {

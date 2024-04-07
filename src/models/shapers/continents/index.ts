@@ -2,22 +2,22 @@ import { range } from 'd3'
 
 import { WORLD } from '../..'
 import { CELL } from '../../cells'
-import { ARRAY } from '../../utilities/array'
 import { SIMPLEX } from '../../utilities/math/dice/noise'
 import { VORONOI } from '../../utilities/math/voronoi'
 import { PERFORMANCE } from '../../utilities/performance'
-import { LANDMARKS } from './landmarks'
+import { LANDMARKS as SHAPER_LANDMARKS } from './landmarks'
+import { OCEANS as SHAPER_OCEANS } from './oceans'
 
-export const CONTINENTS = PERFORMANCE.profile.wrapper({
+export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
   label: 'CONTINENTS',
   o: {
     build: () => {
-      CONTINENTS._setup()
-      CONTINENTS._coastGen()
-      const idx = LANDMARKS.water(1)
-      LANDMARKS.land(idx)
-      CONTINENTS._coastalDistances()
-      CONTINENTS._oceanRegions()
+      SHAPER_CONTINENTS._setup()
+      SHAPER_CONTINENTS._coastGen()
+      const idx = SHAPER_LANDMARKS.water(1)
+      SHAPER_LANDMARKS.land(idx)
+      SHAPER_CONTINENTS._coastalDistances()
+      SHAPER_OCEANS.build()
     },
     _coastalDistances: () => {
       // get distance to oceans (for rivers)
@@ -59,44 +59,6 @@ export const CONTINENTS = PERFORMANCE.profile.wrapper({
       }
       elev.forEach((e, i) => (window.world.cells[i].h = e > cutoff ? WORLD.elevation.seaLevel : 0))
       console.log('land ratio: ' + land + ' | cutoff: ' + cutoff)
-    },
-    _oceanRegions: () => {
-      WORLD.placement
-        .far({
-          count: 500,
-          spacing: WORLD.placement.spacing.regions,
-          whitelist: window.world.cells.filter(cell => cell.ocean)
-        })
-        .filter(poly => window.world.landmarks[poly.landmark])
-        .forEach(cell => {
-          window.world.oceanRegions.push({
-            cell: cell.idx,
-            idx: window.world.oceanRegions.length,
-            borders: []
-          })
-        })
-      const queue = window.world.oceanRegions.map(o => {
-        const cell = window.world.cells[o.cell]
-        cell.oceanRegion = o.idx
-        return cell
-      })
-      while (queue.length > 0) {
-        const current = queue.shift()
-        CELL.neighbors(current).forEach(n => {
-          if (n.ocean && n.oceanRegion === undefined) {
-            n.oceanRegion = current.oceanRegion
-            queue.push(n)
-          } else {
-            n.oceanBorder = true
-            window.world.oceanRegions[current.oceanRegion].borders.push(n.idx)
-            current.oceanBorder = true
-            window.world.oceanRegions[current.oceanRegion]?.borders.push(current.idx)
-          }
-        })
-      }
-      window.world.oceanRegions.forEach(region => {
-        region.borders = ARRAY.unique(region.borders)
-      })
     },
     _setup: () => {
       // create initial points

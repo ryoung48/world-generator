@@ -2,14 +2,13 @@ import { WORLD } from '../..'
 import { CELL } from '../../cells'
 import { CLIMATE } from '../../cells/climate'
 import { Cell } from '../../cells/types'
-import { CULTURE } from '../../npcs/cultures'
 import { REGION } from '../../regions'
 import { PLACE } from '../../regions/places'
 import { PROVINCE } from '../../regions/provinces'
 import { Province } from '../../regions/provinces/types'
 import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
-import { REGIONAL } from '../regions'
+import { SHAPER_REGIONS } from '../regions'
 
 const claimCell = (cell: Cell, province: Province) => {
   cell.province = province.idx
@@ -62,19 +61,16 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
       // final populations
       const cellArea = WORLD.cell.area()
       window.world.regions.forEach(region => {
-        const culture = window.world.cultures[region.culture]
-        const { development } = region
         REGION.provinces(region).forEach(province => {
           province.population =
             province.cells.land.reduce((sum, i) => {
               const cell = window.world.cells[i]
-              const mod = cell.isMountains ? 0.1 : 0.9 + development / 10
+              const mod = cell.isMountains ? 0.1 : 0.9
               return sum + CLIMATE.holdridge[cell.climate].habitability * mod
             }, 0) *
             cellArea *
-            30
+            45
         })
-        if (culture) CULTURE.culturize(culture, region)
       })
     },
     _checkIslands: () => {
@@ -146,9 +142,9 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
       // make sure there are no large empty spaces
       const currProvinces = window.world.provinces.map(t => PROVINCE.cell(t))
       window.world.regions
-        .filter(region => REGION.biome(region).latitude !== 'polar')
+        .filter(region => REGION.climate(region).latitude !== 'polar')
         .forEach(region => {
-          const land = REGIONAL.land[region.idx].length
+          const land = SHAPER_REGIONS.land[region.idx].length
           const settlements = regionSettlements[region.idx].length
           const quota = Math.round(land / 50 - settlements)
           if (quota > 0) {
@@ -156,7 +152,7 @@ export const URBANIZATION = PERFORMANCE.profile.wrapper({
               .close({
                 count: quota,
                 spacing,
-                whitelist: REGIONAL.land[region.idx]
+                whitelist: SHAPER_REGIONS.land[region.idx]
                   .filter(poly => !CELL.place(poly))
                   .sort((a, b) => b.score - a.score),
                 blacklist: currProvinces

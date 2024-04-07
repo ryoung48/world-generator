@@ -26,3 +26,4 @@ public/assets/vignettes
 *.njsproj
 *.sln
 *.sw?
+/notes/_sequences.txt

@@ -1,65 +1,25 @@
 import { Grid } from '@mui/material'
 
 import { WORLD } from '../../models'
-import { CULTURE } from '../../models/npcs/cultures'
-import { RELIGION } from '../../models/npcs/religions'
+import { RELIGION } from '../../models/heritage/religions'
 import { REGION } from '../../models/regions'
 import { PROVINCE } from '../../models/regions/provinces'
-import { Region } from '../../models/regions/types'
+import { WAR } from '../../models/regions/wars'
 import { MATH } from '../../models/utilities/math'
 import { TEXT } from '../../models/utilities/text'
+import { CodexPage } from '../common/CodexPage'
+import { SectionList } from '../common/text/SectionList'
+import { StyledText } from '../common/text/styled'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
 import { MAP } from '../world/common'
-import { CodexPage } from './common/CodexPage'
-import { SectionList } from './common/text/SectionList'
-import { StyledText } from './common/text/styled'
-
-const describeWar = (nation: Region) => {
-  const war = window.world.wars[nation.war]
-  const status = {
-    decisive: 'the defenders are being crushed',
-    stalemated: 'both sides are evenly matched',
-    struggling: 'the invasion is being repulsed'
-  }
-  return {
-    title: 'At War',
-    subtitle: `(${war.idx}) ${status[war.status]}`,
-    content: [
-      {
-        label: 'belligerents',
-        text: war.belligerents
-      },
-      {
-        label: 'background',
-        text: war.reasons
-          .map(({ tag, text }) => TEXT.decorate({ label: tag, tooltip: text }))
-          .join(', ')
-      },
-      {
-        label: 'losses',
-        text: war.losses
-      }
-    ]
-  }
-}
 
 export function NationView() {
   const { state } = VIEW.context()
   const province = window.world.provinces[state.loc.province]
   const nation = PROVINCE.nation(province)
-  const ruling = nation.culture
   const totalPop = REGION.population(nation)
   const provinces = REGION.provinces(nation)
-  const cultures = MATH.counterDist(
-    provinces.map(province => window.world.regions[province.region].culture)
-  )
-    .sort((a, b) => {
-      const aCount = a.value === ruling ? Infinity : a.count
-      const bCount = b.value === ruling ? Infinity : b.count
-      return bCount - aCount
-    })
-    .slice(0, 3)
   const religion = REGION.religion(nation)
   const stateReligion = religion.type === 'atheistic' ? -1 : nation.religion
   const religions = MATH.counterDist(
@@ -86,7 +46,7 @@ export function NationView() {
       subtitle={
         <StyledText
           color={cssColors.subtitle}
-          text={`(${nation.idx}) ${nation.government} (${nation.size})`}
+          text={`(${nation.idx}) ${nation.size} (${nation.government})`}
         ></StyledText>
       }
       content={
@@ -97,29 +57,6 @@ export function NationView() {
                 {
                   label: `Climate`,
                   content: climates
-                },
-                {
-                  label: 'Demographics',
-                  content: (
-                    <span>
-                      <StyledText
-                        text={cultures
-                          .map(({ value, count }) => {
-                            const culture = window.world.cultures[value]
-                            const color = value === ruling ? undefined : cssColors.subtitle
-                            return `${TEXT.decorate({
-                              label: culture.name,
-                              details: CULTURE.describe(culture),
-                              color
-                            })} ${TEXT.decorate({
-                              label: `(${TEXT.formatters.percent(count)})`,
-                              color
-                            })}`
-                          })
-                          .join(', ')}
-                      ></StyledText>
-                    </span>
-                  )
                 },
                 {
                   label: 'Religions',
@@ -189,7 +126,7 @@ export function NationView() {
                             tooltip: war ? undefined : opinion,
                             color: color,
                             bold: war,
-                            details: war ? describeWar(nation) : undefined
+                            details: war ? WAR.describe(window.world.wars[nation.war]) : undefined
                           })
                         })
                         .join(', ')}

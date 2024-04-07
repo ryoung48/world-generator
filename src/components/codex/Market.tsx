@@ -2,13 +2,13 @@ import { css } from '@emotion/css'
 import { Grid, IconButton } from '@mui/material'
 import { ArrowDownBold, ArrowUpBold, Sack } from 'mdi-material-ui'
 
-import { decorateItem, itemPrice, localMarket } from '../../models/npcs/equipment'
-import { Item } from '../../models/npcs/equipment/types'
-import { Actor } from '../../models/npcs/types'
+import { decorateItem, itemPrice, localMarket } from '../../models/actors/equipment'
+import { Item } from '../../models/actors/equipment/types'
+import { Actor } from '../../models/actors/types'
+import { DataTable } from '../common/DataTable'
+import { ToggleButtons } from '../common/navigation/ToggleButtons'
+import { StyledText } from '../common/text/styled'
 import { VIEW } from '../context'
-import { DataTable } from './common/DataTable'
-import { ToggleButtons } from './common/navigation/ToggleButtons'
-import { StyledText } from './common/text/styled'
 
 const style__disabled = css`
   background-color: #cecece !important;
@@ -23,7 +23,7 @@ export function MarketView() {
   const { state, dispatch } = VIEW.context()
   const loc = window.world.provinces[state.loc.province]
   const goods = localMarket({ loc, avatar: state.avatar }).sort((a, b) => b.tier - a.tier)
-  const heroes = state.avatar.pcs.map(i => window.world.npcs[i])
+  const heroes = state.avatar.pcs.map(i => window.world.actors[i])
   return (
     <ToggleButtons
       selection={heroes.map(hero => hero.name)}

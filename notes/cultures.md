@@ -3,7 +3,7 @@
 * aesthetic: beauty in material goods and architecture
 * ancestry: bloodline and family heritage
 * arcana: magical prowess and occult ability
-* artifice: ingenuity and technological advancement
+** artifice: ingenuity and technological advancement
 * austerity: ascetic unworldliness and pious poverty
 * bravery: courage and valiance in danger
 * charity: sharing wealth and goods with others
@@ -15,19 +15,19 @@
 * exploration: exploring the unknown and discovering secrets
 * forgiveness: showing mercy to enemies
 * freedom: individual rights and freedom of action
-* guile: cunning and the ability to trick others
+** guile: cunning and the ability to trick others
 * hierarchy: social stratification and class distinctions
 * history: remembrance of the past and memorializing history
 * honor: honesty and truthfulness in speech and action
 * immortality: building things in service of their posterity
 * imperialism: conquest and domination of others
-* intrigue: scheming subtly against enemies or rivals
+** intrigue: scheming subtly against enemies or rivals
 * logic: humanistic reason and “rational” religion
 * loyalty: faithfulness towards one’s chosen friends
 * lust: seductive charm and sexual license
 * nature: harmony with nature and existing life
 * order: discipline and obedience to the law
-* perfection: social progress toward some eventual utopia
+** perfection: social progress toward some eventual utopia
 * progress: personal development and limit-pushing
 * purity: ethnic purity of blood and culture
 * revanchism: restoring some real or imagined glorious past
@@ -39,7 +39,7 @@
 * subterfuge: subtlety and indirectness of action
 * supremacy: societal or ethnic superiority over all outsiders
 * tenacity: hardiness and endurance before woes
-* tradition: submission to the collective norms
+** tradition: submission to the collective norms
 * unity: elimination of group differences
 * vengeance: execution of just vendettas
 * vigor: industry and the ability to work tirelessly
@@ -105,7 +105,7 @@ below are two lists of traits that might be used to describe alien cultures:
 * vegetative sculpting: growing plants into living structures for habitation and ceremony
 * symbiotic farming: agriculture that relies on native fauna to naturally cultivate flora without tilling land
 * artisan enclaves: communities dedicated to perfecting and teaching their crafts
-* floating markets: trade centers established on interconnected rafts and boats on waterways
+* floating markets: known for trade centers established on interconnected rafts and boats on waterways
 * shadow theater: storytelling through the play of puppets and shapes against illuminated backdrops
 * fusion cuisine: culinary practices that blend different regional flavors, celebrating diversity
 * bioluminescent guidance: paths and public spaces lit by natural organisms, reducing light pollution
@@ -113,46 +113,62 @@ below are two lists of traits that might be used to describe alien cultures:
 
 extend both of these lists with additional entires written in the same style
 
---
-* barbaric
-* warmonger
-* diplomatic
-* xenophobic
-* isolationist
-* cosmopolitan
-* swamp/forest/plains/desert/mountainous/arctic
-* decadence
-* intrigue
-* revanchism
-* stewardship
-* artificers
-* mercantile
-* cultivation
-* seafaring
-* nomadic
-* sorcerous
-* zealous
-* atheist
-* avian/mammalian/reptilian/arthropod
-* fungal/verdant
-* mutant
-* eldritch
-* undeath
-* cybernetic
-
-given the following culture traits:
-
 * family collectives: extended families living together and pooling resources
 * draped turbans: head wraps varying in style and size based on region or social standing
 * ancestral altars: dedicated spaces in homes for ancestor worship, keeping family ties strong
 
-write more in the same style as the examples above for the following traits:
-* seafarers
-* forest folk
-* hill folk
-* mountain folk
-* marsh folk
-* desert dwellers
-* plains dwellers
+
+* agrarian: known for very productive farmlands and advanced agricultural practices
+* astute diplomats: known for building webs of complex alliances and resolving conflicts without violence
+* frontier strongholds: their borders are lined with many forts and watchtowers to protect against invaders
+* court eunuchs: they make great use of eunuchs as domestic servants, bureaucratic administrators, and even military officers
+* culture blending: they are adept at incorporating foreign languages, traditions and customs into their society
+* esteemed hospitality: they are known for their welcoming and friendly service to their guests
+* family business: business are encouraged to develop along family lines, accumulating extensive skill for their trade across generations
+* legalistic: they regard the rule of law and its codification as being the most important parameter of a civilized society
+* marriage ceremonies: marriages are known to be a highly public and ritualistic affair
+* meritocratic exams: 
+* metalworkers: known for the production of durable and high quality weapons and armor
+* pastoralists: they are at home in wide and open terrain, where they herd large groups of animals
+* ruling caste: they have experience ruling over foreign subjects and know how to effectively suppress revolts
+* traditionalists: adherence to tradition is held in high regard; these people are very resistant to change
+* abundant mines: their lands are rich in raw materials, ore, and uncut gems; they have an affinity for mining
+* loyal subjects:  serving one's liege and country is both noble and just - a duty and a privilege, rather than an avaricious arrangement
+
+* battlefield looters: battles are fought for profit rather than prestige
+* military formations: they know how to create synergy between different types of units by use of efficient protective formations
+* large armies: they forsake having elite troops, and instead favors poorly-equipped massed armies
+* hit-and-run tactics: they have mastered the use of lightly-armored units to hit the enemy hard, and then fall back
+* aristocratic soldiers: their armies are small, but they are well-trained and equipped with the highest quality armaments
+* mercenary companies: views mercenary work favorably and encourages warriors to seek glory as mercenaries in-between wars
+* winter warriors: they have much experience fitting in bitter cold climates
+* seasoned archers: 
+* heavy infantry:
+* slave soldiers
+* siege engineers
+* horse lords: they have mastered the horse and its use in warfare
+
+* forbearing
+* industrious
+* modest: one should not take up too much space or think oneself better than others
+* pacifists: only by pursuing a path of non-violence can people truly live in peace
+* prolific hunters: they have refined their hunting practices to precise and almost beautiful art
+* refined poetry: poetry is considered a noble art and many spend their time piecing words together with meaning and thought
+* storytellers: the past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations
+* warrior culture: they value martial prowess and strength above everything else
+* xenophilic: embraces everyone and is genuinely fascinated by all cultures
+* trials-by-combat: disputes often settled through formalized duels and trials by combat
+* vegetarians: has developed a strong aversion to consuming the flesh of animals, and practices vegetarianism throughout their society
+* forest wardens: 
+* caravaneers: these people are experts at traversing harsh desert and are strongly associated with the caravan trade
+* matriarchal: they have a matriarchal hierarchy, where the ruling class is overwhelmingly comprised of women
+
+
+
+
+
+
+
+
 
 

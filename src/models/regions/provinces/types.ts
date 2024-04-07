@@ -1,15 +1,15 @@
+import { Item } from '../../actors/equipment/types'
 import { Cell } from '../../cells/types'
-import { Item } from '../../npcs/equipment/types'
+import type { RouteTypes } from '../../types'
+import { WeightedDistribution } from '../../utilities/math/dice/types'
+import { TaggedEntity } from '../../utilities/text/types'
+import { FindParams } from '../../utilities/types'
 import { Camp } from '../places/camp/types'
 import { Hub } from '../places/hub/types'
 import { Ruin } from '../places/ruin/types'
 import { Village } from '../places/village/types'
 import { Wilderness } from '../places/wilderness/types'
 import { Region } from '../types'
-import type { RouteTypes } from '../../types'
-import { TaggedEntity } from '../../utilities/entities/types'
-import { WeightedDistribution } from '../../utilities/math/types'
-import { FindParams } from '../../utilities/types'
 
 export interface Demographics {
   common: WeightedDistribution<number>

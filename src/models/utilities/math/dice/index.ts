@@ -3,8 +3,7 @@ import { range } from 'd3'
 import { ARRAY } from '../../array'
 import { TEXT } from '../../text'
 import { MATH } from '..'
-import { Directions } from '../points/types'
-import { WeightedDistribution } from '../types'
+import { DistributionParams, WeightedDistribution } from './types'
 
 interface Shuffler<T> {
   r: number
@@ -165,15 +164,18 @@ export class Dice {
       )
     }, text)
   }
-  public direction(): Directions {
-    return this.choice(['N', 'S', 'E', 'W'])
+  public distribute<T>({ count, dist }: DistributionParams<T>) {
+    const total = dist.reduce((sum, { w }) => sum + w, 0)
+    return window.dice.shuffle(
+      dist
+        .filter(({ w }) => w > 0)
+        .map(({ v, w }) => Array<T>(Math.ceil((w / total) * count)).fill(v))
+        .flat()
+    )
   }
 }
 
 export const DICE = {
-  choice: <T>(arr: T[]) => {
-    return arr[~~(Math.random() * arr.length)]
-  },
   id: (seed = Math.random()) => {
     return Math.floor(seed * Number.MAX_SAFE_INTEGER).toString(36)
   },

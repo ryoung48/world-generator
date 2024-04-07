@@ -1,7 +1,7 @@
 import { Dispatch } from 'react'
 
-import { Item } from '../../models/npcs/equipment/types'
-import { Actor } from '../../models/npcs/types'
+import { Item } from '../../models/actors/equipment/types'
+import { Actor } from '../../models/actors/types'
 
 export type Avatar = { pcs: number[]; cp: number }
 

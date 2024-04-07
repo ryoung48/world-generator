@@ -14,10 +14,10 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
       while (land.length > 0) {
         let queue = [land[0].idx]
         window.world.landmarks[idx] = {
-          name: 'none',
           type: 'continent',
           size: 0,
-          water: false
+          water: false,
+          cell: land[0].idx
         }
         // floodfill all connecting land cells to mark an island
         const lake: { isle: boolean; idx?: number } = { isle: true }
@@ -96,9 +96,9 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
         let queue = [water[0].idx]
         window.world.landmarks[idx] = {
           size: 1,
-          name: 'none',
           type: 'ocean',
-          water: true
+          water: true,
+          cell: water[0].idx
         }
         // floodfill all connecting water cells to mark a body of water
         while (queue.length > 0) {

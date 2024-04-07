@@ -2,13 +2,13 @@ import { Divider, Grid } from '@mui/material'
 import { ExclamationThick } from 'mdi-material-ui'
 import { Fragment } from 'react'
 
-import { ACTOR } from '../../models/npcs'
+import { ACTOR } from '../../models/actors'
 import { QUEST } from '../../models/quests'
 import { Hub } from '../../models/regions/places/hub/types'
 import { TEXT } from '../../models/utilities/text'
+import { DataTable, DetailedTableRow } from '../common/DataTable'
+import { StyledText } from '../common/text/styled'
 import { cssColors } from '../theme/colors'
-import { DataTable, DetailedTableRow } from './common/DataTable'
-import { StyledText } from './common/text/styled'
 
 export function QuestView(props: { hub: Hub }) {
   const quests = QUEST.spawn(props.hub)
@@ -39,7 +39,7 @@ export function QuestView(props: { hub: Hub }) {
             {
               text: 'Patron',
               value: quest => {
-                const patron = window.world.npcs[quest.patron]
+                const patron = window.world.actors[quest.patron]
                 return (
                   <DetailedTableRow
                     title={

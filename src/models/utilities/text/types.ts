@@ -1,5 +1,9 @@
-import { DetailedToolTipParams } from '../../../components/codex/common/text/styled/types'
-import { TaggedEntity } from '../entities/types'
+import { DetailedToolTipParams } from '../../../components/common/text/styled/types'
+
+export interface TaggedEntity {
+  tag: 'nation' | 'province'
+  idx: number
+}
 
 export type CodexLinkParams = {
   tooltip?: string

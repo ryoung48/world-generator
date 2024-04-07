@@ -474,36 +474,19 @@ export const MAP = {
           text: MAP.metrics.elevation.format(r)
         }))
     },
-    /**
-     * nomadic - small, often nomadic groups with limited permanent infrastructure
-     * tribal - settled, agriculture-based communities without extensive urbanization
-     * feudal - societies organized around land-based hierarchies and serfdom
-     * mercantile - societies with significant trade networks, both domestic and international
-     * colonial - nations that establish and maintain colonies in foreign territories
-     * enlightened - philosophical advancements, particularly in governance and human rights
-     * industrial - mechanized production, growth of factories, and rapid urbanization
-     */
-    development: {
-      scale: d3.scaleLinear([0, 6], [0, 1]),
-      color: (d: number) => d3.interpolateGreens(d),
-      format: (d: number) =>
-        d === 0
-          ? 'primitive'
-          : d === 1
-          ? 'traditional'
-          : d === 2
-          ? 'emerging'
-          : d === 3
-          ? 'developing'
-          : d === 4
-          ? 'established'
-          : d === 5
-          ? 'progressive'
-          : 'enlightened',
+    government: {
+      colors: {
+        autocratic: '#ffbaba',
+        republic: '#bad5ff',
+        oligarchic: '#baffd9 ',
+        confederation: '#ffe3ba ',
+        fragmented: '#d7e9ef ',
+        uninhabited: 'white'
+      },
       legend: () =>
-        [0, 1, 2, 3, 4, 5, 6].reverse().map(d => ({
-          color: MAP.metrics.development.color(MAP.metrics.development.scale(d)),
-          text: MAP.metrics.development.format(d)
+        Object.entries(MAP.metrics.government.colors).map(([k, v]) => ({
+          color: v,
+          text: k
         }))
     },
     population: {
@@ -540,8 +523,8 @@ export const MAP = {
         monotheistic: '#B0C4DE',
         dualistic: '#ADD8E6',
         polytheistic: '#FFDAB9',
-        'ancestor worship': '#E6E6FA',
-        animistic: '#98FB98'
+        animistic: '#98FB98',
+        uninhabited: 'white'
       },
       legend: () =>
         Object.entries(MAP.metrics.religion.colors).map(([k, v]) => ({
@@ -601,38 +584,6 @@ export const MAP = {
           text: MAP.metrics.temperature.format(heat)
         })),
       units: () => (metric ? '°C' : '°F')
-    },
-    difficulty: {
-      scale: d3.scaleLinear([0, 9], [0, 1]),
-      color: (difficulty: number) =>
-        d3.interpolateRgbBasis([
-          '#FFFFFF',
-          '#7AD7F0',
-          '#A2E8A4',
-          '#FFFDA1',
-          '#FFC266',
-          '#FF6B6B',
-          '#C774E8',
-          '#5E548E',
-          '#34314C'
-        ])(MAP.metrics.difficulty.scale(difficulty)),
-      legend: () => [
-        ...[
-          'safe',
-          'mild',
-          'low',
-          'moderate',
-          'medium',
-          'hazardous',
-          'high',
-          'severe',
-          'extreme',
-          'lethal'
-        ].map((d, i) => ({
-          color: MAP.metrics.difficulty.color(i),
-          text: d
-        }))
-      ]
     }
   },
   polygon: (params: DrawPolygonParams) => {
@@ -659,9 +610,8 @@ export const MAP = {
   },
   styles: [
     'Nations',
-    'Cultures',
+    'Governments',
     'Religions',
-    'Development',
     'Population',
     'Elevation',
     'Temperature',

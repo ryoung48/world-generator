@@ -1,7 +1,7 @@
 import { createContext, Dispatch, useContext } from 'react'
 
-import { itemPrice } from '../../models/npcs/equipment'
-import { adventurers } from '../../models/npcs/professions/adventurers'
+import { itemPrice } from '../../models/actors/equipment'
+import { adventurers } from '../../models/actors/professions/adventurers'
 import { REGION } from '../../models/regions'
 import { DICE } from '../../models/utilities/math/dice'
 import { LoadingParams, ViewActions, ViewState } from './types'

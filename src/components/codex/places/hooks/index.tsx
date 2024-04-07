@@ -1,7 +1,7 @@
 import { Divider, Grid } from '@mui/material'
 import { Fragment } from 'react'
 
-import { StyledText } from '../../common/text/styled'
+import { StyledText } from '../../../common/text/styled'
 import { HookViewParams } from './types'
 
 export function HooksView({ hooks }: HookViewParams) {

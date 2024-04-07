@@ -1,7 +1,7 @@
 import { ProfileNode } from '../../../models/utilities/performance/types'
-import { CHARTS } from '../../codex/common/charts'
-import { NestedPieChart } from '../../codex/common/charts/NestedPirChart'
-import { NestedPieData } from '../../codex/common/charts/types'
+import { CHARTS } from '../../common/charts'
+import { NestedPieChart } from '../../common/charts/NestedPirChart'
+import { NestedPieData } from '../../common/charts/types'
 import { PerformanceViewProps } from './types'
 
 /**

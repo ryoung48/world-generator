@@ -20,7 +20,6 @@ export type DrawLegendsParams = {
   ctx: CanvasRenderingContext2D
   province: Province
   style: MapStyle
-  nationSet: Set<number>
 }
 
 export type HighlightLocationParams = {

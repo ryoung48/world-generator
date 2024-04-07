@@ -85,7 +85,8 @@ export const CELL = {
               if (cell) break
             }
             if (!cell) {
-              throw new Error('bad cell boundary')
+              console.error('bad cell boundary')
+              return []
             }
             ordered.push(current)
           }

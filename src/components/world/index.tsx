@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 
 import { WORLD } from '../../models'
 import { CLIMATE } from '../../models/cells/climate'
+import { GEOGRAPHY } from '../../models/cells/geography'
 import { WEATHER } from '../../models/cells/weather'
 import { REGION } from '../../models/regions'
 import { PROVINCE } from '../../models/regions/provinces'
@@ -106,7 +107,6 @@ const paint = ({ ctx, projection, month, style, loc, cachedImages }: WorldPaintP
   DRAW_BORDERS.regions({ ctx, projection, month, style, nations, province })
   DRAW_BORDERS.contested({ ctx, projection, nations })
   DRAW_LANDMARKS.lakes({ ctx, projection })
-  DRAW_LANDMARKS.rivers({ ctx, projection })
   DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet })
   DRAW_TERRAIN.icons({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
   DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style })
@@ -115,14 +115,7 @@ const paint = ({ ctx, projection, month, style, loc, cachedImages }: WorldPaintP
   DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
   DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection })
-  const close = new Set(
-    [nation]
-      .concat(REGION.neighbors({ region: nation, depth: 1 }))
-      .map(r => REGION.domains(r))
-      .flat()
-      .map(r => r.idx)
-  )
-  DRAW_EMBELLISHMENTS.legend({ ctx, style, province, nationSet: close })
+  DRAW_EMBELLISHMENTS.legend({ ctx, style, province })
 }
 
 let projection: GeoProjection = null
@@ -276,6 +269,9 @@ export function WorldMap() {
               holdridge.name
             }`}</Grid>
           )}
+          <Grid item xs={12}>
+            {GEOGRAPHY.name(cell)}
+          </Grid>
         </Grid>
         <ToggleButtonGroup
           color='primary'
@@ -289,7 +285,7 @@ export function WorldMap() {
             zIndex: 2,
             position: 'absolute',
             top: MAP.height + 35,
-            left: MAP.width * 0.76,
+            left: MAP.width * 0.79,
             background: 'rgba(238, 238, 221, 0.85)'
           }}
         >
@@ -308,7 +304,7 @@ export function WorldMap() {
               position: 'absolute',
               width: 500,
               top: MAP.height - 25,
-              left: MAP.width * 0.8,
+              left: MAP.width * 0.82,
               background: 'transparent'
             }}
           >

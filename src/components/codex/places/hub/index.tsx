@@ -1,13 +1,13 @@
 import { Grid } from '@mui/material'
 
-import { CULTURE } from '../../../../models/npcs/cultures'
+import { CULTURE } from '../../../../models/heritage/cultures'
 import { PLACE } from '../../../../models/regions/places'
 import { HUB } from '../../../../models/regions/places/hub'
 import { TRADE_GOODS } from '../../../../models/regions/places/hub/trade'
 import { PROVINCE } from '../../../../models/regions/provinces'
 import { TEXT } from '../../../../models/utilities/text'
-import { StyledText } from '../../common/text/styled'
-import { QuestView } from '../../Quest'
+import { StyledText } from '../../../common/text/styled'
+// import { QuestView } from '../../Quest'
 import { HubViewParams } from './types'
 
 export function HubView({ hub }: HubViewParams) {
@@ -16,7 +16,7 @@ export function HubView({ hub }: HubViewParams) {
 
   const province = PLACE.province(hub)
   const { common } = PROVINCE.demographics(province)
-  const cultureCount = 5
+  const cultureCount = 4
   const other = common.slice(cultureCount).reduce((sum, { w }) => sum + w, 0)
 
   return (
@@ -47,9 +47,8 @@ export function HubView({ hub }: HubViewParams) {
             .slice(0, cultureCount)
             .map(({ v, w }) => {
               const culture = window.world.cultures[v]
-              const { name } = culture
               return `${TEXT.decorate({
-                label: name,
+                label: window.world.regions[culture.region].name,
                 details: CULTURE.describe(culture)
               })} (${TEXT.formatters.percent(w)})`
             })
@@ -57,7 +56,7 @@ export function HubView({ hub }: HubViewParams) {
             .join(', ')}
         ></StyledText>
       </Grid>
-      <QuestView hub={hub}></QuestView>
+      {/* <QuestView hub={hub}></QuestView> */}
     </Grid>
   )
 }

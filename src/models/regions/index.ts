@@ -139,12 +139,12 @@ export const REGION = {
     return REGION.provinces(region).length > 0
   },
   atWar: (region: Region.Region) => REGION.relations({ target: 'at war', region }).length > 0,
-  biome: (region: Region.Region) => {
+  climate: (region: Region.Region) => {
     const capital = REGION.capital(region)
     const cell = PROVINCE.cell(capital)
     return CLIMATE.holdridge[cell.climate]
   },
-  biomes: (region: Region.Region) => {
+  climates: (region: Region.Region) => {
     const biomes = Object.entries(
       REGION.provinces(region)
         .map(province =>
@@ -177,6 +177,8 @@ export const REGION = {
       })
       .join(', ')
   },
+  coastal: (region: Region.Region) => PROVINCE.coastal(REGION.capital(region)),
+  culture: (region: Region.Region) => window.world.cultures[region.culture],
   environment: (region: Region.Region) => {
     const biomes = REGION.provinces(region)
       .map(province =>
@@ -227,10 +229,6 @@ export const REGION = {
   },
   borders: (region: Region.Region) => region.borders.map(b => window.world.regions[b]),
   capital: (region: Region.Region) => window.world.provinces[region.capital],
-  climate: (region: Region.Region) => {
-    const biome = REGION.biome(region)
-    return CLIMATE.zone[biome.latitude]
-  },
   domains: (region: Region.Region) => {
     return REGION.provinces(region)
       .filter(t => t.capital)
@@ -244,12 +242,16 @@ export const REGION = {
     })
     return window.world.regions[found.region]
   },
-  landBorders: ({ region, depth = 1 }: Region.RegionNeighborsParams): Region.Region[] =>
-    ARRAY.bfs({
-      src: region,
-      n: src => src.landBorders.map(r => window.world.regions[r]),
-      depth
-    }),
+  mountainous: (region: Region.Region) => {
+    const provinces = REGION.provinces(region)
+    const mountains = provinces
+      .map(province => {
+        return province.cells.land.map(i => window.world.cells[i]).filter(cell => cell.isMountains)
+      })
+      .flat()
+    const total = provinces.reduce((sum, provinces) => sum + provinces.cells.land.length, 0)
+    return mountains.length / total > 0.4
+  },
   nation: (region: Region.Region) => {
     const capital = window.world.provinces[region.capital]
     const nation = PROVINCE.nation(capital)
@@ -259,7 +261,7 @@ export const REGION = {
     return Object.values(window.world.regions).filter(n => !n.desolate && REGION.active(n))
   },
   neighbors: ({ region, depth = 1 }: Region.RegionNeighborsParams): Region.Region[] =>
-    ARRAY.bfs({
+    ARRAY.traversal.bfs({
       src: region,
       n: src =>
         PROVINCE.neighboringRegions(REGION.provinces(src)).map(r => window.world.regions[r]),
@@ -312,7 +314,6 @@ export const REGION = {
         ])
       },
       regional: {},
-      coastal: false,
       borders: [],
       provinces: [],
       landBorders: [],
@@ -324,5 +325,29 @@ export const REGION = {
     window.world.regions.push(region)
     return region
   },
-  traits
+  terrain: (region: Region.Region) => {
+    const environment = MATH.counter(
+      REGION.provinces(region)
+        .map(province => {
+          return province.cells.land
+            .map(i => window.world.cells[i])
+            .filter(cell => !cell.isMountains)
+            .map(cell => {
+              const { terrain } = CLIMATE.holdridge[cell.climate]
+              return terrain === 'tundra' ? 'plains' : terrain === 'glacier' ? 'desert' : terrain
+            })
+        })
+        .flat()
+    )
+    if (Object.keys(environment).length === 0) return 'none'
+    return Object.entries(environment).sort((a, b) => b[1] - a[1])[0][0] as
+      | 'forest'
+      | 'plains'
+      | 'desert'
+  },
+  traits,
+  zone: (region: Region.Region) => {
+    const biome = REGION.climate(region)
+    return CLIMATE.zone[biome.latitude]
+  }
 }

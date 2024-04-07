@@ -1,6 +1,7 @@
 {
     "ignorePaths": [
-        "src/models/regions/provinces/hooks/**"
+        "src/models/regions/places/hooks/**",
+        "src/models/regions/places/ruin/**"
     ],
     "ignoreWords": [],
     "words": [
@@ -10,6 +11,7 @@
         "arcanists",
         "archmage",
         "archmages",
+        "armorsmiths",
         "avant",
         "baeuracrats",
         "batesian",
@@ -24,6 +26,7 @@
         "bloodthirst",
         "bynames",
         "camelcase",
+        "caravaneers",
         "cathemeral",
         "catmull",
         "cddfggjkkllmmnnpqrrsstŋŋxzzððʃʧ",
@@ -111,6 +114,7 @@
         "osteoderms",
         "pacted",
         "pacting",
+        "pastoralists",
         "pathing",
         "patternize",
         "perarid",
