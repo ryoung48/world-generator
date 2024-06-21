@@ -232,6 +232,7 @@ export interface QuirkConstraints {
   clergy: boolean
   aristocrat: boolean
   merchant: boolean
+  soldier: boolean
   chef: boolean
   poet: boolean
   thin: boolean

@@ -1,4 +1,4 @@
-import { DrawMapParams } from '../common/types'
+import { DrawMapParams } from '../shapes/types'
 
 export type DrawOceanParams = DrawMapParams & {
   month: number

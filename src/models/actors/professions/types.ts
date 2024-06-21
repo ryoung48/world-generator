@@ -31,7 +31,7 @@ const _professions = [
   'laborer',
   'beggar',
   'servant',
-  'servant (master)',
+  'master servant',
   'sailor',
   'dock worker',
   'artist',
@@ -61,10 +61,6 @@ const _professions = [
   'lawyer',
   'scholar',
   'sorcerer',
-  'poet (famous)',
-  'artist (famous)',
-  'musician (famous)',
-  'courtesan (famous)',
   'butcher',
   'baker',
   'brewer',
@@ -82,7 +78,7 @@ const _professions = [
   'banker',
   'caravan trader',
   'caravan master',
-  'ship captain (merchant)',
+  'ship captain',
   'dock master',
   // upper
   'aristocrat (minor)',
@@ -92,14 +88,13 @@ const _professions = [
   'magistrate',
   'archmage',
   'high priest',
-  'templar (grandmaster)',
-  'ethnarch (minority)',
+  'templar grandmaster',
+  'ethnarch',
   'general (military)',
   'exiled pretender',
   'diplomat',
   'courtier',
-  'prince',
-  'suzerain'
+  'prince'
 ] as const
 export type Profession = typeof _professions[number]
 export interface ProfessionDetails

@@ -1,6 +1,6 @@
 import { scaleLinear } from 'd3'
 
-import { MAP } from '../../../components/world/common'
+import { MAP_METRICS } from '../../../components/world/shapes/metrics'
 import { MATH } from '../../utilities/math'
 import { season } from '../../utilities/math/time'
 import { TEXT } from '../../utilities/text'
@@ -272,7 +272,7 @@ export const WEATHER = {
     // day temperature
     const biome = CLIMATE.holdridge[cell.climate]
     const rain = scaleLinear(
-      MAP.metrics.rain.rain,
+      MAP_METRICS.rain.rain,
       [0.92, 0.8, 0.68, 0.54, 0.42, 0.3, 0.18, 0.06]
     )(WEATHER.rain({ cell, month }))
     const meanTemp = MATH.conversion.temperature.celsius.fahrenheit(WEATHER.heat({ cell, month }))
@@ -292,9 +292,9 @@ export const WEATHER = {
     const night = time === 'night' || time === 'dusk'
     if (night) localTemp -= diurnalVar
     const weather = proceduralWeather({ rainChance: rain, temp: localTemp, biome, time })
-    return `${TEXT.titleCase(season(month))}, ${time}, ${TEXT.decorate({
+    return `${season(month)}, ${time}, ${TEXT.decorate({
       label: weather.heat.desc,
-      tooltip: `${MAP.metrics.temperature.format(
+      tooltip: `${MAP_METRICS.temperature.format(
         MATH.conversion.temperature.fahrenheit.celsius(localTemp)
       )}`,
       color: color
@@ -304,7 +304,8 @@ export const WEATHER = {
         : TEXT.decorate({ label: '*', color: variance === 'warmer' ? 'red' : 'blue' })
     }, ${TEXT.decorate({
       label: weather.wind.desc,
-      tooltip: `${weather.wind.speed} mph`
+      tooltip: `${weather.wind.speed} mph`,
+      color: color
     })}, ${weather.conditions}`
   }
 }

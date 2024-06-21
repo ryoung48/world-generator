@@ -4,7 +4,6 @@ import { ACTOR } from '../../../actors'
 import { CELL } from '../../../cells'
 import { Cell } from '../../../cells/types'
 import { PLACE } from '..'
-import { HOOK } from '../hooks'
 import { Village } from './types'
 
 export const VILLAGE = {
@@ -25,20 +24,6 @@ export const VILLAGE = {
         { v: 'Traditional squire', w: 1 }
       ])
       village.locals = range(10).map(() => ACTOR.spawn({ place: village }).idx)
-      const province = PLACE.province(village)
-      const region = PLACE.region(village)
-      HOOK.spawn({
-        place: village,
-        hooks: HOOK.communities,
-        samples: 2,
-        constraints: {
-          urban: false,
-          warfare: province.conflict >= 0,
-          coastal: village.coastal,
-          tribal: !region.civilized,
-          capital: false
-        }
-      })
     }
   },
   spawn: (cell: Cell) => {

@@ -20,7 +20,8 @@ export const POINT = {
     },
     planar: (ref: Point, origin: Point) => {
       const rads = Math.atan2(origin.y - ref.y, origin.x - ref.x)
-      return MATH.conversion.angles.degrees(rads < 0 ? Math.abs(rads) : 2 * Math.PI - rads)
+      const degrees = MATH.conversion.angles.degrees(rads)
+      return (degrees + 360) % 360
     }
   },
   direction: {

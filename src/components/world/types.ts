@@ -1,9 +1,9 @@
 import { GeoProjection } from 'd3'
 
 import { ViewState } from '../context/types'
-import { MAP } from './common'
+import { MAP_SHAPES } from './shapes'
 
-export type MapStyle = typeof MAP.styles[number]
+export type MapStyle = typeof MAP_SHAPES.styles[number]
 export type CachedImages = Record<string, HTMLImageElement>
 
 export type WorldPaintParams = {
@@ -13,4 +13,5 @@ export type WorldPaintParams = {
   style: MapStyle
   month: number
   projection: GeoProjection
+  rotation: number[]
 }

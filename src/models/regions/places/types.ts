@@ -1,3 +1,4 @@
+import { TerrainIcon } from '../../../components/world/icons/terrain/types'
 import { Point } from '../../utilities/math/points/types'
 
 export interface Place extends Point {
@@ -5,16 +6,8 @@ export interface Place extends Point {
   name?: string
   type: 'hub' | 'village' | 'camp' | 'ruin' | 'wilderness'
   subtype?: string
+  icon?: TerrainIcon
   coastal?: boolean
   cell?: number
   finalized?: boolean
-  hooks?: {
-    tag: string
-    text: string
-    friend: string
-    enemy: string
-    complication: string
-    thing: string
-    place: string
-  }[]
 }

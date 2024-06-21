@@ -1,5 +1,5 @@
 import { REGION } from '../../regions'
-import { Culture } from '../cultures/types'
+import { Culture } from '../types'
 import { Species, SpeciesAppearance, SpeciesAppearanceParams, SpeciesKey } from './types'
 
 type HairTextures = Culture['appearance']['hair']['textures'][number][]

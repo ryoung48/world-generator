@@ -1,8 +1,7 @@
 import { cssColors } from '../../components/theme/colors'
-import { CULTURE } from '../heritage/cultures'
-import { Culture } from '../heritage/cultures/types'
 import { LANGUAGE } from '../heritage/languages'
 import { SPECIES } from '../heritage/species'
+import { Culture } from '../heritage/types'
 import { PLACE } from '../regions/places'
 import { PROVINCE } from '../regions/provinces'
 import { TEXT } from '../utilities/text'
@@ -29,28 +28,24 @@ const assignOutfit = (params: { npc: Actor }) => {
 const assignAppearance = (params: { culture: Culture; age: LifePhase; gender: Gender }) => {
   const { age, gender } = params
   const { appearance } = params.culture
-  const species = CULTURE.species(params.culture)
+  const species = params.culture.species
   const skin = `${window.dice.choice(appearance.skin.colors)} ${
     SPECIES.lookup[species].traits.skin
   }`
+  let hairstyle = ''
+  if (appearance.hair) {
+    const color = age === 'old' ? 'gray' : window.dice.choice(appearance.hair.colors)
+    const style = window.dice.weightedChoice([
+      { w: gender === 'male' ? 3 : 1, v: 'short' },
+      { w: gender === 'female' ? 3 : 1, v: 'long' }
+    ])
+    hairstyle = `${style} ${color} hair`
+  }
   return `${
     appearance.skin.texture
       ? TEXT.decorate({ label: skin, tooltip: appearance.skin.texture })
       : skin
-  }${
-    appearance.hair
-      ? `, ${TEXT.decorate({
-          label: `${window.dice.choice(appearance.hair.textures)} ${
-            age === 'old' ? 'gray' : window.dice.choice(appearance.hair.colors)
-          } hair`,
-          tooltip: window.dice.weightedChoice(appearance.hair.styles[gender])
-        })}`
-      : ''
-  }${
-    gender === 'male' && appearance.facialHair?.chance > window.dice.random
-      ? `, ${window.dice.choice(appearance.facialHair.styles)}`
-      : ''
-  }`
+  }${appearance.hair ? `, ${hairstyle}` : ''}`
 }
 
 export const ACTOR = {
@@ -72,7 +67,7 @@ export const ACTOR = {
     const age = params.age ?? profession.age
     const npc: Actor = {
       idx: window.world.actors.length,
-      name: LANGUAGE.word.firstName(culture.language, gender),
+      name: LANGUAGE.word.firstName(culture.language, gender).word,
       culture: culture.idx,
       age,
       gender,
@@ -104,8 +99,8 @@ export const ACTOR = {
     return {
       title: actor.name,
       subtitle: `${actor.age}, ${actor.gender} ${TEXT.decorate({
-        label: CULTURE.species(culture),
-        tooltip: window.world.regions[culture.region].name,
+        label: culture.species,
+        tooltip: culture.name,
         color: cssColors.subtitle
       })}, ${actor.profession.title}`,
       content

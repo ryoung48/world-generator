@@ -1,5 +1,5 @@
 import { CELL } from '../../../../models/cells'
-import { MAP } from '../../common'
+import { MAP_SHAPES } from '../../shapes'
 import { ICON } from '..'
 import { IconDef } from '../types'
 import { desert__icons } from './desert'
@@ -19,8 +19,8 @@ const terrain: Record<TerrainIcon, IconDef> = {
 
 export const DRAW_TERRAIN = {
   icons: ({ ctx, cachedImages, projection, regions, lands }: DrawTerrainIconParams) => {
-    const scale = MAP.scale.derived(projection)
-    const pathGen = MAP.path.linear(projection)
+    const scale = MAP_SHAPES.scale.derived(projection)
+    const pathGen = MAP_SHAPES.path.linear(projection)
     const sortedIcons = window.world.display.icons
       .filter(m => {
         const cell = window.world.cells[m.cell]
@@ -41,8 +41,8 @@ export const DRAW_TERRAIN = {
     sortedIcons.forEach(i => {
       const img = cachedImages[i.type]
       const icon = DRAW_TERRAIN.definitions[i.type]
-      const geojson = MAP.geojson.point(i)
-      const center = pathGen.centroid(MAP.geojson.features([geojson]))
+      const geojson = MAP_SHAPES.geojson.point(i)
+      const center = pathGen.centroid(MAP_SHAPES.geojson.features([geojson]))
       ICON.draw({
         ctx,
         img,

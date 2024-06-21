@@ -2,8 +2,8 @@ import { WORLD } from '../../../models'
 import { Cell } from '../../../models/cells/types'
 import { WEATHER } from '../../../models/cells/weather'
 import { SHAPER_DISPLAY } from '../../../models/shapers/display'
-import { MAP } from '../common'
-import { DrawMapParams } from '../common/types'
+import { MAP_SHAPES } from '../shapes'
+import { DrawMapParams } from '../shapes/types'
 import { DrawOceanParams } from './types'
 
 const styles = {
@@ -46,8 +46,8 @@ const _iceCache: Record<number, [number, number][][][]> = {}
 
 export const DRAW_LANDMARKS = {
   oceans: ({ ctx, projection, month }: DrawOceanParams) => {
-    const scale = MAP.scale.derived(projection)
-    const path = MAP.path.linear(projection)
+    const scale = MAP_SHAPES.scale.derived(projection)
+    const path = MAP_SHAPES.path.linear(projection)
     const drawnLands = WORLD.features('land')
     ctx.save()
     // fill the ocean
@@ -63,7 +63,7 @@ export const DRAW_LANDMARKS = {
       _iceCache[region.idx].forEach(borders => {
         borders.slice(0, 1).forEach(border => {
           ctx.save()
-          const p = MAP.polygon({ points: border, path, direction: 'inner' })
+          const p = MAP_SHAPES.polygon({ points: border, path, direction: 'inner' })
           ctx.clip(p)
           ctx.fill(p)
           ctx.restore()
@@ -83,7 +83,7 @@ export const DRAW_LANDMARKS = {
         regions.filter(r => filter(window.world.cells[r.cell]))
       )
       ctx.strokeStyle = color
-      const extentPath = path(MAP.geojson.multiline(filtered))
+      const extentPath = path(MAP_SHAPES.geojson.multiline(filtered))
       ctx.stroke(new Path2D(extentPath))
     }
     extent(summer.monthN, summer.color, hemisphere.north)
@@ -103,7 +103,7 @@ export const DRAW_LANDMARKS = {
       drawnLands.forEach(i => {
         if (!cache[i]) {
           const island = islands[i]
-          cache[i] = MAP.polygon({ points: island.path, path, direction: 'inner' })
+          cache[i] = MAP_SHAPES.polygon({ points: island.path, path, direction: 'inner' })
         }
         ctx.stroke(cache[i])
       })
@@ -119,8 +119,8 @@ export const DRAW_LANDMARKS = {
     return new Set(drawnLands)
   },
   lakes: ({ ctx, projection }: DrawMapParams) => {
-    const scale = MAP.scale.derived(projection)
-    const path = MAP.path.curveClosed(projection)
+    const scale = MAP_SHAPES.scale.derived(projection)
+    const path = MAP_SHAPES.path.curveClosed(projection)
     const drawnLakes = WORLD.features('water').filter(
       i => window.world.landmarks[i].type !== 'ocean'
     )
@@ -134,7 +134,8 @@ export const DRAW_LANDMARKS = {
       drawnLakes.forEach(i => {
         ctx.save()
         const lake = lakes[i]
-        if (!cache[i]) cache[i] = MAP.polygon({ points: lake.path, path, direction: 'inner' })
+        if (!cache[i])
+          cache[i] = MAP_SHAPES.polygon({ points: lake.path, path, direction: 'inner' })
         ctx.fillStyle = lake.border ? border.color : interior.color
         const waves = lake.border ? border.waves : interior.waves
         ctx.strokeStyle = `rgba(${waves},${opacity})`

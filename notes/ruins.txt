@@ -350,7 +350,7 @@ hazards:
 * seductive peril: the site has something ({lore|treasure|sanctuary}) that lures intruders to their doom
 * taboo wardens: entrance to the site is forbidden by {ancient law|local custom}
 * toxic miasma: {noxious fumes|arcane radiation|contagious diseases|clouds of cursed ash} slowly kill intruders
-* treacherous road: the path to reach this site is littered with{dangerous fauna|hazardous terrain}
+* treacherous road: the path to reach this site is littered with {dangerous fauna|hazardous terrain}
 * time warped: {temporal distortions make navigation difficult|visions of other times provide occasional insights}
 * uncanny weather: the site is subject to {unnatural heat|chilling cold|torrential rain|howling winds|time-locked seasons}
 

@@ -2,8 +2,13 @@ import { GeoProjection, ZoomTransform } from 'd3'
 
 type ActionParams = { projection: GeoProjection; node: Element }
 
+export type CanvasTransform = {
+  rotation: [number, number, number]
+  scale: number
+}
+
 export type ZoomParams = ActionParams & {
-  onMove: (_p: { rotation: [number, number]; scale: number }) => void
+  onMove: (_p: CanvasTransform) => void
 }
 
 export type ZoomEvent = { transform: ZoomTransform }

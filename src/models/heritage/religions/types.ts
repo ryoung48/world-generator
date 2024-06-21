@@ -80,7 +80,14 @@ type ReligionTheme =
 export interface Religion {
   idx: number
   name: string
-  type: 'monotheistic' | 'polytheistic' | 'animistic' | 'dualistic' | 'nontheistic' | 'atheistic'
+  type:
+    | 'monotheistic'
+    | 'polytheistic'
+    | 'animistic'
+    | 'dualistic'
+    | 'nontheistic'
+    | 'atheistic'
+    | 'ancestor worship'
   display: string
   cultures: number[]
   leadership: string

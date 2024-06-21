@@ -3,7 +3,7 @@
 * aesthetic: beauty in material goods and architecture
 * ancestry: bloodline and family heritage
 * arcana: magical prowess and occult ability
-** artifice: ingenuity and technological advancement
+* artifice: ingenuity and technological advancement
 * austerity: ascetic unworldliness and pious poverty
 * bravery: courage and valiance in danger
 * charity: sharing wealth and goods with others
@@ -15,19 +15,19 @@
 * exploration: exploring the unknown and discovering secrets
 * forgiveness: showing mercy to enemies
 * freedom: individual rights and freedom of action
-** guile: cunning and the ability to trick others
+* guile: cunning and the ability to trick others
 * hierarchy: social stratification and class distinctions
 * history: remembrance of the past and memorializing history
 * honor: honesty and truthfulness in speech and action
 * immortality: building things in service of their posterity
 * imperialism: conquest and domination of others
-** intrigue: scheming subtly against enemies or rivals
+* intrigue: scheming subtly against enemies or rivals
 * logic: humanistic reason and “rational” religion
 * loyalty: faithfulness towards one’s chosen friends
 * lust: seductive charm and sexual license
 * nature: harmony with nature and existing life
 * order: discipline and obedience to the law
-** perfection: social progress toward some eventual utopia
+* perfection: social progress toward some eventual utopia
 * progress: personal development and limit-pushing
 * purity: ethnic purity of blood and culture
 * revanchism: restoring some real or imagined glorious past
@@ -39,7 +39,7 @@
 * subterfuge: subtlety and indirectness of action
 * supremacy: societal or ethnic superiority over all outsiders
 * tenacity: hardiness and endurance before woes
-** tradition: submission to the collective norms
+* tradition: submission to the collective norms
 * unity: elimination of group differences
 * vengeance: execution of just vendettas
 * vigor: industry and the ability to work tirelessly
@@ -161,7 +161,69 @@ extend both of these lists with additional entires written in the same style
 * vegetarians: has developed a strong aversion to consuming the flesh of animals, and practices vegetarianism throughout their society
 * forest wardens: 
 * caravaneers: these people are experts at traversing harsh desert and are strongly associated with the caravan trade
-* matriarchal: they have a matriarchal hierarchy, where the ruling class is overwhelmingly comprised of women
+
+
+below is a list of traits that could be used to describe a procedurally generated fictional culture:
+
+* abolished slavery: they have declared slavery illegal and looks upon all those who still permit this practice with disdain
+* agrarian: known for very productive farmlands and advanced agricultural practices
+* ancestral altars: dedicated spaces in homes for ancestor worship, keeping family ties strong
+* astronomical insights: deep understanding of celestial bodies guiding agricultural and ritual practices
+* astute diplomats: known for building webs of complex alliances and resolving conflicts without violence
+* blood feuds: long-standing animosities between clans or tribes, leading to continuous cycles of violence
+* bone accessories: necklaces or bracelets made of animal bones, believed to provide strength
+* burning regrets: writing down regrets on paper and burning them in a communal fire for catharsis
+* cannibalistic rituals: consuming human flesh in rituals, believed to transfer the strength or virtues of the consumed
+* caste system: society is divided into rigid social classes, with limited mobility between them; each caste has specific roles and responsibilities
+* civilian service: every citizen must complete mandatory service in the military, instilling discipline and loyalty to the state while preparing them for defense in times of war
+* clockwork prosthetics: the culture has developed advanced prosthetics and cybernetic enhancements used mostly by the ruling elite
+* condottiere: known for their large population of mercenaries who fight both locally and abroad
+* court eunuchs: this culture makes great use of eunuchs as domestic servants, bureaucratic administrators, and even military officers
+* courtly intrigue: the ruling elite engage in complex political maneuvering and scheming to gain power and influence; alliances and loyalties are constantly shifting
+* culinary artistry: cooking is considered a high art, leading to innovative and exquisite dishes
+* culture blending: they are adept at incorporating foreign languages, traditions and customs into their society
+* draped turbans: head wraps varying in style and size based on region or social standing
+* desert dwellers: nomads of harsh deserts, adapting to extreme conditions with advanced hydraulic engineering; excel in stealth and endurance in desert warfare
+* enslaved workforce: the economy of this culture is heavily dependent on a large population of slaves that work the land
+* esteemed hospitality: they are known for their welcoming and friendly service to their guests
+* exquisite calligraphy: the art of beautiful handwriting is highly valued; calligraphers are respected for their skill and their work is used for important documents and decorations
+* extended family: they place great importance on extended family ties, with multiple generations living together and supporting each other; family loyalty is paramount
+* family business: business are encouraged to develop along family lines, accumulating extensive skill for their trade across generations
+* flesh-shaping: a rare arcane tradition is wielded by the shamans of this region, each one shaping not only wild beasts, but also their own clan members in pursuit of ultimate hegemony; many of these experiments were catastrophic failures, and others granted their gifts at too dear a price. 
+* forest folk: dwellers in dense woodlands, using the forest for shelter and resources; skilled archers and guerilla tacticians
+* frequent festivals: a variety of festivals are celebrated throughout the year, marked by colorful traditions and raucous celebrations
+* frontier strongholds: their borders are lined with many forts and watchtowers to protect against invaders
+* hill folk: masters of hill terrain, cultivating it for agriculture and defense; use elevation for strategic advantages in conflicts
+* imperial legions: known for their formidable and disciplined heavy infantry; they carry on the martial traditions of an ancient empire
+* indentured servitude: they make great use of indentured servitude, where individuals work for a set period to pay off debts or gain citizenship.
+* isolationists: they prefer a closed society with heavily restricted entry; their traditions are closely guarded secrets
+* jungle folk: residents of the jungle, using the forest for shelter and resources; skilled archers and guerilla tacticians
+* legalistic: they regard the rule of law and its codification as being the most important parameter of a civilized society
+* marsh folk: navigators of waterways, excelling in fishing; employ marshes for ambush tactics and hidden retreats in warfare
+* matriarchal society: they enforce a matriarchal hierarchy, where the ruling class is overwhelmingly comprised of women
+* meritocratic exams: the ruling elite selects government officials through rigorous exams, ensuring positions are filled by the most capable individuals
+* mountain folk: residents of high altitudes, specializing in mining and herding; they make use of fortified mountain passes against invasions
+* mummification: they practice mummification of the dead, believing that it preserves the soul for the afterlife; the process is elaborate and expensive, reserved for the wealthy and powerful
+* musical theorists: many individuals take up the noble and celebrated pursuit of musical study from a young age
+* nomadic caravans: known for their seasonal caravans that travel across vast distances, trading goods and culture
+* necromantic cult: necromancy is revered; the culture flourishes with countless undead thralls serving as solder and laborers
+* opulent court: the ruling elite live a life of luxury and extravagance, crushing the peasants beneath them
+* philosophical debates: they have a strong tradition of philosophical inquiry and debate, with scholars engaging in lively discussions about ethics, metaphysics, and other topics; these debates often have political and social implications
+* plains dwellers: agriculturists and horse breeders on vast plains; cavalry experts in war
+* plundering raids: they are known for attacking neighboring settlements or other tribes for loot and dominance
+* polygamous marriages: marriages with multiple partners are common in this culture
+* refined poetry: poetry is considered a noble art and many spend their time piecing words together with meaning and thought
+* ritual scarification: ritual scarification is used to mark important life events and demonstrate their devotion to a cause; the scars are often elaborate and intricate
+* seafarers: navigators of vast oceans, engaging in trade and exploration; adept at naval warfare and amphibious strategies
+* serfdom: peasants are bound to land, restricting their freedoms and subjugating them to lords
+* slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society; they are well-trained and loyal, but are often resented by the locals
+* songbird cultivation: the care, training, and showcasing of songbirds, valuing their aesthetic and musical qualities
+* sorcerous eugenics: the ruling elite are obsessed with eugenic breeding programs to produce superhuman paragons, many of whom suffer crippling mental or physical infirmities due to extensive inbreeding
+* storytellers: the past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations
+* warrior braids: complex hair braiding signifying martial achievements or clan allegiance
+* warrior culture: they value martial prowess and strength above everything else; disputes often settled through formalized duels and trials by combat
+
+come up with 50 more written in the same style, but for events impacting pre modern nations; use CK3 culture traditions as inspiration
 
 
 

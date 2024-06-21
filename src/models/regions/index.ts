@@ -1,7 +1,6 @@
 import { CLIMATE } from '../cells/climate'
 import { Cell } from '../cells/types'
 import { ARRAY } from '../utilities/array'
-import { COLOR } from '../utilities/color'
 import { MATH } from '../utilities/math'
 import { TEXT } from '../utilities/text'
 import { PROVINCE } from './provinces'
@@ -138,7 +137,7 @@ export const REGION = {
   active: (region: Region.Region) => {
     return REGION.provinces(region).length > 0
   },
-  atWar: (region: Region.Region) => REGION.relations({ target: 'at war', region }).length > 0,
+  atWar: (region: Region.Region) => REGION.relations.get({ target: 'at war', region }).length > 0,
   climate: (region: Region.Region) => {
     const capital = REGION.capital(region)
     const cell = PROVINCE.cell(capital)
@@ -273,10 +272,16 @@ export const REGION = {
   provinces: (region: Region.Region) => {
     return region.provinces.map(p => window.world.provinces[p])
   },
-  relations: (params: Region.RegionRelationsParams) =>
-    Object.entries(params.region.relations)
-      .filter(([_, relation]) => relation === params.target)
-      .map(([r]) => window.world.regions[parseInt(r)]),
+  relations: {
+    get: (params: Region.GetRelationsParams) =>
+      Object.entries(params.region.relations)
+        .filter(([_, relation]) => relation === params.target)
+        .map(([r]) => window.world.regions[parseInt(r)]),
+    set: ({ target, r1, r2 }: Region.SetRelationsParams) => {
+      r1.relations[r2.idx] = target
+      r2.relations[r1.idx] = target
+    }
+  },
   religion: (region: Region.Region) => {
     return window.world.religions[region.religion]
   },
@@ -289,15 +294,13 @@ export const REGION = {
   spawn: (cell: Cell) => {
     const idx = window.world.regions.length
     cell.region = idx
-    const color = window.dice.color()
-    const hue = COLOR.extractHue(color)
     const region: Region.Region = {
       idx,
       tag: 'nation',
       name: '',
       heraldry: {
-        color,
-        hue,
+        color: '',
+        hue: -1,
         style: window.dice.weightedChoice([
           {
             v: 'standard',
@@ -317,6 +320,7 @@ export const REGION = {
       borders: [],
       provinces: [],
       landBorders: [],
+      vassals: [],
       relations: {},
       culture: -1,
       desolate: false,
@@ -346,6 +350,13 @@ export const REGION = {
       | 'desert'
   },
   traits,
+  vassals: {
+    add: ({ overlord, vassal }: Region.AddVassalParams) => {
+      overlord.vassals.push(vassal.idx)
+      vassal.overlord = overlord.idx
+      REGION.relations.set({ target: 'vassal', r1: overlord, r2: vassal })
+    }
+  },
   zone: (region: Region.Region) => {
     const biome = REGION.climate(region)
     return CLIMATE.zone[biome.latitude]

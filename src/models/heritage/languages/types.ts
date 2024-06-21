@@ -15,10 +15,10 @@ export const enum PhonemeCatalog {
 
 export const STOP_CHAR = 'ʔ'
 
-type phoneme_lookup = Record<PhonemeCatalog, WeightedDistribution<string>>
+type PhonemeLookup = Record<PhonemeCatalog, WeightedDistribution<string>>
 
 export interface Cluster {
-  phonemes: phoneme_lookup
+  phonemes: PhonemeLookup
   patterns: Record<string, string>
   key: string
   ending: string
@@ -45,7 +45,7 @@ export interface Language {
   stopChance: number
   // sound sets
   basePhonemes: Record<PhonemeCatalog, string[]>
-  phonemes: phoneme_lookup
+  phonemes: PhonemeLookup
   vowels: string[]
   diphthongs: string[]
   digraphs: string[]

@@ -1,6 +1,6 @@
 import { Religion } from '../../heritage/religions/types'
 import { SpeciesKey } from '../../heritage/species/types'
-import { Heritage } from '../../heritage/types'
+import { Culture } from '../../heritage/types'
 import { Region } from '../../regions/types'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 
@@ -10,6 +10,6 @@ export type DistributeCulturesParams = {
 }
 
 export type DistributeReligionsPArams = {
-  groups: Heritage[]
+  groups: Culture[]
   dist: WeightedDistribution<Religion['type']>
 }

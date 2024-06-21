@@ -68,7 +68,8 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
           // mark islands
           const landmark = window.world.landmarks[idx]
           landmark.size = island.length
-          if (landmark.size / total < 0.015) landmark.type = 'island'
+          if (landmark.size / total < 0.001) landmark.type = 'isle'
+          else if (landmark.size / total < 0.015) landmark.type = 'island'
         }
         // only consider cells that haven't been marked
         land = land.filter(poly => !poly.landmark)
@@ -77,13 +78,17 @@ export const LANDMARKS = PERFORMANCE.profile.wrapper({
       }
       WORLD.reshape()
       // remove super lakes
-      const water = WORLD.water().length
       const lakes = WORLD.lakes()
       WORLD.features('water')
         .filter(idx => window.world.landmarks[idx].type === 'lake')
         .forEach(idx => {
           const lake = window.world.landmarks[idx]
-          if (lake.size / water > 0.005) WORLD.removeLake({ lakes, lake: idx })
+          const shallow = lakes.filter(cell => cell.landmark === idx).find(cell => cell.shallow)
+          const { landmark } = CELL.neighbors(shallow).find(cell => cell.landmark !== idx)
+          lake.parent = landmark
+          const ratio = lake.size / window.world.landmarks[landmark].size
+          if (ratio > 0.025) WORLD.removeLake({ lakes, lake: idx })
+          if (lake.size / window.world.cells.length > 0.001) lake.type = 'sea'
         })
       WORLD.reshape()
     },

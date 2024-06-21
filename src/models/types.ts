@@ -1,8 +1,7 @@
 import { Actor } from './actors/types'
 import { Cell } from './cells/types'
-import { Culture } from './heritage/cultures/types'
 import { Religion } from './heritage/religions/types'
-import { Heritage } from './heritage/types'
+import { Culture } from './heritage/types'
 import { Province } from './regions/provinces/types'
 import { Region } from './regions/types'
 import { War } from './regions/wars/types'
@@ -28,10 +27,11 @@ export interface World {
     number,
     {
       name?: string
-      type: 'ocean' | 'lake' | 'continent' | 'island'
+      type: 'ocean' | 'lake' | 'sea' | 'continent' | 'island' | 'isle'
       water: boolean
       size: number
       cell: number
+      parent?: number
     }
   >
   mountains: { size: number; cell: number; name?: string }[]
@@ -43,7 +43,6 @@ export interface World {
   // entities
   regions: Region[]
   provinces: Province[]
-  heritages: Heritage[]
   cultures: Culture[]
   religions: Religion[]
   actors: Actor[]

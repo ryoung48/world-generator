@@ -6,11 +6,11 @@ const nameFeature = (cell: Cell) => {
   const region = window.world.regions[cell.region]
   if (!region.desolate) {
     const culture = REGION.culture(region)
-    return LANGUAGE.word.unique({ key: 'landmark', lang: culture.language })
+    return LANGUAGE.word.unique({ key: 'landmark', lang: culture.language }).word
   }
   const empire = window.world.regions.find(r => r.size === 'empire')
   const culture = REGION.culture(empire)
-  return LANGUAGE.word.unique({ key: 'landmark', lang: culture.language })
+  return LANGUAGE.word.unique({ key: 'landmark', lang: culture.language }).word
 }
 
 export const GEOGRAPHY = {

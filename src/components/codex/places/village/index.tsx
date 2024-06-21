@@ -5,7 +5,6 @@ import { PLACE } from '../../../../models/regions/places'
 import { VILLAGE } from '../../../../models/regions/places/village'
 import { TEXT } from '../../../../models/utilities/text'
 import { StyledText } from '../../../common/text/styled'
-import { HooksView } from '../hooks'
 import { VillageViewParams } from './types'
 
 export function VillageView({ village }: VillageViewParams) {
@@ -32,9 +31,6 @@ export function VillageView({ village }: VillageViewParams) {
             })
             .join(', ')}
         ></StyledText>
-      </Grid>
-      <Grid item xs={12}>
-        <HooksView hooks={village.hooks}></HooksView>
       </Grid>
     </Grid>
   )

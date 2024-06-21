@@ -1,7 +1,8 @@
-import { Place } from '../../../models/regions/places/types'
+import { GeoProjection } from 'd3'
+
 import { Province } from '../../../models/regions/provinces/types'
 import { Point } from '../../../models/utilities/math/points/types'
-import { DrawMapParams } from '../common/types'
+import { DrawMapParams } from '../shapes/types'
 import { CachedImages, MapStyle } from '../types'
 
 export type DrawLegendParams = {
@@ -20,17 +21,7 @@ export type DrawLegendsParams = {
   ctx: CanvasRenderingContext2D
   province: Province
   style: MapStyle
-}
-
-export type HighlightLocationParams = {
-  point: Point
-  ctx: CanvasRenderingContext2D
-  scale: number
-  color: string
-}
-
-export type DrawAvatarParams = Omit<DrawMapParams, 'nationSet'> & {
-  place: Place
+  nationSet: Set<number>
 }
 
 export type CultureLegendParams = {
@@ -40,4 +31,10 @@ export type CultureLegendParams = {
 
 export interface DrawCloudParams extends DrawMapParams {
   cachedImages: CachedImages
+}
+
+export type DrawCompassParams = {
+  ctx: CanvasRenderingContext2D
+  rotation: number[]
+  projection: GeoProjection
 }

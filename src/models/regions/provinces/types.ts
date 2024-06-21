@@ -33,6 +33,7 @@ export interface Province extends TaggedEntity {
   artery: number[]
   difficulty?: number
   // geography
+  topography?: Cell['topography']
   cells: { land: number[] }
   islands: Record<number, number>
   lakes: Record<number, number>

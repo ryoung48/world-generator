@@ -4,7 +4,6 @@ import { ACTOR } from '../../../actors'
 import { CELL } from '../../../cells'
 import { Cell } from '../../../cells/types'
 import { PLACE } from '..'
-import { HOOK } from '../hooks'
 import { Camp } from './types'
 
 export const CAMP = {
@@ -26,19 +25,6 @@ export const CAMP = {
         { v: `Most charismatic native`, w: 1 }
       ])
       camp.locals = range(10).map(() => ACTOR.spawn({ place: camp }).idx)
-      const province = PLACE.province(camp)
-      HOOK.spawn({
-        place: camp,
-        hooks: HOOK.communities,
-        samples: 2,
-        constraints: {
-          urban: false,
-          warfare: province.conflict >= 0,
-          coastal: camp.coastal,
-          tribal: true,
-          capital: false
-        }
-      })
     }
   },
   spawn: (cell: Cell) => {

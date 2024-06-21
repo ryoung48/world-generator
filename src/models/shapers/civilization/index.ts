@@ -1,29 +1,41 @@
 import { NAVIGATION } from '../../cells/navigation'
-import { HERITAGE } from '../../heritage'
-import { CULTURE } from '../../heritage/cultures'
+import { CULTURE } from '../../heritage'
 import { RELIGION } from '../../heritage/religions'
 import { REGION } from '../../regions'
 import { PROVINCE } from '../../regions/provinces'
 import { ARRAY } from '../../utilities/array'
+import { COLOR } from '../../utilities/color'
 import { PERFORMANCE } from '../../utilities/performance'
+import { PROVINCE_BUILDER as URBANIZATION_BUILDER } from './provinces'
 import { DistributeCulturesParams, DistributeReligionsPArams } from './types'
-import { URBANIZATION as URBANIZATION_BUILDER } from './urbanization'
 
 const distributeCultures = ({ groups, dist }: DistributeCulturesParams) => {
   const species = window.dice.distribute({ dist, count: groups.length })
-  groups.forEach(regions => {
-    const heritage = HERITAGE.spawn({ regions, species: species.pop() })
-    regions.forEach(region => {
-      CULTURE.spawn({ region, heritage })
-    })
+  groups.forEach(regions => CULTURE.spawn({ regions, species: species.pop() }))
+  window.world.cultures.forEach(culture => {
+    const usedHues = new Set(
+      culture.regions
+        .map(region =>
+          window.world.regions[region].borders
+            .map(b => window.world.regions[b].culture)
+            .filter(c => window.world.cultures[c]?.display?.color)
+            .map(c => window.world.cultures[c].display.hue)
+        )
+        .flat()
+    )
+    const hue =
+      usedHues.size > 0
+        ? COLOR.findMostDistantHue(Array.from(usedHues))
+        : window.dice.randint(0, 360)
+    culture.display = { color: window.dice.color([hue, hue]), hue }
   })
 }
 
 const distributeReligions = ({ groups, dist }: DistributeReligionsPArams) => {
   const type = window.dice.distribute({ dist, count: groups.length })
-  groups.forEach(heritage => {
+  groups.forEach(culture => {
     RELIGION.spawn({
-      regions: heritage.regions.map(region => window.world.regions[region]),
+      regions: culture.regions.map(region => window.world.regions[region]),
       type: type.pop()
     })
   })
@@ -42,7 +54,7 @@ export const CIVILIZATION_BUILDER = PERFORMANCE.profile.wrapper({
       const nations = REGION.nations
       const groups = ARRAY.partition.bfs({
         items: nations,
-        target: nations.length * 0.012,
+        target: nations.length * 0.008,
         // regions in the same culture must have the same climate
         neighbors: region =>
           REGION.borders(region).filter(n => REGION.zone(n) === REGION.zone(region) && !n.desolate),
@@ -96,7 +108,7 @@ export const CIVILIZATION_BUILDER = PERFORMANCE.profile.wrapper({
       })
     },
     _religions: () => {
-      const civilized = window.world.heritages.filter(h => HERITAGE.civilized(h))
+      const civilized = window.world.cultures.filter(h => CULTURE.civilized(h))
       distributeReligions({
         groups: civilized,
         dist: [
@@ -106,14 +118,15 @@ export const CIVILIZATION_BUILDER = PERFORMANCE.profile.wrapper({
           { v: 'polytheistic', w: 0.5 }
         ]
       })
-      const uncivilized = window.world.heritages.filter(h => !HERITAGE.civilized(h))
+      const uncivilized = window.world.cultures.filter(h => !CULTURE.civilized(h))
       distributeReligions({
         groups: uncivilized,
         dist: [
           { v: 'monotheistic', w: 1 },
           { v: 'dualistic', w: 0.25 },
-          { v: 'polytheistic', w: 2 },
-          { v: 'animistic', w: 2 }
+          { v: 'polytheistic', w: 1 },
+          { v: 'animistic', w: 2 },
+          { v: 'ancestor worship', w: 1 }
         ]
       })
     },

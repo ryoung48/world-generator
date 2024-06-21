@@ -113,3 +113,35 @@ whale products: materials from whales, like oil or baleen.
 wine: fermented grape drink, prized for taste and ritual.
 wool: warm fibers from mammals, spun into yarn for garments.
 vegetables: edible plants, grown for food and decorative purposes.
+
+given the following weapon description:
+
+wands: Crafted from wood or bone, wands are the companions of spell-casters. Not as potent as rods or scepters, they make up for it with a faster rate of magical energy projection.
+
+write variations for the following quality tiers:
+* [0] poor
+* [1] fair
+* [2] fine
+* [3] exquisite
+* [4] masterwork
+* [5] legendary
+* [6] artifact
+* [7] exotic
+
+write in the same style as below:
+
+[0] Poor hunting bow: Crudely crafted from subpar materials, this bow is difficult to draw and fire accurately. It may snap under pressure.
+
+[1] Fair hunting bow: A serviceable bow made from decent wood. It functions adequately but lacks the finesse of higher-quality bows.
+
+[2] Fine hunting bow: Well-crafted from sturdy, flexible wood, this bow offers a smooth draw and improved accuracy for skilled archers.
+
+[3] Exquisite hunting bow: Meticulously crafted from the finest materials, this bow is perfectly balanced and highly responsive, allowing for swift, precise shots.
+
+[4] Masterwork hunting bow: A bow of unparalleled craftsmanship, created by a master bowyer. Its flawless design and superior materials make it a prized possession among hunters.
+
+[5] Legendary hunting bow: Imbued with the spirit of a legendary hunter, this bow seems to guide the archer's hand, ensuring every shot finds its mark with uncanny accuracy.
+
+[6] Artifact hunting bow: An ancient bow crafted by a long-forgotten civilization. Its unique design and enchanted materials grant it unmatched speed and power.
+
+[7] Exotic hunting bow: Fashioned from the bones and sinews of a mythical beast, this bow possesses an eerie beauty and draws upon the creature's essence to enhance the archer's abilities.

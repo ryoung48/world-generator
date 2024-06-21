@@ -2,7 +2,7 @@ import { mean, pointer, pointers as d3Pointers, select, zoom, ZoomBehavior } fro
 // @ts-ignore
 import versor from 'versor'
 
-import { MAP } from '../common'
+import { MAP_SHAPES } from '../shapes'
 import { MouseoverParams, MoveToParams, ZoomEvent, ZoomParams } from './types'
 
 let zoomRef: ZoomBehavior<Element, unknown> = null
@@ -30,7 +30,7 @@ export const ACTION = {
 
     function zoomed(ev: ZoomEvent) {
       if (!projection) return
-      const scale = ev.transform.k * MAP.scale.init
+      const scale = ev.transform.k * MAP_SHAPES.scale.init
       projection.scale(scale)
       const v1 = versor.cartesian(
           projection.rotate(r0).invert(getPointerCoords(ev, node) as unknown as [number, number])

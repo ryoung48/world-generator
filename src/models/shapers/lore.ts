@@ -2,7 +2,6 @@ import { range } from 'd3'
 
 import { WORLD } from '..'
 import { CELL } from '../cells'
-import { CULTURE } from '../heritage/cultures'
 import { LANGUAGE } from '../heritage/languages'
 import { SPECIES } from '../heritage/species'
 import { REGION } from '../regions'
@@ -13,8 +12,10 @@ import { VILLAGE } from '../regions/places/village'
 import { WILDERNESS } from '../regions/places/wilderness'
 import { PROVINCE } from '../regions/provinces'
 import { Province } from '../regions/provinces/types'
+import { TRADE_GOODS } from '../regions/trade'
 import { DiplomaticRelation, Region } from '../regions/types'
 import { WAR } from '../regions/wars'
+import { ARRAY } from '../utilities/array'
 import { POINT } from '../utilities/math/points'
 import { PERFORMANCE } from '../utilities/performance'
 import { TRAIT } from '../utilities/traits'
@@ -74,6 +75,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
             neighbor =>
               REGION.provinces(region).length > 1 &&
               neighbor.relations[region.idx] !== 'at war' &&
+              neighbor.relations[region.idx] !== 'vassal' &&
               !REGION.atWar(neighbor)
           )
           const prospects = window.dice.shuffle(
@@ -81,8 +83,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
           )
           if (prospects.length > 0) {
             const [belligerent] = prospects
-            belligerent.relations[region.idx] = 'at war'
-            region.relations[belligerent.idx] = 'at war'
+            REGION.relations.set({ target: 'at war', r1: region, r2: belligerent })
             wars.current++
             WAR.spawn({ defender: region, attacker: belligerent })
           }
@@ -91,20 +92,18 @@ export const LORE = PERFORMANCE.profile.wrapper({
       regions
         .filter(region => Object.values(region.relations).some(relation => relation === 'vassal'))
         .forEach(region => {
-          const atWar = REGION.relations({ target: 'at war', region })
-          REGION.relations({ target: 'vassal', region }).forEach(vassal => {
-            const vassalWar = REGION.relations({ target: 'at war', region: vassal })
+          const atWar = REGION.relations.get({ target: 'at war', region })
+          REGION.relations.get({ target: 'vassal', region }).forEach(vassal => {
+            const vassalWar = REGION.relations.get({ target: 'at war', region: vassal })
             vassalWar
               .filter(belligerent => region.relations[belligerent.idx])
               .forEach(belligerent => {
-                region.relations[belligerent.idx] = 'suspicious'
-                belligerent.relations[region.idx] = 'suspicious'
+                REGION.relations.set({ target: 'suspicious', r1: region, r2: belligerent })
               })
             atWar
               .filter(belligerent => vassal.relations[belligerent.idx])
               .forEach(belligerent => {
-                vassal.relations[belligerent.idx] = 'suspicious'
-                belligerent.relations[vassal.idx] = 'suspicious'
+                REGION.relations.set({ target: 'suspicious', r1: vassal, r2: belligerent })
               })
           })
         })
@@ -118,32 +117,49 @@ export const LORE = PERFORMANCE.profile.wrapper({
         // find all towns in the region
         const towns = cities.filter(town => !town.capital)
         // set the capital's population
-        const capitalMod = window.dice.uniform(0.04, 0.06)
+        const capitalMod = window.dice.uniform(0.03, 0.04)
         let pop = REGION.population(region) * capitalMod
-        if (region.civilized && pop < 10000) pop = window.dice.uniform(10000, 15000)
-        if (pop < 8000) pop = window.dice.uniform(5000, 8000)
+        if (region.civilized && pop < 10000) pop = window.dice.randint(10000, 15000)
+        if (pop < 1000) pop = window.dice.randint(1000, 5000)
         HUB.population.set(PROVINCE.hub(capital), pop)
+        const capitalPop = PROVINCE.hub(capital).population
+        const largeTownPop = () => window.dice.randint(5000, 10000)
+        const smallTownPop = () => window.dice.randint(1000, 5000)
+        const largeVillagePop = () => window.dice.randint(500, 1000)
+        const smallVillagePop = () => window.dice.randint(150, 500)
+
         // set the next largest city
         pop = Math.round(pop * window.dice.uniform(0.3, 0.5))
         towns
           .sort((a, b) => PROVINCE.cell(b).score - PROVINCE.cell(a).score)
           .forEach(province => {
-            const rural = window.dice.randint(1000, 1500)
-            const urban = pop > 1000 ? pop : rural
+            const rural = window.dice.weightedChoice([
+              { w: capitalPop < 10000 ? 0 : 1, v: largeTownPop },
+              { w: capitalPop < 5000 ? 0 : 1, v: smallTownPop },
+              { w: 1, v: largeVillagePop },
+              { w: 1, v: smallVillagePop }
+            ])()
+            const urban = pop > 10000 ? pop : rural
             const hub = PROVINCE.hub(province)
             const conflict =
-              HUB.city(hub) &&
-              PROVINCE.neighbors({ province }).some(neighbor => {
+              urban &&
+              ARRAY.unique(
+                PROVINCE.neighbors({ province })
+                  .map(n => PROVINCE.neighbors({ province: n }).map(n => n.idx))
+                  .flat()
+              ).some(n => {
+                const neighbor = window.world.provinces[n]
                 const nHub = PROVINCE.hub(neighbor)
                 return (
+                  n !== province.idx &&
                   HUB.city(nHub) &&
                   POINT.distance.geo({ points: [nHub, hub] }) <
-                    WORLD.placement.spacing.provinces * 1.5
+                    WORLD.placement.spacing.provinces * 2
                 )
               })
             HUB.population.set(hub, conflict ? rural : urban)
             // make each city's population some fraction of the previous city's population
-            const mod = pop > 50e3 ? window.dice.uniform(0.5, 0.8) : window.dice.uniform(0.1, 0.3)
+            const mod = window.dice.uniform(0.5, 0.8)
             if (!conflict) pop = Math.round(pop * (1 - mod))
           })
       })
@@ -155,9 +171,8 @@ export const LORE = PERFORMANCE.profile.wrapper({
       const imperium = { target: 0.02, current: 0, total: regions.length }
       const sizeLimit = (region: Region) => {
         const culture = window.world.cultures[region.culture]
-        const species = CULTURE.species(culture)
-        const details = SPECIES.lookup[CULTURE.species(culture)]
-        return species !== 'ogre' && details.traits.height !== 'small'
+        const details = SPECIES.lookup[culture.species]
+        return culture.species !== 'ogre' && details.traits.height !== 'small'
       }
       window.dice
         .shuffle(regions)
@@ -237,16 +252,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
           region.size = 'kingdom'
         } else region.size = 'empire'
       })
-      //government
-      regions.forEach(region => {
-        region.government = window.dice.weightedChoice([
-          { w: region.civilized ? 3 : 1, v: 'autocratic' },
-          { w: region.civilized ? 1 : 0, v: 'republic' },
-          { w: region.civilized ? 2 : 1, v: 'oligarchic' },
-          { w: region.civilized ? 0.5 : 1, v: 'confederation' },
-          { w: region.civilized ? 0 : 1, v: 'fragmented' }
-        ])
-      })
       // diplomacy
       regions.forEach(region => {
         REGION.neighbors({ region })
@@ -258,9 +263,36 @@ export const LORE = PERFORMANCE.profile.wrapper({
               { v: 'neutral', w: 0.35 },
               { v: 'suspicious', w: 0.4 }
             ])
-            region.relations[neighbor.idx] = relation
-            neighbor.relations[region.idx] = relation
+            REGION.relations.set({ target: relation, r1: region, r2: neighbor })
           })
+      })
+      //government
+      const sizes: Region['size'][] = ['empire', 'kingdom', 'principality', 'city-state']
+      sizes.forEach(size => {
+        const regions = window.world.regions.filter(region => region.size === size)
+        regions.forEach(region => {
+          const powerLimit = REGION.provinces(region).length * 4
+          const overlords = REGION.neighbors({ region }).filter(
+            n =>
+              n.government !== 'fragmented' &&
+              n.government !== 'confederation' &&
+              n.overlord === undefined &&
+              region.relations[n.idx] !== 'at war' &&
+              REGION.provinces(n).length > powerLimit
+          )
+          const religion = REGION.religion(region)
+          region.government = window.dice.weightedChoice([
+            { w: region.civilized ? 3 : 1, v: 'autocracy' },
+            { w: region.civilized ? 1 : 0, v: 'republic' },
+            { w: region.civilized ? 2 : 1, v: 'oligarchy' },
+            { w: region.civilized ? 0.5 : 1, v: 'confederation' },
+            { w: religion.type === 'atheistic' ? 0 : region.civilized ? 1 : 0.5, v: 'theocracy' },
+            { w: overlords.length > 0 ? 2 : 0, v: 'vassal' },
+            { w: region.civilized || region.size === 'empire' ? 0 : 1, v: 'fragmented' }
+          ])
+          if (region.government === 'vassal')
+            REGION.vassals.add({ overlord: window.dice.choice(overlords), vassal: region })
+        })
       })
       // traits
       window.world.regions.forEach(region => {
@@ -313,15 +345,20 @@ export const LORE = PERFORMANCE.profile.wrapper({
             lang: culture.language,
             key: type,
             len: window.dice.randint(2, 4)
-          })
+          }).word
           province.places.push(place)
         })
+    },
+    _trade: () => {
+      REGION.nations.forEach(region => {
+        TRADE_GOODS.spawn(region)
+      })
     },
     build: () => {
       LORE._demographics()
       LORE._history()
       LORE._conflict()
-      // LORE._places()
+      LORE._trade()
     }
   }
 })

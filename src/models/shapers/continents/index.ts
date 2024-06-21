@@ -52,10 +52,11 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
       })
       let cutoff = 0.4
       let land = 0
-      while (land < 0.25 || land > 0.35) {
+      const target = [0.25, 0.35]
+      while (land < target[0] || land > target[1]) {
         land = elev.filter(e => e > cutoff).length / window.world.cells.length
-        if (land > 0.35) cutoff += 0.02
-        if (land < 0.25) cutoff -= 0.02
+        if (land > target[1]) cutoff += 0.02
+        if (land < target[0]) cutoff -= 0.02
       }
       elev.forEach((e, i) => (window.world.cells[i].h = e > cutoff ? WORLD.elevation.seaLevel : 0))
       console.log('land ratio: ' + land + ' | cutoff: ' + cutoff)

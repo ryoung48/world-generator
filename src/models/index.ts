@@ -97,11 +97,16 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         [0, 0.6, 6],
         h
       ),
-    heightToMI: (h: number) => MATH.conversion.distance.km.miles(WORLD.heightToKM(h)),
+    kmToHeight: (km: number) =>
+      MATH.scale(
+        [0, 0.6, 6],
+        [WORLD.elevation.seaLevel, WORLD.elevation.mountains, WORLD.elevation.max],
+        km
+      ),
     lakes: () => WORLD.water().filter(cell => !cell.ocean),
     land: () => land(),
     placement: {
-      spacing: { regions: 0.1, provinces: 0.023, oceans: 1 },
+      spacing: { regions: 0.1, provinces: 0.03, oceans: 1 },
       limit: (spacing: number) => Math.ceil((spacing * window.world.radius) / WORLD.cell.length()),
       close: ({ blacklist = [], whitelist, count, spacing }: WorldPlacementParams) => {
         const placed: Cell[] = []
@@ -113,12 +118,11 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         })
 
         // place cities by iterating through the (pre-sorted) whitelist
-        const distance = scaleLinear([0, 0.1, 0.2, 0.6, 1], [2, 1.6, 1.4, 1.2, 1])
+        const distance = scaleLinear([0, 0.1, 0.2, 0.6, 1], [1.8, 1.6, 1.4, 1.2, 1])
         for (let i = 0; i < whitelist.length && placed.length < count; i++) {
           const cell = whitelist[i]
           const { habitability } = CLIMATE.holdridge[cell.climate]
-          const coast = cell.isCoast ? 0.4 : 0
-          const mod = Math.max(distance(habitability) - coast, 1)
+          const mod = Math.max(distance(habitability), 1)
           const close = CELL.bfsNeighborhood({ start: cell, maxDepth: 5 })
             .filter(n => visited.has(n.idx))
             .some(n => POINT.distance.geo({ points: [n, cell] }) <= spacing * mod)
@@ -185,6 +189,7 @@ export const WORLD = PERFORMANCE.profile.wrapper({
       })
       delete window.world.landmarks[lake]
       window.world.landmarks[landmark].size += lakeCells.length
+      return lakeCells
     },
     reshape: () => {
       PERFORMANCE.memoize.remove(_land)
@@ -231,7 +236,6 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         coasts: [],
         regions: [],
         provinces: [],
-        heritages: [],
         cultures: [],
         religions: [],
         oceanRegions: [],

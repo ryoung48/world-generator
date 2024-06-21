@@ -29,12 +29,14 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
             })
           })
           const mountainous = border.some(cell => CELL.neighbors(cell).some(n => n.isMountains))
-          if (arid || mountainous)
+          if (arid || mountainous) {
             WORLD.removeLake({ lakes, lake: landmark, regional: SHAPER_REGIONS.land })
+          }
         })
       WORLD.reshape()
     },
     _rain: () => {
+      const scale = scaleLinear([4, 8], [1, 1.5])(window.world.resolution)
       const wet = 30
       const ocean = WORLD.water().filter(cell => cell.ocean && !cell.shallow)
       const affected = window.world.cells.filter(cell => cell.shallow || !cell.ocean)
@@ -48,14 +50,9 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
         const queue = [...ocean]
         while (queue.length > 0) {
           const cell = queue.shift()
-          const rain = Math.max(
-            Math.min(
-              Math.max(cell.rain[attr], 0) +
-                (cell.ocean ? 1 : cell.isWater ? 0 : cell.isMountains ? -1.5 : -0.75),
-              wet
-            ),
-            0
-          )
+          const drain = (cell.isMountains ? -1.6 : -0.8) / scale
+          const impact = cell.ocean ? 0.1 : cell.isWater ? 0 : drain
+          const rain = Math.max(Math.min(Math.max(cell.rain[attr], 0) + impact, wet), 0)
           const neighbors = CELL.neighbors(cell).filter(
             n =>
               (!visited.has(n.idx) || (!n.isWater && rain > n.rain[attr])) &&
@@ -79,73 +76,96 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
           })
         })
       }
-      assignRain('east')
-      assignRain('west')
+      PERFORMANCE.profile.apply({
+        label: 'east',
+        f: () => {
+          assignRain('east')
+        }
+      })
+      PERFORMANCE.profile.apply({
+        label: 'west',
+        f: () => {
+          assignRain('west')
+        }
+      })
       const lakes = WORLD.lakes()
-      const tropicsMod = scaleLinear().domain([5, 15]).range([1, 0]).clamp(true)
+      const tropicsModE = scaleLinear().domain([5, 15]).range([1, 0]).clamp(true)
+      const tropicsModW = scaleLinear().domain([0, 15]).range([1, 0]).clamp(true)
       const subtropicsMod = scaleLinear().domain([20, 25]).range([0, 1]).clamp(true)
-      WORLD.land()
-        .concat(lakes)
-        .forEach(cell => {
-          const latitude = cell.y
-          const lat = Math.abs(latitude)
-          const north = latitude >= 0
-          const east = Math.max(cell.rain.east, 0)
-          const west = Math.max(cell.rain.west, 0)
-          // trade winds (summer)
-          if (latitude > -5 && latitude < 25) {
-            cell.rain.summer = east
-          }
-          if (latitude < -5 && latitude > -25) {
-            cell.rain.summer = east * tropicsMod(lat)
-          }
-          // trade winds (winter)
-          if (latitude < 5 && latitude > -25) {
-            cell.rain.winter = east
-          }
-          if (latitude > 5 && latitude < 25) {
-            cell.rain.winter = east * tropicsMod(lat)
-          }
-          const summer = north ? 1 : 0.5
-          const winter = north ? 0.5 : 1
-          // westerlies (summer)
-          if (lat > 40) {
-            if (north) cell.rain.summer = west * summer
-            else cell.rain.winter = west * winter
-          }
-          // westerlies (winter)
-          if (lat > 30) {
-            if (north) cell.rain.winter = west * summer
-            else cell.rain.summer = west * winter
-          }
-          // polar storm fronts
-          if (lat >= 20) {
-            const mod = subtropicsMod(lat)
-            cell.rain.summer = Math.max(mod * east * summer, cell.rain.summer, 0)
-            cell.rain.winter = Math.max(mod * east * winter, cell.rain.winter, 0)
-          }
-          cell.rain.east /= wet
-          cell.rain.west /= wet
-          cell.rain.summer /= wet
-          cell.rain.winter /= wet
-          if (cell.rain.summer < 0) cell.rain.summer = 0
-          if (cell.rain.winter < 0) cell.rain.winter = 0
-        })
-      range(3).forEach(() => {
-        WORLD.land().forEach(cell => {
-          cell.rain.summer = mean(
-            CELL.neighbors(cell)
-              .concat([cell])
-              .filter(n => n.rain.summer >= 0 && !n.isWater)
-              .map(n => n.rain.summer)
-          )
-          cell.rain.winter = mean(
-            CELL.neighbors(cell)
-              .concat([cell])
-              .filter(n => n.rain.winter >= 0 && !n.isWater)
-              .map(n => n.rain.winter)
-          )
-        })
+      PERFORMANCE.profile.apply({
+        label: 'rain',
+        f: () => {
+          WORLD.land()
+            .concat(lakes)
+            .forEach(cell => {
+              const latitude = cell.y
+              const lat = Math.abs(latitude)
+              const north = latitude >= 0
+              const east = Math.max(cell.rain.east, 0)
+              const west = Math.max(cell.rain.west, 0)
+              // trade winds (summer)
+              if (latitude > -5 && latitude < 25) {
+                cell.rain.summer =
+                  latitude <= 15 && latitude >= 0 ? Math.max(east, tropicsModW(lat) * west) : east
+              }
+              if (latitude < -5 && latitude > -25) {
+                cell.rain.summer = east * tropicsModE(lat)
+              }
+              // trade winds (winter)
+              if (latitude < 5 && latitude > -25) {
+                cell.rain.winter =
+                  latitude >= -15 && latitude < 0 ? Math.max(east, tropicsModW(lat) * west) : east
+              }
+              if (latitude > 5 && latitude < 25) {
+                cell.rain.winter = east * tropicsModE(lat)
+              }
+              const summer = north ? 1 : 0.5
+              const winter = north ? 0.5 : 1
+              // westerlies (summer)
+              if (lat > 45) {
+                if (north) cell.rain.summer = west * summer
+                else cell.rain.winter = west * winter
+              }
+              // westerlies (winter)
+              if (lat > 35) {
+                if (north) cell.rain.winter = west * summer
+                else cell.rain.summer = west * winter
+              }
+              // polar storm fronts
+              if (lat >= 20) {
+                const mod = subtropicsMod(lat)
+                cell.rain.summer = Math.max(mod * east * summer, cell.rain.summer, 0)
+                cell.rain.winter = Math.max(mod * east * winter, cell.rain.winter, 0)
+              }
+              cell.rain.east /= wet
+              cell.rain.west /= wet
+              cell.rain.summer /= wet
+              cell.rain.winter /= wet
+              if (cell.rain.summer < 0) cell.rain.summer = 0
+              if (cell.rain.winter < 0) cell.rain.winter = 0
+            })
+        }
+      })
+      PERFORMANCE.profile.apply({
+        label: 'average',
+        f: () => {
+          range(3).forEach(() => {
+            WORLD.land().forEach(cell => {
+              cell.rain.summer = mean(
+                CELL.neighbors(cell)
+                  .concat([cell])
+                  .filter(n => n.rain.summer >= 0 && !n.isWater)
+                  .map(n => n.rain.summer)
+              )
+              cell.rain.winter = mean(
+                CELL.neighbors(cell)
+                  .concat([cell])
+                  .filter(n => n.rain.winter >= 0 && !n.isWater)
+                  .map(n => n.rain.winter)
+              )
+            })
+          })
+        }
       })
     },
     _heat: () => {
@@ -369,11 +389,46 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
           }
         })
     },
+    _topography: () => {
+      WORLD.land()
+        .map(cell => cell)
+        .sort((a, b) => b.h - a.h)
+        .forEach(cell => {
+          if (!cell.topography) {
+            const landmark = window.world.landmarks[cell.landmark]
+            const h = WORLD.heightToKM(cell.h)
+            const n = CELL.neighbors(cell)
+            const climate = CLIMATE.holdridge[cell.climate]
+            if (cell.isMountains) cell.topography = 'mountains'
+            else if (h > 0.33 && window.dice.random > 0.6) cell.topography = 'highlands'
+            else if (h > 0.21 && window.dice.random > 0.6) cell.topography = 'rugged hills'
+            else if (h > 0.09 && window.dice.random > 0.6) cell.topography = 'rolling hills'
+            else if (cell.isCoast && !cell.beach && window.dice.random > 0.4)
+              cell.topography = 'marsh'
+            else if (
+              !climate.arid &&
+              cell.isCoast &&
+              cell.beach &&
+              landmark.type !== 'isle' &&
+              n.every(
+                c =>
+                  c.topography !== 'mountains' &&
+                  c.topography !== 'rugged hills' &&
+                  c.topography !== 'highlands'
+              ) &&
+              window.dice.random > 0.4
+            )
+              cell.topography = 'marsh'
+            else cell.topography = 'flatlands'
+          }
+        })
+    },
     build: () => {
       SHAPER_CLIMATES._rain()
       SHAPER_CLIMATES._heat()
       SHAPER_CLIMATES._climate()
       SHAPER_CLIMATES._lakes()
+      SHAPER_CLIMATES._topography()
     }
   }
 })

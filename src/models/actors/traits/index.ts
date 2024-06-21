@@ -1,6 +1,5 @@
 import { range } from 'd3'
 
-import { CULTURE } from '../../heritage/cultures'
 import { SPECIES } from '../../heritage/species'
 import { PLACE } from '../../regions/places'
 import { PROVINCE } from '../../regions/provinces'
@@ -549,7 +548,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   pacifist: {
     conflicts: ['brawler', 'duelist'],
-    constraints: { wrathful: false },
+    constraints: { wrathful: false, soldier: false },
     tooltip: 'avoids violence except in dire need'
   },
   perceptive: {
@@ -757,7 +756,7 @@ const rollQuirks = ({ place, npc, role }: QuirkParams) => {
   const province = PLACE.province(place)
   const { local, ruling } = PROVINCE.cultures(province)
   const { appearance } = culture
-  const species = CULTURE.species(culture)
+  const species = culture.species
   const speciesDetails = SPECIES.lookup[species]
   const { strata, official, quirks: _quirks = {}, martial } = PROFESSION.lookup[profession]
   const params = {
@@ -805,6 +804,12 @@ const rollQuirks = ({ place, npc, role }: QuirkParams) => {
     aristocrat: profession.includes('aristocrat'),
     clergy: profession.includes('priest'),
     merchant: profession.includes('merchant'),
+    soldier:
+      profession.includes('military') ||
+      profession.includes('templar') ||
+      profession.includes('monster hunter') ||
+      profession.includes('warrior') ||
+      profession.includes('guard'),
     thin: species === 'elf',
     urban: place.type === 'hub'
   }

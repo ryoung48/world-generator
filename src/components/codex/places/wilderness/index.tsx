@@ -4,7 +4,6 @@ import { PLACE } from '../../../../models/regions/places'
 import { WILDERNESS } from '../../../../models/regions/places/wilderness'
 import { TEXT } from '../../../../models/utilities/text'
 import { StyledText } from '../../../common/text/styled'
-import { HooksView } from '../hooks'
 import { WildernessViewParams } from './types'
 
 export function WildernessView({ wilderness }: WildernessViewParams) {
@@ -28,9 +27,6 @@ export function WildernessView({ wilderness }: WildernessViewParams) {
       <Grid item xs={6.5}>
         <b>Locations: </b>
         <StyledText text={wilderness.locations}></StyledText>
-      </Grid>
-      <Grid item xs={12}>
-        <HooksView hooks={wilderness.hooks}></HooksView>
       </Grid>
     </Grid>
   )

@@ -39,6 +39,20 @@ export type ClimateKey =
   | 'desert (polar)'
 
 export type ClimateZone = 'arctic' | 'temperate' | 'tropical'
+
+export type Terrain =
+  | 'forest'
+  | 'plains'
+  | 'desert'
+  | 'tundra'
+  | 'glacier'
+  | 'marsh'
+  | 'jungle'
+  | 'savanna'
+  | 'taiga'
+  | 'highlands'
+  | 'mountains'
+  | 'hills'
 export type Climate = {
   idx: number
   name: string
@@ -61,6 +75,7 @@ export type Climate = {
   color: string
   habitability: number
   diurnalVariation: 'low' | 'standard' | 'high'
-  terrain: 'forest' | 'plains' | 'desert' | 'tundra' | 'glacier'
+  terrain: Terrain
   koppen: { color: string; code: string }
+  arid?: boolean
 }

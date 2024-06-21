@@ -63,7 +63,7 @@
 * aesthetics: beauty, art, creativity
 * household: ancestry, hearth, domestic
 * life: cultivation, fertility, abundance
-* death: endings, undeath, afterlife
+* death: crypts, undeath, afterlife
 * ruin: disaster, collapse, chaos
 * light: salvation, forgiveness, rebirth
 * industry: diligence, craftsmanship, innovation
@@ -93,30 +93,27 @@ earth
 water
 sky
 
-subterranean
-mountainous
-jungle
-forest
-marsh
-plains
-desert
-tundra
-glacier
 
-beast (mammalian|reptilian|avian|arthropod)
-undeath
-mutant
-fungal
-verdant
 
-blood
-shadows
-moon
-sun
-zeal
 
-artistic
-artisan
+
+autocratic|republic|oligarchic|confederation|fragmented
+moralistic|pluralistic|atheistic
+
+
+subterranean|aquatic|volcanic|mountainous|jungle|forest|marsh|plains|desert|tundra|glacier
+undeath|necromantic|parasitic|symbiotic|sorcerous|robotic|cybernetic|eldritch|noxious
+fungal|verdant|mammalian|reptilian|avian|arthropod|mollusc
+venerable|hulking
+
+seafaring|industrious|artistic|architects|academic|agrarian|nomadic|skyships
+warmongers|raiders|mercantile|inquisitors|eugenics
+intrigue|guile
+isolationist|xenophobic|diplomatic|pacifists
+legalistic
+decadence|monastic
+authoritarian|egalitarian
+conformist|rebellious
 
 1564 counties
 675 duchies

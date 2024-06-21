@@ -1,29 +1,30 @@
 import { Box, Grid, Slider, ToggleButton, ToggleButtonGroup } from '@mui/material'
-import { geoOrthographic, GeoProjection, scaleLinear } from 'd3'
+import { GeoProjection, scaleLinear } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
 import { WORLD } from '../../models'
 import { CLIMATE } from '../../models/cells/climate'
 import { GEOGRAPHY } from '../../models/cells/geography'
-import { WEATHER } from '../../models/cells/weather'
 import { REGION } from '../../models/regions'
 import { PROVINCE } from '../../models/regions/provinces'
 import { POINT } from '../../models/utilities/math/points'
 import { delay } from '../../models/utilities/math/time'
 import { NationView } from '../codex/Nation'
 import { PlaceView } from '../codex/places'
+import { StyledText } from '../common/text/styled'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
 import { fonts } from '../theme/fonts'
 import { ACTION } from './actions'
+import { CanvasTransform } from './actions/types'
 import { DRAW_BORDERS } from './border'
 import { DRAW_LANDMARKS } from './coast'
-import { MAP } from './common'
 import { DRAW_EMBELLISHMENTS } from './embellishments'
 import { ICON } from './icons'
-import { DRAW_LOCATION } from './icons/locations'
 import { DRAW_TERRAIN } from './icons/terrain'
 import { DRAW_INFRASTRUCTURE } from './infrastructure'
+import { MAP_SHAPES } from './shapes'
+import { MAP_METRICS } from './shapes/metrics'
 import { CachedImages, MapStyle, WorldPaintParams } from './types'
 
 const markStyle = { fontFamily: fonts.maps, fontSize: 18 }
@@ -54,12 +55,8 @@ const loadImages = async () =>
         img: await loadImage(ICON.path + v.path),
         index: k
       })),
-      ...Object.entries(DRAW_LOCATION.definitions).map(async ([k, v]) => ({
-        img: await loadImage(ICON.path + v.path),
-        index: k
-      })),
       (async () => ({
-        img: await loadImage(MAP.clouds.heavy),
+        img: await loadImage(MAP_SHAPES.clouds.heavy),
         index: 'clouds'
       }))()
     ])
@@ -68,13 +65,21 @@ const loadImages = async () =>
     return dict
   }, {})
 
-const paint = ({ ctx, projection, month, style, loc, cachedImages }: WorldPaintParams) => {
+const paint = ({
+  ctx,
+  projection,
+  month,
+  style,
+  loc,
+  cachedImages,
+  rotation
+}: WorldPaintParams) => {
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   const province = window.world.provinces[loc.province]
-  const scale = MAP.scale.derived(projection)
+  const scale = MAP_SHAPES.scale.derived(projection)
   const place =
-    scale <= MAP.breakpoints.regional ? PROVINCE.hub(province) : province.places[loc.place]
+    scale <= MAP_SHAPES.breakpoints.regional ? PROVINCE.hub(province) : province.places[loc.place]
   const nation = PROVINCE.nation(province)
   const borders = REGION.neighbors({ region: nation, depth: 2 })
   const nations = [nation].concat(borders)
@@ -105,17 +110,16 @@ const paint = ({ ctx, projection, month, style, loc, cachedImages }: WorldPaintP
   )
   DRAW_LANDMARKS.oceans({ ctx, projection, month })
   DRAW_BORDERS.regions({ ctx, projection, month, style, nations, province })
-  DRAW_BORDERS.contested({ ctx, projection, nations })
   DRAW_LANDMARKS.lakes({ ctx, projection })
-  DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet })
+  DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, cachedImages, place })
   DRAW_TERRAIN.icons({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
-  DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style })
-  DRAW_INFRASTRUCTURE.places({ ctx, projection, nationSet })
-  DRAW_EMBELLISHMENTS.avatar({ ctx, projection, place })
+  DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style, cachedImages, place })
+  DRAW_INFRASTRUCTURE.places({ ctx, projection, nationSet, cachedImages, place })
   DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
   DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection })
-  DRAW_EMBELLISHMENTS.legend({ ctx, style, province })
+  DRAW_EMBELLISHMENTS.legend({ ctx, style, province, nationSet })
+  DRAW_EMBELLISHMENTS.compass({ ctx, rotation, projection })
 }
 
 let projection: GeoProjection = null
@@ -123,10 +127,11 @@ let projection: GeoProjection = null
 export function WorldMap() {
   const { state, dispatch } = VIEW.context()
   const [cachedImages, setCachedImages] = useState<CachedImages>({})
-  const [transform, setTransform] = useState({
+  const [transform, setTransform] = useState<CanvasTransform>({
     rotation: [0, 0, 0],
     scale: 1
   })
+  const prevTransformRef = useRef<number>()
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [style, setStyle] = useState<MapStyle>('Nations')
   const [month, setMonth] = useState(0)
@@ -135,6 +140,7 @@ export function WorldMap() {
   const runPaint = () => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
+    if (!projection) projection = MAP_SHAPES.projection.build(ctx)
     paint({
       ...transform,
       cachedImages,
@@ -151,11 +157,11 @@ export function WorldMap() {
     const province = window.world.provinces[poly.province]
     const nation = PROVINCE.nation(province)
     if (nation.desolate) return
-    const scale = MAP.scale.derived(projection)
+    const scale = MAP_SHAPES.scale.derived(projection)
     if (state.view === 'place') {
       // find closest place to cursor
       const closest =
-        scale <= MAP.breakpoints.regional
+        scale <= MAP_SHAPES.breakpoints.regional
           ? { place: PROVINCE.hub(province) }
           : province.places.slice(1).reduce(
               (min, place) => {
@@ -184,9 +190,6 @@ export function WorldMap() {
     node.width = containerRef.current.clientWidth
     node.height = containerRef.current.clientHeight
     const ctx = node.getContext('2d')
-    projection = geoOrthographic()
-      .scale(MAP.scale.init)
-      .translate([ctx.canvas.width / 2, ctx.canvas.height / 2])
     const init = async () => {
       // images
       const loadedImages = await loadImages()
@@ -195,6 +198,7 @@ export function WorldMap() {
       ctx.font = `4px ${fonts.maps}`
       ctx.fillText('text', 0, 8)
       await delay(50)
+      projection = MAP_SHAPES.projection.build(ctx)
       ACTION.zoom({
         node,
         projection,
@@ -231,8 +235,19 @@ export function WorldMap() {
       setCursor({ x, y })
     }
   }, [state.gps])
+  useEffect(() => {
+    if (projection) {
+      const oldScale = prevTransformRef.current
+      const newScale = MAP_SHAPES.scale.derived(projection)
+      const globalTransition =
+        newScale > MAP_SHAPES.breakpoints.global && oldScale <= MAP_SHAPES.breakpoints.global
+      if (globalTransition) transition()
+      prevTransformRef.current = newScale
+    }
+  }, [transform])
   const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
   const holdridge = CLIMATE.holdridge[cell.climate]
+  const province = window.world.provinces[cell.province]
   const infoOpacity = scaleLinear().domain([400, 6000]).range([0, 1]).clamp(true)(transform.scale)
   return (
     <Grid container>
@@ -243,12 +258,12 @@ export function WorldMap() {
           sx={{
             zIndex: 2,
             position: 'absolute',
-            top: MAP.height * 0.145,
-            left: MAP.width * 0.04,
+            top: MAP_SHAPES.height * 0.145,
+            left: MAP_SHAPES.width * 0.04,
             fontFamily: fonts.maps,
             fontSize: 20,
             backgroundColor: 'rgba(238, 238, 221, 0.85)',
-            width: 165,
+            width: 200,
             padding: 1
           }}
         >
@@ -257,20 +272,18 @@ export function WorldMap() {
           </Grid>
           {!cell.isWater && (
             <Grid item xs={12}>
-              <span>{`${MAP.metrics.temperature.format(
-                WEATHER.heat({ cell, month })
-              )}, ${MAP.metrics.rain.format(
-                WEATHER.rain({ cell, month })
-              )}, ${MAP.metrics.elevation.format(WORLD.heightToKM(cell.h))}`}</span>
+              <span>{`${
+                cell.isMountains ? 'mountains' : province.topography
+              }, ${MAP_METRICS.elevation.format(WORLD.heightToKM(cell.h))}`}</span>
             </Grid>
           )}
           {!cell.isWater && (
-            <Grid item xs={12}>{`${cell.isMountains ? holdridge.altitude : holdridge.latitude}, ${
+            <Grid item xs={12}>{`${cell.isMountains ? 'alpine' : holdridge.latitude}, ${
               holdridge.name
             }`}</Grid>
           )}
           <Grid item xs={12}>
-            {GEOGRAPHY.name(cell)}
+            {<StyledText text={GEOGRAPHY.name(cell)}></StyledText>}
           </Grid>
         </Grid>
         <ToggleButtonGroup
@@ -284,12 +297,12 @@ export function WorldMap() {
           style={{
             zIndex: 2,
             position: 'absolute',
-            top: MAP.height + 35,
-            left: MAP.width * 0.79,
+            top: MAP_SHAPES.height + 35,
+            left: MAP_SHAPES.width * 0.72,
             background: 'rgba(238, 238, 221, 0.85)'
           }}
         >
-          {MAP.styles.map(label => (
+          {MAP_SHAPES.styles.map(label => (
             <ToggleButton key={label} value={label}>
               <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
                 {label}
@@ -303,8 +316,8 @@ export function WorldMap() {
               zIndex: 2,
               position: 'absolute',
               width: 500,
-              top: MAP.height - 25,
-              left: MAP.width * 0.82,
+              top: MAP_SHAPES.height - 25,
+              left: MAP_SHAPES.width * 0.78,
               background: 'transparent'
             }}
           >
@@ -378,8 +391,8 @@ export function WorldMap() {
             sx={{
               zIndex: 2,
               position: 'absolute',
-              top: MAP.height * 0.145,
-              left: MAP.width * 0.8,
+              top: MAP_SHAPES.height * 0.145,
+              left: MAP_SHAPES.width * 0.8,
               fontFamily: fonts.maps,
               fontSize: 20,
               backgroundColor: `rgba(238, 238, 221, 0.9)`,
@@ -398,7 +411,7 @@ export function WorldMap() {
             backgroundColor: cssColors.background.map,
             border: `thick double ${cssColors.primary}`,
             filter: 'contrast(0.9) sepia(0.3) url(#noiseFilter)',
-            height: `${MAP.height}px`,
+            height: `${MAP_SHAPES.height}px`,
             width: `100%`
           }}
           onClick={transition}

@@ -33,8 +33,17 @@ export interface Region extends TaggedEntity {
   provinces: number[]
   civilized?: boolean
   size?: 'city-state' | 'principality' | 'kingdom' | 'empire'
-  government?: 'autocratic' | 'republic' | 'oligarchic' | 'confederation' | 'fragmented'
-  leadership?: { male: string; female: string }
+  government?:
+    | 'autocracy'
+    | 'republic'
+    | 'oligarchy'
+    | 'confederation'
+    | 'fragmented'
+    | 'theocracy'
+    | 'vassal'
+  overlord?: number
+  vassals: number[]
+  trade?: string[]
   traits?: {
     tag:
       | 'splendid discovery'
@@ -86,9 +95,12 @@ export interface Region extends TaggedEntity {
 export type RegionNeighborsParams = { region: Region; depth?: number }
 export type RegionFindParams = FindParams<Region>
 export type RegionSortParams = RegionFindParams
-export type RegionRelationsParams = { target: DiplomaticRelation; region: Region }
+export type GetRelationsParams = { target: DiplomaticRelation; region: Region }
+export type SetRelationsParams = { target: DiplomaticRelation; r1: Region; r2: Region }
 export type RegionClaim = { nation: Region; region: Region }
 
 export interface RegionTrait extends Trait<Region['traits'][number]['tag'], {}> {
   text: string
 }
+
+export type AddVassalParams = { vassal: Region; overlord: Region }

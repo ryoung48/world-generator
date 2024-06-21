@@ -21,7 +21,7 @@ export function PlaceView() {
       subtitle={
         <StyledText
           color={cssColors.subtitle}
-          text={`(${province.idx}) ${place.subtype} (${place.type}), ${TEXT.decorate({
+          text={`(${province.idx}) ${place.subtype}, ${TEXT.decorate({
             link: nation,
             label: nation.name
           })}`}

@@ -1,10 +1,10 @@
 import { WORLD } from '../..'
 import { CELL } from '../../cells'
-import { CLIMATE } from '../../cells/climate'
 import { Cell } from '../../cells/types'
 import { REGION } from '../../regions'
 import { PLACE } from '../../regions/places'
 import { PROVINCE } from '../../regions/provinces'
+import { COLOR } from '../../utilities/color'
 import { MATH } from '../../utilities/math'
 import { PERFORMANCE } from '../../utilities/performance'
 import { SHAPER_CLIMATES } from './climate'
@@ -98,15 +98,31 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
       const used: Record<string, boolean> = {}
       while (mounts < total && prospects.length > 0) {
         const region = prospects.pop()
-        if (used[region.idx]) continue
-        const [n, borders] = Object.entries(mountainProspects[region.idx])
-          .filter(([n]) => !used[n])
-          .reduce(
-            (max: [string, Set<number>], [n, cells]) => {
-              return max[1].size > cells.size ? max : [n, cells]
-            },
-            ['-1', new Set()]
+        if (
+          used[region.idx] ||
+          Object.keys(mountainProspects[region.idx]).some(
+            n =>
+              used[n] &&
+              Object.keys(mountainProspects[parseInt(n)]).some(
+                nn =>
+                  used[nn] &&
+                  Object.keys(mountainProspects[parseInt(nn)]).some(
+                    nnn =>
+                      used[nnn] &&
+                      Object.keys(mountainProspects[parseInt(nnn)]).some(nnnn => used[nnnn])
+                  )
+              )
           )
+        )
+          continue
+        const usedBorders = Object.entries(mountainProspects[region.idx]).filter(([n]) => !used[n])
+        if (usedBorders.length < 2) continue
+        const [n, borders] = usedBorders.reduce(
+          (max: [string, Set<number>], [n, cells]) => {
+            return max[1].size > cells.size ? max : [n, cells]
+          },
+          ['-1', new Set()]
+        )
         if (borders.size < 1) continue
         used[region.idx] = true
         used[n] = true
@@ -150,7 +166,7 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
       }
       const land = WORLD.land().filter(p => !p.isMountains)
       const islandScale = window.world.cells.length / 4266
-      const decline = 5
+      const decline = 4
       land.forEach(l => {
         const { oceanDist, mountainDist } = l
         l.h = MATH.scaleExp(
@@ -159,6 +175,18 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
           oceanDist,
           decline
         )
+        const landmark = window.world.landmarks[l.landmark]
+        if (landmark.type !== 'continent' && !l.isMountains) {
+          l.h = WORLD.kmToHeight(
+            window.dice.weightedChoice([
+              { w: 10, v: window.dice.uniform(0, 0.09) },
+              { w: 3, v: window.dice.uniform(0.09, 0.21) },
+              { w: 3, v: window.dice.uniform(0.21, 0.33) },
+              { w: 1, v: window.dice.uniform(0.33, 0.5) },
+              { w: 1, v: window.dice.uniform(0.5, 0.8) }
+            ])
+          )
+        }
       })
       // mark mountains
       let idx = window.world.mountains.length
@@ -269,8 +297,17 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
         })
         region.borders = Array.from(borders)
         region.landBorders = Array.from(landBorders)
-        const { terrain } = CLIMATE.holdridge[cell.climate]
-        region.desolate = terrain === 'glacier' && Math.abs(cell.y) > 75
+        const { terrain } = REGION.climate(region)
+        const glacial = terrain === 'glacier' && Math.abs(cell.y) > 75
+        region.desolate = glacial
+        const usedHues = new Set(
+          region.borders.map(b => window.world.regions[b].heraldry.hue).filter(hue => hue !== -1)
+        )
+        region.heraldry.hue =
+          usedHues.size > 0
+            ? COLOR.findMostDistantHue(Array.from(usedHues))
+            : window.dice.randint(0, 360)
+        region.heraldry.color = window.dice.color([region.heraldry.hue, region.heraldry.hue])
       })
     },
     build: () => {

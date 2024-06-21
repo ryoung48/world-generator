@@ -76,6 +76,7 @@
 * desolate wasteland: {region} was shattered recently by a cataclysmic event; what little resources that remain are extremely limited
 * corrupted wilds: {region} has been warped and twisted by feral magic; long exposure mutates flora and fauna into bloodthirsty abominations
 * supernatural storms: {region} is plagued by powerful and unpredictable storms, causing chaos and destruction wherever they strike
+
 -- wars --
 * border dispute: {region} is at war with a neighboring region over a contested border containing {valuable resources|ancestral homelands}
 * territorial expansion: {region} is aggressively expanding its territory at the expense of neighboring lands, leading to conflict and strife
@@ -114,96 +115,37 @@
 * unification war: a charismatic leader attempts to unify a fractured state by subduing all rival claimants
 * witch hunts: magic users are being hunted and executed due to a recent transgression
 
+-- civics --
 
---- governance ---
-* personal union monarchy: a union of three kingdoms under a single monarch, with each country retaining its own laws and governance
-* nomadic tribal confederation: a confederation of tribes under a single leader, known as the khan
-* feudal monarchy: feudal monarchy with significant noble autonomy, under the rule of the {cultural} dynasty
-* theocratic military order
-* hereditary monarchy with a centralized bureaucracy
+* diaspora clans: {region} is home to numerous nomadic clans who have been exiled from there homeland and are forced to wander; they are often persecuted by the locals
+* seafaring nomads: {region} is home to a large population of nomadic seafarers who travel from across the region trading goods and services; they are often persecuted by the locals
+* nomadic tribes: {region} is home to numerous nomadic tribes who roam the land, following ancient migration routes and engaging in trade and warfare
 
+* famines and droughts: {region} has been recently plagued by devastating droughts and famines, causing widespread suffering and death
+* virulent epidemic: a terrible contagion has broken out in {region} and is spreading rapidly; the locals are terrified and desperate for a cure
 
---- diplomacy ---
-* cultural exchanges: influences in literature, art, and philosophy with {neighbors}
-* strategic alliance: formed a pivotal alliance with {neighbor}, bolstering its military and political standing
-* trade relations: engaged in lucrative trade with {neighbors}, enriching the nation through strategic commerce
-* dynastic union congress: a series of alliances were forged through marriage to secure the kingdom's future and stability
-* rebel support: support provided to the {regional} rebellion against {neighbor} strained diplomatic relations
+* slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society; they are well-trained and loyal, but are often resented by the locals
+* condottiere: {region} is home to a large population of mercenaries who fight both locally and abroad
+* civilian service: every citizen of {region} must complete mandatory service in the military, instilling discipline and loyalty to the state while preparing them for defense in times of war
 
---- military ----
-* territorial expansion: expansionist campaigns, extending territorial control into {neighbor}
-* regional conquest: conquest of the {region} kingdom, resulting in significant territorial expansion
-* border skirmishes: {engaged in frequent raids and conflicts with {neighbor}, impacting regional stability|increased raiding activity on the borders inflicted heavy tolls on the kingdom's resources}
-* dynastic rebels: {noble family} dung usurps power, leading to civil strife
-* raids for resources: conducted raids into {neighbors}, securing resources crucial for the nation's prosperity
-* {hub} massacre: a massacre that led to the eventual downfall of the regime
-* decisive defeat: a pivotal defeat against {neighbor} that precipitated {nation}'s decline
-* dissolution of the royal guard: the elite military force was disbanded due to financial strains, weakening the kingdom's defenses
-* peasant uprising: a major revolt by the peasants, suppressed with brutal force, highlighting social disparities
-* grand fortress: the construction of this fortress symbolized {nation}'s military and administrative prowess
+* divination rituals: {region} has a secretive order of oracles who are consulted for divination and prophetic visions
+* plague doctors: {region} is known for its skilled plague doctors who use a combination of medicine and magic to combat disease
+* necromantic cult: necromancy flourishes in {region} with countless undead thralls serving as solder and laborers
+* sorcerous eugenics: the aristocracy of {region} are obsessed with eugenic breeding programs to produce superhuman paragons, many of whom suffer crippling mental or physical infirmities due to extensive inbreeding
+* skyships: {region} is one of the few nations able to build skyships, which sail through the air using powerful magic and advanced technology
 
---- society ---
-* royal pilgrimage: {ruler}'s religious pilgrimage showcased {nation}'s wealth and bolstered {religion} ties
-* cultural prosperity: prosperous era under {ruler} with significant cultural and administrative reforms
-* capital fortification: construction and fortification of {capital} as a political and cultural center
-* legal reforms: compilation and promulgation of the {nation} legal code, reflecting {religion} values
-* trade embargoes: restrictions on foreign trade to protect local industries
-* agricultural reforms: introduction of new crops, improvement in farming techniques
-* adoption of new faith: saw a gradual shift in religious beliefs, heavily influenced by interactions with {neighbors}
-* religious reformation: the emergence of new religious movements began to question old doctrinal foundations
+* imperial cult: the rulers are worshipped as a living deities aligned with the dominant religion; they are rumored to wield powerful magic and have little tolerance for dissent
+* heathen tax: practitioners of minority religions are required to pay a special tax, leading to tensions and discrimination against foreigners
+* mercantile clergy: clergy of the dominant faith hold tremendous economic power in {region}, often controlling the flow of wealth and owning vast amounts of land
 
-
-
-Create an infobox for a fictional nation that blends circa 1400 japan with crica 1400 tunis; output as json; all output should be be lowercase:
-```json
-{
-    "government": { "type" string; "description": string }; // 250 characters, explain how the government is structured
-    "events": {
-        "major": { "title" string; "text": string }[]; // 5 major events, 150 characters each
-        "minor": { "title" string; "text": string }[]; // 5 minor events, 150 characters each
-    }
-    "figures": {
-        "major": { "occupation" string; "description": string }[]; // 5 major figures, 150 characters each
-        "minor": { "occupation" string; "description": string }[]; // 5 minor figures, 150 characters each
-    }
-}
-```
-keep in mind the following:
-* do not use any proper names; all descriptions must be generic enough to be reusable across many settings
-* do not use code interpreter
-
-
-governments
-
-autocratic:
-* divine monarchy: a nation where the monarch is {seen as a god|chosen by deities}, wielding absolute power, with priests serving as advisors and enforcers of the divine will
-* imperial absolutism: a nation where the monarch has unrestricted control over all aspects of life, from military to agriculture, supported by an intricate spy network to suppress dissent
-* military dictatorship: a state where a general has seized power, maintaining strict control through an elite military force, with compulsory service for all citizens
-* autocratic theocracy: a realm governed by religious leaders claiming divine authority, enforcing a strict moral code and monopolizing spiritual and temporal power
-* imperial bureaucracy: a nation where the monarch rules absolutely but delegates administration to a highly efficient and loyal bureaucratic class, which manages the state's affairs
-* magocratic autocracy: a nation ruled by a sorcerer-king who wields absolute power, with all state functions managed by loyal mage officials
-
-republican:
-* constitutional monarchy: a nation where the monarch shares power with an elected parliament, which represents the citizenry and has a say in taxation and expenditure
-* federal principality: a principality divided into regions, each with its own elected council, but united under a central prince who has limited powers agreed upon by the councils
-* noble republic: a nation where the right to vote and stand for office is limited to wealthy landowners and aristocrats, who elect representatives to a senate that governs the state with almost absolute power
-* parliamentary republic: a nation with a dual system of governance, where elected officials handle domestic affairs and taxation, while the monarch controls foreign policy
-* ecclesiastical parliament: a theocratic state where the central religious authority shares governance with a council of clergy elected by the faithful, who have a say in taxation and religious affairs
-
-
-oligarchic:
-* mercantile oligarchy: a state where a few wealthy merchants control the government, dictate tax policy, and effectively rule over the central monarch
-* aristocratic commonwealth: a nation where a small number of noble families hold all the power, electing one among them as a figurehead monarch while real power rests in a council of nobles who decide on laws, taxes, and military matters
-* clerical hegemony: a state where religious institutions hold great wealth and power, dictating terms to a central monarch that lacks the monarch to challenge them
-
-confederation:
-* ducal confederation: a state comprised of several duchies, each governed by its own duke, with a central monarch that provides coordination but has limited power over the dukes
-* confederation of city-states: a collection of city-states, each with its own government and laws, coordinated by a weak central assembly for defense and foreign policy
-* tribal coalition: a coalition of tribes, each with its own chieftain, loosely united under a central figure who has limited authority beyond coordinating mutual defense
-* crusader states: territories carved out by crusaders, each governed by a knightly order, paying homage to a distant theocratic leader but largely independent in governance
-
-fragmented:
-* independent city-states: a loose collection of city-states, each with its own government, bound together for mutual defense and trade agreements
-* clan territories: a region divided among powerful clans, each ruling its own land and people, with a ceremonial leader whose power is limited to adjudicating disputes
-* monastic communities: areas governed by monasteries, each acting independently in spiritual and temporal affairs, with a figurehead abbot for ceremonial purposes
-* sorcerous enclaves: self-governing enclaves of mages, each with its own unique magical practices, recognizing a central magical academy as a place of neutral gathering
+* opulent court: the aristocracy of {region} live a life of luxury and extravagance, crushing the peasants beneath them
+* outlawed sorcery: locals of {region} distrusts the arcane arts and greatly restricts its use; sorcerers are often persecuted and executed
+* corrupt laws: {region} has a reputation for having a weak legal system and is a haven for corruption and vice; the locals are often forced to pay bribes to get things done
+* culled nobility: the traditional aristocracy has recently been culled in a series of political executions intended to curb their growing influence
+* venal offices: the ruling elite are selling bureaucratic offices to wealthy citizens in order to overcome mounting debts; the locals are outraged by this corruption
+* isolationist regime: {region} is a closed society with heavily restricted entry; their culture and traditions are closely guarded secrets
+* court eunuchs: {region} makes great use of eunuchs as domestic servants and bureaucratic administrators
+* lawless frontier: the frontier regions of {region} are lawless and dangerous, controlled by bandits and outlaws
+* secret police: the ruling elite employ a cadre of fervent patriots to serve as secret police against political dissidents
+* abolished slavery: {region} has declared slavery illegal and looks upon all those who still permit this practice with disdain
+* meritocratic exams: the ruling elite of {region} selects government officials through rigorous exams, ensuring positions are filled by the most capable individuals

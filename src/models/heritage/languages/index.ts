@@ -1,5 +1,6 @@
 import { Gender } from '../../actors/types'
 import { PERFORMANCE } from '../../utilities/performance'
+import { TEXT } from '../../utilities/text'
 import { SpeciesKey } from '../species/types'
 import { initClusters, randomizePhonemes } from './builder'
 import { buildConsonants } from './builder/consonants'
@@ -56,6 +57,29 @@ const baseVowels = ['a', 'e', 'i', 'o', 'u', 'y']
 
 export const LANGUAGE = {
   word: {
+    demonym: (lang: Language) => {
+      const { morphemes } = LANGUAGE.word.unique({ lang, key: 'culture' })
+      const prefix = morphemes.slice(0, window.dice.choice([2, 3])).join('')
+      let index = prefix.length - 1
+      while (index >= 0 && CLUSTER.vowel(prefix[index])) {
+        index--
+      }
+      const cleaned = prefix.slice(0, index + 1)
+      const suffix = window.dice.weightedChoice([
+        { v: 'an', w: cleaned.includes('n') ? 0 : 1 },
+        { v: 'ian', w: cleaned.includes('n') ? 0 : 1 },
+        { v: 'ish', w: cleaned.includes('s') ? 0 : 1 },
+        { v: 'ite', w: cleaned.includes('t') ? 0 : 1 },
+        { v: 'iard', w: cleaned.includes('d') || cleaned.includes('r') ? 0 : 1 },
+        {
+          v: 'ic',
+          w: cleaned.includes('k') || cleaned.includes('c') || cleaned.includes('q') ? 0 : 1
+        },
+        { v: 'i', w: 1 },
+        { v: 'ese', w: 1 }
+      ])
+      return TEXT.capitalize(cleaned + suffix)
+    },
     firstName: (lang: Language, gender: Gender) => LANGUAGE.word.simple({ lang, key: gender }),
     simple: PERFORMANCE.profile.decorate({
       name: 'lang__word',
@@ -78,16 +102,17 @@ export const LANGUAGE = {
             stopChance,
             variation
           })
-        return CLUSTER.word(lang.clusters[key], lang, repeat)
+        const morphemes = CLUSTER.morphemes(lang.clusters[key], lang, repeat)
+        return { morphemes, word: TEXT.titleCase(morphemes.flat().join('')) }
       }
     }),
-    unique: (params: WordParams): string => {
-      const w = LANGUAGE.word.simple(params)
-      if (window.world.uniqueNames[w]) {
+    unique: (params: WordParams): { morphemes: string[]; word: string } => {
+      const { morphemes, word } = LANGUAGE.word.simple(params)
+      if (window.world.uniqueNames[word]) {
         return LANGUAGE.word.unique({ ...params, repeat: true })
       }
-      window.world.uniqueNames[w] = true
-      return w
+      window.world.uniqueNames[word] = true
+      return { morphemes, word }
     }
   },
   spawn: (species: SpeciesKey) => {
@@ -211,5 +236,8 @@ export const LANGUAGE = {
     })
     lang.predefined = { ...base.predefined }
     return lang
+  },
+  vowel: (vowel: string) => {
+    return vowel.includes(PhonemeCatalog.FRONT_VOWEL)
   }
 }

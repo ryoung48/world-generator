@@ -78,6 +78,30 @@ export const COLOR = {
     // Return null if the string doesn't match the HSL format
     return null
   },
+  findMostDistantHue: (hues: number[]): number => {
+    // Sort the hues in ascending order
+    const sortedHues = hues.sort((a, b) => a - b)
+
+    // Add the first hue to the end of the list plus 360 to account for wrapping around the hue circle
+    sortedHues.push(sortedHues[0] + 360)
+
+    // Find the largest gap between consecutive hues
+    let maxGap = 0
+    let maxGapIndex = 0
+    for (let i = 0; i < sortedHues.length - 1; i++) {
+      const gap = sortedHues[i + 1] - sortedHues[i]
+      if (gap > maxGap) {
+        maxGap = gap
+        maxGapIndex = i
+      }
+    }
+
+    // Calculate the hue that is halfway through the largest gap
+    // Ensure the result is modulo 360 to wrap around the hue circle
+    const mostDistantHue = (sortedHues[maxGapIndex] + maxGap / 2) % 360
+
+    return mostDistantHue
+  },
   hslToHex(h: number, s: number, l: number) {
     l /= 100
     const a = (s * Math.min(l, 1 - l)) / 100

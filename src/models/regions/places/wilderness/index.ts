@@ -3,7 +3,6 @@ import { CLIMATE } from '../../../cells/climate'
 import { Cell } from '../../../cells/types'
 import { TEXT } from '../../../utilities/text'
 import { PLACE } from '..'
-import { HOOK } from '../hooks'
 import { Wilderness } from './types'
 
 const polar = {
@@ -40,7 +39,7 @@ const polar = {
 }
 
 const templates = {
-  mountainous: {
+  mountains: {
     moods: [
       'gleaming with snow or high-altitude glow',
       'sheltered, signs of recent campfires',
@@ -142,7 +141,7 @@ const templates = {
       { label: 'gentle rolling hills', tooltip: 'offering panoramic views of the horizon' },
       { label: 'whispering reed bed', tooltip: 'bordering a tranquil pond' },
       { label: 'nomadic campsite', tooltip: 'with tents and campfires under the stars' },
-      { label: 'sunlit plateau', tooltip: 'overlooking vast stretches of the plains' },
+      { label: 'sunlit highlands', tooltip: 'overlooking vast stretches of the plains' },
       { label: 'ancient burial mound', tooltip: 'a testament to civilizations long gone' },
       { label: 'carved rock formations', tooltip: 'shaped by wind and time' },
       { label: 'rusted remains of a wagon', tooltip: 'a relic from bygone journeys' },
@@ -243,66 +242,6 @@ const templates = {
   },
   tundra: polar,
   glacier: polar,
-  coastal: {
-    moods: [
-      'bloody, the site of awful violence',
-      'glistening, reflections, sunlit tide pools',
-      'nestled, campfire signs, shelters',
-      'resonating, waves crash, seabirds call',
-      'eroding, shifting cliffs and shores',
-      'moonlit, long shadows on sands',
-      'marred by shipwrecks, castaways',
-      'driftwood relics from lost vessels',
-      'impeccably serene, untouched beauty',
-      'secluded, rarely trodden coast',
-      'fog-shrouded, vision obscured by mist and haze',
-      'salty, seaweed, brine scent'
-    ],
-    locations: [
-      { label: 'secluded cove', tooltip: 'shielded by tall jagged cliffs' },
-      { label: 'shipwrecked vessel', tooltip: 'half-buried in the sandy shore' },
-      { label: 'tidal pools', tooltip: 'teeming with colorful marine life' },
-      { label: 'kelp forest', tooltip: 'dense and easy to get lost in' },
-      { label: 'coral reef', tooltip: 'vibrant and teeming with marine life' },
-      { label: 'ship graveyard', tooltip: 'hulks of old vessels run aground' },
-      { label: 'rocky outcrop', tooltip: 'a favored spot for local seabirds' },
-      { label: 'driftwood-laden beach', tooltip: 'remnants of distant lands' },
-      { label: 'dune-covered shoreline', tooltip: 'where sea meets shifting sand' },
-      { label: 'mangrove forest', tooltip: 'where roots intertwine and waters maze' },
-      { label: 'sandy grotto', tooltip: 'filled with phosphorescent algae' },
-      { label: 'leviathan carcass', tooltip: 'teeming with scavengers' },
-      { label: 'overgrown coastal road', tooltip: 'leading to ruins' },
-      { label: 'forsaken lighthouse', tooltip: 'its beam long extinguished' },
-      { label: 'moss-covered statue', tooltip: 'arms outstretched to the sea' }
-    ]
-  },
-  oceanic: {
-    moods: [
-      "shimmering, bioluminescence, sun's glint",
-      'tempestuous, roaring waves, wild winds',
-      'eroding, reefs crumbling underwater',
-      'abyssal, darkest depths devour light',
-      'fog-shrouded, vision obscured by mist and haze',
-      'treasure-laden, gold chests, sunken cities',
-      "haunting, lost mariners' songs, ghost ships",
-      'vast, endless seldom-tread expanse',
-      'coral-kissed, vibrant depths',
-      'saline, seaweed, salt scent'
-    ],
-    locations: [
-      { label: 'kelp forest', tooltip: 'dense and easy to get lost in' },
-      { label: 'underwater cave', tooltip: 'glowing with bioluminescence' },
-      { label: 'deep trench', tooltip: "where light doesn't reach" },
-      { label: 'rocky archipelago', tooltip: 'home to rare birds' },
-      { label: 'volcanic island', tooltip: 'with black sand beaches' },
-      { label: 'coral reef', tooltip: 'vibrant and teeming with marine life' },
-      { label: 'ship graveyard', tooltip: 'hulks of old vessels run aground' },
-      { label: 'underwater volcanic vent', tooltip: 'surrounded by exotic lifeforms' },
-      { label: 'busy merchant vessel', tooltip: 'deck bustling with activity' },
-      { label: 'proud navy flagship', tooltip: 'cannons gleaming in readiness' },
-      { label: "smuggler's sloop", tooltip: 'silent and low in moonlit waters' }
-    ]
-  },
   hills: {
     moods: [
       'breeze-caressed, wind dances on slopes',
@@ -425,10 +364,10 @@ const terrain = (cell: Cell) => {
   // Generate a chance of a marsh given certain criteria
   const coastal = cell.beach && window.dice.random > 0.8
   const lakeside = Object.keys(province.lakes).length > 0
-  if (cell.isMountains) return 'mountainous'
-  if (mountainous && window.dice.random > 0.8) return 'mountainous'
+  if (cell.isMountains) return 'mountains'
+  if (mountainous && window.dice.random > 0.8) return 'mountains'
   if (!cell.coastal && window.dice.random > 0.8) return 'hills'
-  if (coastal && window.dice.random > 0.5) return 'coastal'
+  // if (coastal && window.dice.random > 0.5) return 'coastal'
   if (!glacial && (coastal || lakeside)) return 'marsh'
   if (biome.terrain === 'forest') return zone === 'tropical' ? 'jungle' : 'forest'
   return biome.terrain
@@ -438,7 +377,7 @@ export const WILDERNESS = {
   finalize: (wilderness: Wilderness) => {
     if (!wilderness.finalized) {
       wilderness.finalized = true
-      const template = templates[wilderness.subtype as ReturnType<typeof terrain>]
+      const template = templates[wilderness.subtype as keyof typeof templates]
       const hazard = window.dice.choice(hazards)
       const encounter = window.dice.choice(encounters)
       wilderness.mood = window.dice.choice(template.moods)
@@ -453,12 +392,6 @@ export const WILDERNESS = {
         .sample(template.locations, 2)
         .map(location => TEXT.decorate({ ...location }))
         .join(', ')
-      HOOK.spawn({
-        place: wilderness,
-        hooks: HOOK.wilderness,
-        samples: 2,
-        constraints: {}
-      })
     }
   },
   spawn: (cell: Cell) => {

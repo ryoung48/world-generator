@@ -35,46 +35,6 @@ export const ship__icons: Record<ship_icon, IconDef> = {
     path: 'terrain/elements/ships/6.png',
     opacity: 0.8
   },
-  ship_7: {
-    height,
-    path: 'terrain/elements/ships/7.png',
-    opacity: 0.8
-  },
-  ship_8: {
-    height,
-    path: 'terrain/elements/ships/8.png',
-    opacity: 0.8
-  },
-  ship_9: {
-    height,
-    path: 'terrain/elements/ships/9.png',
-    opacity: 0.8
-  },
-  ship_10: {
-    height,
-    path: 'terrain/elements/ships/10.png',
-    opacity: 0.8
-  },
-  ship_11: {
-    height,
-    path: 'terrain/elements/ships/11.png',
-    opacity: 0.8
-  },
-  ship_12: {
-    height,
-    path: 'terrain/elements/ships/12.png',
-    opacity: 0.8
-  },
-  ship_13: {
-    height,
-    path: 'terrain/elements/ships/13.png',
-    opacity: 0.8
-  },
-  ship_14: {
-    height,
-    path: 'terrain/elements/ships/14.png',
-    opacity: 0.8
-  },
   ship_15: {
     height,
     path: 'terrain/elements/ships/15.png',

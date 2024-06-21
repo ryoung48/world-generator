@@ -5,7 +5,6 @@ import { PLACE } from '../../../../models/regions/places'
 import { CAMP } from '../../../../models/regions/places/camp'
 import { TEXT } from '../../../../models/utilities/text'
 import { StyledText } from '../../../common/text/styled'
-import { HooksView } from '../hooks'
 import { CampViewParams } from './types'
 
 export function CampView({ camp }: CampViewParams) {
@@ -32,9 +31,6 @@ export function CampView({ camp }: CampViewParams) {
             })
             .join(', ')}
         ></StyledText>
-      </Grid>
-      <Grid item xs={12}>
-        <HooksView hooks={camp.hooks}></HooksView>
       </Grid>
     </Grid>
   )

@@ -1,4 +1,3 @@
-import { CULTURE } from '../../heritage/cultures'
 import { TEXT } from '../../utilities/text'
 import { REGION } from '..'
 import { PROVINCE } from '../provinces'
@@ -24,10 +23,6 @@ export const WAR = {
           text: war.reasons
             .map(({ tag, text }) => TEXT.decorate({ label: tag, tooltip: text }))
             .join(', ')
-        },
-        {
-          label: 'losses',
-          text: war.losses
         }
       ]
     }
@@ -52,8 +47,8 @@ export const WAR = {
     const defenderCulture = REGION.culture(defender)
     const sameCulture = attackerCulture === defenderCulture
     const sameSpecies =
-      CULTURE.species(window.world.cultures[attacker.culture]) ===
-      CULTURE.species(window.world.cultures[defender.culture])
+      window.world.cultures[attacker.culture].species ===
+      window.world.cultures[defender.culture].species
     const civilized = attackerIsCivilized && defenderIsCivilized
     window.world.wars.push({
       idx,

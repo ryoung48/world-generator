@@ -175,7 +175,7 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         .forEach(m => {
           used.add(m.idx)
           const landmark = window.world.landmarks[m.landmark]
-          const volcano = window.dice.random > (landmark.type === 'island' ? 0.75 : 0.98)
+          const volcano = window.dice.random > (landmark.type !== 'continent' ? 0.75 : 0.98)
           if (m.h > 0.9) {
             display.icons.push({
               x: m.x,
@@ -256,11 +256,21 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         'desert scrub (cool temperate)',
         'dry scrub (boreal)'
       ]
-      const savanna = [
+      const savanna: ClimateKey[] = [
         'dry forest (tropical)',
         'very dry forest (tropical)',
         'thorn woodland (tropical)',
-        'dry forest (subtropical)'
+        'dry forest (subtropical)',
+        'thorn steppe (subtropical)'
+      ]
+      const withered: ClimateKey[] = [
+        'desert scrub (tropical)',
+        'desert scrub (subtropical)',
+        'thorn steppe (warm temperate)',
+        'desert scrub (warm temperate)',
+        'steppe (cool temperate)',
+        'desert scrub (cool temperate)',
+        'dry scrub (boreal)'
       ]
       const temperateGrass = ['dry forest (warm temperate)']
       const biomes = WORLD.land().filter(p => !p.isMountains && !p.isWater && !p.isCoast)
@@ -284,6 +294,8 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
                   : temperateGrass.includes(m.climate)
                   ? ['grass_1', 'grass_2', 'grass_3', 'grass_4']
                   : grassIcons
+                : window.dice.random > 0.95 && withered.includes(m.climate)
+                ? ['withered_1', 'withered_2', 'withered_3', 'withered_4']
                 : grassIcons
             ),
             cell: m.idx
@@ -478,7 +490,6 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
               'ship_4',
               'ship_5',
               'ship_6',
-              'ship_14',
               'ship_15',
               'ship_16'
             ]),

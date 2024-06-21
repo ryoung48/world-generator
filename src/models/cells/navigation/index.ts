@@ -101,7 +101,7 @@ export const NAVIGATION = {
     start,
     end,
     type,
-    roads = 0.3,
+    roads = 0.1,
     limit = Infinity
   }: Navigation.ShortestPathParams) => {
     const pathing = validPath[type]

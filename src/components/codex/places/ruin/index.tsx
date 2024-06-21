@@ -4,7 +4,6 @@ import { PLACE } from '../../../../models/regions/places'
 import { RUIN } from '../../../../models/regions/places/ruin'
 import { TEXT } from '../../../../models/utilities/text'
 import { StyledText } from '../../../common/text/styled'
-import { HooksView } from '../hooks'
 import { RuinViewParams } from './types'
 
 export function RuinView({ ruin }: RuinViewParams) {
@@ -36,9 +35,6 @@ export function RuinView({ ruin }: RuinViewParams) {
       <Grid item xs={6.5}>
         <b>Locations: </b>
         <StyledText text={ruin.locations}></StyledText>
-      </Grid>
-      <Grid item xs={12}>
-        <HooksView hooks={ruin.hooks}></HooksView>
       </Grid>
     </Grid>
   )

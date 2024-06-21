@@ -1,7 +1,6 @@
 import { REGION } from '../../regions'
 import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
-import { LANGUAGE } from '../languages'
 import { Religion, ReligionSpawnParams, ReligionThemes, ReligionTraditions } from './types'
 
 const clergy: Record<string, string> = {
@@ -200,13 +199,13 @@ const themes: ReligionThemes = {
   intrigue: { text: 'deception, plots, manipulation' },
   knowledge: { text: 'wisdom, learning, insight' },
   life: { text: 'cultivation, fertility, abundance' },
-  light: { text: 'salvation, forgiveness, rebirth' },
+  light: { text: 'salvation, forgiveness, rebirth', conflicts: ['shadows'] },
   luck: { text: 'fortune, chance, serendipity' },
   pariah: { text: 'betrayal, rebellion, outcasts' },
   ruin: { text: 'disaster, collapse, chaos' },
   revelry: { text: 'celebration, feasting, debauchery' },
   seasons: { text: 'cycles, change, renewal' },
-  shadows: { text: 'darkness, secrets, hidden truths' },
+  shadows: { text: 'darkness, secrets, hidden truths', conflicts: ['light'] },
   sky: { text: 'storms, inspiration, freedom' },
   tyranny: { text: 'domination, ambition, enslavement', conflicts: ['empathy'] },
   warfare: { text: 'conflict, strength, aggression', conflicts: ['harmony'] },
@@ -253,9 +252,8 @@ export const RELIGION = {
   spawn: ({ regions, type }: ReligionSpawnParams) => {
     const [center] = regions
     const tribal = !center.civilized
-    const culture = REGION.culture(center)
     const religion: Religion = {
-      name: LANGUAGE.word.unique({ lang: culture.language, key: 'religion' }),
+      name: '',
       idx: window.world.religions.length,
       type,
       display: window.dice.color(),

@@ -1,14 +1,16 @@
 import { Grid } from '@mui/material'
 
-import { CULTURE } from '../../../../models/heritage/cultures'
+import { ACTOR } from '../../../../models/actors'
+import { WEATHER } from '../../../../models/cells/weather'
+import { CULTURE } from '../../../../models/heritage'
 import { PLACE } from '../../../../models/regions/places'
 import { HUB } from '../../../../models/regions/places/hub'
-import { TRADE_GOODS } from '../../../../models/regions/places/hub/trade'
 import { PROVINCE } from '../../../../models/regions/provinces'
 import { TEXT } from '../../../../models/utilities/text'
 import { StyledText } from '../../../common/text/styled'
-// import { QuestView } from '../../Quest'
 import { HubViewParams } from './types'
+
+const weather: Record<number, string> = {}
 
 export function HubView({ hub }: HubViewParams) {
   HUB.finalize(hub)
@@ -18,6 +20,10 @@ export function HubView({ hub }: HubViewParams) {
   const { common } = PROVINCE.demographics(province)
   const cultureCount = 4
   const other = common.slice(cultureCount).reduce((sum, { w }) => sum + w, 0)
+  if (!weather[province.idx])
+    weather[province.idx] = TEXT.capitalize(
+      WEATHER.conditions({ cell: window.world.cells[hub.cell] })
+    )
 
   return (
     <Grid container sx={{ fontSize: 10, lineHeight: 1.5 }}>
@@ -26,19 +32,8 @@ export function HubView({ hub }: HubViewParams) {
         <StyledText text={`${TEXT.titleCase(climate.name)} (${climate.latitude})`}></StyledText>
       </Grid>
       <Grid item xs={12}>
-        <b>Trade Goods: </b>
-        <StyledText
-          text={TEXT.formatters.list(
-            hub.trade.map((good, i) => {
-              const details = TRADE_GOODS.reference[good]
-              return TEXT.decorate({
-                label: i !== 0 ? good : TEXT.capitalize(good),
-                tooltip: typeof details.text === 'string' ? details.text : undefined
-              })
-            }),
-            'and'
-          )}
-        ></StyledText>
+        <b>Weather: </b>
+        <StyledText text={weather[province.idx]}></StyledText>
       </Grid>
       <Grid item xs={12}>
         <b>Demographics: </b>
@@ -48,7 +43,7 @@ export function HubView({ hub }: HubViewParams) {
             .map(({ v, w }) => {
               const culture = window.world.cultures[v]
               return `${TEXT.decorate({
-                label: window.world.regions[culture.region].name,
+                label: culture.name,
                 details: CULTURE.describe(culture)
               })} (${TEXT.formatters.percent(w)})`
             })
@@ -56,7 +51,17 @@ export function HubView({ hub }: HubViewParams) {
             .join(', ')}
         ></StyledText>
       </Grid>
-      {/* <QuestView hub={hub}></QuestView> */}
+      <Grid item xs={12}>
+        <b>Locals: </b>
+        <StyledText
+          text={hub.locals
+            .map(i => {
+              const npc = window.world.actors[i]
+              return `${TEXT.decorate({ label: npc.name, details: ACTOR.describe(npc) })}`
+            })
+            .join(', ')}
+        ></StyledText>
+      </Grid>
     </Grid>
   )
 }

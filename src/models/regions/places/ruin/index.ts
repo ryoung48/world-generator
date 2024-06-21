@@ -2,7 +2,6 @@ import { CELL } from '../../../cells'
 import { Cell } from '../../../cells/types'
 import { TEXT } from '../../../utilities/text'
 import { PLACE } from '..'
-import { HOOK } from '../hooks'
 import { Ruin, RuinLocation } from './types'
 
 const rooms: Record<string, RuinLocation> = {
@@ -4953,7 +4952,7 @@ export const RUIN = {
           w: 1,
           v: {
             label: 'vicious flora',
-            tooltip: 'animate and lethal plant life ensnare and devour intruder'
+            tooltip: 'animate and lethal plant life ensnare and devour intruders'
           }
         }
       ])
@@ -5055,12 +5054,6 @@ export const RUIN = {
         )
         .map(i => TEXT.decorate({ ...i }))
         .join(', ')
-      HOOK.spawn({
-        place: ruin,
-        hooks: HOOK.ruins,
-        samples: 2,
-        constraints: {}
-      })
     }
   },
   spawn: (cell: Cell) => {

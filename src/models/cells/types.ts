@@ -27,6 +27,7 @@ export interface Cell extends Point {
   rain: { east: number; west: number; winter: number; summer: number }
   heat?: { winter?: number; summer?: number }
   climate?: ClimateKey
+  topography?: 'marsh' | 'flatlands' | 'rolling hills' | 'rugged hills' | 'highlands' | 'mountains'
   // distances
   oceanDist: number
   mountainDist: number

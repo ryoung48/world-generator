@@ -15,7 +15,13 @@ const hpColorScale = scaleLinear()
 export function PlayerCharacterView() {
   const { state } = VIEW.context()
   return (
-    <Grid container mt={0.5} sx={{ fontSize: 10 }}>
+    <Grid container mt={0.25} sx={{ fontSize: 10 }}>
+      <Grid>
+        <DetailedTableRow
+          title={<b>Adventurers: </b>}
+          subtitle={DIFFICULTY.avatar.lvl(state.avatar).toFixed(2)}
+        ></DetailedTableRow>
+      </Grid>
       {state.avatar.pcs.map((a, i) => {
         const actor = window.world.actors[a]
         const health = actor.health
