@@ -4,7 +4,6 @@ import { QuirkConstraints } from '../traits/types'
 import { Gender } from '../types'
 
 const _professions = [
-  'custom',
   // tribal
   'shaman',
   'tribal warrior',

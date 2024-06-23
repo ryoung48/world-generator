@@ -237,7 +237,6 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         regions: [],
         provinces: [],
         cultures: [],
-        religions: [],
         oceanRegions: [],
         actors: [],
         wars: [],

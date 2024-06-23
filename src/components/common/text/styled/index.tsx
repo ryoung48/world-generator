@@ -70,7 +70,6 @@ export function StyledText(props: { text: string; color?: string }) {
                       tag === 'province'
                         ? idx
                         : PROVINCE.nation(window.world.provinces[idx]).capital,
-                    place: 0,
                     zoom: true
                   }
                 })

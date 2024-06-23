@@ -1,4 +1,4 @@
-import { Place } from '../../../models/regions/places/types'
+import { Place } from '../../../models/regions/hubs/types'
 import { DrawMapParams } from '../shapes/types'
 import { CachedImages, MapStyle } from '../types'
 

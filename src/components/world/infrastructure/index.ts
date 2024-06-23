@@ -1,6 +1,5 @@
 import * as jdenticon from 'jdenticon'
 
-import { PLACE } from '../../../models/regions/places'
 import { PROVINCE } from '../../../models/regions/provinces'
 import { Region } from '../../../models/regions/types'
 import { RouteTypes, World } from '../../../models/types'
@@ -51,7 +50,7 @@ export const DRAW_INFRASTRUCTURE = {
     const base = 1
     ctx.lineWidth = 0.05 * scale
     const provinces = window.world.provinces.map(province => {
-      const geojson = MAP_SHAPES.geojson.point(PROVINCE.hub(province))
+      const geojson = MAP_SHAPES.geojson.point(province.hub)
       geojson.properties = { idx: province.idx }
       return geojson
     })
@@ -66,7 +65,7 @@ export const DRAW_INFRASTRUCTURE = {
           if (nationSet.has(PROVINCE.nation(loc).idx)) {
             const capital = PROVINCE.isCapital(loc)
             const center = pathGen.centroid(MAP_SHAPES.geojson.features([province]))
-            const hub = PROVINCE.hub(loc)
+            const hub = loc.hub
             if (place === hub) {
               MAP_SHAPES.highlight({
                 ctx,
@@ -138,47 +137,6 @@ export const DRAW_INFRASTRUCTURE = {
           ctx.fillText(region.name, center[0], center[1] + offset * 18)
         }
       })
-  },
-  places: ({ ctx, projection, nationSet }: Omit<DrawInfraParams, 'style'>) => {
-    const scale = MAP_SHAPES.scale.derived(projection)
-    if (scale <= MAP_SHAPES.breakpoints.global) return
-    ctx.textAlign = 'center'
-    ctx.shadowColor = 'white'
-    ctx.fillStyle = 'black'
-    ctx.strokeStyle = 'black'
-    const mod = 0.5
-    ctx.lineWidth = 0.05 * scale * mod
-    const places = window.world.provinces
-      .filter(province => nationSet.has(PROVINCE.nation(province).idx))
-      .map(province => province.places)
-      .flat()
-      .map(place => {
-        const geojson = MAP_SHAPES.geojson.point(place)
-        const province = PLACE.province(place)
-        geojson.properties = { idx: place.idx, province: province.idx }
-        return geojson
-      })
-    const pathGen = MAP_SHAPES.path.linear(projection)
-    const offset = 0.4 * scale
-    const base = 1.2 * mod
-    places.forEach(_place => {
-      const center = pathGen.centroid(MAP_SHAPES.geojson.features([_place]))
-      const province = window.world.provinces[_place.properties.province]
-      const loc = province.places[_place.properties.idx]
-      if (loc.type === 'hub') return
-      if (loc.type === 'ruin') {
-        MAP_SHAPES.ruins({ point: { x: center[0], y: center[1] }, scale: scale * 2, ctx })
-      } else if (loc.type === 'wilderness') {
-        MAP_SHAPES.wilderness({ point: { x: center[0], y: center[1] }, scale: scale * 2, ctx })
-      } else if (loc.type.includes('camp')) {
-        MAP_SHAPES.camp({ point: { x: center[0], y: center[1] }, scale: scale * 2, ctx })
-      } else {
-        MAP_SHAPES.rural({ point: { x: center[0], y: center[1] }, scale: scale * 2, ctx })
-      }
-      ctx.fillStyle = 'black'
-      ctx.font = scale * base + 'px ' + fontFamily
-      ctx.fillText(loc.name ?? 'Point', center[0], center[1] - offset * 2.1 * mod)
-    })
   },
   roads: ({ ctx, projection, nationSet }: Omit<DrawInfraParams, 'style'>) => {
     const scale = MAP_SHAPES.scale.derived(projection)

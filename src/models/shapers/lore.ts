@@ -1,15 +1,9 @@
 import { range } from 'd3'
 
 import { WORLD } from '..'
-import { CELL } from '../cells'
-import { LANGUAGE } from '../heritage/languages'
 import { SPECIES } from '../heritage/species'
 import { REGION } from '../regions'
-import { CAMP } from '../regions/places/camp'
-import { HUB } from '../regions/places/hub'
-import { RUIN } from '../regions/places/ruin'
-import { VILLAGE } from '../regions/places/village'
-import { WILDERNESS } from '../regions/places/wilderness'
+import { HUB } from '../regions/hubs'
 import { PROVINCE } from '../regions/provinces'
 import { Province } from '../regions/provinces/types'
 import { TRADE_GOODS } from '../regions/trade'
@@ -18,7 +12,6 @@ import { WAR } from '../regions/wars'
 import { ARRAY } from '../utilities/array'
 import { POINT } from '../utilities/math/points'
 import { PERFORMANCE } from '../utilities/performance'
-import { TRAIT } from '../utilities/traits'
 
 const claimRegion = (params: { nation: Region; region: Region }) => {
   const { nation, region } = params
@@ -121,8 +114,8 @@ export const LORE = PERFORMANCE.profile.wrapper({
         let pop = REGION.population(region) * capitalMod
         if (region.civilized && pop < 10000) pop = window.dice.randint(10000, 15000)
         if (pop < 1000) pop = window.dice.randint(1000, 5000)
-        HUB.population.set(PROVINCE.hub(capital), pop)
-        const capitalPop = PROVINCE.hub(capital).population
+        capital.hub.population = pop
+        const capitalPop = capital.hub.population
         const largeTownPop = () => window.dice.randint(5000, 10000)
         const smallTownPop = () => window.dice.randint(1000, 5000)
         const largeVillagePop = () => window.dice.randint(500, 1000)
@@ -140,7 +133,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
               { w: 1, v: smallVillagePop }
             ])()
             const urban = pop > 10000 ? pop : rural
-            const hub = PROVINCE.hub(province)
+            const hub = province.hub
             const conflict =
               urban &&
               ARRAY.unique(
@@ -149,15 +142,15 @@ export const LORE = PERFORMANCE.profile.wrapper({
                   .flat()
               ).some(n => {
                 const neighbor = window.world.provinces[n]
-                const nHub = PROVINCE.hub(neighbor)
+                const nHub = neighbor.hub
                 return (
                   n !== province.idx &&
-                  HUB.city(nHub) &&
+                  HUB.isCity(province.hub) &&
                   POINT.distance.geo({ points: [nHub, hub] }) <
                     WORLD.placement.spacing.provinces * 2
                 )
               })
-            HUB.population.set(hub, conflict ? rural : urban)
+            hub.population = conflict ? rural : urban
             // make each city's population some fraction of the previous city's population
             const mod = window.dice.uniform(0.5, 0.8)
             if (!conflict) pop = Math.round(pop * (1 - mod))
@@ -182,7 +175,9 @@ export const LORE = PERFORMANCE.profile.wrapper({
           if (REGION.provinces(region).length > 0 && current / total < target) {
             let completed = false
             while (!completed) {
-              const neighbors = REGION.neighbors({ region }).filter(n => n.size !== 'empire')
+              const neighbors = REGION.neighbors({ region }).filter(
+                n => n.size !== 'empire' && n.development <= region.development
+              )
               if (neighbors.length === 0) break
               const closest = REGION.find({ ref: region, group: neighbors, type: 'closest' })
               claimRegion({ nation: region, region: closest })
@@ -200,7 +195,8 @@ export const LORE = PERFORMANCE.profile.wrapper({
         .filter(sizeLimit)
         .forEach(region => {
           const neighbors = REGION.neighbors({ region }).filter(
-            neighbor => REGION.domains(neighbor).length === 1
+            neighbor =>
+              REGION.domains(neighbor).length === 1 && neighbor.development <= region.development
           )
           if (
             REGION.provinces(region).length > 1 &&
@@ -280,13 +276,12 @@ export const LORE = PERFORMANCE.profile.wrapper({
               region.relations[n.idx] !== 'at war' &&
               REGION.provinces(n).length > powerLimit
           )
-          const religion = REGION.religion(region)
           region.government = window.dice.weightedChoice([
             { w: region.civilized ? 3 : 1, v: 'autocracy' },
             { w: region.civilized ? 1 : 0, v: 'republic' },
             { w: region.civilized ? 2 : 1, v: 'oligarchy' },
             { w: region.civilized ? 0.5 : 1, v: 'confederation' },
-            { w: religion.type === 'atheistic' ? 0 : region.civilized ? 1 : 0.5, v: 'theocracy' },
+            { w: region.religion === 'atheistic' ? 0 : region.civilized ? 1 : 0.5, v: 'theocracy' },
             { w: overlords.length > 0 ? 2 : 0, v: 'vassal' },
             { w: region.civilized || region.size === 'empire' ? 0 : 1, v: 'fragmented' }
           ])
@@ -294,60 +289,6 @@ export const LORE = PERFORMANCE.profile.wrapper({
             REGION.vassals.add({ overlord: window.dice.choice(overlords), vassal: region })
         })
       })
-      // traits
-      window.world.regions.forEach(region => {
-        region.traits = TRAIT.selection({
-          available: REGION.traits,
-          current: [],
-          used: window.world.regions.map(r => r.traits?.map(t => t.tag) ?? []).flat(),
-          samples: 2
-        }).map(tag => ({
-          tag,
-          text: REGION.traits[tag].text
-        }))
-      })
-    },
-    _places: () => {
-      const base = 4800
-      const count = Math.floor(base * WORLD.placement.ratio())
-      const spacing = WORLD.placement.spacing.provinces * 0.6
-      const { provinces } = window.world
-      WORLD.placement
-        .close({
-          count,
-          spacing,
-          whitelist: WORLD.land().filter(poly => !CELL.place(poly)),
-          blacklist: provinces.map(province => PROVINCE.cell(province))
-        })
-        .forEach(cell => {
-          const province = CELL.province(cell)
-          const road = cell.roads.land.length > 0
-          const trade = road || cell.coastal
-          const tribal = PROVINCE.region(province).civilized
-          const { local } = PROVINCE.cultures(province)
-          const culture = window.world.cultures[local.culture]
-          if (!culture) return
-          const type = window.dice.weightedChoice([
-            { v: 'ruin', w: road ? 0.05 : 0.5 },
-            { v: 'wilderness', w: road ? 0.05 : 0.5 },
-            { v: 'village', w: trade ? 1 : 0.1 },
-            { v: 'camp', w: tribal ? 0.2 : trade ? 0.1 : 0.01 }
-          ])
-          const place =
-            type === 'ruin'
-              ? RUIN.spawn(cell)
-              : type === 'wilderness'
-              ? WILDERNESS.spawn(cell)
-              : type === 'village'
-              ? VILLAGE.spawn(cell)
-              : CAMP.spawn(cell)
-          place.name = LANGUAGE.word.unique({
-            lang: culture.language,
-            key: type,
-            len: window.dice.randint(2, 4)
-          }).word
-          province.places.push(place)
-        })
     },
     _trade: () => {
       REGION.nations.forEach(region => {

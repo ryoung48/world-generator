@@ -134,7 +134,8 @@ export const DRAW_BORDERS = {
       window.world.provinces.forEach(province => {
         const styles = provinceBorders[province.idx]
         const nation = PROVINCE.nation(province)
-        const religion = REGION.religion(nation)
+        const region = PROVINCE.region(province)
+        const religion = nation.religion
         provinceCache[province.idx] = {}
         styles.path.forEach((border, i) => {
           ctx.save()
@@ -151,12 +152,16 @@ export const DRAW_BORDERS = {
               ? biome.color
               : style === 'Topography'
               ? MAP_METRICS.topography.colors[province.topography]
+              : style === 'Development'
+              ? MAP_METRICS.development.color(region.development)
+              : style === 'Wealth'
+              ? MAP_METRICS.wealth.color(region.wealth)
               : style === 'Population'
               ? styles.pop
               : style === 'Government'
               ? MAP_METRICS.government.colors[nation.government] ?? wasteland
               : style === 'Religion'
-              ? MAP_METRICS.religion.colors[religion?.type] ?? wasteland
+              ? MAP_METRICS.religion.colors[religion] ?? wasteland
               : style === 'Elevation'
               ? styles.elevation
               : style === 'Rain'
@@ -174,7 +179,7 @@ export const DRAW_BORDERS = {
     // nation borders
     ctx.lineWidth = (regionStyle ? 2 : 1) * scale
     nations.forEach(nation => {
-      const religion = REGION.religion(nation)
+      const religion = nation.religion
       if (nation.desolate) return
       nationBorders[nation.idx].forEach((border, i) => {
         ctx.save()
@@ -188,7 +193,7 @@ export const DRAW_BORDERS = {
             ? window.world.regions[border.r].heraldry.color.replace('%)', '%, 0.75)')
             : cultureStyle
             ? CULTURE.color({ culture: window.world.cultures[nation.culture], opacity: 0.75 })
-            : MAP_METRICS.religion.colors[religion.type]
+            : MAP_METRICS.religion.colors[religion]
         ctx.stroke(p)
         if (selected.idx === nation.idx) ctx.stroke(p)
         ctx.restore()

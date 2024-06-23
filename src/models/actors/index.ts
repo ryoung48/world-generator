@@ -1,29 +1,16 @@
+import { range } from 'd3'
+
 import { cssColors } from '../../components/theme/colors'
 import { LANGUAGE } from '../heritage/languages'
 import { SPECIES } from '../heritage/species'
 import { Culture } from '../heritage/types'
-import { PLACE } from '../regions/places'
+import { HUB } from '../regions/hubs'
 import { PROVINCE } from '../regions/provinces'
+import { Province } from '../regions/provinces/types'
 import { TEXT } from '../utilities/text'
-import { decorateItem } from './equipment'
 import { PROFESSION } from './professions'
 import { NPC_TRAITS } from './traits'
 import { Actor, ActorSpawnParams, Gender, LifePhase } from './types'
-
-const outfits = {
-  poor: '{rugged|patched|faded}',
-  modest: '{rustic|practical|basic}',
-  comfortable: '{stylish|professional|fine}',
-  prosperous: '{lavish|exquisite|elegant}',
-  rich: '{illustrious|ostentatious|magnificent}'
-}
-
-const assignOutfit = (params: { npc: Actor }) => {
-  const { npc } = params
-  if (npc.profession.key === 'custom') return
-  const { lifestyle } = PROFESSION.lookup[npc.profession.key]
-  npc.outfit = window.dice.spin(`${outfits[lifestyle]} {outfit|attire|garments}`)
-}
 
 const assignAppearance = (params: { culture: Culture; age: LifePhase; gender: Gender }) => {
   const { age, gender } = params
@@ -54,7 +41,7 @@ export const ACTOR = {
     const { place, role } = params
     const gender = params?.gender ?? ACTOR.gender()
     const profession = PROFESSION.spawn({ place, gender, profession: params.profession })
-    const province = PLACE.province(place)
+    const province = HUB.province(place)
     const { common, native, foreign } = PROVINCE.demographics(province)
     const cidx = window.dice.weightedChoice(
       params.foreign || profession.culture === 'foreign'
@@ -78,7 +65,6 @@ export const ACTOR = {
       health: 1
     }
     NPC_TRAITS.spawn({ place, npc, role })
-    assignOutfit({ npc })
     window.world.actors.push(npc)
     return npc
   },
@@ -89,13 +75,6 @@ export const ACTOR = {
       { label: 'personality', text: actor.personality.join(', ') },
       { label: 'quirks', text: actor.quirks.map(({ text }) => text).join(', ') }
     ]
-    if (actor.equipment)
-      content.push({
-        label: 'equipment',
-        text: Object.values(actor.equipment)
-          .map(item => decorateItem(item))
-          .join(', ')
-      })
     return {
       title: actor.name,
       subtitle: `${actor.age}, ${actor.gender} ${TEXT.decorate({
@@ -104,6 +83,12 @@ export const ACTOR = {
         color: cssColors.subtitle
       })}, ${actor.profession.title}`,
       content
+    }
+  },
+  populate: (province: Province) => {
+    const { hub } = province
+    if (!hub.locals) {
+      hub.locals = range(10).map(() => ACTOR.spawn({ place: hub }).idx)
     }
   }
 }

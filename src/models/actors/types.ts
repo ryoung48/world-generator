@@ -1,5 +1,4 @@
-import type { Province } from '../regions/provinces/types'
-import type { Item } from './equipment/types'
+import { Place } from '../regions/hubs/types'
 import type { Profession } from './professions/types'
 import type { Personality, Quirk } from './traits/types'
 
@@ -28,13 +27,11 @@ export interface Actor {
   quirks: { tag: Quirk; text: string }[]
   appearance: string
   health: number
-  equipment?: Item[]
-  abilities?: { tag: string; text: string; tier: number }[]
   outfit?: string
 }
 
 export interface ActorSpawnParams {
-  place: Province['places'][number]
+  place: Place
   role?: 'friend' | 'enemy'
   profession?: Profession
   age?: Actor['age']

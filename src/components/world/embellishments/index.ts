@@ -289,6 +289,10 @@ export const DRAW_EMBELLISHMENTS = {
         ? MAP_METRICS.religion.legend()
         : style === 'Government'
         ? MAP_METRICS.government.legend()
+        : style === 'Development'
+        ? MAP_METRICS.development.legend()
+        : style === 'Wealth'
+        ? MAP_METRICS.wealth.legend()
         : style === 'Population'
         ? MAP_METRICS.population.legend()
         : style === 'Cultures'

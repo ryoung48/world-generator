@@ -1,9 +1,7 @@
 import { WORLD } from '../..'
 import { CELL } from '../../cells'
-import { CLIMATE } from '../../cells/climate'
 import { Cell } from '../../cells/types'
 import { POINT } from '../../utilities/math/points'
-import { Province } from '../provinces/types'
 import { Place } from './types'
 
 const placement = (params: { cell: Cell }) => {
@@ -23,11 +21,7 @@ const placement = (params: { cell: Cell }) => {
   return { point: { x: cell.x, y: cell.y }, coastal: false }
 }
 
-export const PLACE = {
-  climate: (place: Place) => {
-    const cell = window.world.cells[place.cell]
-    return CLIMATE.holdridge[cell.climate]
-  },
+export const HUB = {
   coastal: {
     move: (place: Place, cell: Cell) => {
       const oldCell = window.world.cells[place.cell]
@@ -35,9 +29,7 @@ export const PLACE = {
       place.cell = cell.idx
       oldCell.province = cell.province
       cell.province = oldProvinceIdx
-      oldCell.place = undefined
-      cell.place = place.idx
-      PLACE.coastal.set(place)
+      HUB.coastal.set(place)
     },
     set: (place: Place) => {
       const { point, coastal } = placement({ cell: window.world.cells[place.cell] })
@@ -46,21 +38,36 @@ export const PLACE = {
       place.coastal = coastal
     }
   },
+  isCity: (place: Place) => place.population > 10e3,
   province: (place: Place) => CELL.province(window.world.cells[place.cell]),
-  region: (place: Place) => window.world.regions[PLACE.province(place).region],
+  region: (place: Place) => window.world.regions[HUB.province(place).region],
   spawn: (cell: Cell): Place => {
     const { x, y } = cell
-    const province = CELL.province(cell)
-    const idx = province.places.length
     const place: Place = {
-      idx,
       x,
       y,
       cell: cell.idx,
-      type: 'hub'
+      population: 0
     }
-    cell.place = idx
-    province.places.push(place as unknown as Province['places'][number])
     return place
+  },
+  type: ({ population }: Place) => {
+    return population > 200e3
+      ? 'metropolis'
+      : population > 50e3
+      ? 'huge city'
+      : population > 20e3
+      ? 'large city'
+      : population > 10e3
+      ? 'small city'
+      : population > 5e3
+      ? 'large town'
+      : population > 1e3
+      ? 'small town'
+      : population > 500
+      ? 'large village'
+      : population > 100
+      ? 'small village'
+      : 'tiny village'
   }
 }

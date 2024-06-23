@@ -1,6 +1,5 @@
 import { Actor } from './actors/types'
 import { Cell } from './cells/types'
-import { Religion } from './heritage/religions/types'
 import { Culture } from './heritage/types'
 import { Province } from './regions/provinces/types'
 import { Region } from './regions/types'
@@ -44,7 +43,6 @@ export interface World {
   regions: Region[]
   provinces: Province[]
   cultures: Culture[]
-  religions: Religion[]
   actors: Actor[]
   oceanRegions: {
     idx: number

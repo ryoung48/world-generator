@@ -3,7 +3,6 @@ import { WORLD } from '../..'
 import { CELL } from '../../cells'
 import { ClimateKey } from '../../cells/climate/types'
 import { Cell } from '../../cells/types'
-import { PROVINCE } from '../../regions/provinces'
 import { Province } from '../../regions/provinces/types'
 import { Region } from '../../regions/types'
 import { CoastalEdge, RouteTypes, World } from '../../types'
@@ -63,7 +62,7 @@ const roadSegment = (params: { route: RouteTypes; path: number[]; imperial: bool
     const points = path.map(i => {
       const cell = window.world.cells[i]
       const province = CELL.province(cell)
-      const hub = PROVINCE.hub(province)
+      const hub = province.hub
       return cell.idx === hub.cell ? [hub.x, hub.y] : [cell.x, cell.y]
     }) as [number, number][]
     window.world.display.routes[route].push({
@@ -466,7 +465,7 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
       // ships
       const seaRoutes = window.dice
         .shuffle(Object.values(window.world.routes.sea))
-        .filter(route => Math.abs(PROVINCE.hub(window.world.provinces[route.src]).y) < 70)
+        .filter(route => Math.abs(window.world.provinces[route.src].hub.y) < 70)
       const validSeaIcon = (p: Cell) =>
         p.ocean &&
         !p.shallow &&

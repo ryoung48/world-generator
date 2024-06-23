@@ -78,7 +78,6 @@ export function Landing() {
               onClick={async () => {
                 await generator({ seed, res, update: setActive })
                 dispatch({ type: 'init world', payload: { id: seed } })
-                dispatch({ type: 'start adventure' })
               }}
             >
               Generate World

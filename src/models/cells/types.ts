@@ -14,7 +14,6 @@ export interface Cell extends Point {
   // location
   region: number
   province: number
-  place?: number
   regionBorder?: boolean
   // features
   h: number

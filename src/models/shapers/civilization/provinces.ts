@@ -3,7 +3,7 @@ import { CELL } from '../../cells'
 import { CLIMATE } from '../../cells/climate'
 import { Cell } from '../../cells/types'
 import { REGION } from '../../regions'
-import { PLACE } from '../../regions/places'
+import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
 import { Province } from '../../regions/provinces/types'
 import { MATH } from '../../utilities/math'
@@ -63,6 +63,7 @@ export const PROVINCE_BUILDER = PERFORMANCE.profile.wrapper({
       const inlandScale = MATH.scale([4, 8], [1, 1.5], window.world.resolution) * 10
       const cellArea = WORLD.cell.area()
       window.world.regions.forEach(region => {
+        const development = region.development * 0.1 + 0.5
         REGION.provinces(region).forEach(province => {
           province.topography = window.dice.choice(
             province.cells.land.map(i => window.world.cells[i].topography)
@@ -72,7 +73,7 @@ export const PROVINCE_BUILDER = PERFORMANCE.profile.wrapper({
               const cell = window.world.cells[i]
               const mod = cell.isMountains ? 0.1 : 0.9
               const inland = Math.max(MATH.scale([1, inlandScale], [1.2, 0.6], cell.oceanDist), 0.5)
-              return sum + CLIMATE.holdridge[cell.climate].habitability * mod * inland
+              return sum + CLIMATE.holdridge[cell.climate].habitability * mod * inland * development
             }, 0) *
             cellArea *
             30
@@ -106,7 +107,7 @@ export const PROVINCE_BUILDER = PERFORMANCE.profile.wrapper({
               })[0]
             // move the city
             const place = CELL.place(closest)
-            PLACE.coastal.move(place, coast)
+            HUB.coastal.move(place, coast)
           }
         }
       })

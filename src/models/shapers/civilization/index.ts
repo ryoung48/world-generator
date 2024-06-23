@@ -1,6 +1,9 @@
+import { range } from 'd3'
+
+import { CLIMATE } from '../../cells/climate'
+import { Climate } from '../../cells/climate/types'
 import { NAVIGATION } from '../../cells/navigation'
 import { CULTURE } from '../../heritage'
-import { RELIGION } from '../../heritage/religions'
 import { REGION } from '../../regions'
 import { PROVINCE } from '../../regions/provinces'
 import { ARRAY } from '../../utilities/array'
@@ -34,10 +37,72 @@ const distributeCultures = ({ groups, dist }: DistributeCulturesParams) => {
 const distributeReligions = ({ groups, dist }: DistributeReligionsPArams) => {
   const type = window.dice.distribute({ dist, count: groups.length })
   groups.forEach(culture => {
-    RELIGION.spawn({
-      regions: culture.regions.map(region => window.world.regions[region]),
-      type: type.pop()
+    const religion = type.pop()
+    culture.regions
+      .map(region => window.world.regions[region])
+      .forEach(region => {
+        region.religion = religion
+      })
+  })
+}
+
+const arctic: Climate['latitude'][] = ['subpolar', 'polar']
+
+const maximumDevelopment = 7
+
+const civilizationCenter = () => {
+  let civil = 0
+  const { regions } = window.world
+  const partition = regions
+    .filter(c => REGION.coastal(c) && REGION.climate(c).habitability > 0.5)
+    .sort((a, b) => REGION.climate(b).habitability - REGION.climate(a).habitability)
+  const count = partition.length
+  // civilized
+  const civilized = Math.floor(count * 0.5)
+  partition.slice(0, civilized).forEach(c => {
+    const biome = REGION.climate(c)
+    const development =
+      civil < 5 && CLIMATE.zone[biome.latitude] === 'temperate' ? maximumDevelopment : 3
+    c.development = development
+    civil += development === maximumDevelopment ? 1 : 0
+  })
+  regions
+    .filter(c => c.development === undefined)
+    .forEach(c => {
+      const development = REGION.climate(c).latitude === 'polar' ? 0 : 1
+      c.development = development
     })
+  range(maximumDevelopment - 1, 0, -1).forEach(development => {
+    const group = window.world.regions.filter(r => r.development === development + 1)
+    group.forEach(c => {
+      c.borders
+        .map(n => window.world.regions[n])
+        .filter(
+          n => n.development < development + 1 && !arctic.includes(REGION.climate(n).latitude)
+        )
+        .forEach(n => {
+          n.development = development
+        })
+    })
+  })
+  // nomadic
+  const nomadic = window.world.regions.filter(r => r.development === 0)
+  nomadic.forEach(c => {
+    c.borders
+      .map(n => window.world.regions[n])
+      .filter(n => n.development > 1)
+      .forEach(n => {
+        n.development -= 1
+      })
+  })
+  const semiNomadic = window.world.regions.filter(r => r.development === 1)
+  semiNomadic.forEach(c => {
+    c.borders
+      .map(n => window.world.regions[n])
+      .filter(n => n.development > 2)
+      .forEach(n => {
+        n.development -= 1
+      })
   })
 }
 
@@ -45,9 +110,15 @@ export const CIVILIZATION_BUILDER = PERFORMANCE.profile.wrapper({
   label: 'CIVILIZATION',
   o: {
     _development: () => {
+      civilizationCenter()
       REGION.nations.forEach(region => {
-        const climate = REGION.climate(region)
-        region.civilized = climate.habitability > 0.5
+        region.civilized = region.development > 3
+        region.wealth = Math.max(
+          0,
+          region.development === maximumDevelopment
+            ? region.development
+            : window.dice.randint(region.development - 1, region.development + 1)
+        )
       })
     },
     _cultures: () => {
@@ -131,8 +202,8 @@ export const CIVILIZATION_BUILDER = PERFORMANCE.profile.wrapper({
       })
     },
     build: () => {
-      URBANIZATION_BUILDER.build()
       CIVILIZATION_BUILDER._development()
+      URBANIZATION_BUILDER.build()
       CIVILIZATION_BUILDER._cultures()
       CIVILIZATION_BUILDER._religions()
       CIVILIZATION_BUILDER._imperialRoads()

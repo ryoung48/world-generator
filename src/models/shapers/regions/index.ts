@@ -2,7 +2,7 @@ import { WORLD } from '../..'
 import { CELL } from '../../cells'
 import { Cell } from '../../cells/types'
 import { REGION } from '../../regions'
-import { PLACE } from '../../regions/places'
+import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
 import { COLOR } from '../../utilities/color'
 import { MATH } from '../../utilities/math'
@@ -81,9 +81,7 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
             })
         })
       // fix regional capitals
-      window.world.provinces.forEach(loc => {
-        PLACE.coastal.set(PROVINCE.hub(loc))
-      })
+      window.world.provinces.forEach(loc => HUB.coastal.set(loc.hub))
     },
     _mountains: (mountainProspects: RegionBorders) => {
       WORLD.land()

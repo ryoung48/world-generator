@@ -478,6 +478,8 @@ export const MAP_SHAPES = {
     'Cultures',
     'Religion',
     'Government',
+    'Development',
+    'Wealth',
     'Population',
     'Topography',
     'Climate',

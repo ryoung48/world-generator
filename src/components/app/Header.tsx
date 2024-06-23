@@ -1,15 +1,12 @@
 import { AppBar, Box, Button, Grid, Toolbar, Typography } from '@mui/material'
-import dayjs from 'dayjs'
 import { Dispatch, SetStateAction } from 'react'
 
-import { ARRAY } from '../../models/utilities/array'
-import { season } from '../../models/utilities/math/time'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
 
 export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAction<boolean>> }) {
   const { stats, toggleStats } = props
-  const { state, dispatch } = VIEW.context()
+  const { state } = VIEW.context()
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar
@@ -33,44 +30,11 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
                   component='div'
                   sx={{ lineHeight: 0.2, color: cssColors.subtitle, fontSize: 10 }}
                 >
-                  {`${season(new Date(state.time).getMonth())}, ${dayjs(state.time).format(
-                    'YYYY'
-                  )} (${state?.id || '∞'})`}
+                  {`${state?.id || '∞'}`}
                 </Typography>
               </Grid>
             </Grid>
             <Grid item xs={3} container justifyContent='end' alignContent='center'>
-              {/* <Grid item px={2}>
-                <IconButton
-                  color='primary'
-                  disabled={!state.id}
-                  onClick={() => dispatch({ type: 'toggle pause' })}
-                  sx={{ padding: '4px' }}
-                >
-                  {!state.paused ? (
-                    <Pause fontSize='inherit'></Pause>
-                  ) : (
-                    <Play fontSize='inherit'></Play>
-                  )}
-                </IconButton>
-              </Grid> */}
-              <Grid item px={1}>
-                <Button
-                  onClick={() => {
-                    const key = 'seeds'
-                    const saved = JSON.parse(localStorage.getItem(key) || '[]') as string[]
-                    localStorage.setItem(key, JSON.stringify(ARRAY.unique([...saved, state.id])))
-                  }}
-                  disabled={!state.id}
-                >
-                  save
-                </Button>
-              </Grid>
-              <Grid item px={1}>
-                <Button onClick={() => dispatch({ type: 'start adventure' })} disabled={!state.id}>
-                  start
-                </Button>
-              </Grid>
               <Grid item px={1}>
                 <Button onClick={() => toggleStats(!stats)} disabled={!state.id}>
                   {stats ? 'world' : 'stats'}

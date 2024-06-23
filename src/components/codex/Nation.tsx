@@ -3,6 +3,7 @@ import { Grid } from '@mui/material'
 import { WORLD } from '../../models'
 import { CULTURE } from '../../models/heritage'
 import { REGION } from '../../models/regions'
+import { HUB } from '../../models/regions/hubs'
 import { PROVINCE } from '../../models/regions/provinces'
 import { TRADE_GOODS } from '../../models/regions/trade'
 import { MATH } from '../../models/utilities/math'
@@ -35,14 +36,24 @@ export function NationView() {
   if (MAP_METRICS.metric) area = MATH.conversion.area.mi.km(area)
   const units = MAP_METRICS.metric ? 'km²' : 'mi²'
   const neighbors = REGION.neighbors({ region: nation, depth: 1 })
-  const religion = REGION.religion(nation)
+  const religion = nation.religion
+  const decoratedProvinces = provinces
+    .sort((a, b) => b.hub.population - a.hub.population)
+    .map(province =>
+      TEXT.decorate({
+        link: province,
+        label: province.hub.name,
+        tooltip: HUB.type(province.hub)
+      })
+    )
+    .join(', ')
   return (
     <CodexPage
       title={nation.name}
       subtitle={
         <StyledText
           color={cssColors.subtitle}
-          text={`(${nation.idx}) ${nation.size} (${nation.government}, ${religion.type})`}
+          text={`(${nation.idx}) ${nation.size} (${nation.government}, ${religion})`}
         ></StyledText>
       }
       content={
@@ -147,7 +158,7 @@ export function NationView() {
                 },
                 {
                   label: `Settlements (${provinces.length})`,
-                  content: <StyledText text={PROVINCE.decorate(provinces)}></StyledText>
+                  content: <StyledText text={decoratedProvinces}></StyledText>
                 }
               ]}
             ></SectionList>

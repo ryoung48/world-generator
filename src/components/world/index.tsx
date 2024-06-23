@@ -7,10 +7,9 @@ import { CLIMATE } from '../../models/cells/climate'
 import { GEOGRAPHY } from '../../models/cells/geography'
 import { REGION } from '../../models/regions'
 import { PROVINCE } from '../../models/regions/provinces'
-import { POINT } from '../../models/utilities/math/points'
 import { delay } from '../../models/utilities/math/time'
 import { NationView } from '../codex/Nation'
-import { PlaceView } from '../codex/places'
+import { ProvinceView } from '../codex/Province'
 import { StyledText } from '../common/text/styled'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
@@ -77,9 +76,7 @@ const paint = ({
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   const province = window.world.provinces[loc.province]
-  const scale = MAP_SHAPES.scale.derived(projection)
-  const place =
-    scale <= MAP_SHAPES.breakpoints.regional ? PROVINCE.hub(province) : province.places[loc.place]
+  const place = province.hub
   const nation = PROVINCE.nation(province)
   const borders = REGION.neighbors({ region: nation, depth: 2 })
   const nations = [nation].concat(borders)
@@ -114,7 +111,6 @@ const paint = ({
   DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, cachedImages, place })
   DRAW_TERRAIN.icons({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
   DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style, cachedImages, place })
-  DRAW_INFRASTRUCTURE.places({ ctx, projection, nationSet, cachedImages, place })
   DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
   DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection })
@@ -157,31 +153,16 @@ export function WorldMap() {
     const province = window.world.provinces[poly.province]
     const nation = PROVINCE.nation(province)
     if (nation.desolate) return
-    const scale = MAP_SHAPES.scale.derived(projection)
     if (state.view === 'place') {
-      // find closest place to cursor
-      const closest =
-        scale <= MAP_SHAPES.breakpoints.regional
-          ? { place: PROVINCE.hub(province) }
-          : province.places.slice(1).reduce(
-              (min, place) => {
-                const dist = POINT.distance.geo({ points: [place, { x, y }] })
-                return dist < min.dist ? { place, dist } : min
-              },
-              {
-                place: province.places[0],
-                dist: POINT.distance.geo({ points: [province.places[0], { x, y }] })
-              }
-            )
       dispatch({
         type: 'transition',
-        payload: { tag: 'place', province: province.idx, place: closest.place.idx }
+        payload: { tag: 'place', province: province.idx }
       })
     } else {
       const capital = REGION.capital(nation)
       dispatch({
         type: 'transition',
-        payload: { tag: 'nation', province: capital.idx, place: 0 }
+        payload: { tag: 'nation', province: capital.idx }
       })
     }
   }
@@ -210,7 +191,7 @@ export function WorldMap() {
       const province = window.world.provinces[state.loc.province]
       const nation = window.world.regions[province.nation]
       const capital = window.world.provinces[nation.capital]
-      const hub = PROVINCE.hub(capital)
+      const hub = capital.hub
       dispatch({
         type: 'update gps',
         payload: {
@@ -402,7 +383,7 @@ export function WorldMap() {
             }}
           >
             {state.view === 'nation' && <NationView></NationView>}
-            {state.view === 'place' && <PlaceView></PlaceView>}
+            {state.view === 'place' && <ProvinceView></ProvinceView>}
           </Grid>
         )}
         <canvas

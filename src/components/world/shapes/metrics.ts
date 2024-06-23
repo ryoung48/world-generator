@@ -12,6 +12,28 @@ const elevation = [0, 300, 600, 1200, 2000, 3000, 4000, 6000, 9000, 12000, 16000
   MATH.conversion.distance.feet.km
 )
 
+const development = [
+  'industrial',
+  'enlightened',
+  'advanced',
+  'developing',
+  'emergent',
+  'agrarian',
+  'traditional',
+  'primitive'
+]
+
+const wealth = [
+  'lavish',
+  'wealthy',
+  'affluent',
+  'prosperous',
+  'secure',
+  'middling',
+  'impoverished',
+  'struggling'
+]
+
 const metric = true
 
 export const MAP_METRICS = {
@@ -111,6 +133,18 @@ export const MAP_METRICS = {
         text: MAP_METRICS.elevation.format(r)
       }))
   },
+  development: {
+    scale: d3.scaleLinear([0, 7], [0, 1]),
+    color: (k: number) => d3.interpolateBrBG(MAP_METRICS.development.scale(k)),
+    legend: () =>
+      d3
+        .range(0, 8)
+        .reverse()
+        .map(r => ({
+          color: MAP_METRICS.development.color(r),
+          text: development[7 - r]
+        }))
+  },
   government: {
     colors: {
       autocracy: '#ffbaba',
@@ -131,13 +165,13 @@ export const MAP_METRICS = {
         }))
   },
   population: {
-    scale: d3.scaleLinear([0, 30], [0, 1]),
+    scale: d3.scaleLinear([0, 40], [0, 1]),
     color: (popMi: number) => d3.interpolateBuPu(MAP_METRICS.population.scale(popMi)),
     value: (popMi: number) => (metric ? MATH.conversion.population.mi.km(popMi) : popMi),
     format: (popMi: number) =>
       `${MAP_METRICS.population.value(popMi).toFixed(0)} ${MAP_METRICS.population.units()}`,
     legend: () =>
-      [0, 5, 10, 15, 20, 25, 30].reverse().map(r => ({
+      [0, 5, 10, 15, 20, 25, 30, 35, 40].reverse().map(r => ({
         color: MAP_METRICS.population.color(r),
         text: MAP_METRICS.population.format(r)
       })),
@@ -249,6 +283,18 @@ export const MAP_METRICS = {
         .map(([k, v]) => ({
           color: v,
           text: k
+        }))
+  },
+  wealth: {
+    scale: d3.scaleLinear([0, 7], [0, 1]),
+    color: (k: number) => d3.interpolateYlGn(MAP_METRICS.wealth.scale(k ?? 0)),
+    legend: () =>
+      d3
+        .range(0, 8)
+        .reverse()
+        .map(r => ({
+          color: MAP_METRICS.wealth.color(r),
+          text: wealth[7 - r]
         }))
   }
 }

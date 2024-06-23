@@ -1,4 +1,4 @@
-import { PLACE } from '../../regions/places'
+import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 import { TEXT } from '../../utilities/text'
@@ -35,7 +35,6 @@ const nobleQuirks = {
 }
 
 const professions: Record<Profession, ProfessionDetails> = {
-  custom: { strata: 'middle', lifestyle: 'modest' },
   // tribal
   shaman: { strata: 'middle', lifestyle: 'modest', unique: true, age: 'veteran' },
   'tribal elder': { strata: 'middle', lifestyle: 'modest', age: 'master' },
@@ -1694,24 +1693,15 @@ const ages: Record<ProfessionDetails['age'], WeightedDistribution<LifePhase>> = 
 }
 
 const professionRandom = (place: ActorSpawnParams['place']) => {
-  const community =
-    communities[
-      place.type === 'hub'
-        ? place.population > 1e3
-          ? 'urban'
-          : 'rural'
-        : place.type === 'village'
-        ? 'rural'
-        : 'tribal'
-    ]
-  const province = PLACE.province(place)
+  const community = communities[place.population > 1e3 ? 'urban' : 'rural']
+  const province = HUB.province(place)
   const actors = PROFESSION.actors(place).map(actor => actor.profession.key)
   const used = new Set(actors)
   const nation = PROVINCE.nation(province)
   const kingdom = nation.size === 'empire' || nation.size === 'kingdom'
   const coastal = place.coastal
   const war = province.conflict >= 0
-  const capital = place.type === 'hub' && province.capital
+  const capital = province.capital
   const leadership = nation.government !== 'fragmented'
   const [selected] = TRAIT.selection({
     available: community.reduce((acc: Partial<Record<Profession, ProfessionDetails>>, { v, w }) => {
@@ -1728,16 +1718,14 @@ const professionRandom = (place: ActorSpawnParams['place']) => {
 
 export const PROFESSION = {
   actors: (place: ActorSpawnParams['place']) =>
-    place.type === 'hub' || place.type === 'village' || place.type === 'camp'
-      ? place.locals?.map(i => window.world.actors[i]) ?? []
-      : [],
+    place.locals?.map(i => window.world.actors[i]) ?? [],
   lookup: professions,
   random: (place: ActorSpawnParams['place']) => professionRandom(place),
   spawn: (params: Pick<ActorSpawnParams, 'profession' | 'place' | 'gender'>) => {
     const { place, gender } = params
     const key = params.profession ?? PROFESSION.random(place)
     const profession = PROFESSION.lookup[key]
-    const province = PLACE.province(place)
+    const province = HUB.province(place)
     const title = !profession.title
       ? key
       : typeof profession.title === 'string'

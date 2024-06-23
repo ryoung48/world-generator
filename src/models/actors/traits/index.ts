@@ -1,7 +1,7 @@
 import { range } from 'd3'
 
 import { SPECIES } from '../../heritage/species'
-import { PLACE } from '../../regions/places'
+import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
 import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
@@ -753,7 +753,7 @@ const rollQuirks = ({ place, npc, role }: QuirkParams) => {
   const { personality, age } = npc
   const { key: profession } = npc.profession
   const culture = window.world.cultures[npc.culture]
-  const province = PLACE.province(place)
+  const province = HUB.province(place)
   const { local, ruling } = PROVINCE.cultures(province)
   const { appearance } = culture
   const species = culture.species
@@ -811,7 +811,7 @@ const rollQuirks = ({ place, npc, role }: QuirkParams) => {
       profession.includes('warrior') ||
       profession.includes('guard'),
     thin: species === 'elf',
-    urban: place.type === 'hub'
+    urban: place.population > 1e3
   }
   const available = { ...quirks, ..._quirks }
   const actors = PROFESSION.actors(place)

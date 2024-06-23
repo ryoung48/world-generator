@@ -1,7 +1,7 @@
 import { CLIMATE } from '../../cells/climate'
 import { TRAIT } from '../../utilities/traits'
 import { REGION } from '..'
-import { HUB } from '../places/hub'
+import { HUB } from '../hubs'
 import { PROVINCE } from '../provinces'
 import { Region } from '../types'
 import { TradeGoods } from './types'
@@ -273,7 +273,7 @@ export const TRADE_GOODS = {
     const arctic = provinces.some(
       province => CLIMATE.zone[PROVINCE.climate(province).latitude] === 'arctic'
     )
-    const urban = provinces.some(province => HUB.city(PROVINCE.hub(province)))
+    const urban = provinces.some(province => HUB.isCity(province.hub))
     nation.trade = TRAIT.selection({
       available: tradeGoods,
       current: [],

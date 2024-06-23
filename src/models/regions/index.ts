@@ -6,133 +6,6 @@ import { TEXT } from '../utilities/text'
 import { PROVINCE } from './provinces'
 import * as Region from './types'
 
-const traits: Record<Region.Region['traits'][number]['tag'], Region.RegionTrait> = {
-  'splendid discovery': {
-    text: 'a splendid mine or resource has been found',
-    conflicts: ['mine depleted']
-  },
-  'faith strengthened': {
-    text: 'a pious saint is strengthening a major faith',
-    conflicts: ['faith crisis']
-  },
-  'heroic heir': {
-    text: 'a noble heir shows signs of heroic greatness',
-    conflicts: ['leadership failure', 'beloved lord']
-  },
-  "rival's downfall": {
-    text: 'a major rival has recently suffered a calamity',
-    conflicts: ['war preparations']
-  },
-  'farmland expansion': {
-    text: 'new farmland has been opened up recently',
-    conflicts: ['farmland depletion', 'hunger plague']
-  },
-  'trade route': { text: 'a new trade route has been forged' },
-  'monster vanquished': {
-    text: 'a horrible monster was slain or driven off',
-    conflicts: ['monster migration', 'vermin swarm']
-  },
-  'bountiful harvest': {
-    text: 'good harvests have enriched the people',
-    conflicts: ['hunger plague', 'farmland depletion']
-  },
-  'minister deposed': {
-    text: 'a wicked minister has been deposed',
-    conflicts: ['sinister influence']
-  },
-  'academy founded': { text: 'a new academy has recently opened' },
-  'uprising crushed': {
-    text: 'a bandit or rebel uprising has been crushed',
-    conflicts: ['rebel stirring']
-  },
-  'peace forged': {
-    text: 'two rival lords have started to make peace',
-    conflicts: ['peace pact', 'savage grudge']
-  },
-  'peace pact': {
-    text: 'an old enemy has agreed to a peace pact',
-    conflicts: ['peace forged', 'war preparations']
-  },
-  'victorious military': { text: 'the military won a recent smashing victory' },
-  'working activated': { text: 'a helpful working has been activated' },
-  'artifact aid': {
-    text: 'a powerful artifact is helping the ruler',
-    conflicts: ['artifact malcontents']
-  },
-  'unrest calmed': {
-    text: 'an old source of unrest has been calmed',
-    conflicts: ['outraged riots']
-  },
-  'cult purged': {
-    text: 'a dark cult has been revealed and purged',
-    conflicts: ['cult attraction']
-  },
-  'diplomacy ties': { text: 'new diplomatic ties have been made' },
-  'beloved lord': {
-    text: 'a new lord has risen, loved by his people',
-    conflicts: ['heroic heir', 'leadership failure']
-  },
-  'farmland depletion': {
-    text: 'farmland is becoming worn-out and depleted',
-    conflicts: ['farmland expansion', 'bountiful harvest']
-  },
-  'vermin swarm': {
-    text: 'verminous monsters are swarming',
-    conflicts: ['monster vanquished', 'monster migration']
-  },
-  'rebel stirring': {
-    text: 'a rebel front is stirring up trouble',
-    conflicts: ['uprising crushed']
-  },
-  'internal backing': { text: 'an outside power is backing internal strife' },
-  'leadership failure': {
-    text: 'the leadership is inept and distracted',
-    conflicts: ['heroic heir', 'beloved lord']
-  },
-  'faith crisis': {
-    text: 'a religious reformer is breaking old compacts',
-    conflicts: ['faith strengthened']
-  },
-  'outraged riots': { text: 'an evil is provoking outraged rioting', conflicts: ['unrest calmed'] },
-  'cult attraction': {
-    text: 'dark cults are attracting the ambitious',
-    conflicts: ['cult purged']
-  },
-  'horde threat': { text: 'a blighted horde is threatening the borders' },
-  'ancient peril': { text: 'an ancient ruin has disgorged some peril' },
-  'artifact malcontents': {
-    text: 'malcontents have obtained a potent artifact',
-    conflicts: ['artifact aid']
-  },
-  'coffers bare': { text: 'luxuriance has left the nation’s coffers bare' },
-  'aristocratic push': { text: 'local aristocrats are pushing for independence' },
-  'mine depleted': {
-    text: 'an important mine has run out or been harmed',
-    conflicts: ['splendid discovery']
-  },
-  'sinister influence': {
-    text: 'a sinister favorite has infatuated the leader',
-    conflicts: ['minister deposed']
-  },
-  'hunger plague': {
-    text: 'a recurring plant plague is causing hunger',
-    conflicts: ['farmland expansion', 'bountiful harvest']
-  },
-  'monster migration': {
-    text: 'fearsome monsters are migrating into the land',
-    conflicts: ['vermin swarm', 'monster vanquished']
-  },
-  'war preparations': {
-    text: 'a rival is preparing for war or raiding',
-    conflicts: ['peace pact', "rival's downfall"]
-  },
-  'national exhaustion': { text: 'a grand national plan is exhausting the people' },
-  'savage grudge': {
-    text: 'a savage grudge has erupted between lords',
-    conflicts: ['peace forged']
-  }
-}
-
 export const REGION = {
   active: (region: Region.Region) => {
     return REGION.provinces(region).length > 0
@@ -282,9 +155,6 @@ export const REGION = {
       r2.relations[r1.idx] = target
     }
   },
-  religion: (region: Region.Region) => {
-    return window.world.religions[region.religion]
-  },
   sort: ({ ref, group, type }: Region.RegionSortParams) =>
     PROVINCE.sort({
       group: group.map(neighbor => window.world.provinces[neighbor.capital]),
@@ -349,7 +219,6 @@ export const REGION = {
       | 'plains'
       | 'desert'
   },
-  traits,
   vassals: {
     add: ({ overlord, vassal }: Region.AddVassalParams) => {
       overlord.vassals.push(vassal.idx)

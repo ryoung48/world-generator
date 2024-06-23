@@ -83,7 +83,7 @@ export const SHAPER_INFRASTRUCTURE = PERFORMANCE.profile.wrapper({
       // iterate through all water bodies
       const allPorts = window.world.provinces
         .filter(province => PROVINCE.coastal(province) && !PROVINCE.region(province).desolate)
-        .map(province => window.world.cells[PROVINCE.hub(province).cell])
+        .map(province => window.world.cells[province.hub.cell])
       const { blacklist } = NAVIGATION.blacklist
       WORLD.features('water').forEach(i => {
         // get all ports on the water body
