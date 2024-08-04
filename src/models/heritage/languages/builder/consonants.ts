@@ -47,7 +47,7 @@ export const buildConsonants = (params: { ending: PhonemeCatalog; vowels: string
   )
   const endConsonants = window.dice
     .sample(
-      'cddfggjkkllmmnnpqrrsstŋŋxzzððʃʧ'.split('').filter(c => middleConsonants.includes(c)),
+      'cddfggjkkllmmnnpqrrsstŋŋxzzððʃʧ'.split('').filter(c => middleConsonants.includes(c)), // cSpell:ignore cddfggjkkllmmnnpqrrsstŋŋxzzððʃʧ
       4
     )
     .concat(essentials)

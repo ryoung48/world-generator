@@ -1,8 +1,8 @@
 import { range } from 'd3'
 
 import { SPECIES } from '../../heritage/species'
-import { HUB } from '../../regions/sites/hubs'
 import { PROVINCE } from '../../regions/provinces'
+import { HUB } from '../../regions/sites/hubs'
 import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
 import { PROFESSION } from '../professions'

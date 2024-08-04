@@ -1,7 +1,6 @@
 {
     "ignorePaths": [
-        "src/models/regions/places/hooks/**",
-        "src/models/regions/places/ruin/**"
+        "src/models/hooks/**"
     ],
     "ignoreWords": [],
     "words": [
@@ -29,7 +28,6 @@
         "caravaneers",
         "cathemeral",
         "catmull",
-        "cddfggjkkllmmnnpqrrsstŋŋxzzððʃʧ",
         "celestials",
         "Censorate",
         "challange",
@@ -64,6 +62,7 @@
         "floodfill",
         "genasi",
         "ggdr",
+        "glassmaking",
         "gnoll",
         "greataxe",
         "greatsword",
