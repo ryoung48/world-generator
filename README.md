@@ -46,6 +46,3 @@ npm run lint
 1. https://kmalexander.com/free-stuff/fantasy-map-brushes/
 2. https://www.deviantart.com/starraven/art/Sketchy-Cartography-Brushes-198264358
 3. https://www.deviantart.com/eragon2589/art/Cartography-brushes-498111706
-4. https://www.deviantart.com/winstonthebutterfly/art/Oblivion-and-Skyrim-Map-Marker-Brush-Set-387861762
-5. https://www.pinterest.com/pin/380343131015862327/
-6. https://www.flaticon.com/packs/tree-icons

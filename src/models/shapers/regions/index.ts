@@ -367,7 +367,7 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
       SHAPER_REGIONS._capitals()
       SHAPER_REGIONS._spheres(mountainProspects, regionBorders)
       SHAPER_REGIONS._mountains(mountainProspects)
-      SHAPER_CLIMATES.build()
+      SHAPER_CLIMATES.build(SHAPER_REGIONS.land)
       SHAPER_REGIONS._coastlines()
       SHAPER_REGIONS._locations()
       SHAPER_REGIONS._finalize(regionBorders)

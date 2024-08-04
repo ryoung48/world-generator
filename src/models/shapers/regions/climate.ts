@@ -3,15 +3,15 @@ import { mean, range, scaleLinear } from 'd3'
 import { WORLD } from '../..'
 import { CELL } from '../../cells'
 import { CLIMATE } from '../../cells/climate'
+import { Cell } from '../../cells/types'
 import { MATH } from '../../utilities/math'
 import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
-import { SHAPER_REGIONS } from '.'
 
 export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
   label: 'CLIMATES',
   o: {
-    _lakes: () => {
+    _lakes: (land: Record<number, Cell[]>) => {
       const lakes = WORLD.lakes()
       const shallow = lakes.filter(cell => cell.shallow)
       WORLD.features('water')
@@ -30,7 +30,7 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
           })
           const mountainous = border.some(cell => CELL.neighbors(cell).some(n => n.isMountains))
           if (arid || mountainous) {
-            WORLD.removeLake({ lakes, lake: landmark, regional: SHAPER_REGIONS.land })
+            WORLD.removeLake({ lakes, lake: landmark, regional: land })
           }
         })
       WORLD.reshape()
@@ -417,11 +417,11 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
           }
         })
     },
-    build: () => {
+    build: (land: Record<number, Cell[]>) => {
       SHAPER_CLIMATES._rain()
       SHAPER_CLIMATES._heat()
       SHAPER_CLIMATES._climate()
-      SHAPER_CLIMATES._lakes()
+      SHAPER_CLIMATES._lakes(land)
       SHAPER_CLIMATES._topography()
     }
   }
