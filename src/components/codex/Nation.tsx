@@ -3,8 +3,8 @@ import { Grid } from '@mui/material'
 import { WORLD } from '../../models'
 import { CULTURE } from '../../models/heritage'
 import { REGION } from '../../models/regions'
-import { HUB } from '../../models/regions/hubs'
 import { PROVINCE } from '../../models/regions/provinces'
+import { HUB } from '../../models/regions/sites/hubs'
 import { TRADE_GOODS } from '../../models/regions/trade'
 import { MATH } from '../../models/utilities/math'
 import { TEXT } from '../../models/utilities/text'
@@ -38,12 +38,12 @@ export function NationView() {
   const neighbors = REGION.neighbors({ region: nation, depth: 1 })
   const religion = nation.religion
   const decoratedProvinces = provinces
-    .sort((a, b) => b.hub.population - a.hub.population)
+    .sort((a, b) => PROVINCE.hub(b).population - PROVINCE.hub(a).population)
     .map(province =>
       TEXT.decorate({
         link: province,
-        label: province.hub.name,
-        tooltip: HUB.type(province.hub)
+        label: PROVINCE.hub(province).name,
+        tooltip: HUB.type(PROVINCE.hub(province))
       })
     )
     .join(', ')

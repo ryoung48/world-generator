@@ -38,3 +38,7 @@ export type DrawCompassParams = {
   rotation: number[]
   projection: GeoProjection
 }
+
+export type MapControlsProps = {
+  move: (_params: { dx: number; dy: number; scale: number }) => void
+}

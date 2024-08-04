@@ -7,7 +7,8 @@ import { MATH } from '../../utilities/math'
 import { POINT } from '../../utilities/math/points'
 import { dayMS } from '../../utilities/math/time'
 import { PERFORMANCE } from '../../utilities/performance'
-import { HUB } from '../hubs'
+import { HUB } from '../sites/hubs'
+import { Hub } from '../sites/hubs/types'
 import * as Province from './types'
 
 const distanceTo = (c1: Province.Province, c2: Province.Province) => {
@@ -49,13 +50,13 @@ export const PROVINCE = {
     return CELL.climate(cell)
   },
   coastal: (province: Province.Province) => {
-    return province.hub.coastal
+    return PROVINCE.hub(province).coastal
   },
   isBorder: (province: Province.Province) => {
     const neighbors = province.neighbors.map(n => window.world.provinces[n])
     return neighbors.some(n => PROVINCE.nation(n) !== PROVINCE.nation(province))
   },
-  cell: (province: Province.Province) => window.world.cells[province.hub.cell],
+  cell: (province: Province.Province) => window.world.cells[PROVINCE.hub(province).cell],
   connected: (province: Province.Province) =>
     province.artery.length > 0 || PROVINCE.isCapital(province),
   cultures: (province: Province.Province) => {
@@ -68,7 +69,7 @@ export const PROVINCE = {
     f: (province: Province.Province): Province.Demographics => {
       const common: Record<string, number> = {}
       window.world.cultures.forEach(k => (common[k.idx] = 0))
-      const hub = province.hub
+      const hub = PROVINCE.hub(province)
       const popScale = MATH.scale([0, 100000], [20, 200], hub.population)
       const origins = MATH.scale([0, 100000], [0.9, 0.6], hub.population)
       const network = PROVINCE.network(province)
@@ -134,6 +135,7 @@ export const PROVINCE = {
       { d: start, province: undefined }
     ).province
   },
+  hub: (province: Province.Province) => province.sites[0] as Hub,
   isCapital: (province: Province.Province) => {
     return PROVINCE.nation(province).capital === province.idx
   },
@@ -218,7 +220,7 @@ export const PROVINCE = {
       region: cell.region,
       nation: cell.region,
       cell: cell.idx,
-      hub: HUB.spawn(cell),
+      sites: [HUB.spawn(cell)],
       trade: { land: {}, sea: {} },
       cells: { land: [] },
       islands: {},

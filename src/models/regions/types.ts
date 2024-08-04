@@ -53,7 +53,6 @@ export interface Region extends TaggedEntity {
   vassals: number[]
   trade?: string[]
   desolate?: boolean
-  exhaustion: number
 }
 
 export type RegionNeighborsParams = { region: Region; depth?: number }

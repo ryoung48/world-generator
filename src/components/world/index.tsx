@@ -7,6 +7,7 @@ import { CLIMATE } from '../../models/cells/climate'
 import { GEOGRAPHY } from '../../models/cells/geography'
 import { REGION } from '../../models/regions'
 import { PROVINCE } from '../../models/regions/provinces'
+import { POINT } from '../../models/utilities/math/points'
 import { delay } from '../../models/utilities/math/time'
 import { NationView } from '../codex/Nation'
 import { ProvinceView } from '../codex/Province'
@@ -19,6 +20,8 @@ import { CanvasTransform } from './actions/types'
 import { DRAW_BORDERS } from './border'
 import { DRAW_LANDMARKS } from './coast'
 import { DRAW_EMBELLISHMENTS } from './embellishments'
+import { MapTranslateControls } from './embellishments/controls/translate'
+import { MapZoomControls } from './embellishments/controls/zoom'
 import { ICON } from './icons'
 import { DRAW_TERRAIN } from './icons/terrain'
 import { DRAW_INFRASTRUCTURE } from './infrastructure'
@@ -76,7 +79,7 @@ const paint = ({
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   const province = window.world.provinces[loc.province]
-  const place = province.hub
+  const place = province.sites[loc.idx]
   const nation = PROVINCE.nation(province)
   const borders = REGION.neighbors({ region: nation, depth: 2 })
   const nations = [nation].concat(borders)
@@ -108,9 +111,10 @@ const paint = ({
   DRAW_LANDMARKS.oceans({ ctx, projection, month })
   DRAW_BORDERS.regions({ ctx, projection, month, style, nations, province })
   DRAW_LANDMARKS.lakes({ ctx, projection })
-  DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, cachedImages, place })
+  DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, cachedImages })
   DRAW_TERRAIN.icons({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
   DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style, cachedImages, place })
+  DRAW_INFRASTRUCTURE.places({ ctx, projection, nationSet, cachedImages, place })
   DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
   DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection })
@@ -153,10 +157,21 @@ export function WorldMap() {
     const province = window.world.provinces[poly.province]
     const nation = PROVINCE.nation(province)
     if (nation.desolate) return
-    if (state.view === 'place') {
+    if (state.view !== 'nation') {
+      // find closest place to cursor
+      const closest = province.sites.slice(1).reduce(
+        (min, place) => {
+          const dist = POINT.distance.geo({ points: [place, { x, y }] })
+          return dist < min.dist ? { place, dist } : min
+        },
+        {
+          place: province.sites[0],
+          dist: POINT.distance.geo({ points: [province.sites[0], { x, y }] })
+        }
+      )
       dispatch({
         type: 'transition',
-        payload: { tag: 'place', province: province.idx }
+        payload: { tag: 'site', province: province.idx, idx: closest.place.idx }
       })
     } else {
       const capital = REGION.capital(nation)
@@ -191,7 +206,7 @@ export function WorldMap() {
       const province = window.world.provinces[state.loc.province]
       const nation = window.world.regions[province.nation]
       const capital = window.world.provinces[nation.capital]
-      const hub = capital.hub
+      const hub = PROVINCE.hub(capital)
       dispatch({
         type: 'update gps',
         payload: {
@@ -228,8 +243,13 @@ export function WorldMap() {
   }, [transform])
   const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
   const holdridge = CLIMATE.holdridge[cell.climate]
-  const province = window.world.provinces[cell.province]
   const infoOpacity = scaleLinear().domain([400, 6000]).range([0, 1]).clamp(true)(transform.scale)
+  const moveControls = ({ dx, dy, scale }: { dx: number; dy: number; scale: number }) => {
+    const node = canvasRef.current
+    const curr = MAP_SHAPES.scale.derived(projection)
+    const r = projection?.rotate()
+    ACTION.moveTo({ node, projection, scale: curr + scale, x: -r[0] + dx, y: -r[1] + dy })
+  }
   return (
     <Grid container>
       <Grid item xs={12} ref={containerRef}>
@@ -253,13 +273,13 @@ export function WorldMap() {
           </Grid>
           {!cell.isWater && (
             <Grid item xs={12}>
-              <span>{`${
-                cell.isMountains ? 'mountains' : province.topography
-              }, ${MAP_METRICS.elevation.format(WORLD.heightToKM(cell.h))}`}</span>
+              <span>{`${cell.topography}, ${MAP_METRICS.elevation.format(
+                WORLD.heightToKM(cell.h)
+              )}`}</span>
             </Grid>
           )}
           {!cell.isWater && (
-            <Grid item xs={12}>{`${cell.isMountains ? 'alpine' : holdridge.latitude}, ${
+            <Grid item xs={12}>{`${cell.isMountains ? holdridge.altitude : holdridge.latitude}, ${
               holdridge.name
             }`}</Grid>
           )}
@@ -267,6 +287,12 @@ export function WorldMap() {
             {<StyledText text={GEOGRAPHY.name(cell)}></StyledText>}
           </Grid>
         </Grid>
+
+        <MapTranslateControls
+          move={moveControls}
+          scale={projection ? MAP_SHAPES.scale.derived(projection) : 1}
+        ></MapTranslateControls>
+        <MapZoomControls move={moveControls}></MapZoomControls>
         <ToggleButtonGroup
           color='primary'
           exclusive
@@ -279,7 +305,7 @@ export function WorldMap() {
             zIndex: 2,
             position: 'absolute',
             top: MAP_SHAPES.height + 35,
-            left: MAP_SHAPES.width * 0.72,
+            left: MAP_SHAPES.width * 0.42,
             background: 'rgba(238, 238, 221, 0.85)'
           }}
         >
@@ -298,7 +324,7 @@ export function WorldMap() {
               position: 'absolute',
               width: 500,
               top: MAP_SHAPES.height - 25,
-              left: MAP_SHAPES.width * 0.78,
+              left: MAP_SHAPES.width * 0.48,
               background: 'transparent'
             }}
           >
@@ -383,7 +409,7 @@ export function WorldMap() {
             }}
           >
             {state.view === 'nation' && <NationView></NationView>}
-            {state.view === 'place' && <ProvinceView></ProvinceView>}
+            {state.view === 'site' && <ProvinceView></ProvinceView>}
           </Grid>
         )}
         <canvas

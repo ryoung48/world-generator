@@ -1,8 +1,10 @@
+import * as turf from '@turf/turf'
 import * as jdenticon from 'jdenticon'
 
+import { CELL } from '../../../models/cells'
 import { PROVINCE } from '../../../models/regions/provinces'
+import { Wilderness } from '../../../models/regions/sites/wilderness/types'
 import { Region } from '../../../models/regions/types'
-import { RouteTypes, World } from '../../../models/types'
 import { fonts } from '../../theme/fonts'
 import { MAP_SHAPES } from '../shapes'
 import { HERALDRY } from '../shapes/heraldry'
@@ -26,20 +28,6 @@ const drawHeraldry = (nation: Region) => {
   return _heraldry[nation.idx]
 }
 
-const regionalPath =
-  (regions: Set<number>) => (route: World['display']['routes'][RouteTypes][number]) => {
-    return (
-      route.provinces.some(idx => {
-        const province = window.world.provinces[idx]
-        return regions.has(PROVINCE.nation(province).idx)
-      }) &&
-      route.provinces.every(idx => {
-        const province = window.world.provinces[idx]
-        return !PROVINCE.nation(province).desolate
-      })
-    )
-  }
-
 export const DRAW_INFRASTRUCTURE = {
   provinces: ({ ctx, projection, nationSet, place }: DrawInfraParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
@@ -50,7 +38,8 @@ export const DRAW_INFRASTRUCTURE = {
     const base = 1
     ctx.lineWidth = 0.05 * scale
     const provinces = window.world.provinces.map(province => {
-      const geojson = MAP_SHAPES.geojson.point(province.hub)
+      const hub = PROVINCE.hub(province)
+      const geojson = turf.point([hub.x, hub.y])
       geojson.properties = { idx: province.idx }
       return geojson
     })
@@ -64,8 +53,8 @@ export const DRAW_INFRASTRUCTURE = {
           const loc = window.world.provinces[province.properties.idx]
           if (nationSet.has(PROVINCE.nation(loc).idx)) {
             const capital = PROVINCE.isCapital(loc)
-            const center = pathGen.centroid(MAP_SHAPES.geojson.features([province]))
-            const hub = loc.hub
+            const center = pathGen.centroid(province)
+            const hub = PROVINCE.hub(loc)
             if (place === hub) {
               MAP_SHAPES.highlight({
                 ctx,
@@ -102,7 +91,7 @@ export const DRAW_INFRASTRUCTURE = {
         const loc = window.world.provinces[capital.properties.idx]
         const nation = PROVINCE.nation(loc)
         const region = PROVINCE.region(loc)
-        const center = pathGen.centroid(MAP_SHAPES.geojson.features([capital]))
+        const center = pathGen.centroid(capital)
         const major = loc.idx === nation.capital && !nation.desolate
         if (major) {
           ctx.font = `${5 * scale * base}px ${fontFamily}`
@@ -138,7 +127,54 @@ export const DRAW_INFRASTRUCTURE = {
         }
       })
   },
-  roads: ({ ctx, projection, nationSet }: Omit<DrawInfraParams, 'style'>) => {
+  places: ({ ctx, projection, nationSet, place }: Omit<DrawInfraParams, 'style'>) => {
+    const scale = MAP_SHAPES.scale.derived(projection)
+    if (scale <= MAP_SHAPES.breakpoints.global) return
+    ctx.textAlign = 'center'
+    ctx.shadowColor = 'white'
+    ctx.fillStyle = 'black'
+    ctx.strokeStyle = 'black'
+    const mod = 0.5
+    ctx.lineWidth = 0.05 * scale * mod
+    const places = window.world.provinces
+      .filter(province => nationSet.has(PROVINCE.nation(province).idx))
+      .map(province =>
+        province.sites.slice(1).map(site => {
+          const cell = window.world.cells[site.cell]
+          const geojson = turf.point([site.x, site.y])
+          const province = CELL.province(cell)
+          geojson.properties = { idx: site.idx, province: province.idx }
+          return geojson
+        })
+      )
+      .flat()
+    const pathGen = MAP_SHAPES.path.linear(projection)
+    const offset = 0.4 * scale
+    const base = 1.2 * mod
+    places.forEach(_place => {
+      const center = pathGen.centroid(_place)
+      const province = window.world.provinces[_place.properties.province]
+      const loc = province.sites[_place.properties.idx] as Wilderness
+      if (place === loc) {
+        MAP_SHAPES.highlight({
+          ctx,
+          point: { x: center[0], y: center[1] },
+          scale: scale * 0.3,
+          color: '255,255,255',
+          opacity: 1
+        })
+      }
+      if (loc.type === 'ruin') {
+        MAP_SHAPES.ruins({ point: { x: center[0], y: center[1] }, scale: scale * 2, ctx })
+      } else if (loc.type === 'wilderness') {
+        MAP_SHAPES.wilderness({ point: { x: center[0], y: center[1] }, scale: scale * 2, ctx })
+      }
+      ctx.fillStyle = 'black'
+      ctx.font = scale * base + 'px ' + fontFamily
+      ctx.fillText(loc.name ?? 'Point', center[0], center[1] - offset * 2.2 * mod)
+    })
+  },
+  roads: ({ ctx, projection }: Omit<DrawInfraParams, 'style' | 'place'>) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.curve(projection)
     const { routes } = window.world.display
@@ -149,26 +185,19 @@ export const DRAW_INFRASTRUCTURE = {
     let dashes = [1 * scale * mod, 0.5 * scale * mod]
     ctx.lineWidth = width
     ctx.setLineDash(dashes)
-    const roadFilter = regionalPath(nationSet)
     // imperial roads
-    ctx.strokeStyle = 'rgb(107, 27, 27, 0.8)'
+    ctx.strokeStyle = MAP_SHAPES.color.routes.land(0.8)
     const imperial = path(
-      MAP_SHAPES.geojson.multiline(
-        routes.land.filter(r => r.imperial && roadFilter(r)).map(r => r.path)
-      )
+      turf.multiLineString(routes.land.filter(r => r.imperial).map(r => r.path))
     )
     ctx.stroke(new Path2D(imperial))
     // land roads
-    ctx.strokeStyle = 'rgba(107, 27, 27, 0.3)'
-    const land = path(
-      MAP_SHAPES.geojson.multiline(
-        routes.land.filter(r => !r.imperial && roadFilter(r)).map(r => r.path)
-      )
-    )
+    ctx.strokeStyle = MAP_SHAPES.color.routes.land(0.3)
+    const land = path(turf.multiLineString(routes.land.filter(r => !r.imperial).map(r => r.path)))
     ctx.stroke(new Path2D(land))
     // sea routes
-    ctx.strokeStyle = 'rgba(128, 128, 128, 0.5)'
-    const sea = path(MAP_SHAPES.geojson.multiline(routes.sea.filter(roadFilter).map(r => r.path)))
+    ctx.strokeStyle = MAP_SHAPES.color.routes.sea(0.5)
+    const sea = path(turf.multiLineString(routes.sea.map(r => r.path)))
     ctx.stroke(new Path2D(sea))
     ctx.restore()
   }

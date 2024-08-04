@@ -13,25 +13,14 @@ const elevation = [0, 300, 600, 1200, 2000, 3000, 4000, 6000, 9000, 12000, 16000
 )
 
 const development = [
-  'industrial',
   'enlightened',
+  'colonial',
   'advanced',
   'developing',
-  'emergent',
-  'agrarian',
+  'emerging',
   'traditional',
-  'primitive'
-]
-
-const wealth = [
-  'lavish',
-  'wealthy',
-  'affluent',
-  'prosperous',
-  'secure',
-  'middling',
-  'impoverished',
-  'struggling'
+  'frontier',
+  'remote'
 ]
 
 const metric = true
@@ -209,7 +198,6 @@ export const MAP_METRICS = {
   },
   settlement: {
     legend: (): DrawLegendParams['items'] => [
-      { text: 'Points of Interest' },
       {
         text: 'metropolis',
         shape: ({ ctx, point, scale }) =>
@@ -230,6 +218,39 @@ export const MAP_METRICS = {
         shape: ({ ctx, point, scale }) =>
           MAP_SHAPES.settlement({ ctx, point, scale: scale, population: 500 })
       },
+      {
+        text: 'ruin',
+        shape: ({ ctx, point, scale }) => MAP_SHAPES.ruins({ ctx, point, scale: scale * 2 })
+      },
+      {
+        text: 'wilderness',
+        shape: ({ ctx, point, scale }) => MAP_SHAPES.wilderness({ ctx, point, scale: scale * 2 })
+      },
+      {
+        text: 'major road',
+        shape: ({ ctx, point }) =>
+          MAP_SHAPES.route({ ctx, point, color: MAP_SHAPES.color.routes.land(0.8) })
+      },
+      {
+        text: 'minor road',
+        shape: ({ ctx, point }) =>
+          MAP_SHAPES.route({ ctx, point, color: MAP_SHAPES.color.routes.land(0.3) })
+      },
+      {
+        text: 'sea route',
+        shape: ({ ctx, point }) =>
+          MAP_SHAPES.route({ ctx, point, color: MAP_SHAPES.color.routes.sea(0.5) })
+      },
+      {
+        text: 'sea ice limit (winter)',
+        shape: ({ ctx, point }) =>
+          MAP_SHAPES.route({ ctx, point, color: MAP_SHAPES.color.seaIce.winter })
+      },
+      {
+        text: 'sea ice limit (summer)',
+        shape: ({ ctx, point }) =>
+          MAP_SHAPES.route({ ctx, point, color: MAP_SHAPES.color.seaIce.summer })
+      },
       // {
       //   text: 'nomadic camp',
       //   shape: ({ ctx, point, scale }) => MAP_SHAPES.camp({ ctx, point, scale: scale * 2 })
@@ -237,14 +258,6 @@ export const MAP_METRICS = {
       // {
       //   text: 'military outpost',
       //   shape: ({ ctx, point, scale }) => MAP_SHAPES.fort({ ctx, point, scale: scale * 2 })
-      // },
-      // {
-      //   text: 'ruin',
-      //   shape: ({ ctx, point, scale }) => MAP_SHAPES.ruins({ ctx, point, scale: scale * 2 })
-      // },
-      // {
-      //   text: 'wilderness',
-      //   shape: ({ ctx, point, scale }) => MAP_SHAPES.wilderness({ ctx, point, scale: scale * 2 })
       // },
       {
         text: 'contested',
@@ -283,18 +296,6 @@ export const MAP_METRICS = {
         .map(([k, v]) => ({
           color: v,
           text: k
-        }))
-  },
-  wealth: {
-    scale: d3.scaleLinear([0, 7], [0, 1]),
-    color: (k: number) => d3.interpolateYlGn(MAP_METRICS.wealth.scale(k ?? 0)),
-    legend: () =>
-      d3
-        .range(0, 8)
-        .reverse()
-        .map(r => ({
-          color: MAP_METRICS.wealth.color(r),
-          text: wealth[7 - r]
         }))
   }
 }

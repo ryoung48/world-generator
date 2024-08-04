@@ -121,7 +121,7 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         const distance = scaleLinear([0, 0.1, 0.2, 0.6, 1], [1.8, 1.6, 1.4, 1.2, 1])
         for (let i = 0; i < whitelist.length && placed.length < count; i++) {
           const cell = whitelist[i]
-          const { habitability } = CLIMATE.holdridge[cell.climate]
+          const habitability = CLIMATE.holdridge[cell.climate]?.habitability ?? 1
           const mod = Math.max(distance(habitability), 1)
           const close = CELL.bfsNeighborhood({ start: cell, maxDepth: 5 })
             .filter(n => visited.has(n.idx))
@@ -178,6 +178,7 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         cell.landmark = landmark
         cell.isWater = false
         cell.shallow = false
+        cell.wasLake = true
         cell.h = WORLD.elevation.seaLevel
         if (regional) regional[cell.region].push(cell)
         CELL.neighbors(cell)
@@ -236,6 +237,7 @@ export const WORLD = PERFORMANCE.profile.wrapper({
         coasts: [],
         regions: [],
         provinces: [],
+        locations: [],
         cultures: [],
         oceanRegions: [],
         actors: [],

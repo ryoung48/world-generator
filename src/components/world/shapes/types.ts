@@ -28,6 +28,12 @@ export interface DrawFeaturesParams {
   ctx: CanvasRenderingContext2D
 }
 
+export interface DrawRouteParams {
+  point: Point
+  color: string
+  ctx: CanvasRenderingContext2D
+}
+
 export type DrawPolygonParams = {
   points: Vertex[]
   direction: 'inner' | 'outer'

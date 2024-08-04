@@ -1,5 +1,5 @@
-import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
+import { HUB } from '../../regions/sites/hubs'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
@@ -35,6 +35,7 @@ const nobleQuirks = {
 }
 
 const professions: Record<Profession, ProfessionDetails> = {
+  custom: { strata: 'middle', lifestyle: 'modest' },
   // tribal
   shaman: { strata: 'middle', lifestyle: 'modest', unique: true, age: 'veteran' },
   'tribal elder': { strata: 'middle', lifestyle: 'modest', age: 'master' },

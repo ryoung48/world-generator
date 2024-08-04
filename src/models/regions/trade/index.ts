@@ -1,8 +1,8 @@
 import { CLIMATE } from '../../cells/climate'
 import { TRAIT } from '../../utilities/traits'
 import { REGION } from '..'
-import { HUB } from '../hubs'
 import { PROVINCE } from '../provinces'
+import { HUB } from '../sites/hubs'
 import { Region } from '../types'
 import { TradeGoods } from './types'
 
@@ -44,6 +44,10 @@ const tradeGoods: TradeGoods = {
   'citrus fruits': {
     text: 'tangy fruits, like oranges and lemons',
     constraints: { forest: true, tropical: true }
+  },
+  clay: {
+    text: 'natural earth material used in pottery, bricks, and construction',
+    constraints: { arctic: false }
   },
   cloth: {
     text: 'high quality woven fabric, used for clothing and various textiles',
@@ -125,6 +129,10 @@ const tradeGoods: TradeGoods = {
     text: 'bee products, for sweetening and candles',
     constraints: { desert: false }
   },
+  horses: {
+    text: 'valuable for transportation, agriculture, and warfare',
+    constraints: { plains: true, human: true }
+  },
   incense: {
     text: 'aromatic resins, burned for fragrance or ritual',
     constraints: { plains: false }
@@ -150,6 +158,10 @@ const tradeGoods: TradeGoods = {
   jewelry: {
     text: 'ornamental pieces often made from precious metals and stones',
     constraints: { urban: true }
+  },
+  lead: {
+    text: 'heavy, malleable metal, used in construction, pipes, and ammunition',
+    constraints: { mountains: true }
   },
   leatherworking: {
     text: 'crafted leather goods such as clothing, saddlery, and accessories',
@@ -195,6 +207,14 @@ const tradeGoods: TradeGoods = {
     text: 'essential mineral, for food preservation and seasoning',
     constraints: { desert: true }
   },
+  saltpeter: {
+    text: 'essential for making gunpowder, used in warfare and mining',
+    constraints: { desert: true }
+  },
+  sand: {
+    text: 'granular material, essential for glassmaking, construction, and metal casting',
+    constraints: { desert: true }
+  },
   shipyards: {
     text: 'high quality maritime vessel construction, repair, and supplies',
     constraints: { urban: true, coastal: true, forest: true }
@@ -224,6 +244,10 @@ const tradeGoods: TradeGoods = {
     text: 'dried leaves, steeped to make a popular drink',
     constraints: { desert: false, arctic: false }
   },
+  tin: {
+    text: 'soft, pliable metal, used in alloys like bronze, and for coating',
+    constraints: { mountains: true }
+  },
   tobacco: {
     text: 'dried leaves, smoked or chewed for leisure',
     constraints: { desert: false, tropical: true }
@@ -235,6 +259,10 @@ const tradeGoods: TradeGoods = {
   'whale products': {
     text: 'materials from whales, like oil or baleen',
     constraints: { coastal: true, arctic: true }
+  },
+  'wild game': {
+    text: 'animals hunted for their meat, hides, and other valuable parts',
+    constraints: { desert: false, urban: false }
   },
   wine: {
     text: 'fermented grape drink, prized for taste and ritual',
@@ -254,7 +282,8 @@ export const TRADE_GOODS = {
   reference: tradeGoods,
   spawn: (nation: Region) => {
     const provinces = REGION.provinces(nation)
-    const coastal = provinces.some(province => province.ocean > 0)
+    const culture = window.world.cultures[nation.culture]
+    const coastal = provinces.some(province => province.capital && province.ocean > 0)
     const mountains = provinces.some(province => province.mountains > 0)
     const desert = provinces.some(
       province =>
@@ -273,12 +302,13 @@ export const TRADE_GOODS = {
     const arctic = provinces.some(
       province => CLIMATE.zone[PROVINCE.climate(province).latitude] === 'arctic'
     )
-    const urban = provinces.some(province => HUB.isCity(province.hub))
+    const urban = provinces.some(province => HUB.isCity(PROVINCE.hub(province)))
+    const human = culture.species === 'human'
     nation.trade = TRAIT.selection({
       available: tradeGoods,
       current: [],
       used: window.world.provinces.map(p => p.trade ?? []).flat(),
-      constraints: { coastal, mountains, desert, forest, plains, tropical, arctic, urban },
+      constraints: { coastal, mountains, desert, forest, plains, tropical, arctic, urban, human },
       samples: 3,
       usagePenalty: (used: number) => 1 / (used * 10 || 1)
     }).map(good => good)

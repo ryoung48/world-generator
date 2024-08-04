@@ -1,12 +1,13 @@
+import * as turf from '@turf/turf'
 import * as d3 from 'd3'
 
 import { Point } from '../../../models/utilities/math/points/types'
-import { Vertex } from '../../../models/utilities/math/voronoi/types'
 import {
   CircleParams,
   CrossParams,
   DrawFeaturesParams,
   DrawPolygonParams,
+  DrawRouteParams,
   HighlightLocationParams,
   SettlementParams,
   StripePatternParams
@@ -94,7 +95,17 @@ export const MAP_SHAPES = {
     ctx.fill()
     if (width > 0) ctx.stroke()
   },
-  color: { contested: (opacity: number) => `rgba(225, 0, 0, ${opacity})` },
+  color: {
+    contested: (opacity: number) => `rgba(225, 0, 0, ${opacity})`,
+    seaIce: {
+      summer: 'red',
+      winter: 'blue'
+    },
+    routes: {
+      land: (opacity: number) => `rgba(107, 27, 27, ${opacity})`,
+      sea: (opacity: number) => `rgba(128, 128, 128, ${opacity})`
+    }
+  },
   contested: ({ ctx, point, scale }: DrawFeaturesParams) => {
     const { x, y } = point
     const squareSize = scale * 0.6 // Size of the square
@@ -225,6 +236,25 @@ export const MAP_SHAPES = {
       const end = { x: start.x + len / Math.sqrt(2), y: start.y + len / Math.sqrt(2) }
       drawLine(start, end)
     }
+  },
+  route: ({ ctx, point, color }: DrawRouteParams) => {
+    // Calculate the start and end points for the horizontal line of the cross
+    const radius = 6
+    const startXHorizontal = point.x - radius
+    const endXHorizontal = point.x + radius
+    const yHorizontal = point.y
+
+    // Set line properties (optional, adjust as needed)
+    ctx.strokeStyle = color
+    ctx.lineWidth = 2 // Width of the cross lines
+
+    // Draw the horizontal line
+    ctx.beginPath()
+    ctx.setLineDash([2, 3])
+    ctx.moveTo(startXHorizontal, yHorizontal)
+    ctx.lineTo(endXHorizontal, yHorizontal)
+    ctx.stroke()
+    ctx.setLineDash([])
   },
   ruins: ({ ctx, scale, point }: DrawFeaturesParams) => {
     const len = scale * 0.15
@@ -371,61 +401,15 @@ export const MAP_SHAPES = {
     ctx.lineTo(point.x, baseStart.y)
     ctx.stroke()
   },
-  geojson: {
-    features: (features: d3.ExtendedFeature[]) => {
-      return {
-        type: 'FeatureCollection',
-        features
-      } as unknown as d3.GeoPermissibleObjects
-    },
-    point: (point: Point) =>
-      ({
-        type: 'Feature',
-        geometry: {
-          type: 'Point',
-          coordinates: [point.x, point.y]
-        }
-      } as unknown as d3.ExtendedFeature),
-    polygon: (points: Vertex[]) =>
-      MAP_SHAPES.geojson.features([
-        {
-          type: 'Feature',
-          geometry: {
-            type: 'Polygon',
-            coordinates: [points]
-          }
-        } as unknown as d3.ExtendedFeature
-      ]),
-    multiline: (points: Vertex[][]) =>
-      MAP_SHAPES.geojson.features([
-        {
-          type: 'Feature',
-          geometry: {
-            type: 'MultiLineString',
-            coordinates: points
-          }
-        } as unknown as d3.ExtendedFeature
-      ]),
-    line: (points: Vertex[]) =>
-      MAP_SHAPES.geojson.features([
-        {
-          type: 'Feature',
-          geometry: {
-            type: 'LineString',
-            coordinates: points
-          }
-        } as unknown as d3.ExtendedFeature
-      ])
-  },
   polygon: (params: DrawPolygonParams) => {
     const { direction, path, points } = params
     const reverse = points.slice().reverse()
-    const areaO = d3.geoArea(MAP_SHAPES.geojson.polygon(points))
-    const areaR = d3.geoArea(MAP_SHAPES.geojson.polygon(reverse))
+    const areaO = d3.geoArea(turf.polygon([points]))
+    const areaR = d3.geoArea(turf.polygon([reverse]))
     const outer = areaO > areaR
     const inside = outer ? reverse : points
     const outside = outer ? points : reverse
-    const poly = MAP_SHAPES.geojson.polygon(direction === 'inner' ? inside : outside)
+    const poly = turf.polygon([direction === 'inner' ? inside : outside])
     return new Path2D(path(poly))
   },
   path: {
@@ -479,9 +463,7 @@ export const MAP_SHAPES = {
     'Religion',
     'Government',
     'Development',
-    'Wealth',
     'Population',
-    'Topography',
     'Climate',
     'Elevation',
     'Temperature',

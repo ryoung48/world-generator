@@ -65,7 +65,7 @@ export function StyledText(props: { text: string; color?: string }) {
                 dispatch({
                   type: 'transition',
                   payload: {
-                    tag: tag === 'province' ? 'place' : tag,
+                    tag: tag === 'province' ? 'site' : tag,
                     province:
                       tag === 'province'
                         ? idx

@@ -1,5 +1,6 @@
 import PriorityQueue from 'js-priority-queue'
 
+import { PROVINCE } from '../../regions/provinces'
 import { RouteTypes } from '../../types'
 import { MATH } from '../../utilities/math'
 import { CELL } from '..'
@@ -57,8 +58,8 @@ export const NAVIGATION = {
   addRoute: ({ src, dst, limit, blacklist, type, imperial }: Navigation.AddRouteParams) => {
     const path = NAVIGATION.shortestPath({
       type,
-      start: src.hub.cell,
-      end: dst.hub.cell,
+      start: PROVINCE.cell(src).idx,
+      end: PROVINCE.cell(dst).idx,
       limit
     })
     if (path.length > 0) {
@@ -85,7 +86,7 @@ export const NAVIGATION = {
     }
   },
   get blacklist() {
-    const locs = window.world.provinces.map(province => window.world.cells[province.hub.cell])
+    const locs = window.world.provinces.map(PROVINCE.cell)
     return {
       blacklist: locs.reduce((org: Record<string, number[]>, town) => {
         org[town.province] = []

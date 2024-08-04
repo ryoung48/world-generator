@@ -6,7 +6,7 @@ import { LoadingParams, ViewActions, ViewState } from './types'
 
 const init: ViewState = {
   id: '',
-  loc: { province: 0 },
+  loc: { province: 0, idx: 0 },
   gps: { x: 0, y: 0, zoom: 0 },
   time: Date.now(),
   loading: false,
@@ -30,18 +30,18 @@ export const VIEW = {
         // always zoom to the same region on every load
         const region = DICE.swap(updated.id, () => window.dice.choice(REGION.nations))
         // set starting codex values
-        updated.loc = { province: region.capital }
+        updated.loc = { province: region.capital, idx: 0 }
         updated.time = window.world.date
         return updated
       }
       case 'transition': {
-        const { tag, province, zoom } = action.payload
+        const { tag, province, zoom, idx = 0 } = action.payload
         const target = window.world.provinces[province]
-        const { hub } = target
+        const site = target.sites[idx]
         const updated = { ...state }
-        updated.loc = { province }
+        updated.loc = { province, idx }
         updated.view = tag
-        if (zoom) updated.gps = { x: hub.x, y: hub.y, zoom: tag === 'nation' ? 10 : 50 }
+        if (zoom) updated.gps = { x: site.x, y: site.y, zoom: tag === 'nation' ? 10 : 50 }
         updated.time = window.world.date
         return updated
       }

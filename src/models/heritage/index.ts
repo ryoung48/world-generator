@@ -1,4 +1,5 @@
 import { REGION } from '../regions'
+import { PROVINCE } from '../regions/provinces'
 import { COLOR } from '../utilities/color'
 import { TEXT } from '../utilities/text'
 import { TRAIT } from '../utilities/traits'
@@ -159,7 +160,7 @@ export const CULTURE = {
     window.world.cultures.push(culture)
     regions.forEach(region => {
       REGION.provinces(region).forEach(province => {
-        const hub = province.hub
+        const hub = PROVINCE.hub(province)
         hub.name ||= LANGUAGE.word.unique({ lang: language, key: 'settlement' }).word
       })
       region.culture = culture.idx

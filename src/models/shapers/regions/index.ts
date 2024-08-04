@@ -2,8 +2,8 @@ import { WORLD } from '../..'
 import { CELL } from '../../cells'
 import { Cell } from '../../cells/types'
 import { REGION } from '../../regions'
-import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
+import { SITE } from '../../regions/sites'
 import { COLOR } from '../../utilities/color'
 import { MATH } from '../../utilities/math'
 import { PERFORMANCE } from '../../utilities/performance'
@@ -81,7 +81,7 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
             })
         })
       // fix regional capitals
-      window.world.provinces.forEach(loc => HUB.coastal.set(loc.hub))
+      window.world.provinces.forEach(loc => SITE.coastal.set(PROVINCE.hub(loc)))
     },
     _mountains: (mountainProspects: RegionBorders) => {
       WORLD.land()
@@ -164,7 +164,7 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
       }
       const land = WORLD.land().filter(p => !p.isMountains)
       const islandScale = window.world.cells.length / 4266
-      const decline = 4
+      const decline = 3
       land.forEach(l => {
         const { oceanDist, mountainDist } = l
         l.h = MATH.scaleExp(
@@ -308,6 +308,59 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
         region.heraldry.color = window.dice.color([region.heraldry.hue, region.heraldry.hue])
       })
     },
+    _locations: () => {
+      const base = 2400 * 3
+      const count = Math.floor(base * WORLD.placement.ratio())
+      const spacing = WORLD.placement.spacing.provinces / 3
+      WORLD.placement
+        .close({
+          count,
+          spacing,
+          whitelist: WORLD.land()
+        })
+        .forEach(cell => {
+          window.world.locations.push({
+            idx: window.world.locations.length,
+            cell: cell.idx,
+            cells: [cell.idx],
+            neighbors: []
+          })
+        })
+      //floodfill
+      const queue = window.world.locations.map(loc => {
+        const cell = window.world.cells[loc.cell]
+        cell.location = loc.idx
+        return cell
+      })
+      while (queue.length > 0) {
+        const current = queue.shift()
+        const currLoc = window.world.locations[current.location]
+        CELL.neighbors(current)
+          .filter(n => !n.isWater)
+          .forEach(n => {
+            if (n.location === undefined) {
+              n.location = current.location
+              currLoc.cells.push(n.idx)
+              queue.push(n)
+            } else {
+              const loc = window.world.locations[n.location]
+              if (loc.neighbors.includes(currLoc.idx)) return
+              loc.neighbors.push(currLoc.idx)
+              currLoc.neighbors.push(loc.idx)
+            }
+          })
+      }
+      WORLD.land()
+        .filter(p => p.location === undefined)
+        .forEach(cell =>
+          window.world.locations.push({
+            idx: window.world.locations.length,
+            cell: cell.idx,
+            cells: [cell.idx],
+            neighbors: []
+          })
+        )
+    },
     build: () => {
       const mountainProspects: RegionBorders = {}
       const regionBorders: RegionBorders = {}
@@ -316,6 +369,7 @@ export const SHAPER_REGIONS = PERFORMANCE.profile.wrapper({
       SHAPER_REGIONS._mountains(mountainProspects)
       SHAPER_CLIMATES.build()
       SHAPER_REGIONS._coastlines()
+      SHAPER_REGIONS._locations()
       SHAPER_REGIONS._finalize(regionBorders)
     },
     land

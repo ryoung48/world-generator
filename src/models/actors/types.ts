@@ -1,4 +1,4 @@
-import { Place } from '../regions/hubs/types'
+import { Hub } from '../regions/sites/hubs/types'
 import type { Profession } from './professions/types'
 import type { Personality, Quirk } from './traits/types'
 
@@ -31,7 +31,7 @@ export interface Actor {
 }
 
 export interface ActorSpawnParams {
-  place: Place
+  place: Hub
   role?: 'friend' | 'enemy'
   profession?: Profession
   age?: Actor['age']

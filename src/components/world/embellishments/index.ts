@@ -291,16 +291,12 @@ export const DRAW_EMBELLISHMENTS = {
         ? MAP_METRICS.government.legend()
         : style === 'Development'
         ? MAP_METRICS.development.legend()
-        : style === 'Wealth'
-        ? MAP_METRICS.wealth.legend()
         : style === 'Population'
         ? MAP_METRICS.population.legend()
         : style === 'Cultures'
         ? cultureLegend({ nationSet, province })
         : style === 'Climate'
         ? MAP_METRICS.climate.legend(climate.latitude)
-        : style === 'Topography'
-        ? MAP_METRICS.topography.legend()
         : style === 'Nations'
         ? MAP_METRICS.settlement.legend()
         : []
@@ -310,7 +306,9 @@ export const DRAW_EMBELLISHMENTS = {
       alignment: 'left',
       position: { x: width, y: height },
       width:
-        style === 'Nations' || style === 'Climate' || style === 'Religion' || style === 'Population'
+        style === 'Nations'
+          ? 15
+          : style === 'Climate' || style === 'Religion' || style === 'Population'
           ? 12
           : 10
     })

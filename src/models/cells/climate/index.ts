@@ -427,7 +427,7 @@ const holdridge: Record<ClimateKey, Climate> = {
   },
   'desert (polar)': {
     idx: 38,
-    name: 'glacial',
+    name: 'glacier',
     latitude: 'polar',
     altitude: 'ice cap',
     color: '#FFFFFF',

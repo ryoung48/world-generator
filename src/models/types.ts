@@ -42,6 +42,7 @@ export interface World {
   // entities
   regions: Region[]
   provinces: Province[]
+  locations: { idx: number; cell: number; cells: number[]; neighbors: number[] }[]
   cultures: Culture[]
   actors: Actor[]
   oceanRegions: {

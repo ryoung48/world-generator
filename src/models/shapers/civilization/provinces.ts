@@ -3,9 +3,9 @@ import { CELL } from '../../cells'
 import { CLIMATE } from '../../cells/climate'
 import { Cell } from '../../cells/types'
 import { REGION } from '../../regions'
-import { HUB } from '../../regions/hubs'
 import { PROVINCE } from '../../regions/provinces'
 import { Province } from '../../regions/provinces/types'
+import { SITE } from '../../regions/sites'
 import { MATH } from '../../utilities/math'
 import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
@@ -107,7 +107,7 @@ export const PROVINCE_BUILDER = PERFORMANCE.profile.wrapper({
               })[0]
             // move the city
             const place = CELL.place(closest)
-            HUB.coastal.move(place, coast)
+            SITE.coastal.move(place, coast)
           }
         }
       })

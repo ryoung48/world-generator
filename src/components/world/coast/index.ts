@@ -1,3 +1,5 @@
+import * as turf from '@turf/turf'
+
 import { WORLD } from '../../../models'
 import { Cell } from '../../../models/cells/types'
 import { WEATHER } from '../../../models/cells/weather'
@@ -74,8 +76,8 @@ export const DRAW_LANDMARKS = {
     const dashes = [0.5 * scale, 1 * scale]
     ctx.lineCap = 'butt'
     ctx.setLineDash(dashes)
-    const summer = { color: 'red', monthN: 6, monthS: 0 }
-    const winter = { color: 'blue', monthN: 0, monthS: 6 }
+    const summer = { color: MAP_SHAPES.color.seaIce.summer, monthN: 6, monthS: 0 }
+    const winter = { color: MAP_SHAPES.color.seaIce.winter, monthN: 0, monthS: 6 }
     const hemisphere = { north: (cell: Cell) => cell.y >= 0, south: (cell: Cell) => cell.y < 0 }
     const extent = (m: number, color: string, filter: (_cell: Cell) => boolean) => {
       const regions = seaIce(m)
@@ -83,7 +85,7 @@ export const DRAW_LANDMARKS = {
         regions.filter(r => filter(window.world.cells[r.cell]))
       )
       ctx.strokeStyle = color
-      const extentPath = path(MAP_SHAPES.geojson.multiline(filtered))
+      const extentPath = path(turf.multiLineString(filtered))
       ctx.stroke(new Path2D(extentPath))
     }
     extent(summer.monthN, summer.color, hemisphere.north)

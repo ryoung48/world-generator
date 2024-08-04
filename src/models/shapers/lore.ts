@@ -1,11 +1,13 @@
 import { range } from 'd3'
 
 import { WORLD } from '..'
+import { CELL } from '../cells'
 import { SPECIES } from '../heritage/species'
 import { REGION } from '../regions'
-import { HUB } from '../regions/hubs'
 import { PROVINCE } from '../regions/provinces'
 import { Province } from '../regions/provinces/types'
+import { HUB } from '../regions/sites/hubs'
+import { WILDERNESS } from '../regions/sites/wilderness'
 import { TRADE_GOODS } from '../regions/trade'
 import { DiplomaticRelation, Region } from '../regions/types'
 import { WAR } from '../regions/wars'
@@ -114,8 +116,8 @@ export const LORE = PERFORMANCE.profile.wrapper({
         let pop = REGION.population(region) * capitalMod
         if (region.civilized && pop < 10000) pop = window.dice.randint(10000, 15000)
         if (pop < 1000) pop = window.dice.randint(1000, 5000)
-        capital.hub.population = pop
-        const capitalPop = capital.hub.population
+        PROVINCE.hub(capital).population = pop
+        const capitalPop = PROVINCE.hub(capital).population
         const largeTownPop = () => window.dice.randint(5000, 10000)
         const smallTownPop = () => window.dice.randint(1000, 5000)
         const largeVillagePop = () => window.dice.randint(500, 1000)
@@ -133,7 +135,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
               { w: 1, v: smallVillagePop }
             ])()
             const urban = pop > 10000 ? pop : rural
-            const hub = province.hub
+            const hub = PROVINCE.hub(province)
             const conflict =
               urban &&
               ARRAY.unique(
@@ -142,10 +144,10 @@ export const LORE = PERFORMANCE.profile.wrapper({
                   .flat()
               ).some(n => {
                 const neighbor = window.world.provinces[n]
-                const nHub = neighbor.hub
+                const nHub = PROVINCE.hub(neighbor)
                 return (
                   n !== province.idx &&
-                  HUB.isCity(province.hub) &&
+                  HUB.isCity(hub) &&
                   POINT.distance.geo({ points: [nHub, hub] }) <
                     WORLD.placement.spacing.provinces * 2
                 )
@@ -290,6 +292,26 @@ export const LORE = PERFORMANCE.profile.wrapper({
         })
       })
     },
+    _places: () => {
+      const base = 4800
+      const count = Math.floor(base * WORLD.placement.ratio())
+      const spacing = WORLD.placement.spacing.provinces * 0.6
+      const { provinces } = window.world
+      WORLD.placement
+        .close({
+          count,
+          spacing,
+          whitelist: WORLD.land().filter(
+            poly => !CELL.place(poly) && !window.world.regions[poly.region].desolate
+          ),
+          blacklist: provinces.map(province => PROVINCE.cell(province))
+        })
+        .forEach(cell => {
+          const province = CELL.province(cell)
+          const site = WILDERNESS.spawn(cell)
+          province.sites.push(site)
+        })
+    },
     _trade: () => {
       REGION.nations.forEach(region => {
         TRADE_GOODS.spawn(region)
@@ -299,6 +321,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
       LORE._demographics()
       LORE._history()
       LORE._conflict()
+      LORE._places()
       LORE._trade()
     }
   }

@@ -62,29 +62,35 @@ const civilizationCenter = () => {
   partition.slice(0, civilized).forEach(c => {
     const biome = REGION.climate(c)
     const development =
-      civil < 5 && CLIMATE.zone[biome.latitude] === 'temperate' ? maximumDevelopment : 3
+      civil < 6 && CLIMATE.zone[biome.latitude] === 'temperate' ? maximumDevelopment : 3
     c.development = development
     civil += development === maximumDevelopment ? 1 : 0
   })
   regions
-    .filter(c => c.development === undefined)
+    .filter(c => arctic.includes(REGION.climate(c).latitude))
     .forEach(c => {
-      const development = REGION.climate(c).latitude === 'polar' ? 0 : 1
-      c.development = development
+      c.development = REGION.climate(c).latitude === 'polar' ? 0 : 1
     })
-  range(maximumDevelopment - 1, 0, -1).forEach(development => {
+  range(maximumDevelopment - 1, -1, -1).forEach(development => {
     const group = window.world.regions.filter(r => r.development === development + 1)
     group.forEach(c => {
       c.borders
         .map(n => window.world.regions[n])
         .filter(
-          n => n.development < development + 1 && !arctic.includes(REGION.climate(n).latitude)
+          n =>
+            (n.development === undefined || n.development < development + 1) &&
+            !arctic.includes(REGION.climate(n).latitude)
         )
         .forEach(n => {
           n.development = development
         })
     })
   })
+  regions
+    .filter(c => c.development === undefined)
+    .forEach(c => {
+      c.development = 0
+    })
   // nomadic
   const nomadic = window.world.regions.filter(r => r.development === 0)
   nomadic.forEach(c => {
@@ -112,7 +118,7 @@ export const CIVILIZATION_BUILDER = PERFORMANCE.profile.wrapper({
     _development: () => {
       civilizationCenter()
       REGION.nations.forEach(region => {
-        region.civilized = region.development > 3
+        region.civilized = region.development > 2
         region.wealth = Math.max(
           0,
           region.development === maximumDevelopment

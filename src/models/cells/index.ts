@@ -127,7 +127,8 @@ export const CELL = {
   },
   place: (cell: Cell) => {
     const province = CELL.province(cell)
-    return province?.hub.cell === cell.idx ? province.hub : null
+    const hub = province?.sites?.[0]
+    return hub?.cell === cell.idx ? hub : null
   },
   province: (cell: Cell) => window.world.provinces[cell.province],
   spawn: ({ idx, point }: CellSpawnParams) => {

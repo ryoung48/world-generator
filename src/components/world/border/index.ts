@@ -27,6 +27,14 @@ let provinceBorders: Record<
   }
 > = {}
 
+let locationBorders: Record<
+  number,
+  {
+    path: Vertex[][]
+    elevation: string
+  }
+> = {}
+
 const contestedBorders: Record<number, [number, number][][]> = {}
 
 const contested = ({
@@ -93,6 +101,16 @@ export const DRAW_BORDERS = {
         }
       })
     }
+    if (Object.keys(locationBorders).length === 0) {
+      window.world.locations.forEach(loc => {
+        const cells = loc.cells.map(c => window.world.cells[c])
+        const h = WORLD.heightToKM(mean(cells.map(c => c.h)))
+        locationBorders[loc.idx] = {
+          path: SHAPER_DISPLAY.borders.locations([loc]),
+          elevation: MAP_METRICS.elevation.color(h)
+        }
+      })
+    }
     // base coloration
     ctx.lineWidth = scale * 2
     nations.forEach(nation => {
@@ -130,6 +148,19 @@ export const DRAW_BORDERS = {
           regionStyle && ctx.stroke(p)
         })
       })
+    } else if (style === 'Elevation' || style === 'Temperature') {
+      window.world.locations.forEach(loc => {
+        const cell = window.world.cells[loc.cell]
+        ctx.fillStyle =
+          style === 'Elevation'
+            ? locationBorders[loc.idx].elevation
+            : MAP_METRICS.temperature.color(WEATHER.heat({ cell, month }))
+        ctx.fill
+        locationBorders[loc.idx].path.forEach(border => {
+          const p = MAP_SHAPES.polygon({ points: border, path, direction: 'inner' })
+          ctx.fill(p)
+        })
+      })
     } else {
       window.world.provinces.forEach(province => {
         const styles = provinceBorders[province.idx]
@@ -137,6 +168,8 @@ export const DRAW_BORDERS = {
         const region = PROVINCE.region(province)
         const religion = nation.religion
         provinceCache[province.idx] = {}
+        const climate = CLIMATE.holdridge[styles.biome]
+        const cell = window.world.cells[province.cell]
         styles.path.forEach((border, i) => {
           ctx.save()
           provinceCache[province.idx][i] = MAP_SHAPES.polygon({
@@ -146,31 +179,18 @@ export const DRAW_BORDERS = {
           })
           const p = provinceCache[province.idx][i]
           ctx.clip(p)
-          const biome = CLIMATE.holdridge[styles.biome]
           ctx.fillStyle =
             style === 'Climate'
-              ? biome.color
-              : style === 'Topography'
-              ? MAP_METRICS.topography.colors[province.topography]
+              ? climate.color
               : style === 'Development'
               ? MAP_METRICS.development.color(region.development)
-              : style === 'Wealth'
-              ? MAP_METRICS.wealth.color(region.wealth)
               : style === 'Population'
               ? styles.pop
               : style === 'Government'
               ? MAP_METRICS.government.colors[nation.government] ?? wasteland
               : style === 'Religion'
               ? MAP_METRICS.religion.colors[religion] ?? wasteland
-              : style === 'Elevation'
-              ? styles.elevation
-              : style === 'Rain'
-              ? MAP_METRICS.rain.color(
-                  WEATHER.rain({ cell: window.world.cells[province.cell], month })
-                )
-              : MAP_METRICS.temperature.color(
-                  WEATHER.heat({ cell: window.world.cells[province.cell], month })
-                )
+              : MAP_METRICS.rain.color(WEATHER.rain({ cell, month }))
           ctx.fill(p)
           ctx.restore()
         })

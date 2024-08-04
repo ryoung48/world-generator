@@ -397,28 +397,22 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
           if (!cell.topography) {
             const landmark = window.world.landmarks[cell.landmark]
             const h = WORLD.heightToKM(cell.h)
-            const n = CELL.neighbors(cell)
             const climate = CLIMATE.holdridge[cell.climate]
             if (cell.isMountains) cell.topography = 'mountains'
-            else if (h > 0.33 && window.dice.random > 0.6) cell.topography = 'highlands'
-            else if (h > 0.21 && window.dice.random > 0.6) cell.topography = 'rugged hills'
-            else if (h > 0.09 && window.dice.random > 0.6) cell.topography = 'rolling hills'
-            else if (cell.isCoast && !cell.beach && window.dice.random > 0.4)
-              cell.topography = 'marsh'
-            else if (
-              !climate.arid &&
-              cell.isCoast &&
-              cell.beach &&
-              landmark.type !== 'isle' &&
-              n.every(
-                c =>
-                  c.topography !== 'mountains' &&
-                  c.topography !== 'rugged hills' &&
-                  c.topography !== 'highlands'
-              ) &&
-              window.dice.random > 0.4
-            )
-              cell.topography = 'marsh'
+            else if (cell.isCoast && cell.beach) {
+              cell.topography =
+                h > (landmark.type === 'continent' ? 0.01 : 0.1)
+                  ? 'rocky beach'
+                  : CELL.neighbors(cell).filter(c => c.isWater).length === 1 &&
+                    landmark.type !== 'isle' &&
+                    climate.terrain !== 'desert' &&
+                    climate.terrain !== 'glacier'
+                  ? 'marsh'
+                  : 'sandy beach'
+            } else if (h > 0.3) cell.topography = 'rugged hills'
+            else if (h > 0.2) cell.topography = 'rolling hills'
+            else if (cell.isCoast && !cell.beach) cell.topography = 'marsh'
+            else if (cell.wasLake && climate.terrain === 'desert') cell.topography = 'salt flats'
             else cell.topography = 'flatlands'
           }
         })

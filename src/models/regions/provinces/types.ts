@@ -3,7 +3,8 @@ import type { RouteTypes } from '../../types'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 import { TaggedEntity } from '../../utilities/text/types'
 import { FindParams } from '../../utilities/types'
-import { Place } from '../hubs/types'
+import { Hub } from '../sites/hubs/types'
+import { Wilderness } from '../sites/wilderness/types'
 import { Region } from '../types'
 
 export interface Demographics {
@@ -20,7 +21,7 @@ export interface Province extends TaggedEntity {
   capital: boolean
   population: number // total
   conflict?: number
-  hub: Place
+  sites: (Hub | Wilderness)[]
   // networking
   // sea|land -> { province -> route table (world) }
   trade: Record<RouteTypes, Record<string, number>>

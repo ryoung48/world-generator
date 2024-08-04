@@ -168,15 +168,19 @@ below is a list of traits that could be used to describe a procedurally generate
 * abolished slavery: they have declared slavery illegal and looks upon all those who still permit this practice with disdain
 * agrarian: known for very productive farmlands and advanced agricultural practices
 * ancestral altars: dedicated spaces in homes for ancestor worship, keeping family ties strong
+* ancestral tombs: they are known for their elaborate and sacred tombs, where locals honor their ancestors and seek guidance from spirits
+* apotropaic symbols: the faithful use symbols, amulets, and talismans to ward off evil spirits, bad luck, and misfortune
+* arcane scholars: a culture deeply invested in the study of arcane arts and magical lore, producing many powerful wizards and sorcerers
+* asceticism: their faith tends to scorn material wealth and comforts, esteeming poverty, simplicity, and deprivation; its shrines and regalia tend to be very simple and austere
 * astronomical insights: deep understanding of celestial bodies guiding agricultural and ritual practices
 * astute diplomats: known for building webs of complex alliances and resolving conflicts without violence
-* blood feuds: long-standing animosities between clans or tribes, leading to continuous cycles of violence
+* blood feuds: long-standing animosities between clans or tribes are common, leading to continuous cycles of violence
 * bone accessories: necklaces or bracelets made of animal bones, believed to provide strength
 * burning regrets: writing down regrets on paper and burning them in a communal fire for catharsis
 * cannibalistic rituals: consuming human flesh in rituals, believed to transfer the strength or virtues of the consumed
 * caste system: society is divided into rigid social classes, with limited mobility between them; each caste has specific roles and responsibilities
 * civilian service: every citizen must complete mandatory service in the military, instilling discipline and loyalty to the state while preparing them for defense in times of war
-* clockwork prosthetics: the culture has developed advanced prosthetics and cybernetic enhancements used mostly by the ruling elite
+* clockwork augmentation: their ruling elite enhance their bodies with intricate mechanical parts, blending flesh and machinery
 * condottiere: known for their large population of mercenaries who fight both locally and abroad
 * court eunuchs: this culture makes great use of eunuchs as domestic servants, bureaucratic administrators, and even military officers
 * courtly intrigue: the ruling elite engage in complex political maneuvering and scheming to gain power and influence; alliances and loyalties are constantly shifting
@@ -184,44 +188,64 @@ below is a list of traits that could be used to describe a procedurally generate
 * culture blending: they are adept at incorporating foreign languages, traditions and customs into their society
 * draped turbans: head wraps varying in style and size based on region or social standing
 * desert dwellers: nomads of harsh deserts, adapting to extreme conditions with advanced hydraulic engineering; excel in stealth and endurance in desert warfare
-* enslaved workforce: the economy of this culture is heavily dependent on a large population of slaves that work the land
+* dire sacrifices: their religion requires regular sacrifices and offerings in exchange for divine favor; the sacrifices are often gruesome and involve the slaughter of animals or even humans
+* eldritch pacts: their sorcerers form contracts with otherworldly entities, gaining power in exchange for specific services or sacrifices; this practice is forbidden in most other places
+* entropic cult: their religion believes that the world is slowly decaying and will eventually be destroyed; the faithful believe that they must perform good deeds to slow the decay 
 * esteemed hospitality: they are known for their welcoming and friendly service to their guests
 * exquisite calligraphy: the art of beautiful handwriting is highly valued; calligraphers are respected for their skill and their work is used for important documents and decorations
 * extended family: they place great importance on extended family ties, with multiple generations living together and supporting each other; family loyalty is paramount
 * family business: business are encouraged to develop along family lines, accumulating extensive skill for their trade across generations
-* flesh-shaping: a rare arcane tradition is wielded by the shamans of this region, each one shaping not only wild beasts, but also their own clan members in pursuit of ultimate hegemony; many of these experiments were catastrophic failures, and others granted their gifts at too dear a price. 
+* flesh-shaping: a rare arcane tradition is wielded by the shamans of this region, each one shaping not only wild beasts, but also their own clan members in pursuit of ultimate hegemony; many of these experiments are catastrophic failures, and others granted their gifts at too dear a price. 
 * forest folk: dwellers in dense woodlands, using the forest for shelter and resources; skilled archers and guerilla tacticians
 * frequent festivals: a variety of festivals are celebrated throughout the year, marked by colorful traditions and raucous celebrations
 * frontier strongholds: their borders are lined with many forts and watchtowers to protect against invaders
+* green pact: their religion forbids the destruction of plant life and requires the followers to favor meat oriented diets; cannibalism is sometimes practiced in remote areas
+* heathen tax: practitioners of minority religions are required to pay a special tax, leading to tensions and discrimination against foreigners
 * hill folk: masters of hill terrain, cultivating it for agriculture and defense; use elevation for strategic advantages in conflicts
+* holy grounds: they believe that certain locations are sacred and must be protected at all costs; these locations are often heavily fortified
 * imperial legions: known for their formidable and disciplined heavy infantry; they carry on the martial traditions of an ancient empire
-* indentured servitude: they make great use of indentured servitude, where individuals work for a set period to pay off debts or gain citizenship.
+* insect cuisine: various insects are considered delicacies and form a significant part of their diet and culinary traditions
 * isolationists: they prefer a closed society with heavily restricted entry; their traditions are closely guarded secrets
 * jungle folk: residents of the jungle, using the forest for shelter and resources; skilled archers and guerilla tacticians
 * legalistic: they regard the rule of law and its codification as being the most important parameter of a civilized society
+* living gods: belief in living deities walking among them, guiding and protecting their people
+* localized beliefs: their faith has substantially different manifestations in different locations, each branch harmonized with local cultures and habits
 * marsh folk: navigators of waterways, excelling in fishing; employ marshes for ambush tactics and hidden retreats in warfare
+* material luxuriance: their religion prizes ornate regalia, splendid shrines, magnificent religious art, and the finest possible adornment of all things related to the faith
 * matriarchal society: they enforce a matriarchal hierarchy, where the ruling class is overwhelmingly comprised of women
 * meritocratic exams: the ruling elite selects government officials through rigorous exams, ensuring positions are filled by the most capable individuals
+* metalworkers: known for the production of durable and high quality weapons and armor
+* missionary zeal: their faith is well-known for its countless missionaries, who travel far and wide seeking to spread the faith and its teachings
+* monastic clergy: the clergy of the religion are required to live in isolated monasteries and devote their lives to prayer and contemplation
 * mountain folk: residents of high altitudes, specializing in mining and herding; they make use of fortified mountain passes against invasions
 * mummification: they practice mummification of the dead, believing that it preserves the soul for the afterlife; the process is elaborate and expensive, reserved for the wealthy and powerful
 * musical theorists: many individuals take up the noble and celebrated pursuit of musical study from a young age
+* mutilated clergy: their clergy are required to undergo some grievous mutilation or physical scarring as a sign of their devotion
+* nature veneration: they hold a deep respect for the natural world and seek harmony with their surroundings; vegetarian diets are common
 * nomadic caravans: known for their seasonal caravans that travel across vast distances, trading goods and culture
 * necromantic cult: necromancy is revered; the culture flourishes with countless undead thralls serving as solder and laborers
-* opulent court: the ruling elite live a life of luxury and extravagance, crushing the peasants beneath them
 * philosophical debates: they have a strong tradition of philosophical inquiry and debate, with scholars engaging in lively discussions about ethics, metaphysics, and other topics; these debates often have political and social implications
 * plains dwellers: agriculturists and horse breeders on vast plains; cavalry experts in war
 * plundering raids: they are known for attacking neighboring settlements or other tribes for loot and dominance
-* polygamous marriages: marriages with multiple partners are common in this culture
+* polarized genders: their society enforces strict gender roles with specific expectations for outfits, occupations, and legal rights
+* polygamous marriages: marriages with multiple partners are common in this culture; this is considered a holy practice and is encouraged by the clergy
 * refined poetry: poetry is considered a noble art and many spend their time piecing words together with meaning and thought
+* reincarnation: they believe that each soul is reborn after death based on their actions in life; the most virtuous souls eventually transcend the cycle of death and birth
+* religious laws: their religion has a developed a complex and sophisticated legal system that is used to adjudicate disputes and settle conflicts
 * ritual scarification: ritual scarification is used to mark important life events and demonstrate their devotion to a cause; the scars are often elaborate and intricate
+* ruling caste: they have experience ruling over foreign subjects and know how to effectively suppress revolts
 * seafarers: navigators of vast oceans, engaging in trade and exploration; adept at naval warfare and amphibious strategies
-* serfdom: peasants are bound to land, restricting their freedoms and subjugating them to lords
+* sky burials: the faithful practice aerial funerary rites, exposing bodies to the elements and birds, believing in a spiritual ascent
 * slave soldiers: a caste of slave soldiers has established itself within the upper echelons of society; they are well-trained and loyal, but are often resented by the locals
 * songbird cultivation: the care, training, and showcasing of songbirds, valuing their aesthetic and musical qualities
 * sorcerous eugenics: the ruling elite are obsessed with eugenic breeding programs to produce superhuman paragons, many of whom suffer crippling mental or physical infirmities due to extensive inbreeding
 * storytellers: the past is preserved through ritualistic storytelling, where the heroes and legends of the past are passed down through generations
+* syncretic faith: their religion cheerfully absorbs other faiths and gods, either casting them as servitors of their deity or different aspects of their chosen divinity
+* temple architects: they are known for their elaborate and beautiful temples, shrines, and monuments; they are often built by specialized architects and engineers
 * warrior braids: complex hair braiding signifying martial achievements or clan allegiance
 * warrior culture: they value martial prowess and strength above everything else; disputes often settled through formalized duels and trials by combat
+* warrior monks: the clergy of the religion are trained in both religious and martial arts, acting as protectors of the faith and their communities
+* vegetative sculpting: growing plants into living structures for habitation and ceremony
 
 come up with 50 more written in the same style, but for events impacting pre modern nations; use CK3 culture traditions as inspiration
 

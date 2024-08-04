@@ -14,11 +14,13 @@ export interface Cell extends Point {
   // location
   region: number
   province: number
+  location?: number
   regionBorder?: boolean
   // features
   h: number
   landmark: number
   isWater?: boolean
+  wasLake?: boolean
   beach?: boolean
   ocean?: boolean
   oceanRegion?: number
@@ -26,7 +28,15 @@ export interface Cell extends Point {
   rain: { east: number; west: number; winter: number; summer: number }
   heat?: { winter?: number; summer?: number }
   climate?: ClimateKey
-  topography?: 'marsh' | 'flatlands' | 'rolling hills' | 'rugged hills' | 'highlands' | 'mountains'
+  topography?:
+    | 'rocky beach'
+    | 'sandy beach'
+    | 'salt flats'
+    | 'marsh'
+    | 'flatlands'
+    | 'rolling hills'
+    | 'rugged hills'
+    | 'mountains'
   // distances
   oceanDist: number
   mountainDist: number

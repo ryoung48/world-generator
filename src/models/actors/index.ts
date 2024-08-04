@@ -4,9 +4,9 @@ import { cssColors } from '../../components/theme/colors'
 import { LANGUAGE } from '../heritage/languages'
 import { SPECIES } from '../heritage/species'
 import { Culture } from '../heritage/types'
-import { HUB } from '../regions/hubs'
 import { PROVINCE } from '../regions/provinces'
 import { Province } from '../regions/provinces/types'
+import { HUB } from '../regions/sites/hubs'
 import { TEXT } from '../utilities/text'
 import { PROFESSION } from './professions'
 import { NPC_TRAITS } from './traits'
@@ -86,7 +86,7 @@ export const ACTOR = {
     }
   },
   populate: (province: Province) => {
-    const { hub } = province
+    const hub = PROVINCE.hub(province)
     if (!hub.locals) {
       hub.locals = range(10).map(() => ACTOR.spawn({ place: hub }).idx)
     }

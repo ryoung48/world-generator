@@ -60,6 +60,7 @@ beans & legumes: protein-rich plant seeds, diverse and nutritious.
 ceramics: fired clay objects, from pottery to art.
 cheese: fermented milk product, with many varieties.
 citrus fruits: tangy fruits, like oranges and lemons.
+clay: natural earth material used in pottery, bricks, and construction.
 cloth: high quality woven fabric, used for clothing and various textiles.
 coal: black rock, burned for heating and industry.
 cocoa: beans for making chocolate, a luxurious treat.
@@ -81,12 +82,14 @@ glass: transparent material, for windows and vessels.
 gold: precious yellow metal, for coinage and jewelry.
 grain: cereal crops, a staple for food and making bread.
 honey & wax: bee products, for sweetening and candles.
+horses: valuable for transportation, agriculture, and warfare.
 incense: aromatic resins, burned for fragrance or ritual.
 iron: strong metal, essential for weapons and tools.
 ivory: hard white material from tusks, for art and luxury items.
 jade: green ornamental mineral, often carved.
 jams & preserves: sweetened fruit preparations, long-lasting.
 jewelry: ornamental pieces often made from precious metals and stones.
+lead: heavy, malleable metal, used in construction, pipes, and ammunition.
 leatherworking: crafted leather goods such as clothing, saddlery, and accessories. 
 livestock: domesticated animals, for meat, labor, or products.
 logging: harvested wood used for construction, furniture, and fuel.
@@ -100,6 +103,8 @@ porcelain: fine ceramic ware, delicate and beautifully crafted.
 opiates & drugs: narcotic resins, used for pain relief and recreation.
 rugs & carpets: woven or knotted textiles, for decor and function.
 salt: essential mineral, for food preservation and seasoning.
+saltpeter: essential for making gunpowder, used in warfare and mining.
+sand: granular material, essential for glassmaking, construction, and metal casting.
 shipyards: high quality maritime vessel construction, repair, and supplies.
 silk: delicate fiber from silkworms, for luxurious textiles.
 silver: lustrous white metal, for coins and fine goods.
@@ -107,9 +112,11 @@ slaves: unfree people, traded and exploited for labor.
 spices: aromatic substances, for flavoring food and medicine.
 sugar: sweet crystalline substance, for food and confectionery.
 tea: dried leaves, steeped to make a popular drink.
+tin: soft, pliable metal, used in alloys like bronze, and for coating.
 tobacco: dried leaves, smoked or chewed for leisure.
 war armaments: the finest weapons and armor used in combat.
 whale products: materials from whales, like oil or baleen.
+wild game: animals hunted for their meat, hides, and other valuable parts.
 wine: fermented grape drink, prized for taste and ritual.
 wool: warm fibers from mammals, spun into yarn for garments.
 vegetables: edible plants, grown for food and decorative purposes.

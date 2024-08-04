@@ -13,6 +13,7 @@ export type TradeGoods = Record<
       desert?: boolean
       mountains?: boolean
       coastal?: boolean
+      human?: boolean
     }
   > & { text: string }
 >

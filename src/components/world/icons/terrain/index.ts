@@ -1,3 +1,5 @@
+import * as turf from '@turf/turf'
+
 import { CELL } from '../../../../models/cells'
 import { MAP_SHAPES } from '../../shapes'
 import { ICON } from '..'
@@ -18,18 +20,14 @@ const terrain: Record<TerrainIcon, IconDef> = {
 }
 
 export const DRAW_TERRAIN = {
-  icons: ({ ctx, cachedImages, projection, regions, lands }: DrawTerrainIconParams) => {
+  icons: ({ ctx, cachedImages, projection }: DrawTerrainIconParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const pathGen = MAP_SHAPES.path.linear(projection)
     const sortedIcons = window.world.display.icons
       .filter(m => {
         const cell = window.world.cells[m.cell]
         const valid = !CELL.place(cell) || scale <= 20
-        const province = window.world.provinces[cell.province]
-        const contained = regions.has(province.region)
-        const drawnLand = cell.isWater || lands.has(cell.landmark)
-        const shouldDraw = cell.isMountains || (contained && drawnLand)
-        return valid && shouldDraw
+        return valid
       })
       .sort((a, b) => {
         if (a.y === b.y) {
@@ -41,8 +39,8 @@ export const DRAW_TERRAIN = {
     sortedIcons.forEach(i => {
       const img = cachedImages[i.type]
       const icon = DRAW_TERRAIN.definitions[i.type]
-      const geojson = MAP_SHAPES.geojson.point(i)
-      const center = pathGen.centroid(MAP_SHAPES.geojson.features([geojson]))
+      const geojson = turf.point([i.x, i.y])
+      const center = pathGen.centroid(geojson)
       ICON.draw({
         ctx,
         img,

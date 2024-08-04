@@ -23,6 +23,7 @@
     "@nivo/pie": "^0.84.0",
     "@nivo/stream": "^0.84.0",
     "@tippyjs/react": "^4.2.6",
+    "@turf/turf": "^7.0.0",
     "@types/json-schema": "^7.0.12",
     "d3": "^7.6.1",
     "d3-geo-voronoi": "^2.0.1",
