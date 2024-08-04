@@ -849,7 +849,7 @@ const professions: Record<Profession, ProfessionDetails> = {
     }
   },
   'grave keeper': {
-    title: '{grave|cemetary} keeper',
+    title: '{grave|cemetery} keeper',
     lifestyle: 'poor',
     strata: 'lower',
     unique: true,
