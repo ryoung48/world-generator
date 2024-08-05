@@ -82,7 +82,7 @@ const holdridge: Record<ClimateKey, Climate> = {
     habitability: 0.0571,
     terrain: 'plains',
     diurnalVariation: 'standard',
-    koppen: { color: '#F5A301', code: 'BSh' },
+    koppen: { color: '#FE0000', code: 'BWh' },
     arid: true
   },
   'desert (tropical)': {
@@ -161,7 +161,7 @@ const holdridge: Record<ClimateKey, Climate> = {
     habitability: 0.0857,
     terrain: 'plains',
     diurnalVariation: 'standard',
-    koppen: { color: '#F5A301', code: 'BSh' },
+    koppen: { color: '#FE0000', code: 'BWh' },
     arid: true
   },
   'desert (subtropical)': {
@@ -240,7 +240,7 @@ const holdridge: Record<ClimateKey, Climate> = {
     habitability: 0.1429,
     terrain: 'plains',
     diurnalVariation: 'standard',
-    koppen: { color: '#F5A301', code: 'BSh' },
+    koppen: { color: '#FE0000', code: 'BWh' },
     arid: true
   },
   'desert (warm temperate)': {
@@ -308,7 +308,7 @@ const holdridge: Record<ClimateKey, Climate> = {
     habitability: 0.1143,
     terrain: 'plains',
     diurnalVariation: 'standard',
-    koppen: { color: '#FFDB63', code: 'BSk' },
+    koppen: { color: '#FE9695', code: 'BWk' },
     arid: true
   },
   'desert (cool temperate)': {

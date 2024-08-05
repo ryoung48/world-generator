@@ -27,7 +27,6 @@ export interface Province extends TaggedEntity {
   trade: Record<RouteTypes, Record<string, number>>
   neighbors: number[]
   artery: number[]
-  difficulty?: number
   // geography
   topography?: Cell['topography']
   cells: { land: number[] }

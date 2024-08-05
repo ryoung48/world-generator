@@ -293,7 +293,7 @@ export const LORE = PERFORMANCE.profile.wrapper({
       })
     },
     _places: () => {
-      const base = 4800
+      const base = 2000
       const count = Math.floor(base * WORLD.placement.ratio())
       const spacing = WORLD.placement.spacing.provinces * 0.6
       const { provinces } = window.world
