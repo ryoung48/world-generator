@@ -2,7 +2,7 @@
 
 The goal of this project is to create a complex earth-like simulation set loosely in the early renaissance period with fantasy elements mixed in to be used by authors|game designers|AI to build interesting procedural settings|plots|novels. The application is currently able to produce detailed procedurally generated global maps with different map modes showing nations, religions, climates, populations, and more. A live demo is available [here](https://rayoung788.gitlab.io/world-generator/). **WARNING:** This application is optimized for 1920x1080 resolution and is not built at all for mobile devices. The high number of polygons being rendered might also make it slow to operate on less powerful machines. Generation typically takes between 20-30 seconds. The same seed will create the same map.
 
-![developed regions](gallery\globe_1.gif)
+![developed regions](./gallery/globe_1.gif)
 *Zoomed out view of the globe focused on a large continent in the southern hemisphere (1ichxt6fy91)*
 
 ## Concepts
@@ -25,13 +25,13 @@ The goal of this project is to create a complex earth-like simulation set loosel
 
 ## Gallery
 
-![developed regions](gallery\nations_1.gif)
+![developed regions](./gallery/nations_1.gif)
 *Zoomed in regional view of a highly developed nation in the southern hemisphere (1ichxt6fy91)*
 
-![developed regions](gallery\arctic_1.gif)
+![developed regions](./gallery/arctic_1.gif)
 *Zoomed out view of the globe focused on the arctic circle (1ichxt6fy91)*
 
-![developed regions](gallery\tropics_2.gif)
+![developed regions](./gallery/tropics_2.gif)
 *Zoomed in view of a large island in the tropics (1s1qo5mm3kn)*
 
 ## Project setup
