@@ -1,78 +1,84 @@
-import { TEXT } from '../text'
+import { range } from 'd3-array'
 
-export const months = [
-  'January',
-  'February',
-  'March',
-  'April',
-  'May',
-  'June',
-  'July',
-  'August',
-  'September',
-  'October',
-  'November',
-  'December'
-]
+const daysPerYear = 365
+const daysPerMonth = 30 // on average
+const daysPerWeek = 7
+const hoursPerDay = 24
+const minutesPerHour = 60
+const secondMS = 1000
+const minuteMS = secondMS * 60
+const hourMS = minuteMS * 60
+const dayMS = hourMS * hoursPerDay
+const weekMS = dayMS * daysPerWeek
+const monthMS = dayMS * daysPerMonth
+const yearMS = dayMS * daysPerYear
+const monthsPerYear = Math.round(daysPerYear / daysPerMonth)
 
-export const daysPerYear = 365
-export const daysPerMonth = 30 // on average
-export const daysPerWeek = 7
-export const hoursPerDay = 24
-export const minutesPerHour = 60
-export const secondMS = 1000
-export const minuteMS = secondMS * 60
-export const hourMS = minuteMS * 60
-export const dayMS = hourMS * hoursPerDay
-export const weekMS = dayMS * daysPerWeek
-export const monthMS = dayMS * daysPerMonth
-export const yearMS = dayMS * daysPerYear
-
-export const deconstructHours = (rawHours: number) => {
-  const hours = rawHours % hoursPerDay
-  const rawMinutes = (hours % 1) * minutesPerHour
-  return {
-    seconds: Math.floor((rawMinutes % 1) * minutesPerHour),
-    minutes: Math.floor(rawMinutes),
-    hours: Math.floor(hours),
-    days: Math.floor(rawHours / hoursPerDay)
+export const TIME = {
+  constants: {
+    daysPerMonth,
+    daysPerWeek,
+    daysPerYear,
+    hoursPerDay,
+    minutesPerHour,
+    secondMS,
+    minuteMS,
+    hourMS,
+    dayMS,
+    weekMS,
+    monthMS,
+    yearMS,
+    monthsPerYear
+  },
+  hours: {
+    deconstruct: (rawHours: number) => {
+      const hours = rawHours % TIME.constants.hoursPerDay
+      const rawMinutes = (hours % 1) * TIME.constants.minutesPerHour
+      return {
+        seconds: Math.floor((rawMinutes % 1) * TIME.constants.minutesPerHour),
+        minutes: Math.floor(rawMinutes),
+        hours: Math.floor(hours),
+        days: Math.floor(rawHours / TIME.constants.hoursPerDay)
+      }
+    }
+  },
+  delay: (ms: number) => new Promise(resolve => setTimeout(resolve, ms)),
+  month: {
+    names: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
+    ],
+    /**
+     * @param month - 0-11
+     * @returns 0-364
+     */
+    days: (month: number) => {
+      const daysPerMonth = TIME.constants.daysPerYear / 12
+      const startDay = Math.floor(month * daysPerMonth)
+      const endDay = Math.floor((month + 1) * daysPerMonth)
+      return range(startDay, endDay)
+    }
+  },
+  season: (month: number) => {
+    const { winter, spring, summer, fall } = {
+      winter: [10, 11, 0],
+      spring: [1, 2, 3],
+      summer: [4, 5, 6],
+      fall: [7, 8, 9]
+    }
+    if (winter.includes(month)) return 'winter'
+    if (summer.includes(month)) return 'summer'
+    if (spring.includes(month)) return 'spring'
+    if (fall.includes(month)) return 'autumn'
   }
-}
-
-export const formatHours = (rawHours: number) => {
-  const { hours, minutes } = deconstructHours(rawHours)
-  const extraZero = minutes < 10 ? '0' : ''
-  const modded = hours % 12
-  const adjusted = modded < 1 ? 12 : modded
-  return `${adjusted}:${extraZero}${minutes} ${rawHours < 12 ? 'AM' : 'PM'}`
-}
-
-export const describeDuration = (time: number) => {
-  const rawDays = time / dayMS
-  const days = Math.floor(rawDays)
-  const rawHours = (rawDays - days) * hoursPerDay
-  const hours = Math.floor(rawHours)
-  const minutes = Math.floor((rawHours - hours) * minutesPerHour)
-  const duration: string[] = []
-  if (days > 0) duration.push(`${days} day${days === 1 ? '' : 's'}`)
-  if (hours > 0) duration.push(`${hours} hour${hours === 1 ? '' : 's'}`)
-  if (minutes > 0) duration.push(`${minutes} minute${minutes === 1 ? '' : 's'}`)
-  return TEXT.formatters.list(duration, 'and')
-}
-
-export function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms))
-}
-
-export const season = (month: number) => {
-  const { winter, spring, summer, fall } = {
-    winter: [10, 11, 0],
-    spring: [1, 2, 3],
-    summer: [4, 5, 6],
-    fall: [7, 8, 9]
-  }
-  if (winter.includes(month)) return 'winter'
-  if (summer.includes(month)) return 'summer'
-  if (spring.includes(month)) return 'spring'
-  if (fall.includes(month)) return 'autumn'
 }

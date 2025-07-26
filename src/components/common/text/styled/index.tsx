@@ -2,7 +2,7 @@ import { css } from '@emotion/css'
 import { Grid } from '@mui/material'
 import { CSSProperties } from 'react'
 
-import { PROVINCE } from '../../../../models/regions/provinces'
+import { PROVINCE } from '../../../../models/provinces'
 import { TEXT } from '../../../../models/utilities/text'
 import { TaggedEntity } from '../../../../models/utilities/text/types'
 import { VIEW } from '../../../context'
@@ -67,9 +67,7 @@ export function StyledText(props: { text: string; color?: string }) {
                   payload: {
                     tag: tag === 'province' ? 'site' : tag,
                     province:
-                      tag === 'province'
-                        ? idx
-                        : PROVINCE.nation(window.world.provinces[idx]).capital,
+                      tag === 'province' ? idx : PROVINCE.nation(window.world.provinces[idx]).idx,
                     zoom: true
                   }
                 })

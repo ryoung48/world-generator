@@ -1,4 +1,3 @@
-import { Climate } from '../climate/types'
 import { Cell } from '../types'
 
 export type TimeOfDay = 'dawn' | 'morning' | 'afternoon' | 'dusk' | 'night'
@@ -28,7 +27,8 @@ export interface WeatherParams {
   rain: number
   temp: number
   clouds: CloudTypes
-  climate: Climate
+  climate: Cell['climate']
+  vegetation: Cell['vegetation']
 }
 
 export interface WeatherPhenomena {

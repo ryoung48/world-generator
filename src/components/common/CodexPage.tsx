@@ -2,7 +2,7 @@ import { css } from '@emotion/css'
 import { Grid } from '@mui/material'
 import { ReactNode } from 'react'
 
-import { PROVINCE } from '../../models/regions/provinces'
+import { PROVINCE } from '../../models/provinces'
 import { VIEW } from '../context'
 import { fonts } from '../theme/fonts'
 import { HERALDRY } from '../world/shapes/heraldry'
@@ -38,7 +38,12 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
         <CodexTitle title={title} subtitle={subtitle}></CodexTitle>
       </Grid>
       <Grid item xs={2}>
-        <Heraldry value={nation.name} size={50} config={HERALDRY.config(nation)}></Heraldry>
+        <Heraldry
+          value={nation.name}
+          size={50}
+          config={HERALDRY.config(nation)}
+          style={province.heraldry.style}
+        ></Heraldry>
       </Grid>
       <Grid item xs={12} my={1} className={classes.content}>
         {content}

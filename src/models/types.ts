@@ -1,9 +1,10 @@
 import { Actor } from './actors/types'
+import { River } from './cells/geography/rivers/types'
+import { Loc } from './cells/locations/types'
 import { Cell } from './cells/types'
 import { Culture } from './heritage/types'
-import { Province } from './regions/provinces/types'
-import { Region } from './regions/types'
-import { War } from './regions/wars/types'
+import { War } from './nations/wars/types'
+import { Province } from './provinces/types'
 import type { Display } from './shapers/display/types'
 import { GeoVoronoiDiagram } from './utilities/math/voronoi/types'
 
@@ -20,13 +21,15 @@ export interface World {
   resolution: number
   diagram?: GeoVoronoiDiagram
   cells: Cell[]
+  cell: { length: number; area: number; count: number }
+  scale: number
   display: Display
   // geography
   landmarks: Record<
     number,
     {
       name?: string
-      type: 'ocean' | 'lake' | 'sea' | 'continent' | 'island' | 'isle'
+      type: 'ocean' | 'lake' | 'sea' | 'continent' | 'island' | 'isle' | 'salt flat'
       water: boolean
       size: number
       cell: number
@@ -37,20 +40,32 @@ export interface World {
   coasts: CoastalEdge[]
   routes: Record<
     RouteTypes,
-    { path: number[]; length: number; src: number; dst: number; imperial?: boolean }[]
+    {
+      path: number[]
+      length: number
+      src: number
+      dst: number
+      imperial?: boolean
+    }[]
   >
+  skyships?: [number, number][]
   // entities
-  regions: Region[]
   provinces: Province[]
-  locations: { idx: number; cell: number; cells: number[]; neighbors: number[] }[]
+  locations: Loc[]
   cultures: Culture[]
   actors: Actor[]
+  rivers?: Record<number, River>
   oceanRegions: {
     idx: number
     cell: number
     borders: number[]
     neighbors: number[]
+    cells: number[]
     ocean: number
+    distanceFrom: { continent: number; land: number }
+    coasts: number
+    type?: 'ocean' | 'sea'
+    feature?: 'coral reef' | 'kelp forest' | 'seasonal sea ice' | 'permanent sea ice'
   }[]
   uniqueNames: Record<string, boolean>
   wars: War[]
@@ -61,15 +76,7 @@ export interface World {
   lunarCycle: number // synodic month (days)
   rotation: number // daily period (hours)
   tilt: number // axial tilt (degrees)
+  meridian: number
 }
 
 export type WorldSpawn = { seed: string; res: number }
-
-export type WorldPlacementParams = {
-  count: number
-  spacing: number
-  whitelist: Cell[]
-  blacklist?: Cell[]
-}
-
-export type RemoveLakeParams = { lakes: Cell[]; lake: number; regional?: Record<number, Cell[]> }

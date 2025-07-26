@@ -12,5 +12,7 @@ export type GeoVoronoiDiagram = {
   neighbors: number[][]
   polygons: number[][]
   centers: [number, number][]
+  edges: [number, number][]
   find: (_x: number, _y: number) => number
+  urquhart: (_distances: number[]) => boolean[]
 }

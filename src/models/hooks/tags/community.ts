@@ -42,14 +42,14 @@ export const communities: Hooks = {
       { title: 'Frustrated but helpless ruler' }
     ],
     complications: [
-      'One side seems at fault but is actually less blameworthy',
-      'The rulers of both use the quarrel to distract their populace',
-      'It was a minor dispute that is spiraling out of control'
+      'Both factions suspect arcane meddling behind recent strife',
+      'A once-neutral tribe is scapegoated for every dire atrocity',
+      'One side seems at fault but is actually less blameworthy'
     ],
     things: [
       "Proof of the culprit's guilt",
-      'Weapons cache meant to start real bloodshed',
-      'Treasure that would erase the cause of the dispute'
+      'Heirloom seal proving secret royal lineage',
+      'Weapons cache meant to start real bloodshed'
     ],
     places: [
       "Dangerous no-man's-land between the communities",
@@ -65,9 +65,9 @@ export const communities: Hooks = {
       { title: 'Ruler going to brutal excess to tamp it down' }
     ],
     friends: [
-      { title: 'Reluctant participant in the feud' },
+      { title: 'Religious leader trying to calm their furious flock' },
       { title: 'Local digging for the real truth of the quarrel' },
-      { title: "Merchant who'd profit by a new peace" }
+      { title: 'Merchant trying to hold together an inter-group deal' }
     ],
     complications: [
       'The groups were formerly the closest of allies',
@@ -422,27 +422,41 @@ export const communities: Hooks = {
     enemies: [
       { title: 'Outside profiteer squeezing the newly-poor' },
       { title: 'Local monopolizing the remaining income' },
-      { title: 'Demagogue blaming everything on their enemy' }
+      { title: 'Demagogue blaming everything on their enemy' },
+      { title: 'Ambitious petty noble using old debts to strong-arm the needy' },
+      { title: 'Corrupt moneylender feeding on local desperation' },
+      { title: 'Desperate ex-merchant turned ruthless hoarder' }
     ],
     friends: [
       { title: 'Plucky local trying to make a new go of things' },
       { title: 'Harried disburser of limited charity' },
-      { title: 'Riches-to-rags native trying to maintain their dignity' }
+      { title: 'Riches-to-rags native trying to maintain their dignity' },
+      { title: 'Kindly orchard-keeper with a hidden stock of supplies' },
+      { title: 'Former guard captain protecting the vulnerable' },
+      { title: 'Traveling tinkerer determined to spark new trade' }
     ],
     complications: [
       "Their loss is a rival's gain",
       "Someone's offering them a new industry at a terrible price",
-      'The leadership is refusing to accept the new reality'
+      'The leadership is refusing to accept the new reality',
+      'A distant baron claims rightful ownership of any salvageable remains',
+      'A once-loyal ally has been corrupted by greed'
     ],
     things: [
       'Priceless relic of their former wealth',
       'Supplies vital to a budding industry',
-      'Resources once held lightly that now are very precious here'
+      'Resources once held lightly that now are very precious here',
+      'Mysterious ledger rumored to record hidden caches of wealth',
+      'Crumbling map indicating lost shipping routes',
+      'Broken mechanical loom once the pride of the town'
     ],
     places: [
       'Ill-maintained but splendid public building',
       'Mansion marked by genteel poverty',
-      'Empty shop once catering to the rich'
+      'Empty shop once catering to the rich',
+      'Shuttered bathhouse once famed for its costly salts',
+      'Overgrown orchard that was once the region’s fruit basket',
+      'Rusting foundry ringed by wasted slag heaps'
     ]
   },
   'Foreign Enclave': {

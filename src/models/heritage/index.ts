@@ -1,17 +1,11 @@
-import { REGION } from '../regions'
-import { PROVINCE } from '../regions/provinces'
+import { PROVINCE } from '../provinces'
 import { COLOR } from '../utilities/color'
 import { TEXT } from '../utilities/text'
 import { TRAIT } from '../utilities/traits'
 import { LANGUAGE } from './languages'
 import { SPECIES } from './species'
-import {
-  Culture,
-  CultureColorParams,
-  CultureSortParams,
-  CultureSpawnParams,
-  CultureValues
-} from './types'
+import { Species } from './species/types'
+import { Culture, CultureColorParams, CultureSpawnParams, CultureValues } from './types'
 
 const values: CultureValues = {
   adaptation: {
@@ -81,14 +75,22 @@ const values: CultureValues = {
   zeal: { text: 'piety and devotion to religious ideals' }
 }
 
+const coloration = (target?: [number, number]) => {
+  const space = target ?? [0, 360]
+  const hue = window.dice.randint(...space)
+  const saturation = window.dice.randint(30, 70)
+  const lum = window.dice.randint(50, 60)
+  return `hsl(${hue}, ${saturation}%, ${lum}%)`
+}
+
 export const CULTURE = {
-  civilized: (culture: Culture) => CULTURE.origin(culture).civilized,
   color: ({ culture, opacity = 1 }: CultureColorParams) =>
     culture.display.color.replace('%)', `%, ${opacity})`),
   describe: (culture: Culture) => {
     const { skin } = culture.appearance
     const species = culture.species
     const region = CULTURE.origin(culture)
+    const climate = PROVINCE.climate(region)
     const content = [
       {
         label: 'appearance',
@@ -108,31 +110,66 @@ export const CULTURE = {
     ]
     return {
       title: culture.name,
-      subtitle: `(${culture.idx}) ${species} (${REGION.climate(region).latitude})`,
+      subtitle: `(${culture.idx}) ${`${species} (${climate}, ${culture.religion})`}`,
       content
     }
   },
-  origin: (culture: Culture) => window.world.regions[culture.regions[0]],
-  sort: ({ group, ref, type }: CultureSortParams) => {
-    const regions = group.map(CULTURE.origin)
-    return REGION.sort({ group: regions, ref: CULTURE.origin(ref), type }).map(
-      region => window.world.cultures[region.culture]
-    )
-  },
-  spawn: ({ regions, species }: CultureSpawnParams) => {
-    const origin = regions[0]
+  neighbors: (culture: Culture) =>
+    culture.neighbors.map(neighbor => window.world.cultures[neighbor]),
+  origin: (culture: Culture) => window.world.provinces[culture.provinces[0]],
+  provinces: (culture: Culture) =>
+    culture.provinces.map(province => window.world.provinces[province]),
+  spawn: ({ provinces }: CultureSpawnParams) => {
+    const origin = provinces[0]
+    const species: Species =
+      provinces.length < 5
+        ? window.dice.weightedChoice([
+            { w: 3, v: 'human' },
+            { w: 1, v: 'orc' },
+            { w: 1, v: 'dwarf' },
+            { w: 1, v: 'orlan' },
+            { w: 1, v: 'elf' },
+            { w: 1, v: 'verdant' },
+            { w: 1, v: 'lithic' },
+            { w: 1, v: 'satyr' },
+            { w: 1, v: 'avian' },
+            { w: 1, v: 'feline' },
+            { w: 1, v: 'bovine' },
+            { w: 1, v: 'draconic' },
+            { w: 1, v: 'gnoll' }
+          ])
+        : window.dice.weightedChoice([
+            { w: 0.8, v: 'human' },
+            { w: 0.1, v: 'orc' },
+            { w: 0.1, v: 'dwarf' },
+            { w: 0.025, v: 'avian' },
+            { w: 0.025, v: 'feline' },
+            { w: 0.025, v: 'bovine' },
+            { w: 0.025, v: 'draconic' }
+          ])
     const language = LANGUAGE.spawn(species)
-    const hue = window.dice.choice([...COLOR.hues])
-    const coastal = REGION.coastal(origin)
+    const hue = window.dice.randint(0, 360)
+    const coastal = PROVINCE.coastal(origin)
     const culture: Culture = {
       idx: window.world.cultures.length,
       name: LANGUAGE.word.unique({ lang: language, key: 'culture' }).word,
-      regions: regions.map(region => region.idx),
+      provinces: provinces.map(province => province.idx),
+      neighbors: [],
       species,
       language,
-      appearance: SPECIES.appearance({ region: origin, species }),
+      religion: window.dice.weightedChoice([
+        { v: 'monotheistic', w: 1 },
+        { v: 'dualistic', w: origin.development > 3 ? 0 : 0.25 },
+        { v: 'polytheistic', w: origin.development > 3 ? 0 : 0.5 },
+        { v: 'animistic', w: origin.development > 2 ? 0 : 1 },
+        { v: 'nontheistic', w: 1 },
+        { v: 'atheistic', w: origin.development < 2 ? 0 : 0.5 },
+        { v: 'pluralistic', w: origin.development < 2 ? 0 : 0.5 },
+        { v: 'syncretic', w: 0.25 }
+      ]),
+      appearance: SPECIES.appearance({ province: origin, species }),
       fashion: {
-        color: hue,
+        color: window.dice.choice([...COLOR.hues]),
         scheme: window.dice.choice([
           'symbols of the dominant faith',
           'family heraldry or clan sigils',
@@ -140,13 +177,17 @@ export const CULTURE = {
           'magically-meaningful runes',
           'decorative script or writing',
           'geometric shapes or patterns',
+          'abstract, swirling, chaotic designs',
           'dull, natural, earthen colors',
           'intensely bright, clashing colors',
           'reds, oranges, and warm hues',
           'bright but complementary colors',
           'intricate weaves of colors',
           'blues, greens, and cool hues',
-          'subdued pastels and soft shades'
+          'subdued pastels and soft shades',
+          'intricate hair styles or braiding',
+          'tattoos of some cultural significance',
+          'piercings, whether minor or elaborate'
         ])
       },
       values: TRAIT.selection({
@@ -155,16 +196,16 @@ export const CULTURE = {
         constraints: { coastal },
         samples: 3
       }),
-      display: { color: '', hue: 0 }
+      display: { color: coloration([hue, hue]), hue }
     }
     window.world.cultures.push(culture)
-    regions.forEach(region => {
-      REGION.provinces(region).forEach(province => {
-        const hub = PROVINCE.hub(province)
-        hub.name ||= LANGUAGE.word.unique({ lang: language, key: 'settlement' }).word
-      })
-      region.culture = culture.idx
-      region.name = LANGUAGE.word.unique({ lang: language, key: 'region' }).word
+    provinces.forEach(province => {
+      province.name = LANGUAGE.word.unique({ lang: language, key: 'region' }).word
+      PROVINCE.hub(province).name = LANGUAGE.word.unique({
+        lang: language,
+        key: 'settlement'
+      }).word
+      province.culture = culture.idx
     })
     return culture
   },

@@ -11,7 +11,6 @@ export type WorldPaintParams = {
   loc: ViewState['loc']
   ctx: CanvasRenderingContext2D
   style: MapStyle
-  month: number
   projection: GeoProjection
   rotation: number[]
 }

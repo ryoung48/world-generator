@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { Point } from '@nivo/core'
 import { GeoProjection } from 'd3'
 
 import { CachedImages } from '../../types'
@@ -14,6 +15,12 @@ export type DrawTerrainIconParams = {
   ctx: CanvasRenderingContext2D
   cachedImages: CachedImages
   projection: GeoProjection
-  regions: Set<number>
-  lands: Set<number>
+}
+
+export type DrawIcon<Icon extends string> = {
+  ctx: CanvasRenderingContext2D
+  cachedImages: CachedImages
+  projection: GeoProjection
+  point: Point
+  icon: Icon
 }

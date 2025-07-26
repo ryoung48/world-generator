@@ -1,7 +1,6 @@
 import { range } from 'd3'
 
 import { MATH } from './math'
-import { DICE } from './math/dice'
 
 const huesWarm = ['magenta', 'red', 'vermilion', 'orange', 'amber', 'yellow'] as const
 const huesCool = ['olive', 'green', 'teal', 'blue', 'indigo', 'purple'] as const
@@ -66,6 +65,24 @@ export const COLOR = {
     const stop = start + dist * 2 + 1
     return range(start, stop).map(i => hues[i >= max ? i - max : i < 0 ? max + i : i])
   },
+  adjustHslLightness: (hslString: string, amount: number): string => {
+    // Regular expression to extract HSL values
+    const hslRegex = /hsl\((\d+),\s*([\d.]+)%,\s*([\d.]+)%\)/
+    const match = hslString.match(hslRegex)
+
+    if (!match) {
+      throw new Error('Invalid HSL string format. Expected format: hsl(H, S%, L%)')
+    }
+
+    const hue = parseInt(match[1], 10)
+    const saturation = parseFloat(match[2])
+    let lightness = parseFloat(match[3])
+
+    // Adjust lightness, clamping to 0-100 range
+    lightness = Math.max(0, Math.min(100, lightness + amount))
+
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`
+  },
   extractHue: (hslString: string): number | null => {
     // Use a regular expression to match the hue, saturation, and lightness values
     const regex = /hsl\((\d+),\s*(\d+)%?,\s*(\d+)%?\)/
@@ -125,13 +142,5 @@ export const COLOR = {
     const target =
       color === 'red' ? window.dice.choice<[number, number]>([space, [340, 360]]) : space
     return window.dice.color(target)
-  },
-  randomPreset: <T extends string>(params: { tags: T[]; seed: string; dark?: boolean }) => {
-    const { tags, seed, dark } = params
-    const colors: Partial<Record<T, string>> = {}
-    DICE.swap(seed, () => {
-      tags.forEach(tag => (colors[tag] = dark ? window.dice.darkColor() : window.dice.color()))
-    })
-    return colors as Record<T, string>
   }
 }

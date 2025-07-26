@@ -31,7 +31,7 @@ export function NestedPieChart(props: {
         {title(current)}
       </Grid>
       <Grid item xs={12}>
-        <div style={{ height: '350px' }}>
+        <div style={{ height: '700px' }}>
           <Pie
             data={pieData}
             options={{
@@ -48,8 +48,12 @@ export function NestedPieChart(props: {
                   callbacks: {
                     label: tooltips
                   }
+                },
+                datalabels: {
+                  display: false
                 }
-              }
+              },
+              cutout: '50%'
             }}
           ></Pie>
         </div>

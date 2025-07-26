@@ -1,14 +1,15 @@
-import { Box, Grid, Slider, ToggleButton, ToggleButtonGroup } from '@mui/material'
+import { Grid, ToggleButton, ToggleButtonGroup } from '@mui/material'
 import { GeoProjection, scaleLinear } from 'd3'
 import { useEffect, useRef, useState } from 'react'
 
-import { WORLD } from '../../models'
-import { CLIMATE } from '../../models/cells/climate'
-import { GEOGRAPHY } from '../../models/cells/geography'
-import { REGION } from '../../models/regions'
-import { PROVINCE } from '../../models/regions/provinces'
-import { POINT } from '../../models/utilities/math/points'
-import { delay } from '../../models/utilities/math/time'
+import { CELL } from '../../models/cells'
+import { GEOGRAPHY_NAMES } from '../../models/cells/geography/names'
+import { LOCATION } from '../../models/cells/locations'
+import { RAIN } from '../../models/cells/weather/rain'
+import { TEMPERATURE } from '../../models/cells/weather/temperature'
+import { PROVINCE } from '../../models/provinces'
+import { ARRAY } from '../../models/utilities/array'
+import { TIME } from '../../models/utilities/math/time'
 import { NationView } from '../codex/Nation'
 import { ProvinceView } from '../codex/Province'
 import { StyledText } from '../common/text/styled'
@@ -23,13 +24,15 @@ import { DRAW_EMBELLISHMENTS } from './embellishments'
 import { MapTranslateControls } from './embellishments/controls/translate'
 import { MapZoomControls } from './embellishments/controls/zoom'
 import { ICON } from './icons'
+import { DRAW_LOCATION } from './icons/locations'
 import { DRAW_TERRAIN } from './icons/terrain'
 import { DRAW_INFRASTRUCTURE } from './infrastructure'
 import { MAP_SHAPES } from './shapes'
+import { DRAW_CACHE } from './shapes/caching'
 import { MAP_METRICS } from './shapes/metrics'
 import { CachedImages, MapStyle, WorldPaintParams } from './types'
 
-const markStyle = { fontFamily: fonts.maps, fontSize: 18 }
+const hidden: MapStyle[] = ['Resources', 'Temperature', 'Rain', 'Population']
 
 function decimalToDMS(lat: number, lon: number): string {
   const convert = (decimalDegree: number, isLatitude: boolean): string => {
@@ -53,6 +56,10 @@ const loadImage = (path: string): Promise<HTMLImageElement> => {
 const loadImages = async () =>
   (
     await Promise.all([
+      ...Object.entries(DRAW_LOCATION.definitions).map(async ([k, v]) => ({
+        img: await loadImage(ICON.path + v.path),
+        index: k
+      })),
       ...Object.entries(DRAW_TERRAIN.definitions).map(async ([k, v]) => ({
         img: await loadImage(ICON.path + v.path),
         index: k
@@ -67,54 +74,28 @@ const loadImages = async () =>
     return dict
   }, {})
 
-const paint = ({
-  ctx,
-  projection,
-  month,
-  style,
-  loc,
-  cachedImages,
-  rotation
-}: WorldPaintParams) => {
+const paint = ({ ctx, projection, style, loc, cachedImages, rotation }: WorldPaintParams) => {
   ctx.fillStyle = 'white'
   ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   const province = window.world.provinces[loc.province]
-  const place = province.sites[loc.idx]
+  const place = province.hub
   const nation = PROVINCE.nation(province)
-  const borders = REGION.neighbors({ region: nation, depth: 2 })
-  const nations = [nation].concat(borders)
+  const nations = ARRAY.unique(
+    window.world.provinces
+      .filter(p => !p.desolate && !PROVINCE.far(province, p, 4))
+      .map(p => PROVINCE.nation(p).idx)
+      .concat(nation.idx)
+  ).map(n => window.world.provinces[n])
   const nationSet = new Set(nations.map(n => n.idx))
-  const expanded = new Set(
-    nations
-      .map(r =>
-        REGION.domains(r)
-          .map(region => {
-            return [region.idx, ...region.borders]
-          })
-          .flat()
-      )
-      .flat()
-  )
-  const landmarks = new Set(
-    Array.from(
-      new Set(
-        nations
-          .map(r =>
-            REGION.provinces(r)
-              .map(p => Object.keys(p.islands).map(i => parseInt(i)))
-              .flat()
-          )
-          .flat()
-      )
-    )
-  )
-  DRAW_LANDMARKS.oceans({ ctx, projection, month })
-  DRAW_BORDERS.regions({ ctx, projection, month, style, nations, province })
-  DRAW_LANDMARKS.lakes({ ctx, projection })
-  DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, cachedImages })
-  DRAW_TERRAIN.icons({ ctx, projection, cachedImages, regions: expanded, lands: landmarks })
+  DRAW_CACHE.paths.clear()
+  DRAW_LANDMARKS.oceans({ ctx, projection, style })
+  DRAW_BORDERS.regions({ ctx, projection, style, nations, province, nationSet })
+  DRAW_LANDMARKS.lakes({ ctx, projection, style })
+  // if (style === 'Topography') DRAW_LANDMARKS.rivers({ ctx, projection })
+  DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, style })
+  DRAW_TERRAIN.icons({ ctx, projection, cachedImages })
   DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style, cachedImages, place })
-  DRAW_INFRASTRUCTURE.places({ ctx, projection, nationSet, cachedImages, place })
+  // DRAW_INFRASTRUCTURE.places({ ctx, projection, nationSet, cachedImages, place })
   DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
   DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection })
@@ -134,7 +115,6 @@ export function WorldMap() {
   const prevTransformRef = useRef<number>()
   const [cursor, setCursor] = useState({ x: 0, y: 0 })
   const [style, setStyle] = useState<MapStyle>('Nations')
-  const [month, setMonth] = useState(0)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const runPaint = () => {
@@ -147,7 +127,6 @@ export function WorldMap() {
       loc: state.loc,
       ctx,
       style,
-      month,
       projection
     })
   }
@@ -158,26 +137,14 @@ export function WorldMap() {
     const nation = PROVINCE.nation(province)
     if (nation.desolate) return
     if (state.view !== 'nation') {
-      // find closest place to cursor
-      const closest = province.sites.slice(1).reduce(
-        (min, place) => {
-          const dist = POINT.distance.geo({ points: [place, { x, y }] })
-          return dist < min.dist ? { place, dist } : min
-        },
-        {
-          place: province.sites[0],
-          dist: POINT.distance.geo({ points: [province.sites[0], { x, y }] })
-        }
-      )
       dispatch({
         type: 'transition',
-        payload: { tag: 'site', province: province.idx, idx: closest.place.idx }
+        payload: { tag: 'site', province: province.idx }
       })
     } else {
-      const capital = REGION.capital(nation)
       dispatch({
         type: 'transition',
-        payload: { tag: 'nation', province: capital.idx }
+        payload: { tag: 'nation', province: nation.idx }
       })
     }
   }
@@ -193,7 +160,7 @@ export function WorldMap() {
       // font
       ctx.font = `4px ${fonts.maps}`
       ctx.fillText('text', 0, 8)
-      await delay(50)
+      await TIME.delay(50)
       projection = MAP_SHAPES.projection.build(ctx)
       ACTION.zoom({
         node,
@@ -204,9 +171,8 @@ export function WorldMap() {
       ACTION.moveTo({ node, projection, scale: 2, x: 0, y: 0 })
       // initial zoom
       const province = window.world.provinces[state.loc.province]
-      const nation = window.world.regions[province.nation]
-      const capital = window.world.provinces[nation.capital]
-      const hub = PROVINCE.hub(capital)
+      const nation = PROVINCE.nation(province)
+      const hub = PROVINCE.cell(nation)
       dispatch({
         type: 'update gps',
         payload: {
@@ -222,7 +188,7 @@ export function WorldMap() {
   }, [])
   useEffect(() => {
     if (Object.keys(cachedImages).length > 0) runPaint()
-  }, [month, style, transform, state.loc])
+  }, [style, transform, state.loc])
   useEffect(() => {
     const { x, y, zoom } = state.gps
     if (projection && zoom > 0) {
@@ -242,8 +208,13 @@ export function WorldMap() {
     }
   }, [transform])
   const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
-  const holdridge = CLIMATE.holdridge[cell.climate]
+  const location = window.world.locations[cell.location]
+  const province = window.world.provinces[cell.province]
+  const temperature = cell.heat.mean
+  const rain = cell.rain.annual
+  const pop = MAP_METRICS.population.format(PROVINCE.population.density(province))
   const infoOpacity = scaleLinear().domain([400, 6000]).range([0, 1]).clamp(true)(transform.scale)
+
   const moveControls = ({ dx, dy, scale }: { dx: number; dy: number; scale: number }) => {
     const node = canvasRef.current
     const curr = MAP_SHAPES.scale.derived(projection)
@@ -264,7 +235,7 @@ export function WorldMap() {
             fontFamily: fonts.maps,
             fontSize: 20,
             backgroundColor: 'rgba(238, 238, 221, 0.85)',
-            width: 200,
+            width: 160,
             padding: 1
           }}
         >
@@ -273,18 +244,89 @@ export function WorldMap() {
           </Grid>
           {!cell.isWater && (
             <Grid item xs={12}>
-              <span>{`${cell.topography}, ${MAP_METRICS.elevation.format(
-                WORLD.heightToKM(cell.h)
-              )}`}</span>
+              <span>{`${
+                location && !cell.isMountains ? LOCATION.cell(location).topography : cell.topography
+              }, ${MAP_METRICS.topography.format(cell.elevation)}`}</span>
             </Grid>
           )}
-          {!cell.isWater && (
-            <Grid item xs={12}>{`${cell.isMountains ? holdridge.altitude : holdridge.latitude}, ${
-              holdridge.name
-            }`}</Grid>
-          )}
+          {!cell.isWater && <Grid item xs={12}>{`${cell.climate}, ${cell.vegetation}`}</Grid>}
           <Grid item xs={12}>
-            {<StyledText text={GEOGRAPHY.name(cell)}></StyledText>}
+            {<StyledText text={GEOGRAPHY_NAMES.name(cell)}></StyledText>}
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12} ref={containerRef}>
+          <Grid
+            justifyContent='space-between'
+            container
+            sx={{
+              zIndex: 2,
+              position: 'absolute',
+              top: MAP_SHAPES.height * 0.145,
+              left: MAP_SHAPES.width * 0.15,
+              fontFamily: fonts.maps,
+              fontSize: 20,
+              backgroundColor: 'rgba(238, 238, 221, 0.85)',
+              width: 160,
+              padding: 1
+            }}
+          >
+            {!cell.isWater && (
+              <Grid item xs={12}>
+                {MAP_METRICS.temperature.format(temperature)} ({TEMPERATURE.describe(temperature)})
+              </Grid>
+            )}
+            {!cell.isWater && (
+              <Grid item xs={12}>
+                {MAP_METRICS.rain.format(rain)} ({RAIN.describe(rain, 'annual')})
+              </Grid>
+            )}
+            <Grid item xs={12}>
+              {MAP_METRICS.oceanDist.format(CELL.distMiles(cell))} from{' '}
+              {cell.isWater ? 'land' : 'ocean'}
+            </Grid>
+            {!cell.isWater && (
+              <Grid item xs={12}>
+                {pop}
+              </Grid>
+            )}
+            {/* {!cell.isWater && (
+              <Grid item xs={12}>
+                {location.resource}
+              </Grid>
+            )} */}
+          </Grid>
+        </Grid>
+
+        <Grid item xs={12} ref={containerRef}>
+          <Grid
+            justifyContent='space-between'
+            container
+            sx={{
+              zIndex: 2,
+              position: 'absolute',
+              top: MAP_SHAPES.height * 0.145,
+              left: MAP_SHAPES.width * 0.26,
+              fontFamily: fonts.maps,
+              fontSize: 20,
+              backgroundColor: 'rgba(238, 238, 221, 0.85)',
+              width: 160,
+              padding: 1
+            }}
+          >
+            <Grid item xs={12}>
+              nation: {province.desolate ? 'none' : PROVINCE.nation(province).name}
+            </Grid>
+            <Grid item xs={12}>
+              culture: {province.desolate ? 'none' : window.world.cultures[province.culture].name}
+            </Grid>
+            <Grid item xs={12}>
+              province: {province.desolate ? 'none' : PROVINCE.hub(province).name}
+            </Grid>
+            <Grid item xs={12}>
+              development: {province.development.toFixed(1)} (
+              {PROVINCE.development.describe(province.development)})
+            </Grid>
           </Grid>
         </Grid>
 
@@ -305,93 +347,20 @@ export function WorldMap() {
             zIndex: 2,
             position: 'absolute',
             top: MAP_SHAPES.height + 35,
-            left: MAP_SHAPES.width * 0.42,
+            left: MAP_SHAPES.width * 0.4,
             background: 'rgba(238, 238, 221, 0.85)'
           }}
         >
-          {MAP_SHAPES.styles.map(label => (
-            <ToggleButton key={label} value={label}>
-              <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
-                {label}
-              </span>
-            </ToggleButton>
-          ))}
+          {MAP_SHAPES.styles
+            .filter(label => !hidden.includes(label))
+            .map(label => (
+              <ToggleButton key={label} value={label}>
+                <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 20 }}>
+                  {label}
+                </span>
+              </ToggleButton>
+            ))}
         </ToggleButtonGroup>
-        {(style === 'Temperature' || style === 'Rain') && (
-          <Box
-            style={{
-              zIndex: 2,
-              position: 'absolute',
-              width: 500,
-              top: MAP_SHAPES.height - 25,
-              left: MAP_SHAPES.width * 0.48,
-              background: 'transparent'
-            }}
-          >
-            <Slider
-              aria-label='Always visible'
-              value={month}
-              color='primary'
-              min={0}
-              max={11}
-              step={1}
-              onChange={(_, value) => {
-                if (typeof value === 'number') setMonth(value)
-              }}
-              marks={[
-                {
-                  value: 0,
-                  label: <span style={markStyle}>Jan</span>
-                },
-                {
-                  value: 1,
-                  label: <span style={markStyle}>Feb</span>
-                },
-                {
-                  value: 2,
-                  label: <span style={markStyle}>Mar</span>
-                },
-                {
-                  value: 3,
-                  label: <span style={markStyle}>Apr</span>
-                },
-                {
-                  value: 4,
-                  label: <span style={markStyle}>May</span>
-                },
-                {
-                  value: 5,
-                  label: <span style={markStyle}>Jun</span>
-                },
-                {
-                  value: 6,
-                  label: <span style={markStyle}>Jul</span>
-                },
-                {
-                  value: 7,
-                  label: <span style={markStyle}>Aug</span>
-                },
-                {
-                  value: 8,
-                  label: <span style={markStyle}>Sep</span>
-                },
-                {
-                  value: 9,
-                  label: <span style={markStyle}>Oct</span>
-                },
-                {
-                  value: 10,
-                  label: <span style={markStyle}>Nov</span>
-                },
-                {
-                  value: 11,
-                  label: <span style={markStyle}>Dec</span>
-                }
-              ]}
-              valueLabelDisplay='off'
-            />
-          </Box>
-        )}
         {infoOpacity > 0 && (
           <Grid
             container

@@ -1,7 +1,7 @@
 import { Gender } from '../../actors/types'
 import { PERFORMANCE } from '../../utilities/performance'
 import { TEXT } from '../../utilities/text'
-import { SpeciesKey } from '../species/types'
+import { Species } from '../species/types'
 import { initClusters, randomizePhonemes } from './builder'
 import { buildConsonants } from './builder/consonants'
 import { buildBasicVowels, buildComplexVowels } from './builder/vowels'
@@ -115,17 +115,20 @@ export const LANGUAGE = {
       return { morphemes, word }
     }
   },
-  spawn: (species: SpeciesKey) => {
+  spawn: (species: Species) => {
     const lang = spawn()
     // stop chance
     const stop = window.dice.weightedChoice([
       { v: ' ', w: 0.8 },
-      { v: "'", w: species === 'human' ? 0 : 0.25 },
-      { v: '-', w: species === 'human' ? 0 : 0.15 }
+      { v: "'", w: 0.1 },
+      { v: '-', w: 0.1 }
     ])
     lang.stop = stop
     const stopChance = stop === "'" ? window.dice.uniform(0.3, 0.6) : stop === '-' ? 1 : 0
     lang.stopChance = stopChance
+    if (stop === "'" || stop === '-') {
+      lang.articleChance = window.dice.uniform(0.1, 0.4)
+    }
     // phonemes
     const vowels = buildBasicVowels({ ending: lang.ending })
     const { consonantPhonemes } = buildConsonants({ ending: lang.ending, vowels })

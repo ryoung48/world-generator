@@ -1,4 +1,4 @@
-import { Site } from '../regions/sites/type'
+import { Hub } from '../provinces/hubs/type'
 import { Trait } from '../utilities/traits/types'
 
 export interface HookActor {
@@ -34,6 +34,6 @@ export type Hooks = Record<string, Tag<{}>>
 
 export type HookParams = {
   type: 'wilderness' | 'ruin' | 'community'
-  place: Site
+  place: Hub
   samples: number
 }

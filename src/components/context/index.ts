@@ -1,12 +1,12 @@
 import { createContext, Dispatch, useContext } from 'react'
 
-import { REGION } from '../../models/regions'
+import { NATION } from '../../models/nations'
 import { DICE } from '../../models/utilities/math/dice'
 import { LoadingParams, ViewActions, ViewState } from './types'
 
 const init: ViewState = {
   id: '',
-  loc: { province: 0, idx: 0 },
+  loc: { province: 0 },
   gps: { x: 0, y: 0, zoom: 0 },
   time: Date.now(),
   loading: false,
@@ -28,18 +28,18 @@ export const VIEW = {
       case 'init world': {
         const updated = { ...state, id: action.payload.id }
         // always zoom to the same region on every load
-        const region = DICE.swap(updated.id, () => window.dice.choice(REGION.nations))
+        const region = DICE.swap(updated.id, () => window.dice.choice(NATION.nations()))
         // set starting codex values
-        updated.loc = { province: region.capital, idx: 0 }
+        updated.loc = { province: region.idx }
         updated.time = window.world.date
         return updated
       }
       case 'transition': {
-        const { tag, province, zoom, idx = 0 } = action.payload
+        const { tag, province, zoom } = action.payload
         const target = window.world.provinces[province]
-        const site = target.sites[idx]
+        const site = target.hub
         const updated = { ...state }
-        updated.loc = { province, idx }
+        updated.loc = { province }
         updated.view = tag
         if (zoom) updated.gps = { x: site.x, y: site.y, zoom: tag === 'nation' ? 10 : 50 }
         updated.time = window.world.date

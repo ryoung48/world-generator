@@ -1,14 +1,14 @@
 import { Grid } from '@mui/material'
 
-import { WORLD } from '../../models'
+import { Cell } from '../../models/cells/types'
 import { CULTURE } from '../../models/heritage'
-import { REGION } from '../../models/regions'
-import { PROVINCE } from '../../models/regions/provinces'
-import { HUB } from '../../models/regions/sites/hubs'
-import { TRADE_GOODS } from '../../models/regions/trade'
+import { NATION } from '../../models/nations'
+import { PROVINCE } from '../../models/provinces'
+import { HUB } from '../../models/provinces/hubs'
 import { MATH } from '../../models/utilities/math'
 import { TEXT } from '../../models/utilities/text'
 import { CodexPage } from '../common/CodexPage'
+import { ColoredBox } from '../common/ColoredBox'
 import { SectionList } from '../common/text/SectionList'
 import { StyledText } from '../common/text/styled'
 import { VIEW } from '../context'
@@ -17,33 +17,42 @@ import { MAP_METRICS } from '../world/shapes/metrics'
 
 export function NationView() {
   const { state } = VIEW.context()
-  const province = window.world.provinces[state.loc.province]
+  const province = window.world.provinces[state.loc?.province]
+  if (!province) return <span>No province selected</span>
   const nation = PROVINCE.nation(province)
-  const totalPop = REGION.population(nation)
-  const provinces = REGION.provinces(nation)
+  const provinces = NATION.provinces(nation)
+  const cells = provinces.map(PROVINCE.cells.land).flat()
   const ruling = nation.culture
+  const colonists = new Set(provinces.filter(p => p.colonists).map(p => p.minority))
   const cultures = MATH.counterDist(
-    provinces.map(province => window.world.regions[province.region].culture)
+    provinces
+      .map(province =>
+        province.minority !== undefined ? [province.minority, province.culture] : [province.culture]
+      )
+      .flat()
   )
     .sort((a, b) => {
       const aCount = a.value === ruling ? Infinity : a.count
       const bCount = b.value === ruling ? Infinity : b.count
       return bCount - aCount
     })
-    .slice(0, 3)
-  const cellArea = WORLD.cell.area()
+    .slice(0, 5)
+  const cellArea = window.world.cell.area
+  const totalPop = provinces.reduce((sum, province) => sum + province.population, 0)
   let area = provinces.reduce((sum, province) => sum + province.land, 0) * cellArea
   if (MAP_METRICS.metric) area = MATH.conversion.area.mi.km(area)
   const units = MAP_METRICS.metric ? 'km²' : 'mi²'
-  const neighbors = REGION.neighbors({ region: nation, depth: 1 })
-  const religion = nation.religion
+  const neighbors = NATION.relations.all(nation)
+  const religion = window.world.cultures[nation.culture].religion
   const decoratedProvinces = provinces
     .sort((a, b) => PROVINCE.hub(b).population - PROVINCE.hub(a).population)
     .map(province =>
       TEXT.decorate({
         link: province,
         label: PROVINCE.hub(province).name,
-        tooltip: HUB.type(PROVINCE.hub(province))
+        tooltip: HUB.settlement(PROVINCE.hub(province)),
+        underlineColor:
+          province.colonists !== undefined ? MAP_METRICS.government.colors.colonial : undefined
       })
     )
     .join(', ')
@@ -51,10 +60,14 @@ export function NationView() {
     <CodexPage
       title={nation.name}
       subtitle={
-        <StyledText
-          color={cssColors.subtitle}
-          text={`(${nation.idx}) ${nation.size} (${nation.government}, ${religion})`}
-        ></StyledText>
+        <span>
+          <span style={{ color: cssColors.subtitle }}>
+            ({nation.idx}) {nation.decentralization ?? nation.size} (
+            <ColoredBox color={MAP_METRICS.government.colors[nation?.government]} />{' '}
+            {nation.government}, <ColoredBox color={MAP_METRICS.religion.colors[religion]} />{' '}
+            {religion})
+          </span>
+        </span>
       }
       content={
         <Grid container>
@@ -70,6 +83,21 @@ export function NationView() {
                   content: `${TEXT.formatters.compact(area)} ${units} (${Math.round(
                     totalPop / area
                   )} persons/${units})`
+                },
+                {
+                  label: 'Development',
+                  content: (
+                    <span>
+                      <ColoredBox
+                        color={MAP_METRICS.development.color(nation.development)}
+                      ></ColoredBox>
+                      <StyledText
+                        text={` ${TEXT.titleCase(
+                          PROVINCE.development.describe(nation.development)
+                        )} (${nation.development.toFixed(2)})`}
+                      ></StyledText>
+                    </span>
+                  )
                 }
               ]}
             ></SectionList>
@@ -78,44 +106,97 @@ export function NationView() {
             <SectionList
               list={[
                 {
-                  label: 'Cultures',
+                  label: 'Climate',
                   content: (
                     <span>
-                      <StyledText
-                        text={cultures
-                          .map(({ value, count }) => {
-                            const culture = window.world.cultures[value]
-                            const color = value === ruling ? undefined : cssColors.subtitle
-                            return `${TEXT.decorate({
-                              label: culture.name,
-                              details: CULTURE.describe(culture),
-                              color
-                            })} ${TEXT.decorate({
-                              label: `(${TEXT.formatters.percent(count)})`,
-                              color
-                            })}`
-                          })
-                          .join(', ')}
-                      ></StyledText>
+                      {Object.entries(
+                        cells.reduce((dict: Record<string, number>, cell) => {
+                          const climate = cell.climate
+                          if (!dict[climate]) dict[climate] = 0
+                          dict[climate] += 1
+                          return dict
+                        }, {})
+                      )
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(([value, count], i) => {
+                          const color = MAP_METRICS.climate.categories[value as Cell['climate']]
+                          return (
+                            <span key={value}>
+                              <ColoredBox color={color}></ColoredBox>
+                              {` ${TEXT.titleCase(value)} (${TEXT.formatters.percent(
+                                count / cells.length
+                              )})${i !== 2 ? ', ' : ''}`}
+                            </span>
+                          )
+                        })}
                     </span>
                   )
                 },
                 {
-                  label: 'Exports',
+                  label: 'Vegetation',
                   content: (
-                    <StyledText
-                      text={nation.trade
-                        .map((good, i) => {
-                          const details = TRADE_GOODS.reference[good]
-                          return TEXT.decorate({
-                            label: i !== 0 ? good : TEXT.capitalize(good),
-                            tooltip: typeof details.text === 'string' ? details.text : undefined
-                          })
-                        })
-                        .join(', ')}
-                    ></StyledText>
+                    <span>
+                      {Object.entries(
+                        cells.reduce((dict: Record<string, number>, { vegetation }) => {
+                          if (!dict[vegetation]) dict[vegetation] = 0
+                          dict[vegetation] += 1
+                          return dict
+                        }, {})
+                      )
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(([value, count], i) => {
+                          const color = MAP_METRICS.vegetation.color[value as Cell['vegetation']]
+                          return (
+                            <span key={value}>
+                              <ColoredBox color={color}></ColoredBox>
+                              {` ${TEXT.titleCase(value)} (${TEXT.formatters.percent(
+                                count / cells.length
+                              )})${i !== 2 ? ', ' : ''}`}
+                            </span>
+                          )
+                        })}
+                    </span>
+                  )
+                },
+                {
+                  label: 'Topography',
+                  content: (
+                    <span>
+                      {Object.entries(
+                        cells.reduce((dict: Record<string, number>, cell) => {
+                          const terrain = cell.topography
+                          if (!dict[terrain]) dict[terrain] = 0
+                          dict[terrain] += 1
+                          return dict
+                        }, {})
+                      )
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 3)
+                        .map(([value, count], i) => {
+                          const color =
+                            MAP_METRICS.topography.categories()[value as Cell['topography']]
+                          return (
+                            <span key={value}>
+                              <ColoredBox color={color}></ColoredBox>
+                              {` ${TEXT.titleCase(value)} (${TEXT.formatters.percent(
+                                count / cells.length
+                              )})${i !== 2 ? ', ' : ''}`}
+                            </span>
+                          )
+                        })}
+                    </span>
                   )
                 }
+                // {
+                //   label: 'Quirks',
+                //   content: (
+                //     <span>
+                //       <StyledText text={nation.quirks.join(', ')}></StyledText>
+                //     </span>
+                //   )
+                // }
               ]}
             ></SectionList>
           </Grid>
@@ -123,12 +204,41 @@ export function NationView() {
             <SectionList
               list={[
                 {
-                  label: `Borders (${neighbors.length})`,
+                  label: 'Cultures',
+                  content: (
+                    <span>
+                      {cultures.map(({ value, count }, i) => {
+                        const culture = window.world.cultures[value]
+                        const bold = value === ruling
+                        return (
+                          <span key={culture.idx.toString()}>
+                            <ColoredBox color={culture.display.color} border={false}></ColoredBox>{' '}
+                            <StyledText
+                              text={`${TEXT.decorate({
+                                label: culture.name,
+                                details: CULTURE.describe(culture),
+                                bold,
+                                underlineColor: colonists.has(culture.idx)
+                                  ? MAP_METRICS.government.colors.colonial
+                                  : undefined
+                              })} ${TEXT.decorate({
+                                label: `(${TEXT.formatters.percent(count)})`
+                              })}`}
+                            ></StyledText>
+                            {i !== cultures.length - 1 ? ', ' : ''}
+                          </span>
+                        )
+                      })}
+                    </span>
+                  )
+                },
+                {
+                  label: `Relations (${neighbors.length})`,
                   content: (
                     <StyledText
                       text={neighbors
                         .map(n => {
-                          const opinion = nation.relations[n.idx]
+                          const opinion = NATION.relations.get({ n1: nation, n2: n })
                           const war = opinion === 'at war'
                           const color =
                             opinion === 'ally'
@@ -139,25 +249,25 @@ export function NationView() {
                               ? '#969696'
                               : opinion === 'suspicious'
                               ? '#7c4502'
-                              : opinion === 'vassal'
+                              : opinion === 'vassal' || opinion === 'suzerain'
                               ? '#59027c'
-                              : cssColors.primary
-                          const suzerain = window.world.regions[nation.overlord]?.idx === n.idx
-                          const subject = nation.vassals.includes(n.idx)
-                          return TEXT.decorate({
-                            link: n,
+                              : opinion === 'at war'
+                              ? cssColors.primary
+                              : '#0090a3'
+                          return `${TEXT.decorate({
+                            link: { tag: 'nation', idx: n.idx },
                             label: n.name,
-                            tooltip: suzerain ? 'suzerain' : subject ? 'vassal' : opinion,
+                            tooltip: opinion,
                             color: color,
                             bold: war
-                          })
+                          })}`
                         })
                         .join(', ')}
                     ></StyledText>
                   )
                 },
                 {
-                  label: `Settlements (${provinces.length})`,
+                  label: `Provinces (${provinces.length})`,
                   content: <StyledText text={decoratedProvinces}></StyledText>
                 }
               ]}

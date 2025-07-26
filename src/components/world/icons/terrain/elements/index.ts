@@ -11,8 +11,8 @@ export const element__icons: Record<element__icon, IconDef> = {
   ...city__icons,
   ...town__icons,
   city: {
-    height: 2,
-    path: 'terrain/elements/cities/2.png',
+    height: 1,
+    path: 'locations/settlements/castle.png',
     opacity: 1
   },
   town: {

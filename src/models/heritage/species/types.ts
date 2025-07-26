@@ -1,28 +1,31 @@
 import { Gender } from '../../actors/types'
-import { ClimateZone } from '../../cells/climate/types'
-import { Region } from '../../regions/types'
-import { AllColors, ColorHue } from '../../utilities/color'
+import { Cell } from '../../cells/types'
+import { Province } from '../../provinces/types'
+import { ColorHue } from '../../utilities/color'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 
-export type SpeciesKey =
+// human|dwarf|elf|orc|hobgoblin|goblin|ogre|gnoll|centaur|satyr|draconic|bovine|feline|avian|verdant
+export type Species =
   | 'human'
-  | 'elf'
-  | 'dwarf'
   | 'orc'
+  | 'goblin'
   | 'orlan'
+  | 'dwarf'
+  | 'elf'
+  | 'satyr'
+  | 'verdant'
+  | 'lithic'
   | 'bovine'
   | 'feline'
-  | 'avian'
-  | 'draconic'
-  | 'goblin'
-  | 'hobgoblin'
-  | 'ogre'
   | 'gnoll'
-  | 'vulpine'
+  | 'draconic'
+  | 'avian'
+  | 'arthropod'
+  | 'mollusc'
 
 export type SpeciesAppearance = {
   skin: {
-    colors: (AllColors | 'fair' | 'pale')[]
+    colors: string[]
     texture?: string
   }
   eyes: {
@@ -30,7 +33,7 @@ export type SpeciesAppearance = {
   }
   hair?: {
     textures: ('straight' | 'wavy' | 'curly' | 'kinky')[]
-    colors: ('white' | 'blond' | 'red' | 'auburn' | 'brown' | 'black')[]
+    colors: ('white' | 'blond' | 'red' | 'auburn' | 'brown' | 'black' | 'green')[]
     styles?: Record<
       Gender,
       WeightedDistribution<'long' | 'short' | 'ponytail' | 'topknot' | 'braided' | 'bun'>
@@ -42,9 +45,9 @@ export type SpeciesAppearance = {
   }
 }
 
-export interface Species {
+export interface SpeciesBuilder {
   traits: {
-    skin: 'skin' | 'fur' | 'scales' | 'feathers'
+    skin: 'skin' | 'fur' | 'scales' | 'feathers' | 'carapace'
     age: 'fleeting' | 'average' | 'enduring' | 'venerable' | 'ancient'
     height: 'short' | 'small' | 'average' | 'tall' | 'large' | 'giant'
     bmi: number
@@ -52,13 +55,13 @@ export interface Species {
     piercings?: boolean // defaults to true
     facialHair?: number
   }
-  appearance: (_params: { latitude: number; eastern?: boolean; zone: ClimateZone }) => {
+  appearance: (_params: { latitude: number; eastern?: boolean; zone: Cell['climate'] }) => {
     skin: SpeciesAppearance['skin']
     hair?: Omit<SpeciesAppearance['hair'], 'styles'>
   }
 }
 
 export type SpeciesAppearanceParams = {
-  region: Region
-  species: SpeciesKey
+  province: Province
+  species: Species
 }

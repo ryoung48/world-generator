@@ -1,15 +1,14 @@
 import { TerrainIcon } from '../../../components/world/icons/terrain/types'
-import { WORLD } from '../..'
 import { CELL } from '../../cells'
-import { ClimateKey } from '../../cells/climate/types'
+import { GEOGRAPHY } from '../../cells/geography'
+import { LOCATION } from '../../cells/locations'
 import { Cell } from '../../cells/types'
-import { PROVINCE } from '../../regions/provinces'
-import { Province } from '../../regions/provinces/types'
-import { Region } from '../../regions/types'
+import { PROVINCE } from '../../provinces'
+import { Province } from '../../provinces/types'
 import { CoastalEdge, RouteTypes, World } from '../../types'
 import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
-import { Display, RegionSegment } from './types'
+import { Display } from './types'
 
 const drawCoasts = (params: {
   landmarks: number[]
@@ -100,35 +99,11 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
   label: 'DISPLAY',
   o: {
     borders: {
-      regions: (regions: Region[]) => {
-        const paths: { path: [number, number][]; r: number }[] = []
-        const borders: Record<string, RegionSegment[]> = {}
-        // iterate though all regions
-        const borderCells = WORLD.borders()
-        Object.values(regions).forEach(r => {
-          borders[r.idx] = []
-          // find all borders & coastline cells
-          const land = borderCells.filter(cell => r.idx === CELL.nation(cell))
-          CELL.boundary({
-            cells: land,
-            boundary: cell => cell.isWater || CELL.nation(cell) !== r.idx
-          }).forEach(path => paths.push({ path, r: r.idx }))
-        })
-        PERFORMANCE.profile.apply({
-          label: 'curve',
-          f: () => {
-            paths.forEach(({ path, r }) => {
-              borders[r].push({ path, r })
-            })
-          }
-        })
-        return borders
-      },
       provinces: (provinces: Province[]) => {
         const edges = provinces
           .map(province => {
             return CELL.bfsNeighborhood({
-              start: window.world.cells[province.cell],
+              start: window.world.cells[PROVINCE.cell(province).idx],
               spread: cell => cell.province === province.idx
             })
           })
@@ -143,7 +118,7 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         const edges = locations
           .map(loc => {
             return CELL.bfsNeighborhood({
-              start: window.world.cells[loc.cell],
+              start: window.world.cells[LOCATION.cell(loc).idx],
               spread: cell => cell.location === loc.idx
             })
           })
@@ -154,22 +129,26 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
           boundary: cell => !group.has(cell.idx) || cell.isWater
         })
       },
-      oceanRegions: (oceanRegions: World['oceanRegions']) => {
-        return oceanRegions.map(oceanRegion => {
-          const borders = oceanRegion.borders.map(b => window.world.cells[b])
-          const group = new Set(oceanRegion.borders)
-          return CELL.boundary({
-            cells: borders,
-            boundary: cell => !group.has(cell.idx)
+      oceanic: (oceanRegions: World['oceanRegions']) => {
+        const borders = oceanRegions
+          .map(region => {
+            return CELL.bfsNeighborhood({
+              start: window.world.cells[region.cell],
+              spread: cell => cell.oceanRegion === region.idx
+            })
           })
-        })
-      },
-      seaIceExtent: (oceanRegions: World['oceanRegions']) => {
-        const borders = oceanRegions.map(oceanRegion => oceanRegion.borders).flat()
+          .flat()
         const group = new Set(borders)
         return CELL.boundary({
-          cells: borders.map(b => window.world.cells[b]),
-          boundary: cell => !group.has(cell.idx)
+          cells: borders,
+          boundary: cell => !group.has(cell)
+        })
+      },
+      cells: (cells: World['cells']) => {
+        const group = new Set(cells)
+        return CELL.boundary({
+          cells: cells,
+          boundary: cell => !group.has(cell)
         })
       }
     },
@@ -183,54 +162,53 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
       // 10% chance for no icon placement
       let valid = (m: Cell) => window.dice.random > 0.5 && !CELL.hasRoads(m)
       // mountains
-      const mountains = window.world.cells.filter(p => p.isMountains)
-      const volcanoes: Display['icons'][number]['type'][] = ['volcano_0', 'volcano_1', 'volcano_2']
+      const mountains = window.world.cells.filter(p => p.isMountains).sort((a, b) => b.h - a.h)
       mountains
         .filter(m => valid(m))
         .forEach(m => {
           used.add(m.idx)
-          const landmark = window.world.landmarks[m.landmark]
-          const volcano = window.dice.random > (landmark.type !== 'continent' ? 0.75 : 0.98)
-          if (m.h > 0.9) {
+          const usedNeighbors = CELL.neighbors({ cell: m }).some(n => used.has(n.idx))
+          if (m.h > 0.9 && !usedNeighbors) {
             display.icons.push({
               x: m.x,
               y: m.y,
-              type: window.dice.choice(
-                volcano ? volcanoes : ['mountain_1_1_1', 'mountain_1_1_2', 'mountain_1_1_3']
-              ),
+              type: window.dice.choice(['mountain_1_1_1', 'mountain_1_1_2', 'mountain_1_1_3']),
               cell: m.idx
             })
-          } else if (m.h > 0.8) {
+          } else if (m.h > 0.8 && !usedNeighbors) {
             display.icons.push({
               x: m.x,
               y: m.y,
-              type: window.dice.choice(
-                volcano
-                  ? volcanoes
-                  : ['mountain_1_2_1', 'mountain_1_2_2', 'mountain_1_2_3', 'mountain_1_2_4']
-              ),
+              type: window.dice.choice([
+                'mountain_1_2_1',
+                'mountain_1_2_2',
+                'mountain_1_2_3',
+                'mountain_1_2_4'
+              ]),
               cell: m.idx
             })
-          } else if (m.h > 0.7) {
+          } else if (m.h > 0.7 && !usedNeighbors) {
             display.icons.push({
               x: m.x,
               y: m.y,
-              type: window.dice.choice(
-                volcano
-                  ? volcanoes
-                  : ['mountain_1_3_1', 'mountain_1_3_2', 'mountain_1_3_3', 'mountain_1_3_4']
-              ),
+              type: window.dice.choice([
+                'mountain_1_3_1',
+                'mountain_1_3_2',
+                'mountain_1_3_3',
+                'mountain_1_3_4'
+              ]),
               cell: m.idx
             })
           } else if (m.h > 0.6) {
             display.icons.push({
               x: m.x,
               y: m.y,
-              type: window.dice.choice(
-                volcano
-                  ? volcanoes
-                  : ['mountain_1_4_1', 'mountain_1_4_2', 'mountain_1_4_3', 'mountain_1_4_4']
-              ),
+              type: window.dice.choice([
+                'mountain_1_4_1',
+                'mountain_1_4_2',
+                'mountain_1_4_3',
+                'mountain_1_4_4'
+              ]),
               cell: m.idx
             })
           } else {
@@ -254,42 +232,11 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         !CELL.hasRoads(m) &&
         !used.has(m.idx) &&
         window.dice.random > 0.8 &&
-        CELL.neighbors(m).every(i => !used.has(i.idx))
+        CELL.neighbors({ cell: m }).every(i => !used.has(i.idx))
       // grass
-      const grasslands: ClimateKey[] = [
-        'dry forest (tropical)',
-        'very dry forest (tropical)',
-        'thorn woodland (tropical)',
-        'desert scrub (tropical)',
-        'dry forest (subtropical)',
-        'thorn steppe (subtropical)',
-        'desert scrub (subtropical)',
-        'dry forest (warm temperate)',
-        'thorn steppe (warm temperate)',
-        'desert scrub (warm temperate)',
-        'steppe (cool temperate)',
-        'desert scrub (cool temperate)',
-        'dry scrub (boreal)'
-      ]
-      const savanna: ClimateKey[] = [
-        'dry forest (tropical)',
-        'very dry forest (tropical)',
-        'thorn woodland (tropical)',
-        'dry forest (subtropical)',
-        'thorn steppe (subtropical)'
-      ]
-      const withered: ClimateKey[] = [
-        'desert scrub (tropical)',
-        'desert scrub (subtropical)',
-        'thorn steppe (warm temperate)',
-        'desert scrub (warm temperate)',
-        'steppe (cool temperate)',
-        'desert scrub (cool temperate)',
-        'dry scrub (boreal)'
-      ]
-      const temperateGrass = ['dry forest (warm temperate)']
-      const biomes = WORLD.land().filter(p => !p.isMountains && !p.isWater && !p.isCoast)
-      const grass = biomes.filter(p => grasslands.includes(p.climate))
+      const grasslands: Cell['vegetation'][] = ['grasslands', 'sparse']
+      const biomes = GEOGRAPHY.land().filter(p => !p.isMountains && !p.isWater && !p.isCoast)
+      const grass = biomes.filter(p => grasslands.includes(p.vegetation))
       const grassIcons: Display['icons'][number]['type'][] = [
         'grass_5',
         'grass_6',
@@ -298,45 +245,49 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
       ]
       grass.forEach(m => {
         if (valid(m)) {
+          const arctic = m.climate === 'arctic' || m.climate === 'subarctic'
+          const sparse = m.vegetation === 'sparse'
           used.add(m.idx)
           display.icons.push({
             x: m.x,
             y: m.y,
-            type: window.dice.choice(
-              window.dice.random > 0.8
-                ? savanna.includes(m.climate)
-                  ? ['savanna_1', 'savanna_2', 'savanna_3', 'savanna_4']
-                  : temperateGrass.includes(m.climate)
-                  ? ['grass_1', 'grass_2', 'grass_3', 'grass_4']
-                  : grassIcons
-                : window.dice.random > 0.95 && withered.includes(m.climate)
-                ? ['withered_1', 'withered_2', 'withered_3', 'withered_4']
-                : grassIcons
-            ),
+            type: window.dice.weightedChoice([
+              {
+                w: ['tropical', 'subtropical'].includes(m.climate) ? 0.2 : 0,
+                v: window.dice.choice(['savanna_1', 'savanna_2', 'savanna_3', 'savanna_4'])
+              },
+              {
+                w: m.climate === 'temperate' ? 0.2 : 0,
+                v: window.dice.choice(['grass_1', 'grass_2', 'grass_3', 'grass_4'])
+              },
+              {
+                w: sparse ? 0.2 : 0.1,
+                v: window.dice.choice(['desert_9', 'desert_10', 'desert_11'])
+              },
+              { w: arctic || !sparse ? 0 : 0.1, v: 'desert_13' },
+              { w: arctic || !sparse ? 0 : 0.1, v: 'desert_14' },
+              { w: 0.8, v: window.dice.choice(grassIcons) }
+            ]),
             cell: m.idx
           })
         }
       })
       // forest
-      const deciduous: ClimateKey[] = [
-        'rain forest (warm temperate)',
-        'wet forest (warm temperate)',
-        'moist forest (warm temperate)',
-        'rain forest (cool temperate)',
-        'wet forest (cool temperate)',
-        'moist forest (cool temperate)'
-      ]
       const forestStyles: Record<number, number> = {}
-      const forest = biomes.filter(p => deciduous.includes(p.climate))
+      const forest = biomes.filter(
+        p =>
+          (p.vegetation === 'forest' || p.vegetation === 'woods') &&
+          ['tropical', 'subtropical', 'temperate'].includes(p.climate)
+      )
       forest.forEach(m => {
         if (valid(m)) {
           used.add(m.idx)
-          if (!forestStyles[m.region]) forestStyles[m.region] = window.dice.choice([1, 2])
+          if (!forestStyles[m.province]) forestStyles[m.province] = window.dice.choice([1, 2])
           display.icons.push({
             x: m.x,
             y: m.y,
             type: window.dice.choice(
-              forestStyles[m.region] === 1
+              forestStyles[m.province] === 1
                 ? ['temperate_1', 'temperate_2', 'temperate_3']
                 : [
                     'temperate_4',
@@ -352,25 +303,21 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         }
       })
       // boreal
-      const coniferous: ClimateKey[] = [
-        'rain forest (cool temperate)',
-        'wet forest (cool temperate)',
-        'moist forest (cool temperate)',
-        'rain forest (boreal)',
-        'wet forest (boreal)',
-        'moist forest (boreal)'
-      ]
       const borealStyles: Record<number, number> = {}
-      const boreal = biomes.filter(p => coniferous.includes(p.climate))
+      const boreal = biomes.filter(
+        p =>
+          (p.vegetation === 'forest' || p.vegetation === 'woods') &&
+          (p.climate === 'boreal' || p.climate === 'temperate')
+      )
       boreal.forEach(m => {
         if (valid(m)) {
           used.add(m.idx)
-          if (!borealStyles[m.region]) borealStyles[m.region] = window.dice.choice([1, 2])
+          if (!borealStyles[m.province]) borealStyles[m.province] = window.dice.choice([1, 2])
           display.icons.push({
             x: m.x,
             y: m.y,
             type: window.dice.choice(
-              borealStyles[m.region] === 1
+              borealStyles[m.province] === 1
                 ? ['boreal_1', 'boreal_2', 'boreal_3', 'boreal_4']
                 : ['boreal_5', 'boreal_6', 'boreal_7', 'boreal_8']
             ),
@@ -379,25 +326,21 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         }
       })
       // tropical
-      const jungles: ClimateKey[] = [
-        'rain forest (tropical)',
-        'wet forest (tropical)',
-        'moist forest (tropical)',
-        'rain forest (subtropical)',
-        'wet forest (subtropical)',
-        'moist forest (subtropical)'
-      ]
       const tropicalStyles: Record<number, number> = {}
-      const tropical = biomes.filter(p => jungles.includes(p.climate))
+      const tropical = biomes.filter(
+        p =>
+          (p.vegetation === 'forest' || p.vegetation === 'jungle') &&
+          ['tropical', 'subtropical'].includes(p.climate)
+      )
       tropical.forEach(m => {
         if (valid(m)) {
           used.add(m.idx)
-          if (!tropicalStyles[m.region]) tropicalStyles[m.region] = window.dice.choice([1, 2])
+          if (!tropicalStyles[m.province]) tropicalStyles[m.province] = window.dice.choice([1, 2])
           display.icons.push({
             x: m.x,
             y: m.y,
             type: window.dice.choice<TerrainIcon>(
-              tropicalStyles[m.region] === 1
+              tropicalStyles[m.province] === 1
                 ? ['tropical_1', 'tropical_2', 'tropical_3', 'tropical_4']
                 : ['tropical_5', 'tropical_6', 'tropical_7', 'tropical_8']
             ),
@@ -408,7 +351,7 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
       const freeSpace = (n: Cell) => !used.has(n.idx) && !n.isCoast && !CELL.hasRoads(n)
       // tropical hills
       tropical.forEach(m => {
-        if (valid(m) && CELL.neighbors(m).every(freeSpace)) {
+        if (valid(m) && CELL.neighbors({ cell: m }).every(freeSpace)) {
           used.add(m.idx)
           display.icons.push({
             x: m.x,
@@ -421,16 +364,9 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
       valid = m =>
         !CELL.hasRoads(m) &&
         window.dice.random > 0.8 &&
-        CELL.neighbors(m).every(i => !used.has(i.idx))
+        CELL.neighbors({ cell: m }).every(i => !used.has(i.idx))
       // desert
-      const deserts: ClimateKey[] = [
-        'desert (tropical)',
-        'desert (subtropical)',
-        'desert (warm temperate)',
-        'desert (cool temperate)',
-        'desert (boreal)'
-      ]
-      const desert = biomes.filter(p => deserts.includes(p.climate))
+      const desert = biomes.filter(p => p.vegetation === 'desert')
       const desertIcons: TerrainIcon[] = [
         'desert_1',
         'desert_2',
@@ -443,27 +379,30 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
       ]
       desert.forEach(m => {
         if (valid(m)) {
+          const arctic = m.climate === 'arctic' || m.climate === 'subarctic'
           used.add(m.idx)
           display.icons.push({
             x: m.x,
             y: m.y,
-            type: window.dice.choice(desertIcons),
+            type: window.dice.weightedChoice([
+              { w: 8, v: window.dice.choice(desertIcons) },
+              { w: 1, v: 'desert_9' },
+              { w: 1, v: 'desert_10' },
+              { w: 1, v: 'desert_11' },
+              { w: 0.1, v: 'desert_12' },
+              { w: arctic ? 0 : 1, v: 'desert_13' },
+              { w: arctic ? 0 : 1, v: 'desert_14' }
+            ]),
             cell: m.idx
           })
         }
       })
-      // polar
-      const polarClimates: ClimateKey[] = [
-        'rain tundra (subpolar)',
-        'wet tundra (subpolar)',
-        'moist tundra (subpolar)',
-        'dry tundra (subpolar)',
-        'desert (polar)'
-      ]
-      const polar = biomes.filter(p => polarClimates.includes(p.climate))
-      polar.forEach(m => {
+      // arctic
+      const arcticClimates: Cell['climate'][] = ['arctic', 'subarctic']
+      const arctic = biomes.filter(p => arcticClimates.includes(p.climate))
+      arctic.forEach(m => {
         if (valid(m)) {
-          const glacier = m.climate === 'desert (polar)'
+          const glacier = m.vegetation === 'desert'
           used.add(m.idx)
           display.icons.push({
             x: m.x,
@@ -486,11 +425,11 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
         p.ocean &&
         !p.shallow &&
         !used.has(p.idx) &&
-        CELL.neighbors(p, 2).every(cell => !used.has(cell.idx) && cell.ocean)
-      const scale = 1 / WORLD.cell.scale()
-      seaRoutes.slice(0, Math.floor(seaRoutes.length * 0.05 * scale)).forEach(route => {
+        CELL.neighbors({ cell: p, depth: 2 }).every(cell => !used.has(cell.idx) && cell.ocean)
+      const scale = 1 / window.world.scale
+      seaRoutes.slice(0, Math.floor(seaRoutes.length * 0.25 * scale)).forEach(route => {
         const cells = route.path
-          .map(p => CELL.neighbors(window.world.cells[p]))
+          .map(p => CELL.neighbors({ cell: window.world.cells[p] }))
           .flat()
           .filter(validSeaIcon)
         if (cells.length > 0) {
@@ -516,7 +455,7 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
     _islands: () => {
       // land (ocean)
       const islands = drawCoasts({
-        landmarks: WORLD.features('land'),
+        landmarks: GEOGRAPHY.landmarks('land'),
         coastFilter: i => e => e.land === i && window.world.landmarks[e.water].type === 'ocean'
       })
       PERFORMANCE.profile.apply({
@@ -535,14 +474,16 @@ export const SHAPER_DISPLAY = PERFORMANCE.profile.wrapper({
     _lakes: () => {
       // land (ocean)
       const lakes = drawCoasts({
-        landmarks: WORLD.features('water').filter(i => window.world.landmarks[i].type !== 'ocean'),
+        landmarks: GEOGRAPHY.landmarks('water').filter(
+          i => window.world.landmarks[i].type !== 'ocean'
+        ),
         coastFilter: i => e => e.water === i
       })
       PERFORMANCE.profile.apply({
         label: 'curve',
         f: () => {
           // create ocean curve
-          const lakeEdges = WORLD.water().filter(
+          const lakeEdges = GEOGRAPHY.water().filter(
             cell => cell.isWater && cell.shallow && !cell.ocean
           )
           window.world.display.lakes = lakes.reduce((dict: Display['lakes'], { path, idx }) => {

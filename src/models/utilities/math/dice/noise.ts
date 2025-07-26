@@ -10,33 +10,23 @@ interface NoiseParameters {
 }
 
 class Simplex {
-  protected res: number
   protected params: NoiseParameters
   protected n: SimplexNoise
-  constructor(res: number, params: NoiseParameters, seed: string) {
-    this.res = res
+  constructor(params: NoiseParameters, seed: string) {
     this.params = params
     this.n = new SimplexNoise(seed)
   }
-  public billow() {
-    const warpSize = 1
-    const size = this.res
-    const data = Array.from(Array(size + 1), () => Array(size + 1).fill(0))
-    let [high, low] = [-Infinity, Infinity]
-    for (let i = 0; i <= size; i++) {
-      for (let j = 0; j <= size; j++) {
-        data[i][j] = this.noise(i * warpSize, j * warpSize)
-        high = data[i][j] > high ? data[i][j] : high
-        low = data[i][j] < low ? data[i][j] : low
-      }
+  protected noise3d(i: number, j: number, k: number) {
+    const { octaves, frequency, persistence } = this.params
+    const amplitudes = Array.from({ length: octaves }, (_, octave) => Math.pow(persistence, octave))
+    let [f, maxValue, res] = [frequency, 0, 0]
+    for (let octave = 1; octave <= octaves; octave++) {
+      const n = this.n.noise3D(i * f, j * f, k * f)
+      res += n * amplitudes[octave - 1]
+      maxValue += amplitudes[octave - 1]
+      f *= 2
     }
-    for (let i = 0; i <= size; i++) {
-      for (let j = 0; j <= size; j++) {
-        const d = MATH.scale([low, high], [-1, 1], data[i][j])
-        data[i][j] = Math.abs(d)
-      }
-    }
-    return data
+    return res / maxValue
   }
   public sphere(points: Point[]) {
     const data: number[] = []
@@ -52,38 +42,29 @@ class Simplex {
       high = val > high ? val : high
       low = val < low ? val : low
     }
+    return [data, high, low] as const
+  }
+  public continents(points: Point[]) {
+    const [data, high, low] = this.sphere(points)
     for (const i in data) {
-      data[i] = MATH.scale([low, high], [0, 1], Math.abs(data[i])) ** 3
+      data[i] = MATH.scale([low, high], [0, 1], Math.abs(data[i])) ** 6
     }
     return data
   }
-  protected noise3d(i: number, j: number, k: number) {
-    const { octaves, frequency, persistence } = this.params
-    const amplitudes = Array.from({ length: octaves }, (_, octave) => Math.pow(persistence, octave))
-    let [f, maxValue, res] = [frequency, 0, 0]
-    for (let octave = 1; octave <= octaves; octave++) {
-      res += this.n.noise3D(i * f, j * f, k * f) * amplitudes[octave - 1]
-      maxValue += amplitudes[octave - 1]
-      f *= 2
+  public chaos(points: Point[]) {
+    const [data] = this.sphere(points)
+    const high = data.reduce((acc, curr) => Math.max(acc, Math.abs(curr)), -Infinity)
+    const low = data.reduce((acc, curr) => Math.min(acc, Math.abs(curr)), Infinity)
+    for (const i in data) {
+      data[i] = MATH.scale([low, high], [0, 1], Math.abs(data[i]))
     }
-    return res / maxValue
-  }
-  protected noise(i: number, j: number) {
-    const { octaves, frequency, persistence } = this.params
-    let [amp, f, maxValue, res] = [1, frequency, 0, 0]
-    for (let k = 1; k <= octaves; k++) {
-      res += this.n.noise2D(i * f, j * f) * amp
-      maxValue += amp
-      f *= 2
-      amp *= persistence
-    }
-    return res / maxValue
+    return data
   }
 }
 
 export const SIMPLEX = {
-  simplex: (res: number, params: NoiseParameters, seed: string) =>
-    new Simplex(res, params, seed).billow(),
-  sphere: (points: Point[], params: NoiseParameters, seed: string) =>
-    new Simplex(1, params, seed).sphere(points)
+  continents: (points: Point[], params: NoiseParameters, seed: string) =>
+    new Simplex(params, seed).continents(points),
+  chaos: (points: Point[], params: NoiseParameters, seed: string) =>
+    new Simplex(params, seed).chaos(points)
 }

@@ -1,8 +1,9 @@
-import { geoGraticule10, GeoProjection, range, scaleLinear } from 'd3'
+import { geoGraticule, GeoProjection, range, scaleLinear } from 'd3'
 
-import { CULTURE } from '../../../models/heritage'
-import { REGION } from '../../../models/regions'
-import { PROVINCE } from '../../../models/regions/provinces'
+import { NATION } from '../../../models/nations'
+import { PROVINCE } from '../../../models/provinces'
+import { TRADE_GOODS } from '../../../models/provinces/trade'
+import { TradeGood } from '../../../models/provinces/trade/types'
 import { MATH } from '../../../models/utilities/math'
 import { POINT } from '../../../models/utilities/math/points'
 import { fonts } from '../../theme/fonts'
@@ -14,12 +15,20 @@ import {
   DrawCloudParams,
   DrawCompassParams,
   DrawLegendParams,
-  DrawLegendsParams
+  DrawLegendsParams,
+  LegendParams
 } from './types'
 
 const embellishFont = 20
 
-const drawLegend = ({ ctx, items, alignment, position, width }: DrawLegendParams) => {
+const drawLegend = ({
+  ctx,
+  items,
+  alignment,
+  position,
+  width,
+  border = true
+}: DrawLegendParams) => {
   if (items.length == 0) return
   const boxSize = 10
   const spacingBetweenBoxes = 12
@@ -42,10 +51,12 @@ const drawLegend = ({ ctx, items, alignment, position, width }: DrawLegendParams
     // Draw the color box
     if (item.color) {
       ctx.fillStyle = item.color
-      ctx.strokeStyle = 'black'
-      ctx.lineWidth = 0.5
       ctx.fillRect(startX, startY, boxSize, boxSize)
-      ctx.strokeRect(startX, startY, boxSize, boxSize)
+      if (border) {
+        ctx.strokeStyle = 'black'
+        ctx.lineWidth = 0.5
+        ctx.strokeRect(startX, startY, boxSize, boxSize)
+      }
     } else if (item.shape) {
       item.shape({
         ctx,
@@ -68,35 +79,74 @@ const drawLegend = ({ ctx, items, alignment, position, width }: DrawLegendParams
   }
 }
 
-const cultureLegend = ({ nationSet, province }: CultureLegendParams) => {
-  const region = PROVINCE.region(province)
+const cultureLegend = ({ nationSet, province }: CultureLegendParams): LegendParams => {
   const used = new Set()
-  const cultures: number[] = []
-  REGION.sort({
-    ref: region,
+  const cultures: { culture: number; minority: boolean; colonists: boolean }[] = []
+  PROVINCE.sort({
+    ref: province,
     group: Array.from(nationSet)
-      .map(r => REGION.domains(window.world.regions[r]))
+      .map(r => NATION.provinces(window.world.provinces[r]))
       .flat(),
     type: 'closest'
   }).forEach(r => {
     if (!used.has(r.culture)) {
-      cultures.push(r.culture)
+      cultures.push({ minority: false, culture: r.culture, colonists: false })
       used.add(r.culture)
     }
-  })
-  return cultures.slice(0, 10).map(c => {
-    const culture = window.world.cultures[c]
-    return {
-      text: `${culture.name.toLowerCase()}`,
-      color: CULTURE.color({ culture, opacity: 0.4 })
+    if (r.minority && !used.has(r.minority)) {
+      const colonists = r.colonists !== undefined
+      cultures.push({ minority: true, culture: r.minority, colonists })
+      used.add(r.minority)
     }
   })
+  return {
+    items: cultures.slice(0, 10).map(({ culture: c }) => {
+      const culture = window.world.cultures[c]
+      const text = `${culture.name.toLowerCase()}`
+      const color = culture.display.color
+      return {
+        text,
+        shape: ({ ctx, point, scale }) => MAP_SHAPES.hatched.partial({ ctx, point, scale, color })
+      }
+    }),
+    width: 10
+  }
+}
+
+const resourceLegend = ({ nationSet, province }: CultureLegendParams): LegendParams => {
+  const used = new Set()
+  const resources: TradeGood[] = []
+  PROVINCE.sort({
+    ref: province,
+    group: Array.from(nationSet)
+      .map(r => NATION.provinces(window.world.provinces[r]))
+      .flat(),
+    type: 'closest'
+  }).forEach(r => {
+    r.locations
+      .map(l => window.world.locations[l])
+      .forEach(l => {
+        if (l.resource && !used.has(l.resource)) {
+          resources.push(l.resource)
+          used.add(l.resource)
+        }
+      })
+  })
+  return {
+    items: resources.slice(0, 10).map(resource => {
+      return {
+        text: resource,
+        color: TRADE_GOODS.reference[resource]?.tinto ?? TRADE_GOODS.reference[resource].color
+      }
+    }),
+    width: 10
+  }
 }
 
 // Function to draw compass
 function drawCompass(ctx: CanvasRenderingContext2D, projection: GeoProjection) {
   const centerX = ctx.canvas.width * 0.07
-  const centerY = ctx.canvas.height * 0.75
+  const centerY = ctx.canvas.height * 0.78
   const radius = 60
   const width = 6
 
@@ -267,7 +317,7 @@ export const DRAW_EMBELLISHMENTS = {
     ctx.save()
     const scale = MAP_SHAPES.scale.derived(projection)
     const pathGen = MAP_SHAPES.path.linear(projection)
-    const path = new Path2D(pathGen(geoGraticule10()))
+    const path = new Path2D(pathGen(geoGraticule().stepMinor([15, 10])()))
     const opacity = 1 / (scale / 2)
     ctx.lineWidth = 0.1
     ctx.strokeStyle = `rgba(0,0,0,${opacity})`
@@ -275,42 +325,42 @@ export const DRAW_EMBELLISHMENTS = {
     ctx.restore()
   },
   legend: ({ ctx, style, province, nationSet }: DrawLegendsParams) => {
-    const height = ctx.canvas.height * 0.2
-    const width = ctx.canvas.width * 0.025
-    const climate = PROVINCE.climate(province)
-    const items =
+    const y = ctx.canvas.height * 0.2
+    const x = ctx.canvas.width * 0.025
+    const { items, width } =
       style === 'Temperature'
         ? MAP_METRICS.temperature.legend()
         : style === 'Rain'
         ? MAP_METRICS.rain.legend()
-        : style === 'Elevation'
-        ? MAP_METRICS.elevation.legend()
+        : style === 'Climate'
+        ? MAP_METRICS.climate.legend()
+        : style === 'Topography'
+        ? MAP_METRICS.topography.legend()
         : style === 'Religion'
         ? MAP_METRICS.religion.legend()
         : style === 'Government'
         ? MAP_METRICS.government.legend()
-        : style === 'Development'
-        ? MAP_METRICS.development.legend()
         : style === 'Population'
         ? MAP_METRICS.population.legend()
         : style === 'Cultures'
         ? cultureLegend({ nationSet, province })
-        : style === 'Climate'
-        ? MAP_METRICS.climate.legend(climate.latitude)
         : style === 'Nations'
         ? MAP_METRICS.settlement.legend()
-        : []
+        : style === 'Resources'
+        ? resourceLegend({ nationSet, province })
+        : style === 'Vegetation'
+        ? MAP_METRICS.vegetation.legend()
+        : style === 'Development'
+        ? MAP_METRICS.development.legend()
+        : style === 'Timezones'
+        ? MAP_METRICS.timezone.legend()
+        : { items: [], width: 0 }
     drawLegend({
       ctx,
       items,
       alignment: 'left',
-      position: { x: width, y: height },
-      width:
-        style === 'Nations'
-          ? 15
-          : style === 'Climate' || style === 'Religion' || style === 'Population'
-          ? 12
-          : 10
+      position: { x, y },
+      width
     })
   },
   scale: ({ ctx, projection }: DrawMapParams) => {
@@ -332,7 +382,7 @@ export const DRAW_EMBELLISHMENTS = {
       ctx.fillStyle = 'black'
       ctx.strokeRect(rectStart, height, len, 6)
       const x = rectStart + len / 2
-      ctx.fillText(MAP_METRICS.elevation.format(width * (i + 1), 0), x, height - 8)
+      ctx.fillText(MAP_METRICS.topography.format(width * (i + 1), 0), x, height - 8)
     })
   }
 }

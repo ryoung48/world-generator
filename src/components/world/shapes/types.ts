@@ -11,6 +11,10 @@ export interface CircleParams {
   border?: {
     color: string
     width: number
+    secondary?: {
+      color: string
+      width: number
+    }
   }
 }
 
@@ -30,8 +34,11 @@ export interface DrawFeaturesParams {
 
 export interface DrawRouteParams {
   point: Point
-  color: string
+  color: { primary: string; secondary?: string }
   ctx: CanvasRenderingContext2D
+  dash?: number[]
+  width?: number
+  lineCap?: 'butt' | 'round' | 'square'
 }
 
 export type DrawPolygonParams = {
@@ -58,6 +65,13 @@ export type StripePatternParams = {
   scale: number
   color: string
   width?: number
+  spacing?: number
+}
+
+export type StripeMaskedPatternParams = {
+  ctx: CanvasRenderingContext2D
+  mask: HTMLCanvasElement
+  color: string
 }
 
 export type HighlightLocationParams = {
@@ -66,4 +80,13 @@ export type HighlightLocationParams = {
   scale: number
   color: string
   opacity: number
+}
+
+export type ChainParams = {
+  point: Point
+  ctx: CanvasRenderingContext2D
+  scale: number
+  backgroundColor: string
+  borderColor: string
+  borderWidth?: number
 }

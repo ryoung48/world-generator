@@ -31,8 +31,8 @@ export const keepIcons: Record<KeepIcon, LocationIconDef> = {
     fontScale: generic.font
   },
   keep_5: {
-    height: generic.height,
-    path: 'locations/keeps/5.png',
+    height: generic.height * 2,
+    path: 'locations/keeps/fort.png',
     opacity: 1,
     fontScale: generic.font
   }

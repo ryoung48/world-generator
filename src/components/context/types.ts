@@ -4,7 +4,7 @@ export type Avatar = { pcs: number[]; cp: number }
 
 export type ViewState = {
   id: string
-  loc: { province: number; idx: number }
+  loc: { province: number }
   gps: { x: number; y: number; zoom: number }
   time: number
   loading: boolean

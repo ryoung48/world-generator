@@ -9,7 +9,7 @@ import { element__icons } from './elements'
 import { grass__icons } from './grass'
 import { mountain__icons } from './mountains'
 import { tree__icons } from './trees'
-import { DrawTerrainIconParams, TerrainIcon } from './types'
+import { DrawIcon, DrawTerrainIconParams, TerrainIcon } from './types'
 
 const terrain: Record<TerrainIcon, IconDef> = {
   ...desert__icons,
@@ -20,6 +20,23 @@ const terrain: Record<TerrainIcon, IconDef> = {
 }
 
 export const DRAW_TERRAIN = {
+  draw: ({ ctx, cachedImages, projection, icon, point }: DrawIcon<TerrainIcon>) => {
+    const scale = MAP_SHAPES.scale.derived(projection)
+    const pathGen = MAP_SHAPES.path.linear(projection)
+    const geojson = turf.point([point.x, point.y])
+    const center = pathGen.centroid(geojson)
+    ICON.draw({
+      ctx,
+      img: cachedImages[icon],
+      icon: DRAW_TERRAIN.definitions[icon],
+      sw: scale,
+      sh: scale,
+      point: {
+        x: center[0],
+        y: center[1]
+      }
+    })
+  },
   icons: ({ ctx, cachedImages, projection }: DrawTerrainIconParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const pathGen = MAP_SHAPES.path.linear(projection)

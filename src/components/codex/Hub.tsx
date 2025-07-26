@@ -1,54 +1,64 @@
 import { Grid } from '@mui/material'
 
+// import { HookView } from './Hooks'
 import { ACTOR } from '../../models/actors'
-import { WEATHER } from '../../models/cells/weather'
 import { CULTURE } from '../../models/heritage'
-import { PROVINCE } from '../../models/regions/provinces'
-import { HUB } from '../../models/regions/sites/hubs'
+import { PROVINCE } from '../../models/provinces'
+import { HUB } from '../../models/provinces/hubs'
 import { TEXT } from '../../models/utilities/text'
 import { CodexPage } from '../common/CodexPage'
+import { ColoredBox } from '../common/ColoredBox'
+import { ToggleButtons } from '../common/navigation/ToggleButtons'
 import { StyledText } from '../common/text/styled'
 import { VIEW } from '../context'
 import { cssColors } from '../theme/colors'
-import { HookView } from './Hooks'
-
-const weather: Record<number, string> = {}
+import { MAP_METRICS } from '../world/shapes/metrics'
+import { DaylightView } from './weather/Daylight'
+import { RainView } from './weather/Rain'
+import { TemperatureView } from './weather/Temperature'
 
 export function HubView() {
   const { state } = VIEW.context()
   const province = window.world.provinces[state.loc.province]
   const hub = PROVINCE.hub(province)
   const nation = PROVINCE.nation(province)
-  const climate = PROVINCE.climate(province)
   const { common } = PROVINCE.demographics(province)
   const cultureCount = 4
   const other = common.slice(cultureCount).reduce((sum, { w }) => sum + w, 0)
-  if (!weather[province.idx])
-    weather[province.idx] = TEXT.capitalize(
-      WEATHER.conditions({ cell: window.world.cells[hub.cell] })
-    )
+  const cell = window.world.cells[hub.cell]
+  const { climate, vegetation } = cell
+  const location = window.world.locations[cell.location]
+  const { topography } = location
   ACTOR.populate(province)
   return (
     <CodexPage
       title={hub.name}
       subtitle={
-        <StyledText
-          color={cssColors.subtitle}
-          text={`(${province.idx}) ${HUB.type(hub)}, ${TEXT.decorate({
-            link: nation,
-            label: nation.name
-          })}`}
-        ></StyledText>
+        <span style={{ color: cssColors.subtitle }}>
+          {`(${province.idx}) ${HUB.settlement(hub)} (`}
+          <ColoredBox color={MAP_METRICS.climate.categories[climate]}></ColoredBox> {climate}
+          {', '}
+          <ColoredBox color={MAP_METRICS.topography.categories()[topography]}></ColoredBox>
+          {` ${topography}`}
+          {', '}
+          <ColoredBox color={MAP_METRICS.vegetation.color[vegetation]}></ColoredBox>
+          {` ${vegetation})`}
+        </span>
       }
       content={
         <Grid container sx={{ fontSize: 10, lineHeight: 1.5 }}>
-          <Grid item xs={12}>
-            <b>Climate: </b>
-            <StyledText text={`${TEXT.titleCase(climate.name)} (${climate.latitude})`}></StyledText>
+          <Grid item xs={6}>
+            <b>Population: </b>
+            {TEXT.formatters.compact(hub.population)}
           </Grid>
-          <Grid item xs={12}>
-            <b>Weather: </b>
-            <StyledText text={weather[province.idx]}></StyledText>
+          <Grid item xs={6}>
+            <b>Region: </b>
+            <StyledText
+              text={TEXT.decorate({
+                link: { tag: 'nation', idx: nation.idx },
+                label: nation.name
+              })}
+            ></StyledText>
           </Grid>
           <Grid item xs={12}>
             <b>Demographics: </b>
@@ -58,6 +68,9 @@ export function HubView() {
                 .map(({ v, w }) => {
                   const culture = window.world.cultures[v]
                   return `${TEXT.decorate({
+                    label: '■',
+                    color: culture.display.color
+                  })} ${TEXT.decorate({
                     label: culture.name,
                     details: CULTURE.describe(culture)
                   })} (${TEXT.formatters.percent(w)})`
@@ -70,15 +83,23 @@ export function HubView() {
             <b>Locals: </b>
             <StyledText
               text={hub.locals
-                .map(i => {
+                ?.map(i => {
                   const npc = window.world.actors[i]
                   return `${TEXT.decorate({ label: npc.name, details: ACTOR.describe(npc) })}`
                 })
                 .join(', ')}
             ></StyledText>
           </Grid>
-          <Grid item xs={12}>
-            <HookView site={hub}></HookView>
+          <Grid item xs={12} pt={2}>
+            <ToggleButtons
+              selection={['temperature', 'rain', 'daylight', 'wind']}
+              content={tab => {
+                if (tab === 'temperature') return <TemperatureView />
+                if (tab === 'rain') return <RainView />
+                if (tab === 'daylight') return <DaylightView />
+                return <span>{tab}</span>
+              }}
+            ></ToggleButtons>
           </Grid>
         </Grid>
       }

@@ -1,4 +1,4 @@
-import { Province } from '../../regions/provinces/types'
+import { Province } from '../../provinces/types'
 import { Trait } from '../../utilities/traits/types'
 import { QuirkConstraints } from '../traits/types'
 import { Gender } from '../types'

@@ -1,12 +1,9 @@
-import { scaleLinear } from 'd3'
-
-import { MAP_METRICS } from '../../../components/world/shapes/metrics'
 import { MATH } from '../../utilities/math'
-import { season } from '../../utilities/math/time'
+import { TIME } from '../../utilities/math/time'
 import { TEXT } from '../../utilities/text'
-import { CLIMATE } from '../climate'
-import { Climate } from '../climate/types'
 import { Cell } from '../types'
+import { RAIN } from './rain'
+import { TEMPERATURE } from './temperature'
 import {
   CloudTypes,
   TemperatureVariance,
@@ -16,36 +13,6 @@ import {
   WeatherParams,
   WeatherPhenomena
 } from './types'
-
-const rain = {
-  dry: 0.05,
-  low: 0.15,
-  moderate: 0.25,
-  wet: 0.4,
-  humid: 0.8
-}
-
-const tempDescriptor = (t: number) => {
-  if (t < -40) return 'polar'
-  else if (t >= -40 && t < -30) return 'arctic'
-  else if (t >= -30 && t < -20) return 'bitterly cold'
-  else if (t >= -20 && t < -10) return 'very cold'
-  else if (t >= -10 && t < 0) return 'cold'
-  else if (t >= 0 && t < 10) return 'wintry'
-  else if (t >= 10 && t < 20) return 'icy'
-  else if (t >= 20 && t < 30) return 'frosty'
-  else if (t >= 30 && t < 40) return 'chilly'
-  else if (t >= 40 && t < 50) return 'brisk'
-  else if (t >= 50 && t < 60) return 'cool'
-  else if (t >= 60 && t < 70) return 'mild'
-  else if (t >= 70 && t < 80) return 'warm'
-  else if (t >= 80 && t < 90) return 'balmy'
-  else if (t >= 90 && t < 100) return 'sweaty'
-  else if (t >= 100 && t < 110) return 'sweltering'
-  else if (t >= 110 && t < 120) return 'feverish'
-  else if (t >= 120 && t < 130) return 'baking'
-  return 'scorching'
-}
 
 const beaufort = (w: number) => {
   if (w < 1) return 'calm'
@@ -79,10 +46,12 @@ const windMap = (w: number) => {
 }
 
 const clouds = (rainChance: number, condition: WeatherConditions) => {
-  const arid = rainChance >= 0 && rainChance < rain.low
-  const semiArid = rainChance >= rain.low && rainChance < rain.moderate
-  const moderate = rainChance >= rain.moderate && rainChance < rain.wet
-  const wet = rainChance >= rain.wet
+  const arid = rainChance >= 0 && rainChance < RAIN.thresholds.clouds.low
+  const semiArid =
+    rainChance >= RAIN.thresholds.clouds.low && rainChance < RAIN.thresholds.clouds.moderate
+  const moderate =
+    rainChance >= RAIN.thresholds.clouds.moderate && rainChance < RAIN.thresholds.clouds.wet
+  const wet = rainChance >= RAIN.thresholds.clouds.wet
   const cloudMap: Record<WeatherConditions, CloudTypes> = {
     clear: 'clear skies',
     fog: 'clear skies',
@@ -106,8 +75,6 @@ const fairWeather = (): WeatherPhenomena => ({
   wind: window.dice.roll(1, 4)
 })
 
-const freezingPoint = 33
-
 const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => WeatherPhenomena> = {
   stormy: ({ clouds, rain, temp }) => {
     let { weather, wind } = fairWeather()
@@ -128,7 +95,7 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
       wind = window.dice.roll(2, 6)
       if (rained) {
         weather = 'spattering rain'
-        if (temp <= freezingPoint) {
+        if (temp <= TEMPERATURE.freezingPoint) {
           weather = 'ice crystals'
         }
       }
@@ -141,47 +108,46 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
       wind = window.dice.roll(2, 4)
       if (rain > window.dice.random) {
         weather = 'spattering rain'
-        if (temp <= freezingPoint) {
+        if (temp <= TEMPERATURE.freezingPoint) {
           weather = 'ice crystals'
         }
       }
     } else if (clouds === 'stratus clouds') {
       wind = window.dice.roll(2, 4)
       weather = 'spattering rain'
-      if (temp <= freezingPoint) {
+      if (temp <= TEMPERATURE.freezingPoint) {
         weather = 'tiny flakes'
       }
       if (rain > window.dice.random) {
         weather = 'pelting rain'
-        if (temp <= freezingPoint) {
+        if (temp <= TEMPERATURE.freezingPoint) {
           weather = 'snow flurry'
         }
       }
     } else if (clouds === 'cumulus clouds') {
       wind = window.dice.roll(1, 6)
       weather = 'drizzle'
-      if (temp <= freezingPoint) {
+      if (temp <= TEMPERATURE.freezingPoint) {
         weather = 'dusting'
       }
       if (rain > window.dice.random) {
         wind = window.dice.roll(2, 6)
         weather = 'rain shower'
-        if (temp <= freezingPoint) {
+        if (temp <= TEMPERATURE.freezingPoint) {
           weather = 'snowfall'
         }
       }
     }
     return { wind, weather }
   },
-  windy: ({ climate }) => {
+  windy: ({ climate, vegetation }) => {
     let { weather, wind } = fairWeather()
-    const desert = climate.terrain === 'desert'
-    const zone = CLIMATE.zone[climate.latitude]
+    const desert = vegetation === 'desert'
     wind = window.dice.roll(2, desert ? 9 : 7)
     if (wind >= 12 && desert) {
-      if (zone === 'tropical') {
+      if (climate === 'tropical' || climate === 'subtropical') {
         weather = 'sand storm'
-      } else if (zone === 'temperate' || climate.latitude === 'boreal') {
+      } else if (climate === 'boreal' || climate === 'temperate') {
         weather = 'dust storm'
       }
     }
@@ -190,11 +156,13 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
   fog: ({ rain, temp }) => {
     const fair = fairWeather()
     let { weather } = fair
-    weather = temp >= freezingPoint ? 'dew' : 'cold surface'
+    weather = temp >= TEMPERATURE.freezingPoint ? 'dew' : 'cold surface'
     const intensity = window.dice.random
-    if (rain > intensity) weather = temp >= freezingPoint ? 'fog' : temp >= -30 ? 'rime' : 'ice fog'
-    else if (rain * 2 > intensity) weather = temp >= freezingPoint ? 'mist' : 'frost'
-    else if (rain * 3 > intensity) weather = temp >= freezingPoint ? 'thin mist' : 'thin frost'
+    if (rain > intensity)
+      weather = temp >= TEMPERATURE.freezingPoint ? 'fog' : temp >= -30 ? 'rime' : 'ice fog'
+    else if (rain * 2 > intensity) weather = temp >= TEMPERATURE.freezingPoint ? 'mist' : 'frost'
+    else if (rain * 3 > intensity)
+      weather = temp >= TEMPERATURE.freezingPoint ? 'thin mist' : 'thin frost'
     return { wind: fair.wind, weather }
   },
   clear: () => ({ ...fairWeather() }),
@@ -205,7 +173,8 @@ const weatherPhenomena: Record<WeatherConditions, (_params: WeatherParams) => We
 const proceduralWeather = (params: {
   rainChance: number
   temp: number
-  biome: Climate
+  climate: Cell['climate']
+  vegetation: Cell['vegetation']
   time: TimeOfDay
 }) => {
   const condition = window.dice.weightedChoice<WeatherConditions>(
@@ -227,7 +196,8 @@ const proceduralWeather = (params: {
     clouds: cloudType,
     rain: params.rainChance,
     temp: params.temp,
-    climate: params.biome
+    climate: params.climate,
+    vegetation: params.vegetation
   })
   const windSpeed = windMap(wind)
   const cloudy = weather === 'clear skies' && cloudType !== 'clear skies'
@@ -238,7 +208,7 @@ const proceduralWeather = (params: {
     },
     heat: {
       degrees: params.temp,
-      desc: tempDescriptor(params.temp)
+      desc: TEMPERATURE.describe(params.temp)
     },
     conditions: cloudy ? 'cloudy' : weather,
     clouds: cloudType
@@ -246,42 +216,21 @@ const proceduralWeather = (params: {
 }
 
 export const WEATHER = {
-  heat: (params: { cell: Cell; month: number }) => {
-    const { cell } = params
-    const month = params.month + 1
-    const { summer, winter } = cell.heat
-    const amp = Math.abs(summer - winter) / 2
-    const base = (summer + winter) / 2
-    const shift = summer > winter ? 4 : 10
-    return amp * Math.sin((month - shift) * (Math.PI / 6)) + base
-  },
-  rain: (params: { cell: Cell; month: number }) => {
-    const { cell } = params
-    const month = params.month + 1
-    const { summer, winter } = cell.rain
-    const amp = Math.abs(summer - winter) / 2
-    const base = (summer + winter) / 2
-    const shift = summer > winter ? 4 : 10
-    return amp * Math.sin((month - shift) * (Math.PI / 6)) + base
-  },
   conditions: ({
     cell,
     month = new Date(window.world.date).getMonth(),
     color
   }: WeatherConditionsParams) => {
+    const { climate, vegetation } = cell
     // day temperature
-    const biome = CLIMATE.holdridge[cell.climate]
-    const rain = scaleLinear(
-      MAP_METRICS.rain.rain,
-      [0.92, 0.8, 0.68, 0.54, 0.42, 0.3, 0.18, 0.06]
-    )(WEATHER.rain({ cell, month }))
-    const meanTemp = MATH.conversion.temperature.celsius.fahrenheit(WEATHER.heat({ cell, month }))
+    const rain = RAIN.monthly.chance({ cell, month })
+    const meanTemp = MATH.conversion.temperature.celsius.fahrenheit(
+      TEMPERATURE.monthly.mean({ cell, month })
+    )
     let localTemp = window.dice.norm(meanTemp, 4)
     const diff = localTemp - meanTemp
     const variance: TemperatureVariance = diff >= 8 ? 'warmer' : diff <= -8 ? 'colder' : 'normal'
     // night temperature
-    const diurnalHeat = CLIMATE.diurnalVariation(biome)
-    const diurnalVar = Math.max(1, window.dice.norm(...diurnalHeat))
     const time = window.dice.weightedChoice<TimeOfDay>([
       { w: 0.05, v: 'dawn' },
       { w: 0.35, v: 'morning' },
@@ -289,14 +238,16 @@ export const WEATHER = {
       { w: 0.05, v: 'dusk' },
       { w: 0.2, v: 'night' }
     ])
-    const night = time === 'night' || time === 'dusk'
-    if (night) localTemp -= diurnalVar
-    const weather = proceduralWeather({ rainChance: rain, temp: localTemp, biome, time })
-    return `${season(month)}, ${time}, ${TEXT.decorate({
+    const weather = proceduralWeather({
+      rainChance: rain,
+      temp: localTemp,
+      climate,
+      vegetation,
+      time
+    })
+    return `${TIME.season(month)}, ${time}, ${TEXT.decorate({
       label: weather.heat.desc,
-      tooltip: `${MAP_METRICS.temperature.format(
-        MATH.conversion.temperature.fahrenheit.celsius(localTemp)
-      )}`,
+      tooltip: `${MATH.conversion.temperature.fahrenheit.celsius(localTemp)}`, // FIX ME
       color: color
     })}${
       variance === 'normal'

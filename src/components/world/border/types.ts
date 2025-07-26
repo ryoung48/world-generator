@@ -1,11 +1,10 @@
-import { Province } from '../../../models/regions/provinces/types'
-import { Region } from '../../../models/regions/types'
+import { Province } from '../../../models/provinces/types'
 import { DrawMapParams } from '../shapes/types'
 import { MapStyle } from '../types'
 
 export type DrawBorderParams = DrawMapParams & {
   style: MapStyle
-  month: number
-  nations: Region[]
+  nations: Province[]
+  nationSet: Set<number>
   province: Province
 }

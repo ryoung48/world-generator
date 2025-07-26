@@ -1,4 +1,4 @@
-import { Hub } from '../regions/sites/hubs/types'
+import { Hub } from '../provinces/hubs/type'
 import type { Profession } from './professions/types'
 import type { Personality, Quirk } from './traits/types'
 

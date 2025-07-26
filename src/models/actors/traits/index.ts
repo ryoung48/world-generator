@@ -1,8 +1,8 @@
 import { range } from 'd3'
 
 import { SPECIES } from '../../heritage/species'
-import { PROVINCE } from '../../regions/provinces'
-import { HUB } from '../../regions/sites/hubs'
+import { PROVINCE } from '../../provinces'
+import { HUB } from '../../provinces/hubs'
 import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
 import { PROFESSION } from '../professions'
@@ -63,15 +63,7 @@ const hobbyist: Quirk[] = [
   'occultist',
   'medic'
 ]
-const relations: Quirk[] = [
-  'doomed love',
-  'broken heart',
-  'betrothed',
-  'forbidden romance',
-  'load-bearing relationship',
-  'troublesome friend',
-  'lovesick fool'
-]
+const relations: Quirk[] = ['broken heart', 'betrothed', 'forbidden romance']
 const talent: Quirk[] = [
   'well-off',
   'struggling',
@@ -137,11 +129,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
     constraints: { youthful: true },
     tooltip: 'is the bride or groom in an upcoming marriage'
   },
-  'betting it all': {
-    tooltip: 'has gambled everything on a risky venture and is desperate for it to succeed'
-  },
   'bitter grudge': {
-    conflicts: ['persecuting foe'],
     tooltip:
       'has a deep-seated hatred for someone and is always looking for an opportunity to get revenge'
   },
@@ -156,9 +144,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   'black sheep': {
     tooltip: 'is an outcast within their {family|profession} due to some past transgression'
-  },
-  'blithe idealist': {
-    tooltip: 'has grand ambitions and is willing to sacrifice everything to achieve it'
   },
   blighted: {
     tooltip: 'shows subtle signs of sorcerous mutations'
@@ -184,10 +169,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   'burnt out': {
     tooltip: 'has lost the passion for their work'
-  },
-  'chance at glory': {
-    tooltip:
-      'has been given a once-in-a-lifetime opportunity to achieve their dreams, but it comes at a great cost'
   },
   charismatic: {
     conflicts: charisma,
@@ -278,12 +259,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'distrustful of magic': {
     constraints: { sorcerer: false },
     tooltip: 'suspicious of magic users, may react unpredictably around them'
-  },
-  'doomed love': {
-    conflicts: relations,
-    constraints: { youthful: true },
-    tooltip:
-      "{is in love with someone who is {utterly unobtainable|wholly disinterested in their devotion|profoundly unhealthy in their affections}|is the unwilling object of someone's {unhealthy|unwanted} affections}"
   },
   'drug addict': {
     conflicts: vice,
@@ -446,17 +421,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   'lives for today': {
     tooltip: 'seeks immediate ends without regard for the future'
   },
-  'load-bearing relationship': {
-    tooltip:
-      'has a {child|spouse|friend|associate} that they rely on for {emotional support|practical assistance}',
-    conflicts: relations
-  },
-  'lovesick fool': {
-    tooltip:
-      'absolutely and utter smitten with someone, to the point where they are {neglecting|ignoring} critical situations that threaten to explode into outright disaster',
-    conflicts: relations,
-    constraints: { youthful: true }
-  },
   lustful: {
     constraints: { austere: false, youthful: true },
     tooltip: 'has a wandering eye and is always looking for a new lover'
@@ -485,9 +449,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   melancholic: {
     conflicts: ['optimistic'],
     tooltip: '{death of a {friend|relative}|terrible betrayal|ruined relationship|crushing failure}'
-  },
-  'misplaced trust': {
-    tooltip: 'has great trust in someone who is secretly plotting against them'
   },
   'multilingual interpreter': {
     tooltip: 'fluent in various languages, facilitating communication'
@@ -554,10 +515,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
   perceptive: {
     conflicts: wisdom,
     tooltip: 'notices fine details through sight, hearing, and smell'
-  },
-  'persecuting foe': {
-    conflicts: ['bitter grudge'],
-    tooltip: 'has a powerful nemesis that seeks to {destroy|disgrace} them'
   },
   'petty criminal': {
     constraints: { poor: true },
@@ -701,10 +658,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
     text: 'well-traveled',
     tooltip: 'well versed in many lands and cultures'
   },
-  'troublesome friend': {
-    tooltip:
-      'has a friend who is prone to {poor decisions|reckless indulgences} and is need of help getting them out of trouble'
-  },
   'underworld connection': {
     constraints: { urban: true },
     tooltip:
@@ -754,14 +707,14 @@ const rollQuirks = ({ place, npc, role }: QuirkParams) => {
   const { key: profession } = npc.profession
   const culture = window.world.cultures[npc.culture]
   const province = HUB.province(place)
-  const { local, ruling } = PROVINCE.cultures(province)
+  const overlord = PROVINCE.nation(province)
   const { appearance } = culture
   const species = culture.species
   const speciesDetails = SPECIES.lookup[species]
   const { strata, official, quirks: _quirks = {}, martial } = PROFESSION.lookup[profession]
   const params = {
     coastal: window.world.cells[place.cell].beach,
-    foreigner: local.culture !== culture.idx && ruling.culture !== culture.idx,
+    foreigner: province.culture !== culture.idx && overlord.culture !== culture.idx,
     callous: personality.some(trait => trait === 'callous'),
     compassionate: personality.some(trait => trait === 'compassionate'),
     generous: personality.some(trait => trait === 'generous'),

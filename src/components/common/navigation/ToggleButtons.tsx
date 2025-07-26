@@ -12,11 +12,12 @@ const classes = {
 export function ToggleButtons<T extends string>(props: {
   selection: T[]
   content: (_selected: T, _i: number) => ReactNode
+  controls?: ReturnType<typeof useState<T>>
 }) {
-  const { selection, content } = props
-  const [value, setValue] = useState(0)
+  const { selection, content, controls } = props
+  const [value, setValue] = controls ?? useState(selection[0])
 
-  const handleChange = (_: SyntheticEvent, newValue: number) => {
+  const handleChange = (_: SyntheticEvent, newValue: T) => {
     if (newValue !== null) setValue(newValue)
   }
   return (
@@ -31,14 +32,14 @@ export function ToggleButtons<T extends string>(props: {
           className={classes.tabs}
         >
           {selection.map((label, i) => (
-            <ToggleButton key={i} value={i} sx={{ fontSize: 9 }}>
+            <ToggleButton key={i} value={label} sx={{ fontSize: 9 }}>
               {label}
             </ToggleButton>
           ))}
         </ToggleButtonGroup>
       </Grid>
       <Grid item xs={12}>
-        {content(selection[value], value)}
+        {content(value, selection.indexOf(value))}
       </Grid>
     </Grid>
   )

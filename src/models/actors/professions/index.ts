@@ -1,5 +1,5 @@
-import { PROVINCE } from '../../regions/provinces'
-import { HUB } from '../../regions/sites/hubs'
+import { PROVINCE } from '../../provinces'
+import { HUB } from '../../provinces/hubs'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 import { TEXT } from '../../utilities/text'
 import { TRAIT } from '../../utilities/traits'
@@ -1701,8 +1701,8 @@ const professionRandom = (place: ActorSpawnParams['place']) => {
   const nation = PROVINCE.nation(province)
   const kingdom = nation.size === 'empire' || nation.size === 'kingdom'
   const coastal = place.coastal
-  const war = province.conflict >= 0
-  const capital = province.capital
+  const war = province.battleground >= 0
+  const capital = PROVINCE.capital(province)
   const leadership = nation.government !== 'fragmented'
   const [selected] = TRAIT.selection({
     available: community.reduce((acc: Partial<Record<Profession, ProfessionDetails>>, { v, w }) => {

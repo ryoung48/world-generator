@@ -3,7 +3,6 @@ export const cssColors = {
   blue: '#0d1456',
   purple: '#420d54',
   secondary: '#c9ad6a',
-  plague: '#4d5e27',
   background: {
     map: '#e6edef',
     cards: '#f7f2e1',

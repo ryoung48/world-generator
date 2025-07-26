@@ -1,23 +1,24 @@
 import { Point } from '../utilities/math/points/types'
-import { ClimateKey } from './climate/types'
 
 export interface Cell extends Point {
   idx: number
   score: number
   // coastal attributes
-  coastalEdges?: [Point, Point][]
+  coastalEdges?: { vertices: [Point, Point]; neighbor: number }[]
   isCoast?: boolean
   waterSources?: Set<number>
   // mountains
   isMountains?: boolean
   mountain?: number
+  plateau?: boolean
+  volcanic?: boolean
   // location
-  region: number
   province: number
+  region: number
   location?: number
-  regionBorder?: boolean
   // features
   h: number
+  elevation?: number
   landmark: number
   isWater?: boolean
   wasLake?: boolean
@@ -25,22 +26,34 @@ export interface Cell extends Point {
   ocean?: boolean
   oceanRegion?: number
   shallow?: boolean
-  rain: { east: number; west: number; winter: number; summer: number }
-  heat?: { winter?: number; summer?: number }
-  climate?: ClimateKey
-  topography?:
-    | 'rocky beach'
-    | 'sandy beach'
-    | 'salt flats'
-    | 'marsh'
-    | 'flatlands'
-    | 'rolling hills'
-    | 'rugged hills'
-    | 'mountains'
+  rain: {
+    east: number
+    west: number
+    winter: number
+    summer: number
+    annual: number
+    pattern?: number[]
+  }
+  heat: { min: number; max: number; mean: number }
+  pressure?: number[]
+  monsoon?: boolean
+  topography?: 'coastal' | 'marsh' | 'flat' | 'hills' | 'plateau' | 'mountains'
+  vegetation?: 'desert' | 'sparse' | 'grasslands' | 'woods' | 'forest' | 'jungle'
+  climate?:
+    | 'arctic'
+    | 'subarctic'
+    | 'boreal'
+    | 'temperate'
+    | 'subtropical'
+    | 'tropical'
+    | 'infernal'
+    | 'chaotic'
+  river?: number
+  nRiver?: number
   // distances
   oceanDist: number
   mountainDist: number
-  coastal?: boolean
+  landDist: number
   // roads & cities
   roads: { land: number[]; sea: number[] }
 }
@@ -48,4 +61,9 @@ export interface Cell extends Point {
 export interface CellSpawnParams {
   idx: number
   point: [number, number]
+}
+
+export interface CellNeighborsParams {
+  cell: Cell
+  depth?: number
 }

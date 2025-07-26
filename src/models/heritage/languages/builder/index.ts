@@ -58,7 +58,7 @@ export const initClusters = (params: {
       src: src,
       key: 'region',
       ending,
-      stopChance: 0,
+      stopChance: src.articleChance,
       variation: 15,
       longNames: 1
     }),

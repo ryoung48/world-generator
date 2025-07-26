@@ -46,6 +46,9 @@ export const MATH = {
       },
       fahrenheit: {
         celsius: (fahrenheit: number) => ((fahrenheit - 32) * 5) / 9
+      },
+      kelvin: {
+        celsius: (kelvin: number) => kelvin - 273.15
       }
     }
   },

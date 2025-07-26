@@ -16,12 +16,12 @@ export const ship__icons: Record<ship_icon, IconDef> = {
     opacity: 0.8
   },
   ship_3: {
-    height,
+    height: 3,
     path: 'terrain/elements/ships/3.png',
     opacity: 0.8
   },
   ship_4: {
-    height,
+    height: 3,
     path: 'terrain/elements/ships/4.png',
     opacity: 0.8
   },
@@ -36,12 +36,12 @@ export const ship__icons: Record<ship_icon, IconDef> = {
     opacity: 0.8
   },
   ship_15: {
-    height,
+    height: 3,
     path: 'terrain/elements/ships/15.png',
     opacity: 0.8
   },
   ship_16: {
-    height,
+    height: 3,
     path: 'terrain/elements/ships/16.png',
     opacity: 1
   }

@@ -43,7 +43,7 @@ export class Dice {
     max = Math.floor(max)
     return Math.floor(this.random * (max - min + 1)) + min
   }
-  // https://en.wikipedia.org/wiki/Marsaglia_polar_method
+  // https://en.wikipedia.org/wiki/Marsaglia_arctic_method
   public norm(mean: number, dev: number) {
     if (this.spare) {
       const spare = this.spare
@@ -146,13 +146,6 @@ export class Dice {
     const lum = this.randint(20, 60)
     return `hsl(${hue}, ${saturation}%, ${lum}%)`
   }
-  public darkColor(target?: [number, number]) {
-    const space = target ?? [0, 360]
-    const hue = this.randint(...space)
-    const saturation = this.randint(20, 80)
-    const lum = this.randint(20, 40)
-    return `hsl(${hue}, ${saturation}%, ${lum}%)`
-  }
   public generateId() {
     return DICE.id(this.random)
   }
@@ -166,12 +159,7 @@ export class Dice {
   }
   public distribute<T>({ count, dist }: DistributionParams<T>) {
     const total = dist.reduce((sum, { w }) => sum + w, 0)
-    return window.dice.shuffle(
-      dist
-        .filter(({ w }) => w > 0)
-        .map(({ v, w }) => Array<T>(Math.ceil((w / total) * count)).fill(v))
-        .flat()
-    )
+    return dist.map(({ w, v }) => ({ v, w: (w / total) * count }))
   }
 }
 

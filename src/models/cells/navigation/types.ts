@@ -1,4 +1,4 @@
-import { Province } from '../../regions/provinces/types'
+import { Province } from '../../provinces/types'
 import { RouteTypes } from '../../types'
 
 interface PathParams {
@@ -23,7 +23,6 @@ export type AddTradeRouteParams = {
   src: Province
   dst: Province
   limit?: number
-  blacklist: Record<string, number[]>
   type: RouteTypes
 }
 

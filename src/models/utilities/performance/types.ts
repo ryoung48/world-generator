@@ -17,6 +17,7 @@ export type MemoCache = { store: Record<string, Record<string, unknown>> }
 export type MemoDecorate<T, K extends unknown[]> = {
   f: GenericFunction<T, K>
   dirty?: (..._args: K) => boolean
+  keyBuilder?: (..._args: K) => string
 }
 export type ProfileDecorate<T, K extends unknown[]> = {
   f: GenericFunction<T, K>

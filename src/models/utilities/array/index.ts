@@ -28,6 +28,12 @@ export const ARRAY = {
     }
     return modes
   },
+  counter: <T extends string | number | symbol>(arr: T[]): Record<T, number> => {
+    return arr.reduce((acc, item) => {
+      acc[item] = (acc[item] || 0) + 1
+      return acc
+    }, {} as Record<T, number>)
+  },
   partition: {
     /**
      * partitions array items

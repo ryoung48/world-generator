@@ -34,6 +34,14 @@ The goal of this project is to create a complex earth-like simulation set loosel
 ![developed regions](./gallery/tropics_2.gif)
 *Zoomed in view of a large island in the tropics (1s1qo5mm3kn)*
 
+## Roadmap
+* corruption: jungles|wastes :: burning|frozen|noxious|radioactive|necrotic :: mutating|maddening :: storms|earthquakes|volcanic|darkness
+* minorities: nomadic|seafaring|tribal|demihuman|eldritch
+* demihumans: half-blighted (brute|orlan|exotic|verdant|lithic) :: beastfolk (bovine|feline|draconic|avian)
+* dark cults & heresy
+* vassals, tributaries, colonies
+* rebellions: separatists|pretenders|religious|slaves|estate (peasants|merchants|clergy|aristocrats)
+
 ## Project setup
 ```
 npm install
@@ -72,6 +80,7 @@ npm run lint
 1. https://kmalexander.com/free-stuff/fantasy-map-brushes/
 2. https://www.deviantart.com/starraven/art/Sketchy-Cartography-Brushes-198264358
 3. https://www.deviantart.com/eragon2589/art/Cartography-brushes-498111706
+4. https://www.deviantart.com/djekspek/art/Trees-on-Maps-Reference-291587839
 
 ### Clouds:
 1. https://eoimages.gsfc.nasa.gov/images/imagerecords/57000/57747/cloud_combined_2048.jpg

@@ -1,7 +1,6 @@
-import { geoInterpolate } from 'd3'
+import { geoInterpolate, range } from 'd3'
 
 import { MATH } from '..'
-import { dayMS } from '../time'
 import { Directions, Point } from './types'
 
 export const POINT = {
@@ -38,7 +37,14 @@ export const POINT = {
       else if (deg > 135 && deg <= 225) return 'W'
       else if (deg > 225 && deg <= 315) return 'S'
       return 'E'
-    }
+    },
+    opposite: {
+      N: 'S',
+      S: 'N',
+      E: 'W',
+      W: 'E'
+    } as Record<Directions, Directions>,
+    random: () => window.dice.choice<Directions>(['N', 'S', 'E', 'W'])
   },
   distance: {
     euclidean: (params: { points: [Point, Point] }) => {
@@ -46,10 +52,10 @@ export const POINT = {
       const [p1, p2] = points
       return MATH.distance.euclidean([p1.x, p1.y], [p2.x, p2.y])
     },
-    geo: (params: { points: [Point, Point] }) => {
-      const { points } = params
+    geo: (params: { points: [Point, Point]; radius?: number }) => {
+      const { points, radius = window.world.radius } = params
       const [p1, p2] = points
-      return MATH.distance.geo([p1.x, p1.y], [p2.x, p2.y])
+      return MATH.distance.geo([p1.x, p1.y], [p2.x, p2.y]) * radius
     }
   },
   isOnEdge: {
@@ -73,9 +79,9 @@ export const POINT = {
   sameEdge: (e1: number[], e2: number[]) => {
     return e1[0] === e2[0] && e1[1] === e2[1]
   },
-  travel: (params: { src: Point; dst: Point; mpd?: number }) => {
-    const { src, dst, mpd = 24 } = params
-    const miles = POINT.distance.geo({ points: [src, dst] })
-    return { miles, duration: (miles / mpd) * dayMS }
+  random: (count: number): [number, number][] => {
+    return range(count).map(() => {
+      return [360 * window.dice.random, 90 * (window.dice.random - window.dice.random)]
+    })
   }
 }

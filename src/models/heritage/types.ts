@@ -1,9 +1,9 @@
-import { Region } from '../regions/types'
+import { Province } from '../provinces/types'
 import { Hue } from '../utilities/color'
 import { Trait } from '../utilities/traits/types'
 import { FindParams } from '../utilities/types'
 import { Language } from './languages/types'
-import { SpeciesAppearance, SpeciesKey } from './species/types'
+import { Species, SpeciesAppearance } from './species/types'
 
 type CulturalValue =
   | 'adaptation'
@@ -62,11 +62,21 @@ export type CultureValues = Record<
 export interface Culture {
   idx: number
   name: string
-  regions: number[]
-  species: SpeciesKey
+  provinces: number[]
+  neighbors: number[]
+  species: Species
   appearance: SpeciesAppearance
   // cultural traits
   language: Language
+  religion:
+    | 'animistic'
+    | 'syncretic'
+    | 'monotheistic'
+    | 'dualistic'
+    | 'polytheistic'
+    | 'nontheistic'
+    | 'pluralistic'
+    | 'atheistic'
   values: CulturalValue[]
   fashion: { color: Hue; scheme: string }
   display: { color: string; hue: number }
@@ -75,8 +85,7 @@ export interface Culture {
 export type CultureSortParams = FindParams<Culture>
 
 export type CultureSpawnParams = {
-  regions: Region[]
-  species: SpeciesKey
+  provinces: Province[]
 }
 
 export type CultureColorParams = {
