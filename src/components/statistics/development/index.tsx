@@ -7,7 +7,7 @@ import { PROVINCE } from '../../../models/provinces'
 import { ARRAY } from '../../../models/utilities/array'
 import { TEXT } from '../../../models/utilities/text'
 import { fonts } from '../../theme/fonts'
-import { MAP_METRICS } from '../../world/shapes/metrics'
+import { MAP_METRICS } from '../../world/paint/shapes/metrics'
 
 export const DevelopmentChart = () => {
   const raw = window.world.provinces.map(province =>

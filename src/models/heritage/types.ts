@@ -1,5 +1,6 @@
 import { Province } from '../provinces/types'
 import { Hue } from '../utilities/color'
+import { TaggedEntity } from '../utilities/text/types'
 import { Trait } from '../utilities/traits/types'
 import { FindParams } from '../utilities/types'
 import { Language } from './languages/types'
@@ -59,8 +60,8 @@ export type CultureValues = Record<
   Trait<CulturalValue, { coastal?: boolean }> & { text: string }
 >
 
-export interface Culture {
-  idx: number
+export interface Culture extends TaggedEntity {
+  tag: 'culture'
   name: string
   provinces: number[]
   neighbors: number[]

@@ -1,4 +1,4 @@
-import { TerrainIcon } from '../../../components/world/icons/terrain/types'
+import { TerrainIcon } from '../../../components/world/paint/icons/terrain/types'
 import { CELL } from '../../cells'
 import { GEOGRAPHY } from '../../cells/geography'
 import { LOCATION } from '../../cells/locations'

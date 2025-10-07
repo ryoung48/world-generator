@@ -15,7 +15,7 @@ import { GEOGRAPHY } from '../../../models/cells/geography'
 import { NATION } from '../../../models/nations'
 import { MATH } from '../../../models/utilities/math'
 import { TEXT } from '../../../models/utilities/text'
-import { MAP_METRICS } from '../../world/shapes/metrics'
+import { VIEW } from '../../context'
 
 interface StatCardProps {
   title: string
@@ -98,6 +98,7 @@ interface WorldStatisticsProps {
 }
 
 const WorldStatistics: FC<WorldStatisticsProps> = () => {
+  const { state } = VIEW.context()
   const nations = NATION.nations()
   const totalNations = nations.length
   const totalPopulation = window.world.provinces.reduce(
@@ -124,11 +125,11 @@ const WorldStatistics: FC<WorldStatisticsProps> = () => {
   ).length
 
   // Add calculations for land and ocean area
-  const units = MAP_METRICS.metric ? 'km²' : 'mi²'
+  const units = state.units === 'metric' ? 'km²' : 'mi²'
   const land = GEOGRAPHY.land()
   const cellArea = window.world.cell.area
   let landArea = land.length * cellArea
-  if (MAP_METRICS.metric) {
+  if (state.units === 'metric') {
     landArea = MATH.conversion.area.mi.km(landArea)
   }
   return (

@@ -8,6 +8,7 @@ export type War = {
   provinces: number[]
   status: 'decisive' | 'stalemated' | 'struggling'
   invader: number
+  defender: number
 }
 
 export type SpawnWarParams = {

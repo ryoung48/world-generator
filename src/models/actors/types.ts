@@ -1,4 +1,5 @@
 import { Hub } from '../provinces/hubs/type'
+import { TaggedEntity } from '../utilities/text/types'
 import type { Profession } from './professions/types'
 import type { Personality, Quirk } from './traits/types'
 
@@ -16,9 +17,10 @@ export type LifePhase = typeof lifeCycle[number]
 
 export type Gender = 'male' | 'female'
 
-export interface Actor {
-  idx: number
+export interface Actor extends TaggedEntity {
+  tag: 'actor'
   name: string
+  province: number
   profession: { key: Profession; title: string }
   culture: number
   gender: Gender

@@ -56,6 +56,7 @@ export const WAR = {
     window.world.wars.push({
       idx,
       invader: attacker.idx,
+      defender: defender.idx,
       belligerents: `${TEXT.decorate({
         label: attacker.name.toLowerCase(),
         tooltip: 'invader'

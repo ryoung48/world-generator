@@ -4,24 +4,22 @@ import { Province } from '../../provinces/types'
 import { ColorHue } from '../../utilities/color'
 import { WeightedDistribution } from '../../utilities/math/dice/types'
 
-// human|dwarf|elf|orc|hobgoblin|goblin|ogre|gnoll|centaur|satyr|draconic|bovine|feline|avian|verdant
+// Expanded species list inspired by D&D 5e and fantasy settings
 export type Species =
   | 'human'
+  | 'ogre'
   | 'orc'
   | 'goblin'
   | 'orlan'
   | 'dwarf'
   | 'elf'
   | 'satyr'
-  | 'verdant'
-  | 'lithic'
   | 'bovine'
   | 'feline'
   | 'gnoll'
   | 'draconic'
   | 'avian'
-  | 'arthropod'
-  | 'mollusc'
+  | 'centaur'
 
 export type SpeciesAppearance = {
   skin: {

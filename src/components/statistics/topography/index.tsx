@@ -7,7 +7,7 @@ import { Cell } from '../../../models/cells/types'
 import { ARRAY } from '../../../models/utilities/array'
 import { TEXT } from '../../../models/utilities/text'
 import { fonts } from '../../theme/fonts'
-import { MAP_METRICS } from '../../world/shapes/metrics'
+import { MAP_METRICS } from '../../world/paint/shapes/metrics'
 
 export const TopographyChart = () => {
   const raw = window.world.cells.filter(cell => cell.topography).map(cell => cell.topography)

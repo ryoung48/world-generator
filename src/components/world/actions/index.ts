@@ -2,7 +2,7 @@ import { mean, pointer, pointers as d3Pointers, select, zoom, ZoomBehavior } fro
 // @ts-ignore
 import versor from 'versor'
 
-import { MAP_SHAPES } from '../shapes'
+import { MAP_SHAPES } from '../paint/shapes'
 import { MouseoverParams, MoveToParams, ZoomEvent, ZoomParams } from './types'
 
 let zoomRef: ZoomBehavior<Element, unknown> = null

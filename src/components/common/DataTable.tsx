@@ -57,6 +57,24 @@ const classes = {
   footer: css`
     border-color: transparent !important;
   `,
+  compactFooter: css`
+    border-color: transparent !important;
+    .MuiTablePagination-toolbar {
+      min-height: 32px !important;
+      padding: 0 8px !important;
+    }
+    .MuiTablePagination-displayedRows,
+    .MuiTablePagination-selectLabel {
+      font-size: 10px !important;
+      margin: 0 !important;
+    }
+    .MuiTablePagination-actions {
+      margin-left: 8px !important;
+    }
+    .MuiIconButton-root {
+      padding: 4px !important;
+    }
+  `,
   expanded: css`
     padding: 15px;
     font-size: 0.88rem !important;
@@ -122,8 +140,9 @@ export function DataTable<T extends Object>(props: {
   expand?: TableRowExpansion<T>
   paging?: [number, Dispatch<SetStateAction<number>>]
   rowStyles?: (_item: T) => string | undefined
+  compactPagination?: boolean
 }) {
-  const { data, rowsPerPage = 10, rowStyles } = props
+  const { data, rowsPerPage = 10, rowStyles, compactPagination = false } = props
   const headers = props.headers.filter(header => !header.hidden)
   const [page, setPage] = props.paging ?? useState(0)
   const rows = data.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
@@ -160,7 +179,7 @@ export function DataTable<T extends Object>(props: {
           <TableFooter>
             <TableRow>
               <TablePagination
-                className={classes.footer}
+                className={compactPagination ? classes.compactFooter : classes.footer}
                 rowsPerPageOptions={[]}
                 count={data.length}
                 rowsPerPage={rowsPerPage}

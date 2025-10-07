@@ -407,9 +407,6 @@ const quirks: Record<Quirk, QuirkDetails> = {
     conflicts: charisma,
     tooltip: 'has a commanding presence and is feared by others'
   },
-  journaler: {
-    tooltip: 'keeps a detailed diary of their life, which could be used to blackmail them'
-  },
   'light sleeper': {
     conflicts: ['snores loudly'],
     tooltip: 'wakes at the slightest noise'
@@ -699,6 +696,94 @@ const quirks: Record<Quirk, QuirkDetails> = {
   xenophobic: {
     conflicts: foreigners,
     tooltip: 'hates foreigners and outsiders'
+  },
+  'absent-minded': {
+    conflicts: ['brilliant'],
+    tooltip: 'frequently forgets details, easily lost in thought'
+  },
+  'blood feud': {
+    tooltip: 'bound to a long-standing family or clan rivalry'
+  },
+  disfigured: {
+    tooltip: 'noticeable scars or deformities that draw attention'
+  },
+  'eldritch mark': {
+    tooltip: 'strange symbol burned or tattooed onto their flesh by otherworldly means'
+  },
+  frugal: {
+    conflicts: ['profligate spending'],
+    tooltip: 'avoids waste and hoards resources carefully'
+  },
+  'gentle giant': {
+    tooltip: 'imposing in size, but soft-spoken and kind-hearted'
+  },
+  'immaculate attire': {
+    tooltip: 'always perfectly dressed, not a thread out of place'
+  },
+  jaded: {
+    tooltip: 'once hopeful, now cynical and weary from experience'
+  },
+  'ornate jewelry': {
+    conflicts: ['accessory'],
+    constraints: { austere: false },
+    tooltip: 'never seen without lavish rings, chains, or brooches'
+  },
+  schemer: {
+    constraints: { honest: false },
+    tooltip: 'plots and maneuvers to outwit rivals'
+  },
+  sentimental: {
+    tooltip: 'holds onto keepsakes, treasures small memories'
+  },
+  'soft-hearted': {
+    constraints: { callous: false },
+    tooltip: 'easily swayed by appeals to mercy or compassion'
+  },
+  weathered: {
+    tooltip: 'skin and features show the marks of long exposure to the elements'
+  },
+  'absconded heir': {
+    constraints: { rich: true, youthful: true },
+    tooltip: 'fled their family estate, abandoning duties and inheritance'
+  },
+  anxious: {
+    tooltip: 'constantly worried, fiddles nervously when stressed'
+  },
+  'cursed bloodline': {
+    tooltip: 'descended from a family with a lingering magical curse'
+  },
+  'devoted mentor': {
+    constraints: { elderly: true },
+    tooltip: 'guides others with patience, though sometimes overbearing'
+  },
+  'forsaken by gods': {
+    constraints: { irreverent: true },
+    tooltip: 'believes divine powers turned against them, lives in bitterness'
+  },
+  fugitive: {
+    tooltip: 'on the run from law, guild, or rival powers'
+  },
+  iconoclast: {
+    tooltip: 'openly challenges traditions, faiths, or social structures'
+  },
+  'language keeper': {
+    constraints: { elderly: true },
+    tooltip: 'dedicated to preserving an old, dying tongue'
+  },
+  lonely: {
+    constraints: { gregarious: false },
+    tooltip: 'craves connection but struggles to maintain bonds'
+  },
+  'soft-spoken': {
+    constraints: { wrathful: false },
+    tooltip: 'rarely raises their voice, forces others to lean in to listen'
+  },
+  'sworn celibate': {
+    conflicts: ['lustful'],
+    tooltip: 'has vowed to abstain from romance or pleasure'
+  },
+  'tattooed scripture': {
+    tooltip: 'covered in sacred or profane writings etched into skin'
   }
 }
 

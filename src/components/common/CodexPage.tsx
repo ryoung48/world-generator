@@ -3,9 +3,10 @@ import { Grid } from '@mui/material'
 import { ReactNode } from 'react'
 
 import { PROVINCE } from '../../models/provinces'
+import { ENTITY } from '../../models/utilities/entities'
 import { VIEW } from '../context'
 import { fonts } from '../theme/fonts'
-import { HERALDRY } from '../world/shapes/heraldry'
+import { HERALDRY } from '../world/paint/shapes/heraldry'
 import { Heraldry } from './Heraldry'
 // import { PlayerCharacterView } from './PCs'
 import { CodexTitle } from './text/title'
@@ -30,8 +31,9 @@ const classes = {
 export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
   const { title, subtitle, content } = props
   const { state } = VIEW.context()
-  const province = window.world.provinces[state.loc.province]
+  const province = ENTITY.province(state.codex)
   const nation = PROVINCE.nation(province)
+
   return (
     <Grid container p={2} justifyContent='space-between'>
       <Grid item xs={7}>
@@ -48,12 +50,6 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
       <Grid item xs={12} my={1} className={classes.content}>
         {content}
       </Grid>
-      {/* <Grid item xs={12}>
-        <Divider className={classes.divider}>PCs</Divider>
-      </Grid>
-      <Grid item xs={12} mt={1} style={{ fontFamily: fonts.content, fontSize: 8 }}>
-        <PlayerCharacterView></PlayerCharacterView>
-      </Grid> */}
     </Grid>
   )
 }

@@ -4,21 +4,24 @@ export type Avatar = { pcs: number[]; cp: number }
 
 export type ViewState = {
   id: string
-  loc: { province: number }
   gps: { x: number; y: number; zoom: number }
   time: number
   loading: boolean
-  view: 'nation' | 'site'
+  codex: { tag: 'nation' | 'province' | 'culture' | 'actor'; idx: number }
+  units: 'metric' | 'imperial'
+  history: { tag: 'nation' | 'province' | 'culture' | 'actor'; idx: number }[]
 }
 
 export type ViewActions =
   | { type: 'init world'; payload: { id: string } }
   | {
       type: 'transition'
-      payload: { tag: ViewState['view']; province: number; idx?: number; zoom?: boolean }
+      payload: ViewState['codex'] & { zoom?: boolean }
     }
   | { type: 'update gps'; payload: { gps: ViewState['gps'] } }
   | { type: 'loading'; payload: boolean }
+  | { type: 'toggle units' }
+  | { type: 'back' }
 
 export type LoadingParams = {
   dispatch: Dispatch<ViewActions>

@@ -115,8 +115,6 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
     },
     sea: () => {
       GEOGRAPHY.landmarks('water').forEach(water => {
-        const landmark = window.world.landmarks[water]
-        if (!['ocean', 'sea'].includes(landmark.type)) return
         const settlementFilter = 1e3
         const neighbors = provinceNetworks({
           provinces: window.world.provinces.filter(p => {

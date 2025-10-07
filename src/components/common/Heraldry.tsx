@@ -2,7 +2,7 @@ import * as jdenticon from 'jdenticon'
 import React, { useEffect, useRef } from 'react'
 
 import { Province } from '../../models/provinces/types'
-import { HERALDRY } from '../world/shapes/heraldry'
+import { HERALDRY } from '../world/paint/shapes/heraldry'
 
 interface IdenticonProps {
   value: string

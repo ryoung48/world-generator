@@ -1,6 +1,6 @@
-import { cssColors } from "../../../components/theme/colors"
-import { Province } from "../../provinces/types"
-import { TEXT } from "../../utilities/text"
+import { cssColors } from '../../../components/theme/colors'
+import { Province } from '../../provinces/types'
+import { TEXT } from '../../utilities/text'
 
 const arctic = {
   moods: [

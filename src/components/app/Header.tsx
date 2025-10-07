@@ -34,7 +34,7 @@ export function Header(props: { stats: boolean; toggleStats: Dispatch<SetStateAc
                 </Typography>
               </Grid>
             </Grid>
-            <Grid item xs={3} container justifyContent='end' alignContent='center'>
+            <Grid item xs={3} container justifyContent='end' alignItems='center'>
               <Grid item px={1}>
                 <Button onClick={() => toggleStats(!stats)} disabled={!state.id}>
                   {stats ? 'world' : 'stats'}

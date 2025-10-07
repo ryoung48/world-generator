@@ -45,6 +45,20 @@ export const TEXT = {
         value
       ),
     compact: (value: number) => new Intl.NumberFormat(local, { notation: 'compact' }).format(value),
+    coordinates: (lat: number, lon: number): string => {
+      const convert = (decimalDegree: number, isLatitude: boolean): string => {
+        const degree: number = Math.floor(decimalDegree)
+        const direction = isLatitude
+          ? decimalDegree >= 0
+            ? 'N'
+            : 'S'
+          : decimalDegree >= 0
+          ? 'E'
+          : 'W'
+        return `${Math.abs(degree)}° ${direction}`
+      }
+      return `${convert(lat, true)},  ${convert(lon, false)}`
+    },
     long: (value: number, rounding = 1) =>
       new Intl.NumberFormat(local).format(Math.round(value / rounding) * rounding),
     list: (list: string[], ending: string) =>

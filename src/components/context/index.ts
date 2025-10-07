@@ -6,11 +6,12 @@ import { LoadingParams, ViewActions, ViewState } from './types'
 
 const init: ViewState = {
   id: '',
-  loc: { province: 0 },
   gps: { x: 0, y: 0, zoom: 0 },
   time: Date.now(),
   loading: false,
-  view: 'nation'
+  codex: { idx: 0, tag: 'nation' },
+  units: 'metric',
+  history: []
 }
 
 export const ViewContext = createContext(
@@ -30,18 +31,20 @@ export const VIEW = {
         // always zoom to the same region on every load
         const region = DICE.swap(updated.id, () => window.dice.choice(NATION.nations()))
         // set starting codex values
-        updated.loc = { province: region.idx }
+        updated.codex = { tag: 'nation', idx: region.idx }
         updated.time = window.world.date
         return updated
       }
       case 'transition': {
-        const { tag, province, zoom } = action.payload
-        const target = window.world.provinces[province]
-        const site = target.hub
+        const { tag, zoom, idx } = action.payload
         const updated = { ...state }
-        updated.loc = { province }
-        updated.view = tag
-        if (zoom) updated.gps = { x: site.x, y: site.y, zoom: tag === 'nation' ? 10 : 50 }
+        // Push current codex state to history before transitioning
+        updated.history = [...state.history, state.codex]
+        updated.codex = { tag, idx }
+        if (zoom && (tag === 'province' || tag === 'nation')) {
+          const target = window.world.provinces[idx]?.hub
+          updated.gps = { x: target.x, y: target.y, zoom: tag === 'nation' ? 10 : 50 }
+        }
         updated.time = window.world.date
         return updated
       }
@@ -52,6 +55,18 @@ export const VIEW = {
       }
       case 'loading': {
         return { ...state, loading: action.payload }
+      }
+      case 'toggle units': {
+        return { ...state, units: state.units === 'metric' ? 'imperial' : 'metric' }
+      }
+      case 'back': {
+        if (state.history.length === 0) return state
+        const updated = { ...state }
+        const [previous] = updated.history.slice(-1)
+        updated.history = updated.history.slice(0, -1)
+        updated.codex = previous
+        updated.time = window.world.date
+        return updated
       }
     }
   },

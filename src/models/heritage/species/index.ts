@@ -88,52 +88,42 @@ const goblinColoration: SpeciesBuilder['appearance'] = ({ zone }) => {
   }
 }
 
-const arthropodColoration: SpeciesBuilder['appearance'] = ({ zone }) => {
+const ogreColoration: SpeciesBuilder['appearance'] = ({ zone }) => {
+  const textures: HairTextures = ['straight', 'wavy']
   if (zone === 'tropical' || zone === 'subtropical') {
     return {
-      skin: {
-        colors: window.dice.sample(['iridescent green', 'metallic blue', 'copper', 'gold'], 2),
-        texture: window.dice.choice(['chitinous', 'segmented', 'crystalline'])
-      }
+      skin: { colors: window.dice.sample(['stone grey', 'dark grey', 'mottled grey'], 2) },
+      hair: { colors: ['black', 'brown'], textures }
     }
   } else if (zone === 'temperate' || zone === 'boreal') {
     return {
-      skin: {
-        colors: window.dice.sample(['iridescent purple', 'metallic silver', 'bronze', 'pearl'], 2),
-        texture: window.dice.choice(['chitinous', 'segmented', 'crystalline'])
-      }
+      skin: { colors: window.dice.sample(['blue-grey', 'slate grey', 'granite grey'], 2) },
+      hair: { colors: ['black', 'brown'], textures }
     }
   } else {
     return {
-      skin: {
-        colors: window.dice.sample(['iridescent blue', 'metallic grey', 'silver', 'white'], 2),
-        texture: window.dice.choice(['chitinous', 'segmented', 'crystalline'])
-      }
+      skin: { colors: window.dice.sample(['pale grey', 'white-grey', 'marble white'], 2) },
+      hair: { colors: ['black', 'brown'], textures }
     }
   }
 }
 
-const molluscColoration: SpeciesBuilder['appearance'] = ({ zone }) => {
+const centaurColoration: SpeciesBuilder['appearance'] = ({ zone }) => {
+  const textures: HairTextures = ['straight', 'wavy', 'curly']
   if (zone === 'tropical' || zone === 'subtropical') {
     return {
-      skin: {
-        colors: window.dice.sample(['pearl', 'coral', 'pink', 'orange'], 2),
-        texture: window.dice.choice(['smooth', 'ridged', 'spiraled'])
-      }
+      skin: { colors: window.dice.sample(['dark tan', 'light brown'], 2) },
+      hair: { colors: ['brown', 'black', 'auburn'], textures }
     }
   } else if (zone === 'temperate' || zone === 'boreal') {
     return {
-      skin: {
-        colors: window.dice.sample(['blue', 'purple', 'teal', 'green'], 2),
-        texture: window.dice.choice(['smooth', 'ridged', 'spiraled'])
-      }
+      skin: { colors: window.dice.sample(['fair', 'light tan', 'dark tan'], 2) },
+      hair: { colors: ['blond', 'brown', 'auburn', 'black'], textures }
     }
   } else {
     return {
-      skin: {
-        colors: window.dice.sample(['white', 'silver', 'pale blue', 'pale purple'], 2),
-        texture: window.dice.choice(['smooth', 'ridged', 'spiraled'])
-      }
+      skin: { colors: window.dice.sample(['fair', 'pale', 'light tan'], 2) },
+      hair: { colors: ['blond', 'white', 'brown'], textures }
     }
   }
 }
@@ -197,48 +187,6 @@ const lookup: Record<Species, SpeciesBuilder> = {
           skin: { colors: ['blue', 'dark blue'] },
           hair: { colors: ['white', 'blond', 'brown', 'black'], textures }
         }
-      }
-    }
-  },
-  verdant: {
-    traits: { skin: 'skin', height: 'average', bmi: 22, age: 'average' },
-    appearance: ({ zone }) => {
-      const textures: HairTextures = ['straight', 'wavy', 'curly']
-      const skin = window.dice.choice(['smooth bark', 'fibrous bark', 'fungal', 'mossy'])
-      if (zone === 'tropical' || zone === 'subtropical') {
-        return {
-          skin: { colors: ['green', 'dark green'], texture: skin },
-          hair: { colors: ['green', 'blond', 'red', 'brown'], textures }
-        }
-      } else if (zone === 'temperate' || zone === 'boreal') {
-        return {
-          skin: { colors: ['olive', 'light brown'], texture: skin },
-          hair: { colors: ['white', 'blond', 'brown'], textures }
-        }
-      } else {
-        return {
-          skin: { colors: ['dark grey', 'pale grey'], texture: skin },
-          hair: { colors: ['white', 'blond', 'brown'], textures }
-        }
-      }
-    }
-  },
-  lithic: {
-    traits: { skin: 'skin', height: 'average', bmi: 22, age: 'average' },
-    appearance: () => {
-      const textures: HairTextures = ['straight', 'wavy', 'curly']
-      const skin = window.dice.choice([
-        'crystalline clusters',
-        'metallic veins',
-        'smooth marble',
-        'cracked stone'
-      ])
-      return {
-        skin: {
-          colors: window.dice.sample(['pale grey', 'dark grey', 'white', 'black'], 2),
-          texture: skin
-        },
-        hair: { colors: ['blond', 'auburn', 'brown', 'black'], textures }
       }
     }
   },
@@ -373,26 +321,13 @@ const lookup: Record<Species, SpeciesBuilder> = {
     traits: { skin: 'skin', height: 'small', bmi: 20, age: 'fleeting' },
     appearance: goblinColoration
   },
-  arthropod: {
-    traits: {
-      skin: 'carapace',
-      height: 'average',
-      bmi: 23,
-      age: 'average',
-      piercings: false,
-      facialHair: 0
-    },
-    appearance: arthropodColoration
+  ogre: {
+    traits: { skin: 'skin', height: 'giant', bmi: 30, age: 'average' },
+    appearance: ogreColoration
   },
-  mollusc: {
-    traits: {
-      skin: 'skin',
-      height: 'average',
-      bmi: 24,
-      age: 'average',
-      facialHair: 0
-    },
-    appearance: molluscColoration
+  centaur: {
+    traits: { skin: 'skin', height: 'large', bmi: 24, age: 'enduring' },
+    appearance: centaurColoration
   }
 }
 

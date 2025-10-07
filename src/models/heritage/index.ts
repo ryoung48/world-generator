@@ -121,27 +121,31 @@ export const CULTURE = {
     culture.provinces.map(province => window.world.provinces[province]),
   spawn: ({ provinces }: CultureSpawnParams) => {
     const origin = provinces[0]
+    const cell = window.world.cells[origin.cell]
+    const continental = window.world.landmarks[cell.landmark].type === 'continent'
+    const { development } = origin
     const species: Species =
       provinces.length < 5
         ? window.dice.weightedChoice([
-            { w: 3, v: 'human' },
+            { w: 1, v: 'human' },
+            { w: development < 2 ? 1 : 0, v: 'ogre' },
             { w: 1, v: 'orc' },
             { w: 1, v: 'dwarf' },
             { w: 1, v: 'orlan' },
             { w: 1, v: 'elf' },
-            { w: 1, v: 'verdant' },
-            { w: 1, v: 'lithic' },
             { w: 1, v: 'satyr' },
             { w: 1, v: 'avian' },
             { w: 1, v: 'feline' },
             { w: 1, v: 'bovine' },
             { w: 1, v: 'draconic' },
-            { w: 1, v: 'gnoll' }
+            { w: 1, v: 'gnoll' },
+            { w: continental && development < 2 ? 1 : 0, v: 'centaur' }
           ])
         : window.dice.weightedChoice([
-            { w: 0.8, v: 'human' },
+            { w: 0.6, v: 'human' },
             { w: 0.1, v: 'orc' },
             { w: 0.1, v: 'dwarf' },
+            { w: 0.1, v: 'elf' },
             { w: 0.025, v: 'avian' },
             { w: 0.025, v: 'feline' },
             { w: 0.025, v: 'bovine' },
@@ -152,6 +156,7 @@ export const CULTURE = {
     const coastal = PROVINCE.coastal(origin)
     const culture: Culture = {
       idx: window.world.cultures.length,
+      tag: 'culture',
       name: LANGUAGE.word.unique({ lang: language, key: 'culture' }).word,
       provinces: provinces.map(province => province.idx),
       neighbors: [],

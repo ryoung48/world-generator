@@ -216,6 +216,12 @@ const proceduralWeather = (params: {
 }
 
 export const WEATHER = {
+  populateWind: () => {
+    // Import and populate wind fields for all cells
+    import('./wind').then(({ populateWindFields }) => {
+      populateWindFields()
+    })
+  },
   conditions: ({
     cell,
     month = new Date(window.world.date).getMonth(),
@@ -245,6 +251,13 @@ export const WEATHER = {
       vegetation,
       time
     })
+
+    // Use realistic wind data if available
+    if (cell.wind && cell.wind[month] && cell.wind[month].speed !== undefined) {
+      const cellWind = cell.wind[month]
+      weather.wind.speed = Math.round(cellWind.speed * 2.237) // Convert m/s to mph
+      weather.wind.desc = beaufort(weather.wind.speed)
+    }
     return `${TIME.season(month)}, ${time}, ${TEXT.decorate({
       label: weather.heat.desc,
       tooltip: `${MATH.conversion.temperature.fahrenheit.celsius(localTemp)}`, // FIX ME

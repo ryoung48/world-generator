@@ -1,22 +1,39 @@
 import { css } from '@emotion/css'
 import { Grid } from '@mui/material'
-import { CSSProperties } from 'react'
+import { CSSProperties, useState } from 'react'
 
-import { PROVINCE } from '../../../../models/provinces'
 import { TEXT } from '../../../../models/utilities/text'
 import { TaggedEntity } from '../../../../models/utilities/text/types'
 import { VIEW } from '../../../context'
 import { cssColors } from '../../../theme/colors'
+import { fonts } from '../../../theme/fonts'
 import { DetailedTableRow } from '../../DataTable'
 import { LazyTippy } from '../LazyTippy'
 import { DetailedToolTipParams } from './types'
 
+// Global tooltip state to prevent multiple tooltips
+let activeTooltipId: string | null = null
+const setActiveTooltip = (id: string | null) => {
+  activeTooltipId = id
+}
+
 const DescriptiveToolTip = ({ title, subtitle, content }: DetailedToolTipParams) => {
   return (
-    <Grid container>
+    <Grid container p={0.5}>
       <Grid item xs={12}>
         <DetailedTableRow
-          title={<span style={{ fontSize: 14 }}>{title}</span>}
+          title={
+            <span
+              style={{
+                fontSize: 35,
+                color: cssColors.primary,
+                fontWeight: 600,
+                fontFamily: fonts.maps
+              }}
+            >
+              {title}
+            </span>
+          }
           subtitle={
             <span style={{ fontSize: 10 }}>
               <StyledText color={cssColors.subtitle} text={subtitle}></StyledText>
@@ -26,9 +43,9 @@ const DescriptiveToolTip = ({ title, subtitle, content }: DetailedToolTipParams)
       </Grid>
       {content.map(({ label, text }) => {
         return (
-          <Grid key={label} item xs={12} style={{ fontSize: 10, color: cssColors.subtitle }}>
+          <Grid key={label} item xs={12} style={{ fontSize: 10 }}>
             <span>
-              <b>{label}:</b> <StyledText text={text} color={cssColors.subtitle}></StyledText>
+              <b>{label}:</b> <StyledText text={text}></StyledText>
             </span>
           </Grid>
         )
@@ -52,6 +69,8 @@ export function StyledText(props: { text: string; color?: string }) {
   const { dispatch } = VIEW.context()
   const { text } = props
   const baseColor = props.color ?? 'black'
+  const [componentId] = useState(() => Math.random().toString(36))
+
   return (
     <span className={style__links}>
       {text.split(/@(.+?)@/g).map((text, j) => {
@@ -60,17 +79,10 @@ export function StyledText(props: { text: string; color?: string }) {
             text.split('##')
           const tag = cat as TaggedEntity['tag']
           const idx = parseInt(i)
-          const onClick = ['nation', 'province'].includes(tag)
-            ? () =>
-                dispatch({
-                  type: 'transition',
-                  payload: {
-                    tag: tag === 'province' ? 'site' : tag,
-                    province:
-                      tag === 'province' ? idx : PROVINCE.nation(window.world.provinces[idx]).idx,
-                    zoom: true
-                  }
-                })
+          const onClick = ['nation', 'province', 'culture', 'actor'].includes(tag)
+            ? () => {
+                dispatch({ type: 'transition', payload: { tag, idx, zoom: true } })
+              }
             : false
           const textColor = color !== '' ? color : baseColor
           const underlineColor = underline || textColor
@@ -93,15 +105,30 @@ export function StyledText(props: { text: string; color?: string }) {
           ) : (
             <span style={style}>{label}</span>
           )
+          const tooltipId = `${componentId}-${j}`
+
           return (
             <span key={j}>
               {details ? (
                 <LazyTippy
                   arrow={false}
                   animation='scale'
-                  theme='actor'
+                  theme='codex'
                   interactive={true}
                   appendTo={document.body}
+                  offset={[0, 5]}
+                  hideOnClick={false}
+                  onShow={() => {
+                    if (activeTooltipId && activeTooltipId !== tooltipId) {
+                      return false // Prevent showing if another tooltip is active
+                    }
+                    setActiveTooltip(tooltipId)
+                  }}
+                  onHide={() => {
+                    if (activeTooltipId === tooltipId) {
+                      setActiveTooltip(null)
+                    }
+                  }}
                   content={
                     <DescriptiveToolTip
                       {...JSON.parse(TEXT.base64.decode(details))}

@@ -41,7 +41,7 @@ export const PROVINCE = {
       const common: Record<string, number> = {}
       window.world.cultures.forEach(k => (common[k.idx] = 0))
       const hub = PROVINCE.hub(province)
-      const popScale = MATH.scale([0, 500000], [20, 200], hub.population)
+      const popScale = MATH.scale([0, 500000], [5, 200], hub.population)
       const origins = MATH.scale([0, 100000], [0.9, 0.6], hub.population)
       const network = PROVINCE.network(province)
       Object.entries(network)
@@ -238,7 +238,10 @@ export const PROVINCE = {
       mountains: 0,
       population: 0,
       neighbors: [],
-      subjects: []
+      subjects: [],
+      desirability: window.dice.uniform(0.1, 0.9),
+      immigration: {},
+      emigration: {}
     }
     window.world.provinces.push(province)
     return province

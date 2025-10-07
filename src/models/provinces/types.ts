@@ -55,6 +55,10 @@ export interface Province extends TaggedEntity {
   population: number
   development?: number
   area?: number
+  desirability: number
+  immigration: Record<number, number>
+  emigration: Record<number, number>
+
   // geography
   topography?: Cell['topography']
   habitability?: number

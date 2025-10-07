@@ -48,12 +48,14 @@ export const ACTOR = {
         ? foreign
         : profession.culture === 'native'
         ? native
-        : common
+        : common.filter(c => profession.culture !== 'tribal' || c.v !== province.minority)
     )
     const culture = window.world.cultures[cidx]
     const age = params.age ?? profession.age
     const npc: Actor = {
+      tag: 'actor',
       idx: window.world.actors.length,
+      province: HUB.province(place).idx,
       name: LANGUAGE.word.firstName(culture.language, gender).word,
       culture: culture.idx,
       age,

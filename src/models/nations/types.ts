@@ -5,3 +5,10 @@ export type SetRelationParams = GetRelationParams & { relation: DiplomaticRelati
 export type SetVassalage = { overlord: Province; vassal: Province }
 export type SetColony = { overlord: Province; colony: Province }
 export type NationNeighborParams = { nation: Province; depth?: number }
+
+export interface MigrationEstimate {
+  neighbor: Province
+  immigration: number
+  emigration: number
+  netMigration: number
+}

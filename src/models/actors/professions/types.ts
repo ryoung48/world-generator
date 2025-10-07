@@ -84,7 +84,6 @@ const _professions = [
   'aristocrat (minor)',
   'aristocrat (major)',
   'oligarch',
-  'crime lord',
   'magistrate',
   'archmage',
   'high priest',
@@ -110,7 +109,7 @@ export interface ProfessionDetails
   lifestyle: 'poor' | 'modest' | 'comfortable' | 'prosperous' | 'rich'
   official?: boolean
   martial?: boolean
-  culture?: 'foreign' | 'native'
+  culture?: 'foreign' | 'native' | 'tribal'
   age?: 'novice' | 'veteran' | 'master'
   unique?: boolean
 

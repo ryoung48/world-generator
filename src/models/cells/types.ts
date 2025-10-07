@@ -26,6 +26,7 @@ export interface Cell extends Point {
   ocean?: boolean
   oceanRegion?: number
   shallow?: boolean
+  wind?: { speed: number; direction: number }[]
   rain: {
     east: number
     west: number

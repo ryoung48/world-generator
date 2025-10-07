@@ -1,7 +1,7 @@
 import { DetailedToolTipParams } from '../../../components/common/text/styled/types'
 
 export interface TaggedEntity {
-  tag: 'nation' | 'province'
+  tag: 'nation' | 'province' | 'culture' | 'actor'
   idx: number
 }
 

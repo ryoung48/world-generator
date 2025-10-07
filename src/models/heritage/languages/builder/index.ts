@@ -22,10 +22,24 @@ export const validTerms = (prospects: string[], letters: string[]) =>
 
 export const randomizePhonemes = (src: Language) => {
   Object.entries(src.basePhonemes).forEach(([k, v]) => {
-    src.phonemes[k as PhonemeCatalog] = MATH.buildDistribution(
-      v.map(c => ({ v: c, w: window.dice.random })),
-      1
-    )
+    // Create a map to merge duplicate phonemes
+    const phonemeMap = new Map<string, number>()
+
+    // Generate weights and merge duplicates
+    v.forEach(phoneme => {
+      const weight = window.dice.random
+      if (phonemeMap.has(phoneme)) {
+        // Merge weights by adding them together
+        phonemeMap.set(phoneme, phonemeMap.get(phoneme)! + weight)
+      } else {
+        phonemeMap.set(phoneme, weight)
+      }
+    })
+
+    // Convert back to array format
+    const uniquePhonemes = Array.from(phonemeMap.entries()).map(([v, w]) => ({ v, w }))
+
+    src.phonemes[k as PhonemeCatalog] = MATH.buildDistribution(uniquePhonemes, 1)
   })
 }
 

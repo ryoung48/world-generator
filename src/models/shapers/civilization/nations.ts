@@ -1,6 +1,5 @@
 import { range, scaleLinear } from 'd3'
 
-import { cssColors } from '../../../components/theme/colors'
 import { PLACEMENT } from '../../cells/placement'
 import { CULTURE } from '../../heritage'
 import { NATION } from '../../nations'
@@ -12,7 +11,6 @@ import { DiplomaticRelation, Province } from '../../provinces/types'
 import { ARRAY } from '../../utilities/array'
 import { POINT } from '../../utilities/math/points'
 import { PERFORMANCE } from '../../utilities/performance'
-import { TEXT } from '../../utilities/text'
 import { NATION_ATTRIBUTES } from './quirks'
 
 const distribute = <Item>(params: {
@@ -118,13 +116,12 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
       const provinces = window.world.provinces.filter(p => !p.desolate)
       const { groups, unassigned } = distribute({
         items: window.dice.shuffle(provinces),
-        percentages: [0.4, 0.3, 0.2, 0.08, 0.02],
+        percentages: [0.4, 0.3, 0.2, 0.1],
         buckets: [
           [1, 1],
           [2, 4],
           [5, 14],
-          [15, 29],
-          [30, 60]
+          [15, 30]
         ],
         neighbors: province =>
           PROVINCE.neighbors({ province }).filter(p => !PROVINCE.far(p, province))
@@ -313,13 +310,7 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
         const military = window.dice.choice(NATION_ATTRIBUTES.military)
         nation.quirks = window.dice
           .shuffle([economic, cultural, military])
-          .map(q =>
-            TEXT.decorate({
-              label: q.title,
-              tooltip: q.text,
-              underlineColor: q.type === 'problem' ? cssColors.primary : 'blue'
-            })
-          )
+          .map(q => `${q.title}: ${q.text}`)
           .slice(0, nation.size === 'city-state' ? 1 : nation.size === 'principality' ? 2 : 3)
       })
     },
@@ -348,6 +339,7 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
         PROVINCE.hub(capital).population = pop
       })
       const cityScale = scaleLinear().domain([1, 3, 4]).range([10, 6, 5]).clamp(true)
+      const tribeScale = scaleLinear().domain([1, 2.5]).range([0.95, 0]).clamp(true)
       NATION.nations().forEach(nation => {
         const capital = nation
         const provinces = NATION.provinces(nation)
@@ -388,6 +380,7 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
             const urban = rank <= cities ? getPopulation(rank) : rural
             const isCity = urban > 10e3
             const hub = PROVINCE.hub(province)
+            const cell = window.world.cells[hub.cell]
             const conflict =
               isCity &&
               PROVINCE.neighbors({ province }).some(neighbor => {
@@ -402,6 +395,8 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
               rank++
               smallestCity = province
             }
+            const encampment = tribeScale(province.development) * (cell.roads.land.length ? 0.5 : 1)
+            hub.nomadic = hub.population < 1e3 && encampment > window.dice.random
           })
         if (smallestCity !== capital) {
           PROVINCE.hub(smallestCity).population = smallestCityPop

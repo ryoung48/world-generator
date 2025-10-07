@@ -33,6 +33,8 @@ export const NATION = {
     )
   },
   provinces: (nation: Province) => [nation, ...nation.subjects.map(v => window.world.provinces[v])],
+  population: (nation: Province) =>
+    NATION.provinces(nation).reduce((sum, province) => sum + province.population, 0),
   nations: () => window.world.provinces.filter(p => p.nation === undefined && !p.desolate),
   relations: {
     get: ({ n1, n2 }: GetRelationParams) => n1.relations[n2.idx] ?? 'neutral',

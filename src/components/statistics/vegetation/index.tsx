@@ -6,7 +6,7 @@ import { Pie } from 'react-chartjs-2'
 import { ARRAY } from '../../../models/utilities/array'
 import { TEXT } from '../../../models/utilities/text'
 import { fonts } from '../../theme/fonts'
-import { MAP_METRICS } from '../../world/shapes/metrics'
+import { MAP_METRICS } from '../../world/paint/shapes/metrics'
 
 // make sure parent container have a defined height when using
 // responsive component, otherwise height will be 0 and

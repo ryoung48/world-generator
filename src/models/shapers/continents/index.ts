@@ -24,6 +24,7 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
       SHAPER_OCEANS.build()
       SHAPER_MOUNTAINS.build()
       SHAPER_CLIMATES.build()
+      // SHAPER_WIND.build()
       SHAPER_CONTINENTS._topography()
       SHAPER_CONTINENTS._oceanic()
       SHAPER_CONTINENTS._coastlines()
@@ -149,7 +150,7 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
                 window.dice.random > 0.8
                   ? 'marsh'
                   : 'coastal'
-            } else if (cell.isCoast && !cell.beach && !arid && window.dice.random > 0.6)
+            } else if (cell.isCoast && !cell.beach && !arid && window.dice.random > 0.3)
               cell.topography = 'marsh'
             else cell.topography = 'flat'
             if (cell.isMountains)

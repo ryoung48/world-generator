@@ -10,6 +10,7 @@
     "lint": "npm run lint:cspell && npm run lint:eslint && npm run lint:cycles",
     "test": "jest --coverage",
     "docs": "npx jsdoc -r ./src -c jsdoc.json",
+    "typecheck": "tsc --noEmit",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
