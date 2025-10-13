@@ -725,7 +725,7 @@ const quirks: Record<Quirk, QuirkDetails> = {
   },
   'ornate jewelry': {
     conflicts: ['accessory'],
-    constraints: { austere: false },
+    constraints: { austere: false, rich: true },
     tooltip: 'never seen without lavish rings, chains, or brooches'
   },
   schemer: {

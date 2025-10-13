@@ -38,8 +38,16 @@ export interface Province extends TaggedEntity {
     color: string
     style: 'monochrome' | 'dark chromatic' | 'light chromatic' | 'dawn' | 'dusk'
   }
-  government?: 'autocracy' | 'republic' | 'oligarchy' | 'confederation' | 'fragmented' | 'theocracy'
+  government?:
+    | 'autocracy'
+    | 'republic'
+    | 'oligarchy'
+    | 'confederation'
+    | 'fragmented'
+    | 'theocracy'
+    | 'magisterium'
   decentralization?: 'tribes' | 'lawless'
+  regency?: boolean
   quirks?: string[]
   // networking
   relations: Record<number, DiplomaticRelation>

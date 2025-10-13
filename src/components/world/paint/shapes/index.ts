@@ -3,7 +3,6 @@ import * as d3 from 'd3'
 
 import { Point } from '../../../../models/utilities/math/points/types'
 import {
-  ChainParams,
   CircleParams,
   CrossParams,
   DrawFeaturesParams,
@@ -16,6 +15,9 @@ import {
 } from './types'
 
 let legendMask: HTMLCanvasElement = null
+const crownPathData =
+  'M5 16L3 5L8.5 10L12 4L15.5 10L21 5L19 16H5M19 19C19 19.6 18.6 20 18 20H6C5.4 20 5 19.6 5 19V18H19V19Z'
+let crownPath: Path2D = null
 
 /**
  * Creates a strongly typed curve context object.
@@ -103,35 +105,6 @@ export const MAP_SHAPES = {
     ctx.fillStyle = fill
     ctx.fill()
     if (width > 0) ctx.stroke()
-  },
-  chain: (params: ChainParams) => {
-    const { ctx, point, scale, backgroundColor, borderColor, borderWidth = 1 } = params
-    const radius = scale * 0.08
-    const spacing = radius * 1.5
-
-    // Calculate positions for three interlocking circles in a straight line
-    const leftCircle = { x: point.x - spacing, y: point.y }
-    const centerCircle = { x: point.x, y: point.y + spacing * 0.6 }
-    const rightCircle = { x: point.x + spacing, y: point.y }
-
-    const circles = [leftCircle, centerCircle, rightCircle]
-
-    // Set drawing properties
-    ctx.lineWidth = borderWidth
-    ctx.strokeStyle = borderColor
-    ctx.fillStyle = backgroundColor
-
-    // Draw each circle
-    circles.forEach(circle => {
-      ctx.beginPath()
-      ctx.arc(circle.x, circle.y, radius, 0, 2 * Math.PI)
-      ctx.lineWidth = borderWidth * 3
-      ctx.strokeStyle = backgroundColor
-      ctx.stroke()
-      ctx.lineWidth = borderWidth * 2
-      ctx.strokeStyle = borderColor
-      ctx.stroke()
-    })
   },
   color: {
     coastal: '#79a896',
@@ -330,6 +303,18 @@ export const MAP_SHAPES = {
       ctx.stroke()
       ctx.fill()
     })
+  },
+  crown: ({ ctx, scale, point, color }: DrawFeaturesParams & { color: string }) => {
+    if (!crownPath) crownPath = new Path2D(crownPathData)
+    const viewBoxSize = 24
+    const size = scale * 0.3
+    const ratio = size / viewBoxSize
+    ctx.save()
+    ctx.translate(point.x - size / 2, point.y - size / 2)
+    ctx.scale(ratio, ratio)
+    ctx.fillStyle = color
+    ctx.fill(crownPath)
+    ctx.restore()
   },
   highlight: ({ point, ctx, scale, color, opacity }: HighlightLocationParams) => {
     if (isNaN(point.x) || isNaN(point.y)) return

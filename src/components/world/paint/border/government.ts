@@ -11,20 +11,22 @@ export const DRAW_GOVERNMENT = {
     const nations = NATION.nations()
     const scale = MAP_SHAPES.scale.derived(projection)
     const pathGen = MAP_SHAPES.path.curveClosed(projection)
-    const vassals = MAP_SHAPES.patterns.stripes({
-      ctx,
-      scale,
-      color: MAP_METRICS.government.colors.vassal
-    })
-    ctx.lineCap = 'round'
+    ctx.save()
+    ctx.lineCap = 'butt'
+    ctx.lineWidth = 1 * scale
+    ctx.setLineDash([1 * scale, 0.5 * scale])
+    ctx.strokeStyle = MAP_METRICS.government.colors.vassal
     nations
-      .filter(province => province.suzerain !== undefined)
-      .map(province => {
-        ctx.fillStyle = ctx.createPattern(vassals, 'repeat')
-        DRAW_CACHE.paths.nation({ nation: province, path: pathGen }).forEach(p => {
-          ctx.fill(p)
+      .filter(nation => nation.suzerain !== undefined)
+      .map(nation => {
+        DRAW_CACHE.paths.nation({ nation: nation, path: pathGen }).forEach(p => {
+          ctx.save()
+          ctx.clip(p)
+          ctx.stroke(p)
+          ctx.restore()
         })
       })
+    ctx.restore()
   },
   colonies: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
     const { projection, ctx } = params

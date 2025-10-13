@@ -72,7 +72,7 @@ export function HubView() {
           </Grid>
           <Grid item xs={6}>
             <b>Coordinates: </b>
-            {TEXT.formatters.coordinates(hub.y, hub.x)}
+            {TEXT.formatters.coordinates(hub.y, hub.x)}{' '}
           </Grid>
           <Grid item xs={12}>
             <b>Demographics: </b>

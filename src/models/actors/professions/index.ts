@@ -453,7 +453,7 @@ const professions: Record<Profession, ProfessionDetails> = {
       'stubborn pride': {
         tooltip: 'refuses help even when herd faces serious threats or disease'
       },
-      'ancient bloodline': {
+      'purebred stock': {
         tooltip: 'maintains pure breeding lines descended from legendary animals'
       },
       'stolen legacy': {

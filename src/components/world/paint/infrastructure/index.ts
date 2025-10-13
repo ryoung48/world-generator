@@ -9,6 +9,7 @@ import { TIMEZONE_SHAPER } from '../../../../models/shapers/civilization/timezon
 import { fonts } from '../../../theme/fonts'
 import { MAP_SHAPES } from '../shapes'
 import { HERALDRY } from '../shapes/heraldry'
+import { MAP_METRICS } from '../shapes/metrics'
 import { DrawInfraParams } from './types'
 
 const fontFamily = fonts.maps
@@ -112,6 +113,7 @@ export const DRAW_INFRASTRUCTURE = {
       const loc = window.world.provinces[capital.properties.idx]
       const nation = PROVINCE.nation(loc)
       const center = pathGen.centroid(capital)
+      if (!center || !Number.isFinite(center[0]) || !Number.isFinite(center[1])) return
       if (nation.idx === loc.idx && !nation.desolate) {
         const small = nation.size === 'city-state' || nation.size === 'principality'
         const [fontS, fontH, iconS, iconX, iconY, iconH, iconW, tempW, tempH] = small
@@ -184,6 +186,52 @@ export const DRAW_INFRASTRUCTURE = {
           iconSize,
           iconSize
         )
+        const iconFontSize = fontS * scale * base * 1.5
+        ctx.save()
+        ctx.font = `${iconFontSize}px ${fontFamily}`
+        ctx.textAlign = 'left'
+        ctx.textBaseline = 'middle'
+        const spacing = iconFontSize * 0.2
+        const y = center[1] + (small ? 5.5 : 9) * scale
+        const heraldryIcons: Array<{
+          width: number
+          draw: (_x: number, _y: number) => void
+        }> = []
+        if (nation.suzerain && style === 'Government') {
+          const glyph = '◈'
+          const width = ctx.measureText(glyph).width
+          heraldryIcons.push({
+            width,
+            draw: (x, y) => {
+              ctx.fillStyle = MAP_METRICS.government.colors.vassal
+              ctx.fillText(glyph, x, y)
+            }
+          })
+        }
+        if (nation.regency && style === 'Government') {
+          const crownSize = iconFontSize * 0.8
+          heraldryIcons.push({
+            width: crownSize,
+            draw: (x, y) => {
+              MAP_SHAPES.crown({
+                ctx,
+                scale: crownSize / 0.3,
+                point: { x: x + crownSize / 2, y: y - 3 },
+                color: MAP_METRICS.government.colors.regency
+              })
+            }
+          })
+        }
+        if (heraldryIcons.length) {
+          const totalWidth =
+            heraldryIcons.reduce((sum, icon) => sum + icon.width, 0) +
+            spacing * Math.max(heraldryIcons.length - 1, 0)
+          let x = center[0] - totalWidth / 2
+          heraldryIcons.forEach(icon => {
+            icon.draw(x, y)
+            x += icon.width + spacing
+          })
+        }
         ctx.restore()
       }
     })

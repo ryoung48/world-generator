@@ -157,7 +157,7 @@ const lookup: Record<Species, SpeciesBuilder> = {
         ])
       } else if (zone === 'temperate' || zone === 'boreal') {
         return {
-          skin: { colors: window.dice.sample(['fair', 'light tan', 'dark tan'], 2) },
+          skin: { colors: ['fair', 'light tan'] },
           hair: { colors: ['auburn', 'brown', 'red', 'black'], textures }
         }
       } else {

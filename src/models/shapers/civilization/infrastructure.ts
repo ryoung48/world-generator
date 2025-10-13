@@ -149,7 +149,7 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
       const provinces = window.world.provinces.filter(
         p =>
           (PROVINCE.capital(p) || PROVINCE.hub(p).population >= 50e3) &&
-          (p.development > 2.5 || PROVINCE.hub(p).population > 200e3)
+          (p.development > 3.5 || PROVINCE.hub(p).population > 200e3)
       )
       VORONOI.urquhart(provinces.map(p => [p.hub.x, p.hub.y])).forEach(([x, y]) => {
         const src = provinces[x]

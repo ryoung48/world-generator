@@ -81,12 +81,3 @@ export type HighlightLocationParams = {
   color: string
   opacity: number
 }
-
-export type ChainParams = {
-  point: Point
-  ctx: CanvasRenderingContext2D
-  scale: number
-  backgroundColor: string
-  borderColor: string
-  borderWidth?: number
-}

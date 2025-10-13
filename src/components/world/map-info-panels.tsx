@@ -32,7 +32,7 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
     top: MAP_SHAPES.height * 0.145,
     fontFamily: fonts.maps,
     fontSize: 20,
-    backgroundColor: 'rgba(238, 238, 221, 0.85)',
+    backgroundColor: 'rgba(241, 241, 241, 0.85)',
     width: 160,
     padding: 1
   }

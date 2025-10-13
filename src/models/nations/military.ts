@@ -25,6 +25,8 @@ const calculate = (nation: Province) => {
   const navy = NATION.coastal(nation) && !decentralized && nation.size !== 'city-state'
   const development = nation.development
 
+  const colonial = Object.values(nation.relations).some(relation => relation === 'colony')
+
   const composition: WeightedDistribution<Unit> =
     development < 2
       ? [
@@ -58,7 +60,16 @@ const calculate = (nation: Province) => {
 
   const tribes = scaleLinear([1, 4], [1, 0.1]).clamp(true)(nation.development) * totalPopulation
   const count = 3
-  const selected = ARRAY.counter(window.dice.weightedSample(composition, count, false))
+  const selected = ARRAY.counter(
+    window.dice
+      .weightedSample(composition, colonial ? 2 : count, false)
+      .concat(colonial ? ['warships'] : [])
+  )
+
+  if (selected['warships'] === 3) {
+    selected['warships'] = 2
+    selected['standing army'] = 1
+  }
   const military: [Unit, number, number][] = []
 
   if (selected['knights']) {

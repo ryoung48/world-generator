@@ -164,13 +164,13 @@ export const CULTURE = {
       language,
       religion: window.dice.weightedChoice([
         { v: 'monotheistic', w: 1 },
-        { v: 'dualistic', w: origin.development > 3 ? 0 : 0.25 },
+        { v: 'dualistic', w: origin.development > 3 ? 0 : 0.15 },
         { v: 'polytheistic', w: origin.development > 3 ? 0 : 0.5 },
         { v: 'animistic', w: origin.development > 2 ? 0 : 1 },
         { v: 'nontheistic', w: 1 },
         { v: 'atheistic', w: origin.development < 2 ? 0 : 0.5 },
         { v: 'pluralistic', w: origin.development < 2 ? 0 : 0.5 },
-        { v: 'syncretic', w: 0.25 }
+        { v: 'syncretic', w: 0.15 }
       ]),
       appearance: SPECIES.appearance({ province: origin, species }),
       fashion: {

@@ -29,15 +29,17 @@ const pastelSpectral = d3
 
 const pastelBrBG = d3
   .scaleLinear<number, string, string>()
-  .domain([1.0, 1.35, 1.7, 2.75, 3.1, 3.8, 4.5])
+  .domain([0, 1.0, 1.35, 1.7, 2.75, 3.1, 3.8, 4.5, 6])
   .range([
+    '#805c26', // dark orange
     '#c18b3c', // golden orange
     '#e0c283', // soft gold
     '#f2e5c2', // pale cream
     '#edf1ea', // neutral light
     '#c3e7e2', // very light aqua
     '#81cac0', // soft teal
-    '#3b9a91' // medium teal
+    '#3b9a91', // medium teal
+    '#245f59' // dark teal
   ] as unknown[] as number[])
   .clamp(true)
 
@@ -121,11 +123,11 @@ export const MAP_METRICS = {
     }),
     legend: (): LegendParams => ({
       items: [
-        {
-          text: 'volcanic',
-          shape: ({ ctx, point, scale }) =>
-            MAP_SHAPES.hatched.square({ ctx, point, scale, color: MAP_SHAPES.color.volcanic })
-        },
+        // {
+        //   text: 'volcanic',
+        //   shape: ({ ctx, point, scale }) =>
+        //     MAP_SHAPES.hatched.square({ ctx, point, scale, color: MAP_SHAPES.color.volcanic })
+        // },
         {
           text: 'mountains',
           shape: ({ ctx, point, scale }) =>
@@ -206,37 +208,39 @@ export const MAP_METRICS = {
       oligarchy: 'hsl(147, 100%, 87%)',
       confederation: 'hsl(28, 100%, 86%)',
       fragmented: 'hsl(195, 43%, 89%)',
+      magisterium: 'hsla(185, 100%, 85%, 1.00)',
       theocracy: 'hsl(45, 77%, 95%)',
       colonial: 'hsl(185, 91%, 60%)',
-      vassal: 'hsl(256, 85%, 75%)'
+      vassal: 'hsla(256, 62%, 49%, 1.00)',
+      regency: 'hsla(340, 62%, 49%, 1.00)'
     },
     legend: (): LegendParams => ({
       items: [
         ...Object.entries(MAP_METRICS.government.colors)
-          .slice(0, -2)
+          .slice(0, -3)
           .map(([k, v]) => ({
             color: v,
             text: k
           })),
         {
           text: 'vassal',
-          shape: ({ ctx, point, scale }) =>
-            MAP_SHAPES.hatched.square({
-              ctx,
-              point,
-              scale,
-              color: MAP_METRICS.government.colors.vassal
-            })
+          shape: ({ ctx, point }) => {
+            ctx.save()
+            ctx.fillStyle = MAP_METRICS.government.colors.vassal
+            ctx.fillText('◈', point.x - 8, point.y + 6)
+            ctx.restore()
+          }
         },
         {
-          text: 'colonial',
-          shape: ({ ctx, point, scale }) =>
-            MAP_SHAPES.hatched.square({
+          text: 'regency',
+          shape: ({ ctx, point, scale }) => {
+            MAP_SHAPES.crown({
               ctx,
+              scale: scale * 2.5,
               point,
-              scale,
-              color: MAP_METRICS.government.colors.colonial
+              color: MAP_METRICS.government.colors.regency
             })
+          }
         }
       ],
       width: 10

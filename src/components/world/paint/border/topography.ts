@@ -37,18 +37,18 @@ export const DRAW_TOPOGRAPHY = {
           ctx.fill(p)
         })
       })
-    const volcanic = MAP_SHAPES.patterns.masked({
-      ctx,
-      mask,
-      color: MAP_SHAPES.color.volcanic
-    })
-    ctx.fillStyle = ctx.createPattern(volcanic, 'repeat')
-    window.world.locations
-      .filter(loc => loc.volcanic)
-      .forEach(loc => {
-        DRAW_CACHE.paths.location({ loc, path }).forEach(p => {
-          ctx.fill(p)
-        })
-      })
+    // const volcanic = MAP_SHAPES.patterns.masked({
+    //   ctx,
+    //   mask,
+    //   color: MAP_SHAPES.color.volcanic
+    // })
+    // ctx.fillStyle = ctx.createPattern(volcanic, 'repeat')
+    // window.world.locations
+    //   .filter(loc => loc.volcanic)
+    //   .forEach(loc => {
+    //     DRAW_CACHE.paths.location({ loc, path }).forEach(p => {
+    //       ctx.fill(p)
+    //     })
+    //   })
   }
 }

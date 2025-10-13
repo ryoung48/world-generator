@@ -14,7 +14,7 @@ type MapControlsProps = {
   onProjectionChange: (_type: ProjectionType) => void
 }
 
-const hidden: MapStyle[] = ['Resources', 'Temperature', 'Rain', 'Population']
+const hidden: MapStyle[] = ['Resources', 'Temperature', 'Rain', 'Population', 'Timezones']
 
 export function MapControls(props: MapControlsProps) {
   const { state } = VIEW.context()
@@ -35,7 +35,7 @@ export function MapControls(props: MapControlsProps) {
           position: 'absolute',
           top: MAP_SHAPES.height + 35,
           left: MAP_SHAPES.width * 0.4,
-          background: 'rgba(238, 238, 221, 0.85)'
+          background: 'rgba(241, 241, 241, 0.95)'
         }}
       >
         {MAP_SHAPES.styles
@@ -64,7 +64,7 @@ export function MapControls(props: MapControlsProps) {
           position: 'absolute',
           top: MAP_SHAPES.height * 1.045,
           left: MAP_SHAPES.width * 0.22,
-          background: 'rgba(238, 238, 221, 0.95)'
+          background: 'rgba(241, 241, 241, 0.95)'
         }}
       >
         <Tooltip title='Metric (km, °C)' arrow>
@@ -92,7 +92,7 @@ export function MapControls(props: MapControlsProps) {
           position: 'absolute',
           top: MAP_SHAPES.height * 0.15,
           left: MAP_SHAPES.width * 0.5,
-          background: 'rgba(238, 238, 221, 0.95)'
+          background: 'rgba(241, 241, 241, 0.95)'
         }}
       >
         <ToggleButton value='orthographic'>

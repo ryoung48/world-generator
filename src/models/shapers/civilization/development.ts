@@ -109,13 +109,17 @@ export const DEVELOPMENT_SPREAD = PERFORMANCE.profile.wrapper({
       const cellArea = window.world.cell.area
       window.world.provinces.forEach(province => {
         province.area = MATH.conversion.distance.km.miles(province.area)
-        province.population = province.desolate
-          ? 0
-          : PROVINCE.cells.land(province).reduce(sum => {
-              return sum + province.habitability * province.development ** 1.25
-            }, 0) *
-            cellArea *
-            6
+        if (province.desolate) {
+          province.population = 0
+          province.development = 0.5
+          return
+        }
+        province.population =
+          PROVINCE.cells.land(province).reduce(sum => {
+            return sum + province.habitability * province.development ** 1.25
+          }, 0) *
+          cellArea *
+          6
       })
     }
   }

@@ -31,7 +31,7 @@ export function MapOverlay(props: MapOverlayProps) {
         left: MAP_SHAPES.width * 0.8,
         fontFamily: fonts.maps,
         fontSize: 20,
-        backgroundColor: `rgba(238, 238, 221, 0.9)`,
+        backgroundColor: `rgba(241, 241, 241, 0.95)`,
         width: 550,
         padding: 1,
         opacity: scaleLinear().domain([400, 1500]).range([0, 1]).clamp(true)(transform.scale)

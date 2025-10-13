@@ -199,7 +199,7 @@ export function NationView() {
             <SectionList
               list={[
                 {
-                  label: `Military (⚔️ ${might}, 🛡️ ${might})`,
+                  label: `Military (⚔️ ${might})`,
                   content: (
                     <span>
                       {(() => {
@@ -253,7 +253,7 @@ export function NationView() {
                   label: `Relations (${neighbors.length})`,
                   content: (
                     <span>
-                      {([...neighbors]
+                      {[...neighbors]
                         .sort((a, b) => {
                           const order: Record<string, number> = {
                             'at war': 0,
@@ -268,38 +268,38 @@ export function NationView() {
                           return oa - ob
                         })
                         .map((n, i) => {
-                        const opinion = NATION.relations.get({ n1: nation, n2: n })
-                        const war = opinion === 'at war'
-                        const color =
-                          opinion === 'ally'
-                            ? '#00008B'
-                            : opinion === 'friendly'
-                            ? '#006400'
-                            : opinion === 'neutral'
-                            ? '#969696'
-                            : opinion === 'suspicious'
-                            ? '#7c4502'
-                            : opinion === 'vassal' || opinion === 'suzerain'
-                            ? '#59027c'
-                            : opinion === 'at war'
-                            ? cssColors.primary
-                            : '#0090a3'
-                        return (
-                          <span key={n.idx}>
-                            <ColoredBox color={n.heraldry.color} border={false}></ColoredBox>{' '}
-                            <StyledText
-                              text={`${TEXT.decorate({
-                                link: { tag: 'nation', idx: n.idx },
-                                label: n.name,
-                                tooltip: opinion,
-                                color: color,
-                                bold: war
-                              })}`}
-                            ></StyledText>
-                            {i !== neighbors.length - 1 ? ', ' : ''}
-                          </span>
-                        )
-                      }))}
+                          const opinion = NATION.relations.get({ n1: nation, n2: n })
+                          const war = opinion === 'at war'
+                          const color =
+                            opinion === 'ally'
+                              ? '#00008B'
+                              : opinion === 'friendly'
+                              ? '#006400'
+                              : opinion === 'neutral'
+                              ? '#969696'
+                              : opinion === 'suspicious'
+                              ? '#7c4502'
+                              : opinion === 'vassal' || opinion === 'suzerain'
+                              ? '#59027c'
+                              : opinion === 'at war'
+                              ? cssColors.primary
+                              : '#0090a3'
+                          return (
+                            <span key={n.idx}>
+                              <ColoredBox color={n.heraldry.color} border={false}></ColoredBox>{' '}
+                              <StyledText
+                                text={`${TEXT.decorate({
+                                  link: { tag: 'nation', idx: n.idx },
+                                  label: n.name,
+                                  tooltip: opinion,
+                                  color: color,
+                                  bold: war
+                                })}`}
+                              ></StyledText>
+                              {i !== neighbors.length - 1 ? ', ' : ''}
+                            </span>
+                          )
+                        })}
                     </span>
                   )
                 },

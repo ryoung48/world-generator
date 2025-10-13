@@ -50,7 +50,7 @@ export function MapTranslateControls({ move, scale }: MapControlsProps & { scale
         sx={{
           ...base,
           zIndex: 2,
-          backgroundColor: 'rgba(238, 238, 221, 0.75)',
+          backgroundColor: 'rgba(241, 241, 241, 0.95)',
           width: 100,
           height: 75
         }}

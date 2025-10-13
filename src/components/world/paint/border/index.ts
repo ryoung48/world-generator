@@ -69,9 +69,7 @@ export const DRAW_BORDERS = {
     if (style === 'Topography') DRAW_TOPOGRAPHY.special({ projection, ctx })
     if (style === 'Timezones') DRAW_TIMEZONES.land({ ctx, projection })
     if (style === 'Religion') DRAW_RELIGIONS.minorities({ projection, ctx })
-    if (style === 'Government') DRAW_GOVERNMENT.vassals({ projection, ctx })
-    if (style === 'Development' || style === 'Government')
-      DRAW_GOVERNMENT.colonies({ projection, ctx })
+    if (style === 'Development') DRAW_GOVERNMENT.colonies({ projection, ctx })
     // nation borders
     DRAW_NATION.coloration({ projection, ctx, style, selected: province })
     if (style === 'Nations') {

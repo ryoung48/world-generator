@@ -180,6 +180,7 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
           { w: uncivilized ? 1 : 2, v: 'autocracy' },
           { w: nation.development < 2 ? 0 : 1, v: 'republic' },
           { w: 1, v: 'oligarchy' },
+          { w: 0.25, v: 'magisterium' },
           { w: small ? 0 : uncivilized ? 2 : 0.25, v: 'confederation' },
           { w: irreligious ? 0 : 0.5, v: 'theocracy' },
           { w: corrupted ? 1000 : uncivilized ? 5 : 0, v: 'fragmented' }
@@ -189,6 +190,14 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
           (nation.government === 'confederation' && uncivilized)
         ) {
           nation.decentralization = 'tribes'
+        }
+        if (
+          (nation.government === 'autocracy' ||
+            nation.government === 'oligarchy' ||
+            nation.government === 'theocracy') &&
+          window.dice.random > 0.95
+        ) {
+          nation.regency = true
         }
       })
       // diplomacy
@@ -259,7 +268,7 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
 
       const { groups, unassigned } = distribute({
         items: provinces,
-        percentages: [0.4, 0.3, 0.2, 0.08, 0.02],
+        percentages: [0.6, 0.2, 0.1, 0.05, 0.02],
         buckets: [
           [1, 1],
           [2, 4],
@@ -401,6 +410,14 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
         if (smallestCity !== capital) {
           PROVINCE.hub(smallestCity).population = smallestCityPop
         }
+      })
+      window.world.provinces.forEach(province => {
+        const type = HUB.settlement(province.hub)
+        if (type === 'small city') province.development += 0.3
+        else if (type === 'large city') province.development += 0.6
+        else if (type === 'huge city') province.development += 0.9
+        else if (type === 'metropolis') province.development += 1.2
+        else if (province.hub.nomadic) province.development -= 0.3
       })
     },
     walls: () => {

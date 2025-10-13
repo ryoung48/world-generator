@@ -162,7 +162,7 @@ export const MapCanvas = forwardRef<HTMLCanvasElement, MapCanvasProps>(function 
         style={{
           backgroundColor: cssColors.background.map,
           border: `thick double ${cssColors.primary}`,
-          filter: 'contrast(0.9) sepia(0.3) url(#noiseFilter)',
+          filter: 'url(#noiseFilter)',
           height: `${MAP_SHAPES.height}px`,
           width: `100%`
         }}
