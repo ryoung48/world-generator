@@ -10,6 +10,7 @@ import { PERFORMANCE } from '../../../../models/utilities/performance'
 import { MapStyle } from '../../types'
 import { MAP_SHAPES } from '../shapes'
 import { DRAW_CACHE } from '../shapes/caching'
+import { MAP_METRICS } from '../shapes/metrics'
 
 const contestedBorder = PERFORMANCE.memoize.decorate({
   f: (nation: Province) => {
@@ -109,20 +110,39 @@ export const DRAW_NATION = {
     const nations = NATION.nations()
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.linear(projection)
-    const baseWidth = (nationStyle ? 2 : 1) * scale
     nations.forEach(nation => {
       DRAW_CACHE.paths.nation({ nation, path }).forEach(p => {
+        const nationalBorders = nationStyle
+        const baseWidth = (nationalBorders ? 2 : 1) * scale
         ctx.save()
         ctx.lineWidth = baseWidth
         ctx.clip(p)
-        ctx.filter = `blur(${scale * (nationStyle ? 1 : 0.5)}px)`
-        ctx.strokeStyle = nationStyle ? nation.heraldry.color : 'hsla(0, 0%, 0%, 0.4)'
+        ctx.filter = `blur(${scale * (nationalBorders ? 1 : 0.5)}px)`
+        ctx.strokeStyle = nationalBorders ? nation.heraldry.color : 'hsla(0, 0%, 0%, 0.4)'
         ctx.stroke(p)
         if (selected.idx === nation.idx) ctx.stroke(p)
         ctx.fillStyle = nation.heraldry.color.replace('%)', `%, 0.25)`)
-        if (nationStyle) ctx.fill(p)
+        if (nationalBorders) ctx.fill(p)
         ctx.restore()
       })
+    })
+  },
+  decentralized: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
+    const { projection, ctx } = params
+    const nations = NATION.nations()
+    const path = MAP_SHAPES.path.linear(projection)
+    nations.forEach(nation => {
+      const decentralized =
+        nation.decentralization === 'tribes' &&
+        nation.government === 'fragmented' &&
+        nation.overlord === undefined
+      if (!decentralized) return
+      ctx.save()
+      DRAW_CACHE.paths.nation({ nation, path }).forEach(p => {
+        ctx.fillStyle = MAP_METRICS.government.colors.fragmented
+        ctx.fill(p)
+      })
+      ctx.restore()
     })
   },
   contested: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {

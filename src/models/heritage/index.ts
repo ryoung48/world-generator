@@ -157,19 +157,18 @@ export const CULTURE = {
     const culture: Culture = {
       idx: window.world.cultures.length,
       tag: 'culture',
-      name: LANGUAGE.word.unique({ lang: language, key: 'culture' }).word,
+      name: '',
       provinces: provinces.map(province => province.idx),
       neighbors: [],
       species,
       language,
       religion: window.dice.weightedChoice([
-        { v: 'monotheistic', w: 1 },
+        { v: 'monotheistic', w: origin.development < 2 ? 1 : 2 },
         { v: 'dualistic', w: origin.development > 3 ? 0 : 0.15 },
         { v: 'polytheistic', w: origin.development > 3 ? 0 : 0.5 },
         { v: 'animistic', w: origin.development > 2 ? 0 : 1 },
         { v: 'nontheistic', w: 1 },
-        { v: 'atheistic', w: origin.development < 2 ? 0 : 0.5 },
-        { v: 'pluralistic', w: origin.development < 2 ? 0 : 0.5 },
+        { v: 'irreligious', w: origin.development < 2 ? 0 : 1 },
         { v: 'syncretic', w: 0.15 }
       ]),
       appearance: SPECIES.appearance({ province: origin, species }),
@@ -205,13 +204,23 @@ export const CULTURE = {
     }
     window.world.cultures.push(culture)
     provinces.forEach(province => {
-      province.name = LANGUAGE.word.unique({ lang: language, key: 'region' }).word
+      const { word, morphemes } = LANGUAGE.word.unique({
+        lang: language,
+        key: 'region'
+      })
+      province.name = word
+      province.demonym = LANGUAGE.word.demonym(morphemes).replace(' ', '')
       PROVINCE.hub(province).name = LANGUAGE.word.unique({
         lang: language,
         key: 'settlement'
       }).word
       province.culture = culture.idx
     })
+    const largest = provinces.reduce(
+      (largest, curr) => (curr.territories.length > largest.territories.length ? curr : largest),
+      provinces[0]
+    )
+    culture.name = largest.demonym
     return culture
   },
   values

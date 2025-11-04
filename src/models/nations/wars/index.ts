@@ -43,7 +43,7 @@ export const WAR = {
     })
     const attackerCulture = window.world.cultures[attacker.culture]
     const defenderCulture = window.world.cultures[defender.culture]
-    const attackerIsAtheist = attackerCulture.religion === 'atheistic'
+    const attackerIsAtheist = attackerCulture.religion === 'irreligious'
     const attackerIsCivilized =
       attacker.government !== 'confederation' && attacker.government !== 'fragmented'
     const defenderIsCivilized =

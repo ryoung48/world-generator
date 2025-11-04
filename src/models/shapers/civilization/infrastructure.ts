@@ -123,7 +123,7 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
               !p.desolate &&
               coast?.landmark === water &&
               (coast?.heat.max > 0 || coast?.heat.min > 0) &&
-              (PROVINCE.hub(p).population > settlementFilter || PROVINCE.capital(p))
+              (PROVINCE.hub(p).population > settlementFilter || (PROVINCE.capital(p) && !p.hub.nomadic))
             )
           }),
           filter: n => n.landmark === water && (n.heat.max > 0 || n.heat.min > 0)

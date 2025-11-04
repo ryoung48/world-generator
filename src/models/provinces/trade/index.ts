@@ -1,4 +1,8 @@
+import { NATION } from '../../nations'
+import { ARRAY } from '../../utilities/array'
+import { PROVINCE } from '..'
 import { TradeGood, TradeGoods } from './types'
+import { Province } from '../types'
 
 const tradeGoods: TradeGoods = {
   alum: {
@@ -14,7 +18,33 @@ const tradeGoods: TradeGoods = {
     conditions: ({ vegetation, climate, coastal }) =>
       coastal &&
       vegetation?.some(b => ['woods', 'forest'].includes(b)) &&
-      climate?.some(c => ['warm temperate', 'cool temperate'].includes(c))
+      climate?.some(c => ['temperate'].includes(c))
+  },
+  artillery: {
+    color: '#4C5866',
+    tinto: '#8A7E74',
+    w: 0.2,
+    conditions: ({ advanced }) => advanced
+  },
+  beer: {
+    color: '#C4722C',
+    tinto: '#6B3E1F',
+    w: 1,
+    conditions: ({ climate }) => climate?.some(c => ['temperate', 'boreal'].includes(c))
+  },
+  beeswax: {
+    color: '#F9D26A',
+    tinto: '#A8792F',
+    w: 0.8,
+    conditions: ({ vegetation, climate }) =>
+      vegetation?.some(b => ['forest', 'woods', 'jungle'].includes(b)) &&
+      climate?.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
+  },
+  books: {
+    color: '#6B4F3A',
+    tinto: '#4A3A2A',
+    w: 0.4,
+    conditions: () => true
   },
   clay: {
     color: '#B5651D',
@@ -23,6 +53,12 @@ const tradeGoods: TradeGoods = {
     conditions: ({ vegetation, topography }) =>
       vegetation?.some(b => ['grasslands', 'sparse'].includes(b)) &&
       topography?.every(t => t !== 'mountains')
+  },
+  cloth: {
+    color: '#C8D0D9',
+    tinto: '#7C8A93',
+    w: 1.2,
+    conditions: () => true
   },
   coal: {
     color: '#2F4F4F',
@@ -57,15 +93,7 @@ const tradeGoods: TradeGoods = {
     w: 1.5,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => ['grasslands', 'sparse', 'woods'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
-  },
-  dates: {
-    color: '#D2B48C',
-    tinto: '#AD9978',
-    w: 2,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.includes('desert') &&
-      climate?.some(c => ['warm temperate', 'subtropical', 'tropical'].includes(c))
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
   },
   dyes: {
     color: '#800080',
@@ -73,7 +101,7 @@ const tradeGoods: TradeGoods = {
     w: 1,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
   },
   elephants: {
     color: '#808080',
@@ -88,9 +116,20 @@ const tradeGoods: TradeGoods = {
     tinto: '#214F35',
     w: 1,
     conditions: ({ climate }) =>
-      climate?.some(c =>
-        ['tropical', 'subtropical', 'warm temperate', 'cool temperate'].includes(c)
-      )
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  'fine cloth': {
+    color: '#E8E2F0',
+    tinto: '#957E9D',
+    w: 0.5,
+    conditions: ({ climate }) =>
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  firearms: {
+    color: '#3E3A39',
+    tinto: '#746C68',
+    w: 0.2,
+    conditions: ({ advanced }) => advanced
   },
   fish: {
     color: '#1E90FF',
@@ -103,9 +142,7 @@ const tradeGoods: TradeGoods = {
     tinto: '#915453',
     w: 2,
     conditions: ({ climate }) =>
-      climate?.some(c =>
-        ['tropical', 'subtropical', 'warm temperate', 'cool temperate'].includes(c)
-      )
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
   },
   fur: {
     color: '#A0522D',
@@ -113,13 +150,26 @@ const tradeGoods: TradeGoods = {
     w: 0.8,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['boreal', 'cool temperate', 'subarctic'].includes(c))
+      climate?.some(c => ['boreal', 'temperate', 'subarctic'].includes(c))
+  },
+  furniture: {
+    color: '#8E5A3C',
+    tinto: '#C1A37E',
+    w: 0.7,
+    conditions: ({ vegetation }) => vegetation?.some(b => ['forest', 'woods', 'jungle'].includes(b))
   },
   gems: {
     color: '#8A2BE2',
     tinto: '#9E8D8B',
     w: 1,
     conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+  },
+  glass: {
+    color: '#7EC8E3',
+    tinto: '#4E6A78',
+    w: 0.4,
+    conditions: ({ coastal, vegetation }) =>
+      Boolean(coastal || vegetation?.some(b => ['desert', 'sparse'].includes(b)))
   },
   gold: {
     color: '#FFD700',
@@ -158,20 +208,44 @@ const tradeGoods: TradeGoods = {
         climate?.some(c => ['tropical', 'subtropical'].includes(c))) ||
       (coastal && climate?.some(c => ['subarctic', 'arctic'].includes(c)))
   },
+  jewelry: {
+    color: '#DAA520',
+    tinto: '#8B6C2F',
+    w: 0.3,
+    conditions: () => true
+  },
+  lacquerware: {
+    color: '#A40000',
+    tinto: '#E0A05F',
+    w: 0.2,
+    conditions: ({ vegetation, climate }) =>
+      vegetation?.some(b => ['jungle', 'forest'].includes(b)) &&
+      climate?.some(c => ['tropical', 'subtropical'].includes(c))
+  },
   lead: {
     color: '#6E6E6E',
     tinto: '#4D428F',
     w: 0.5,
     conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
   },
+  leather: {
+    color: '#A9744A',
+    tinto: '#6D4C32',
+    w: 1,
+    conditions: () => true
+  },
   legumes: {
     color: '#228B22',
     tinto: '#3E7875',
     w: 3,
     conditions: ({ climate }) =>
-      climate?.some(c =>
-        ['tropical', 'subtropical', 'warm temperate', 'cool temperate'].includes(c)
-      )
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  liquor: {
+    color: '#B37A2C',
+    tinto: '#643D24',
+    w: 0.8,
+    conditions: () => true
   },
   livestock: {
     color: '#A52A2A',
@@ -191,13 +265,19 @@ const tradeGoods: TradeGoods = {
     w: 4,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => ['grasslands', 'woods', 'sparse'].includes(b)) &&
-      climate?.some(c => ['subtropical', 'warm temperate', 'cool temperate'].includes(c))
+      climate?.some(c => ['subtropical', 'temperate'].includes(c))
   },
   marble: {
     color: '#D3D3D3',
     tinto: '#9C979B',
     w: 1,
     conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+  },
+  masonry: {
+    color: '#A9A9A9',
+    tinto: '#5F6B76',
+    w: 0.6,
+    conditions: () => true
   },
   medicaments: {
     color: '#32CD32',
@@ -211,20 +291,39 @@ const tradeGoods: TradeGoods = {
     w: 0.5,
     conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
   },
+  'naval supplies': {
+    color: '#466D80',
+    tinto: '#6F8C72',
+    w: 1,
+    conditions: ({ vegetation, coastal }) =>
+      Boolean(coastal && vegetation?.some(b => ['forest', 'woods'].includes(b)))
+  },
   olives: {
     color: '#556B2F',
     tinto: '#4E600B',
     w: 2,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => !['desert', 'sparse'].includes(b)) &&
-      climate?.some(c => ['warm temperate', 'subtropical'].includes(c))
+      climate?.some(c => ['temperate', 'subtropical'].includes(c))
+  },
+  paper: {
+    color: '#F5F0DC',
+    tinto: '#9B8D6F',
+    w: 0.6,
+    conditions: ({ vegetation }) => vegetation?.some(b => ['forest', 'woods'].includes(b))
   },
   pearls: {
     color: '#F0FFFF',
     tinto: '#AB9A8B',
     w: 0.5,
     conditions: ({ climate, coastal }) =>
-      coastal && climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
+      coastal && climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  porcelain: {
+    color: '#F0F8FF',
+    tinto: '#7991A5',
+    w: 0.3,
+    conditions: ({ climate }) => climate?.some(c => ['temperate', 'subtropical'].includes(c))
   },
   potato: {
     color: '#D2691E',
@@ -232,7 +331,14 @@ const tradeGoods: TradeGoods = {
     w: 3,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => ['forest', 'woods', 'grasslands'].includes(b)) &&
-      climate?.some(c => ['warm temperate', 'cool temperate'].includes(c))
+      climate?.some(c => ['temperate'].includes(c))
+  },
+  pottery: {
+    color: '#C0804D',
+    tinto: '#8A5D37',
+    w: 0.9,
+    conditions: ({ vegetation }) =>
+      vegetation?.some(b => ['grasslands', 'woods', 'sparse'].includes(b))
   },
   rice: {
     color: '#EEE8AA',
@@ -240,7 +346,7 @@ const tradeGoods: TradeGoods = {
     w: 7,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => !['desert', 'sparse'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
   },
   salt: {
     color: '#F0F8FF',
@@ -267,7 +373,7 @@ const tradeGoods: TradeGoods = {
     w: 0.8,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => ['woods', 'forest', 'jungle', 'grasslands'].includes(b)) && //Mulberry trees can grow in various vegetation
-      climate?.some(c => ['warm temperate', 'subtropical', 'tropical'].includes(c))
+      climate?.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
   },
   silver: {
     color: '#C0C0C0',
@@ -275,12 +381,11 @@ const tradeGoods: TradeGoods = {
     w: 1,
     conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
   },
-  soybeans: {
-    color: '#9ACD32',
-    w: 2,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => !['desert', 'sparse'].includes(b)) &&
-      climate?.some(c => ['subtropical', 'warm temperate', 'cool temperate'].includes(c))
+  slaves: {
+    color: '#3B2F2F',
+    tinto: '#6A4A3C',
+    w: 0.3,
+    conditions: ({ climate }) => climate?.some(c => ['tropical', 'subtropical'].includes(c))
   },
   spices: {
     color: '#FF6347',
@@ -289,6 +394,13 @@ const tradeGoods: TradeGoods = {
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => ['jungle', 'forest', 'woods'].includes(b)) &&
       climate?.some(c => ['tropical', 'subtropical'].includes(c))
+  },
+  steel: {
+    color: '#5A6C7A',
+    tinto: '#2F353B',
+    w: 0.3,
+    conditions: ({ climate }) =>
+      climate?.some(c => ['temperate', 'subtropical', 'boreal'].includes(c))
   },
   stone: {
     color: '#808080',
@@ -301,7 +413,7 @@ const tradeGoods: TradeGoods = {
     w: 7,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => !['desert', 'sparse', 'grasslands'].includes(b)) && // Hardy grains in drier regions
-      climate?.some(c => ['cool temperate', 'boreal', 'subarctic'].includes(c))
+      climate?.some(c => ['temperate', 'boreal', 'subarctic'].includes(c))
   },
   sugar: {
     color: '#FFF8DC',
@@ -309,7 +421,14 @@ const tradeGoods: TradeGoods = {
     w: 1.5,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => !['desert', 'sparse'].includes(b)) && // Sugar cane can grow in various vegetations with enough water and warmth
-      climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  tar: {
+    color: '#2B2725',
+    tinto: '#665B47',
+    w: 0.5,
+    conditions: ({ coastal, vegetation }) =>
+      Boolean(coastal && vegetation?.some(b => ['forest', 'woods'].includes(b)))
   },
   tea: {
     color: '#228B22',
@@ -317,7 +436,7 @@ const tradeGoods: TradeGoods = {
     w: 1,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => ['woods', 'forest', 'jungle'].includes(b)) && // Tea prefers shade and moisture, hillside
-      climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
   },
   tin: {
     color: '#D3D3D3',
@@ -331,7 +450,19 @@ const tradeGoods: TradeGoods = {
     w: 1,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => !['desert', 'sparse', 'grasslands'].includes(b)) && // Tobacco needs sunny open areas, but can tolerate some shade
-      climate?.some(c => ['tropical', 'subtropical', 'warm temperate'].includes(c))
+      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  tools: {
+    color: '#8C8D8F',
+    tinto: '#575F5F',
+    w: 0.7,
+    conditions: () => true
+  },
+  weaponry: {
+    color: '#4F4F4F',
+    tinto: '#8A6D5C',
+    w: 0.2,
+    conditions: () => true
   },
   wheat: {
     color: '#F5DEB3',
@@ -339,7 +470,7 @@ const tradeGoods: TradeGoods = {
     w: 8.5,
     conditions: ({ vegetation, climate }) =>
       vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['subtropical', 'warm temperate', 'cool temperate', 'boreal'].includes(c))
+      climate?.some(c => ['subtropical', 'temperate', 'boreal'].includes(c))
   },
   'wild game': {
     color: '#6B8E23',
@@ -352,130 +483,63 @@ const tradeGoods: TradeGoods = {
     tinto: '#553450',
     w: 1,
     conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => b !== 'desert') && // Grapes can be grown in various open vegetations
-      climate?.some(c => ['warm temperate', 'cool temperate', 'subtropical'].includes(c))
+      vegetation?.some(b => b !== 'desert') &&
+      climate?.some(c => ['temperate', 'subtropical'].includes(c))
   },
   wool: {
     color: '#FFFFFF',
     tinto: '#778285',
     w: 1.5,
     conditions: ({ climate }) =>
-      climate?.some(c => ['cool temperate', 'boreal', 'subarctic', 'warm temperate'].includes(c))
+      climate?.some(c => ['temperate', 'boreal', 'subarctic', 'temperate'].includes(c))
   }
-}
-
-const locationFilter = () =>
-  window.world.locations.filter(loc => !window.world.provinces[loc.province].desolate)
-
-const _spawn = (resource: TradeGood) => {
-  const { conditions, w } = tradeGoods[resource]
-  const locations = locationFilter()
-  const target = Math.floor((locations.length * w) / 100)
-  window.dice
-    .shuffle(
-      locations.filter(loc => {
-        if (loc.resource) return false
-        const cells = loc.cells.map(cell => window.world.cells[cell])
-        return conditions({
-          vegetation: cells.map(cell => cell.vegetation),
-          climate: cells.map(cell => cell.climate),
-          topography: cells.map(cell => cell.topography),
-          coastal: cells.some(cell => cell.isCoast && cell.beach)
-        })
-      })
-    )
-    .slice(0, target)
-    .forEach(loc => (loc.resource = resource))
 }
 
 export const TRADE_GOODS = {
   reference: tradeGoods,
   spawn: () => {
-    // coastal
-    _spawn('fish')
-    _spawn('pearls')
-    _spawn('amber')
-    // mountains
-    _spawn('iron')
-    _spawn('coal')
-    _spawn('copper')
-    _spawn('tin')
-    _spawn('lead')
-    _spawn('alum')
-    _spawn('marble')
-    _spawn('gold')
-    _spawn('silver')
-    _spawn('gems')
-    _spawn('stone')
-    _spawn('mercury')
-    // less common
-    _spawn('ivory')
-    _spawn('elephants')
-    _spawn('dyes')
-    _spawn('medicaments')
-    _spawn('tea')
-    _spawn('wine')
-    _spawn('spices')
-    _spawn('saltpeter')
-    _spawn('cocoa')
-    _spawn('coffee')
-    _spawn('silk')
-    _spawn('fur')
-    _spawn('incense')
-    // common
-    _spawn('lumber')
-    _spawn('clay')
-    _spawn('salt')
-    _spawn('horses')
-    _spawn('cotton')
-    _spawn('sugar')
-    _spawn('tobacco')
-    _spawn('fiber crops')
-    _spawn('wool')
-    _spawn('sand')
-    // food
-    _spawn('olives')
-    _spawn('potato')
-    _spawn('wheat')
-    _spawn('livestock')
-    _spawn('wild game')
-    _spawn('fruit')
-    _spawn('dates')
-    _spawn('rice')
-    _spawn('maize')
-    _spawn('soybeans')
-    _spawn('sturdy grains')
-    _spawn('legumes')
-    // fill any locations without a resource
-    const resources = Object.keys(tradeGoods) as TradeGood[]
-    locationFilter()
-      .filter(loc => !loc.resource)
-      .forEach(loc => {
-        loc.resource = window.dice.weightedChoice(
-          resources.map(r => {
-            const { conditions, w } = tradeGoods[r]
-            const cells = loc.cells.map(cell => window.world.cells[cell])
-            return {
-              v: r,
-              w: conditions({
-                vegetation: cells.map(cell => cell.vegetation),
-                climate: cells.map(cell => cell.climate),
-                topography: cells.map(cell => cell.topography),
-                coastal: cells.some(cell => cell.isCoast && cell.beach)
-              })
-                ? w
-                : 0
-            }
-          })
-        )
-      })
+    const goods = Object.keys(tradeGoods) as TradeGood[]
+    const used: Partial<Record<TradeGood, number>> = {}
+    NATION.nations().forEach(nation => {
+      const locations = NATION.provinces(nation)
+        .map(PROVINCE.cells.land)
+        .flat()
+        .map(cell => {
+          const { topography } = window.world.locations[cell.location]
+          const { vegetation, climate } = cell
+          const coastal = cell.isCoast && cell.beach
+          return { topography, vegetation, climate, coastal }
+        })
+      const topography = ARRAY.unique(locations.map(l => l.topography))
+      const climate = ARRAY.unique(locations.map(l => l.climate))
+      const vegetation = ARRAY.unique(locations.map(l => l.vegetation))
+      const coastal = locations.some(l => l.coastal)
+      const prospects = goods
+        .map(good => {
+          const { conditions } = tradeGoods[good]
+          if (!used[good]) used[good] = 0
+          const occurrence = used[good]
+          const w = conditions({ vegetation, climate, topography, coastal })
+            ? 1 / 10 ** occurrence
+            : 0
+          used[good] += 1
+          if (used[good] > 100) used[good] = 0
+          return { w, v: good }
+        })
+        .filter(r => r.w > 0)
+      nation.exports = window.dice.weightedSample(prospects, 3)
+    })
   },
-  aggregate: () => {
-    const locations = locationFilter()
-    const resources = locations
-      .map(loc => loc.resource ?? 'none')
-      .reduce((a: Record<string, number>, b) => ({ ...a, [b]: (a[b] ?? 0) + 1 }), {})
-    Object.keys(resources).forEach(k => (resources[k] = resources[k] / locations.length))
-    return Object.entries(resources).sort((a, b) => b[1] - a[1]) as [TradeGood, number][]
+  imports: (nation: Province) => {
+    if (!nation.imports) {
+      const n = ARRAY.unique(
+        NATION.neighbors({ nation, depth: 2 })
+          .map(n => n.exports ?? [])
+          .flat()
+          .filter(good => !nation.exports.includes(good) && good !== 'wild game' && good !== 'fish')
+      )
+      nation.imports = window.dice.sample(n, 3)
+    }
+    return nation.imports
   }
 }

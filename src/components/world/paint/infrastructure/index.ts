@@ -197,31 +197,6 @@ export const DRAW_INFRASTRUCTURE = {
           width: number
           draw: (_x: number, _y: number) => void
         }> = []
-        if (nation.suzerain && style === 'Government') {
-          const glyph = '◈'
-          const width = ctx.measureText(glyph).width
-          heraldryIcons.push({
-            width,
-            draw: (x, y) => {
-              ctx.fillStyle = MAP_METRICS.government.colors.vassal
-              ctx.fillText(glyph, x, y)
-            }
-          })
-        }
-        if (nation.regency && style === 'Government') {
-          const crownSize = iconFontSize * 0.8
-          heraldryIcons.push({
-            width: crownSize,
-            draw: (x, y) => {
-              MAP_SHAPES.crown({
-                ctx,
-                scale: crownSize / 0.3,
-                point: { x: x + crownSize / 2, y: y - 3 },
-                color: MAP_METRICS.government.colors.regency
-              })
-            }
-          })
-        }
         if (heraldryIcons.length) {
           const totalWidth =
             heraldryIcons.reduce((sum, icon) => sum + icon.width, 0) +
@@ -287,7 +262,7 @@ export const DRAW_INFRASTRUCTURE = {
           const end: [number, number] = [dst.hub.x, dst.hub.y]
           const distance = geoDistance(start, end) * window.world.radius
           const offset = distance < PLACEMENT.spacing.provinces * 4 ? 0 : 0.03
-          const offsetPoint = calculateCurvedPathPoint(start, end, offset)
+          const offsetPoint = MAP_SHAPES.path.curvedSimple(start, end, offset)
           const pre = geoInterpolate(start, end)(0.99)
           return [start, offsetPoint, pre, end]
         })
@@ -296,55 +271,4 @@ export const DRAW_INFRASTRUCTURE = {
     ctx.stroke(new Path2D(airships))
     ctx.restore()
   }
-}
-/**
- * Calculate a third point to create a curved path between two geographical points
- * @param point1 - [longitude, latitude] of the first point
- * @param point2 - [longitude, latitude] of the second point
- * @param curvature - Factor to control the curvature of the path (positive for outward, negative for inward)
- * @returns [longitude, latitude] of the third point
- */
-export function calculateCurvedPathPoint(
-  point1: [number, number],
-  point2: [number, number],
-  curvature: number = 0.5
-): [number, number] {
-  // Helper to convert degrees to radians
-  const toRadians = (deg: number) => (deg * Math.PI) / 180
-  // Helper to convert radians to degrees
-  const toDegrees = (rad: number) => (rad * 180) / Math.PI
-
-  // Compute the initial bearing between the two points
-  const [lon1, lat1] = point1.map(toRadians)
-  const [lon2, lat2] = point2.map(toRadians)
-
-  const y = Math.sin(lon2 - lon1) * Math.cos(lat2)
-  const x =
-    Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)
-  const initialBearing = (toDegrees(Math.atan2(y, x)) + 360) % 360
-
-  // Find the perpendicular bearing (90 degrees offset)
-  const perpendicularBearing = (initialBearing + 90) % 360
-
-  // Compute the midpoint between the two points
-  const midpoint = geoInterpolate(point1, point2)(0.5)
-
-  // Move the midpoint along the perpendicular bearing by a small distance
-  const distance = curvature // Set distance proportional to curvature
-  const midpointLat = toRadians(midpoint[1])
-  const midpointLon = toRadians(midpoint[0])
-
-  const newLat = Math.asin(
-    Math.sin(midpointLat) * Math.cos(distance) +
-      Math.cos(midpointLat) * Math.sin(distance) * Math.cos(toRadians(perpendicularBearing))
-  )
-  const newLon =
-    midpointLon +
-    Math.atan2(
-      Math.sin(toRadians(perpendicularBearing)) * Math.sin(distance) * Math.cos(midpointLat),
-      Math.cos(distance) - Math.sin(midpointLat) * Math.sin(newLat)
-    )
-
-  // Convert the result back to degrees
-  return [toDegrees(newLon), toDegrees(newLat)]
 }

@@ -3,6 +3,7 @@ import { WeightedDistribution } from '../utilities/math/dice/types'
 import { TaggedEntity } from '../utilities/text/types'
 import { FindParams } from '../utilities/types'
 import { Hub } from './hubs/type'
+import { TradeGood } from './trade/types'
 
 export interface Demographics {
   common: WeightedDistribution<number>
@@ -11,21 +12,23 @@ export interface Demographics {
 }
 
 export type DiplomaticRelation =
-  | 'vassal'
-  | 'colony'
-  | 'trading company'
-  | 'colonial settlers'
-  | 'penal colony'
   | 'suzerain'
   | 'ally'
   | 'friendly'
   | 'neutral'
   | 'suspicious'
   | 'at war'
+  | 'vassal'
+  | 'tributary'
+  | 'personal union'
+  | 'chartered company'
+  | 'dominion'
+  | 'colony'
 
 export interface Province extends TaggedEntity {
   tag: 'province'
   name: string
+  demonym?: string
   cell: number
   culture: number
   minority?: number
@@ -45,18 +48,28 @@ export interface Province extends TaggedEntity {
     | 'confederation'
     | 'fragmented'
     | 'theocracy'
-    | 'magisterium'
-  decentralization?: 'tribes' | 'lawless'
+  decentralization?: 'tribes' | 'warring states' | 'city-states'
   regency?: boolean
   quirks?: string[]
+  law?:
+    | 'customary law'
+    | 'localized codes'
+    | 'hierarchical law'
+    | 'bureaucratic law'
+    | 'esoteric codified'
+    | 'arbitrary rule'
+  policies?: {
+    religion?: 'atheism' | 'pluralism' | 'secularized' | 'moralism'
+    trade?: 'isolationist' | 'protectionism' | 'mercantilism' | 'free trade'
+    economy?: 'traditionalism' | 'laissez-faire' | 'interventionism' | 'state capitalism' | 'command economy'
+    bureaucracy?: 'meritocratic exams' | 'venal offices' | 'hereditary officials' | 'court eunuchs' | 'appointed officials'
+  }
   // networking
   relations: Record<number, DiplomaticRelation>
   neighbors: number[]
-  subjects: number[]
+  territories: number[]
   nation?: number
-  suzerain?: number
-  colonists?: number
-  colonial?: boolean
+  overlord?: number
   walls?: number
   //population
   capacity?: number
@@ -80,6 +93,8 @@ export interface Province extends TaggedEntity {
   mountains: number
   corruption?: number
   farmland?: boolean
+  exports?: TradeGood[]
+  imports?: TradeGood[]
   // time
   timezone?: { offset: number; singular: boolean }
   // memory

@@ -108,7 +108,7 @@ export const MAP_SHAPES = {
   },
   color: {
     coastal: '#79a896',
-    wasteland: '#dbdad9',
+    wasteland: 'hsl(195, 43%, 89%)',
     marsh: '#99ccc2',
     volcanic: '#f77542',
     'salt marsh': '#a1d1cf',
@@ -206,6 +206,28 @@ export const MAP_SHAPES = {
       ctx.fillStyle = ctx.createPattern(pattern, 'repeat')
       ctx.fill()
     }
+  },
+  square: ({
+    ctx,
+    point,
+    scale,
+    color,
+    dash = [],
+    border
+  }: DrawFeaturesParams & { color: string; dash: number[]; border: string }) => {
+    ctx.save()
+    const { x, y } = point
+    const squareSize = scale * 0.5 // Size of the square
+    const halfSize = squareSize / 2
+    ctx.fillStyle = color
+    ctx.beginPath()
+    ctx.rect(x - halfSize, y - halfSize, squareSize, squareSize)
+    ctx.fill()
+    ctx.setLineDash(dash)
+    ctx.strokeStyle = border
+    ctx.lineWidth = 2
+    ctx.strokeRect(x - halfSize, y - halfSize, squareSize, squareSize)
+    ctx.restore()
   },
   gradient: ({
     ctx,
@@ -602,7 +624,51 @@ export const MAP_SHAPES = {
     curve: (projection: d3.GeoProjection) =>
       geoCurvePath(d3.curveCatmullRom.alpha(0.1), projection, false),
     basis: (projection: d3.GeoProjection) => geoCurvePath(d3.curveBasis, projection, false),
-    linear: (projection: d3.GeoProjection) => d3.geoPath(projection)
+    linear: (projection: d3.GeoProjection) => d3.geoPath(projection),
+    curvedSimple: (
+      point1: [number, number],
+      point2: [number, number],
+      curvature: number = 0.5
+    ): [number, number] => {
+      // Helper to convert degrees to radians
+      const toRadians = (deg: number) => (deg * Math.PI) / 180
+      // Helper to convert radians to degrees
+      const toDegrees = (rad: number) => (rad * 180) / Math.PI
+
+      // Compute the initial bearing between the two points
+      const [lon1, lat1] = point1.map(toRadians)
+      const [lon2, lat2] = point2.map(toRadians)
+
+      const y = Math.sin(lon2 - lon1) * Math.cos(lat2)
+      const x =
+        Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(lon2 - lon1)
+      const initialBearing = (toDegrees(Math.atan2(y, x)) + 360) % 360
+
+      // Find the perpendicular bearing (90 degrees offset)
+      const perpendicularBearing = (initialBearing + 90) % 360
+
+      // Compute the midpoint between the two points
+      const midpoint = d3.geoInterpolate(point1, point2)(0.5)
+
+      // Move the midpoint along the perpendicular bearing by a small distance
+      const distance = curvature // Set distance proportional to curvature
+      const midpointLat = toRadians(midpoint[1])
+      const midpointLon = toRadians(midpoint[0])
+
+      const newLat = Math.asin(
+        Math.sin(midpointLat) * Math.cos(distance) +
+          Math.cos(midpointLat) * Math.sin(distance) * Math.cos(toRadians(perpendicularBearing))
+      )
+      const newLon =
+        midpointLon +
+        Math.atan2(
+          Math.sin(toRadians(perpendicularBearing)) * Math.sin(distance) * Math.cos(midpointLat),
+          Math.cos(distance) - Math.sin(midpointLat) * Math.sin(newLat)
+        )
+
+      // Convert the result back to degrees
+      return [toDegrees(newLon), toDegrees(newLat)]
+    }
   },
   patterns: {
     stripes: ({ ctx, scale, color, width = 1, spacing = 0 }: StripePatternParams) => {

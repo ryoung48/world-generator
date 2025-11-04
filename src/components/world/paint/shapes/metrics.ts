@@ -78,17 +78,7 @@ export const MAP_METRICS = {
         ...Object.entries(PROVINCE.development.scale).map(([k, v]) => ({
           color: MAP_METRICS.development.color(v),
           text: k
-        })),
-        {
-          text: 'colonial',
-          shape: ({ ctx, point, scale }) =>
-            MAP_SHAPES.hatched.square({
-              ctx,
-              point,
-              scale,
-              color: MAP_METRICS.government.colors.colonial
-            })
-        }
+        }))
       ],
       width: 10
     })
@@ -208,7 +198,7 @@ export const MAP_METRICS = {
       oligarchy: 'hsl(147, 100%, 87%)',
       confederation: 'hsl(28, 100%, 86%)',
       fragmented: 'hsl(195, 43%, 89%)',
-      magisterium: 'hsla(185, 100%, 85%, 1.00)',
+      // magisterium: 'hsla(185, 100%, 85%, 1.00)',
       theocracy: 'hsl(45, 77%, 95%)',
       colonial: 'hsl(185, 91%, 60%)',
       vassal: 'hsla(256, 62%, 49%, 1.00)',
@@ -223,24 +213,28 @@ export const MAP_METRICS = {
             text: k
           })),
         {
-          text: 'vassal',
-          shape: ({ ctx, point }) => {
-            ctx.save()
-            ctx.fillStyle = MAP_METRICS.government.colors.vassal
-            ctx.fillText('◈', point.x - 8, point.y + 6)
-            ctx.restore()
-          }
+          text: 'subject',
+          shape: ({ ctx, point, scale }) =>
+            MAP_SHAPES.square({
+              ctx,
+              point,
+              color: 'white',
+              border: MAP_METRICS.government.colors.vassal,
+              dash: [2, 3],
+              scale
+            })
         },
         {
-          text: 'regency',
-          shape: ({ ctx, point, scale }) => {
-            MAP_SHAPES.crown({
+          text: 'colonial',
+          shape: ({ ctx, point, scale }) =>
+            MAP_SHAPES.square({
               ctx,
-              scale: scale * 2.5,
               point,
-              color: MAP_METRICS.government.colors.regency
+              color: 'white',
+              border: MAP_METRICS.government.colors.colonial,
+              dash: [2, 3],
+              scale
             })
-          }
         }
       ],
       width: 10
@@ -295,8 +289,7 @@ export const MAP_METRICS = {
   },
   religion: {
     colors: {
-      atheistic: 'hsl(0, 100%, 72%)',
-      pluralistic: 'hsl(0, 69%, 80%)',
+      irreligious: 'hsl(0, 100%, 72%)',
       nontheistic: 'hsl(46, 58%, 78%)',
       monotheistic: 'hsl(214, 41%, 63%)',
       dualistic: 'hsl(195, 65.90%, 60%)',

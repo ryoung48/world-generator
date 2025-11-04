@@ -141,10 +141,7 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
     },
     minorities: () => {
       window.world.provinces
-        .filter(
-          province =>
-            !province.desolate && province.colonists === undefined && window.dice.random > 0.6
-        )
+        .filter(province => !province.desolate && window.dice.random > 0.6)
         .forEach(province => {
           const candidates = PROVINCE.neighbors({ province }).filter(
             neighbor => neighbor.culture !== province.culture && !PROVINCE.far(province, neighbor)
@@ -170,35 +167,93 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
       //     })
       //   }
       // })
+
+      const isRoyal = (n: Province) =>
+        n.government === 'autocracy' || n.government === 'oligarchy' || n.government === 'theocracy'
       nations.forEach(nation => {
         const culture = window.world.cultures[nation.culture]
         const uncivilized = nation.development < 1.5
+        const civilized = nation.development > 3.5
         const corrupted = nation.corruption > 0.5
         const small = NATION.provinces(nation).length < 3
-        const irreligious = culture.religion === 'atheistic' || culture.religion === 'pluralistic'
+        const large = nation.size === 'kingdom' || nation.size === 'empire'
+        const irreligious = culture.religion === 'irreligious'
+        const climate = PROVINCE.climate(nation)
         nation.government = window.dice.weightedChoice([
           { w: uncivilized ? 1 : 2, v: 'autocracy' },
           { w: nation.development < 2 ? 0 : 1, v: 'republic' },
           { w: 1, v: 'oligarchy' },
-          { w: 0.25, v: 'magisterium' },
           { w: small ? 0 : uncivilized ? 2 : 0.25, v: 'confederation' },
           { w: irreligious ? 0 : 0.5, v: 'theocracy' },
-          { w: corrupted ? 1000 : uncivilized ? 5 : 0, v: 'fragmented' }
+          {
+            w: corrupted || climate === 'subarctic' ? 1000 : uncivilized ? 5 : large ? 0.25 : 0,
+            v: 'fragmented'
+          }
         ])
-        if (
-          nation.government === 'fragmented' ||
-          (nation.government === 'confederation' && uncivilized)
-        ) {
-          nation.decentralization = 'tribes'
+        const decentralized =
+          nation.government === 'fragmented' || nation.government === 'confederation'
+        if (decentralized) {
+          nation.decentralization = uncivilized
+            ? 'tribes'
+            : nation.government === 'confederation'
+            ? 'city-states'
+            : 'warring states'
         }
-        if (
-          (nation.government === 'autocracy' ||
-            nation.government === 'oligarchy' ||
-            nation.government === 'theocracy') &&
-          window.dice.random > 0.95
-        ) {
+        if (isRoyal(nation) && window.dice.random > 0.95) {
           nation.regency = true
         }
+        // legal system
+        if (nation.government === 'fragmented') nation.law = 'customary law'
+        else if (nation.government === 'confederation')
+          nation.law = window.dice.weightedChoice([
+            { w: uncivilized ? 1 : 0, v: 'customary law' },
+            { w: nation.size === 'city-state' ? 0 : 3, v: 'localized codes' },
+            { w: 1, v: 'hierarchical law' },
+            { w: civilized ? 1 : 0, v: 'bureaucratic law' }
+          ])
+        else
+          nation.law = window.dice.weightedChoice([
+            { w: uncivilized ? 1 : 0, v: 'customary law' },
+            { w: nation.size === 'city-state' || civilized ? 0 : 1, v: 'localized codes' },
+            { w: 3, v: 'hierarchical law' },
+            { w: uncivilized ? 0 : 0.5, v: 'esoteric codified' },
+            { w: civilized ? 3 : uncivilized ? 0 : 1, v: 'bureaucratic law' },
+            { w: nation.government === 'autocracy' ? 1 : 0, v: 'arbitrary rule' }
+          ])
+        nation.policies = {}
+        // religion
+        const theocracy = nation.government === 'theocracy'
+        nation.policies.religion = window.dice.weightedChoice([
+          { w: irreligious ? 2 : 0, v: 'atheism' },
+          { w: theocracy ? 0 : 1, v: 'pluralism' },
+          { w: decentralized || theocracy ? 0 : 1, v: 'secularized' },
+          { w: irreligious ? 0 : 2, v: 'moralism' }
+        ])
+        // trade
+        nation.policies.trade = window.dice.weightedChoice([
+          { w: 3, v: 'free trade' },
+          { w: uncivilized || decentralized ? 0 : 1, v: 'mercantilism' },
+          { w: uncivilized || decentralized ? 0 : 1, v: 'protectionism' },
+          { w: decentralized ? 0 : 0.5, v: 'isolationist' }
+        ])
+        // economy
+        nation.policies.economy = uncivilized
+          ? 'traditionalism'
+          : window.dice.weightedChoice([
+              { w: 3, v: 'laissez-faire' },
+              { w: decentralized ? 0 : 1, v: 'interventionism' },
+              { w: decentralized ? 0 : 1, v: 'state capitalism' },
+              { w: decentralized ? 0 : 0.5, v: 'command economy' }
+            ])
+        // bureaucracy
+        nation.policies.bureaucracy = window.dice.weightedChoice([
+          { w: decentralized ? 0 : 1, v: 'meritocratic exams' },
+          { w: decentralized || !large ? 0 : 0.25, v: 'venal offices' },
+          { w: 1, v: 'hereditary officials' },
+          { w: decentralized || !large ? 0 : 1, v: 'court eunuchs' },
+          { w: 1, v: 'appointed officials' }
+        ])
+
       })
       // diplomacy
       nations.forEach(nation => {
@@ -216,49 +271,72 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
         })
       })
       // vassals
+      const union = (n: Province) => Object.values(n.relations).some(r => r === 'personal union')
       nations
         .filter(
-          n => (n.size === 'empire' || n.size === 'kingdom') && n.decentralization !== 'tribes'
+          n => (n.size === 'empire' || n.size === 'kingdom') && n.government !== 'fragmented'
         )
         .forEach(nation => {
           const condition =
             nation.size === 'kingdom'
-              ? (n: Province) => n.size === 'city-state'
-              : (n: Province) => n.size === 'city-state' || n.size === 'principality'
+              ? (n: Province) => n.size === 'city-state' || n.size === 'principality'
+              : (n: Province) =>
+                  n.size === 'city-state' || n.size === 'principality' || nation.size === 'kingdom'
           NATION.neighbors({ nation })
             .filter(
               n =>
                 condition(n) &&
-                n.suzerain === undefined &&
-                window.dice.random > 0.5 &&
-                !PROVINCE.far(nation, n)
+                n.overlord === undefined &&
+                n.government !== 'fragmented' &&
+                window.dice.random > 0.75 &&
+                !PROVINCE.far(nation, n) &&
+                nation.territories.length - n.territories.length > 4
             )
             .forEach(neighbor => {
-              NATION.relations.vassalage({ overlord: nation, vassal: neighbor })
+              NATION.relations.subject({
+                overlord: nation,
+                vassal: neighbor,
+                type: window.dice.weightedChoice([
+                  {
+                    w: isRoyal(neighbor) && isRoyal(nation) && !union(nation) ? 0.25 : 0,
+                    v: 'personal union'
+                  },
+                  { w: 1, v: 'vassal' },
+                  { w: 2, v: 'tributary' }
+                ])
+              })
             })
         })
       // colonies
-      const candidates = nations.filter(p => p.development < 1.5 && NATION.coastal(p))
+      const candidates = nations.filter(p => p.development < 2 && NATION.coastal(p))
       nations
         .filter(
           n =>
             n.size !== 'city-state' &&
             n.government !== 'fragmented' &&
             NATION.coastal(n) &&
-            n.suzerain === undefined &&
+            n.overlord === undefined &&
             n.development > 2.75
         )
         .forEach(nation => {
           window.dice
-            .shuffle(candidates.filter(n => n.suzerain === undefined && !n.colonial))
-            .slice(0, window.dice.randint(0, 8))
-            .forEach(neighbor => {
-              const candidates = NATION.provinces(neighbor).filter(
-                p => p.colonists === undefined && p.ocean > 0
+            .shuffle(candidates.filter(n => n.overlord === undefined))
+            .slice(
+              0,
+              window.dice.randint(
+                0,
+                nation.size === 'principality' ? 1 : nation.size === 'kingdom' ? 2 : 3
               )
-              if (candidates.length === 0) return
-              window.dice.sample(candidates, window.dice.randint(1, 10)).forEach(p => {
-                NATION.relations.colonize({ overlord: nation, colony: p })
+            )
+            .forEach(neighbor => {
+              NATION.relations.subject({
+                overlord: nation,
+                vassal: neighbor,
+                type: window.dice.weightedChoice([
+                  { w: 1, v: 'colony' },
+                  { w: 2, v: 'chartered company' },
+                  { w: 2, v: 'dominion' }
+                ])
               })
             })
         })
@@ -280,24 +358,24 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
           PROVINCE.neighbors({ province }).filter(p => !PROVINCE.far(p, province, 2))
       })
       groups.forEach(group => {
-        // Assign overlord and vassals
+        // Assign nations and territories
         const overlordProvince = group[0]
         overlordProvince.nation = undefined
-        overlordProvince.subjects = []
+        overlordProvince.territories = []
         for (let i = 1; i < group.length; i++) {
           const vassalProvince = group[i]
           vassalProvince.nation = overlordProvince.idx
-          vassalProvince.subjects = []
-          overlordProvince.subjects.push(vassalProvince.idx)
+          vassalProvince.territories = []
+          overlordProvince.territories.push(vassalProvince.idx)
         }
       })
       Array.from(unassigned).forEach(province => {
-        if (province.nation === undefined && province.subjects.length === 0) {
+        if (province.nation === undefined && province.territories.length === 0) {
           const neighbors = PROVINCE.neighbors({ province }).map(n => PROVINCE.nation(n))
           if (neighbors.length > 0) {
             const neighbor = window.dice.choice(neighbors)
             province.nation = neighbor.idx
-            neighbor.subjects.push(province.idx)
+            neighbor.territories.push(province.idx)
           }
         }
       })
@@ -343,9 +421,16 @@ export const NATION_SHAPER = PERFORMANCE.profile.wrapper({
         if (nation.size === 'city-state') pop = Math.min(pop, largeCityPop())
         if (nation.size === 'principality' || nation.development < 2)
           pop = Math.min(pop, hugeCityPop())
-        if (pop > 10e3 && nation.decentralization === 'tribes') pop = largeTownPop()
-        if (pop < 1000) pop = window.dice.randint(1000, 5000)
+        if (nation.decentralization === 'tribes') {
+          pop =
+            nation.size === 'empire'
+              ? largeTownPop()
+              : nation.size === 'kingdom'
+              ? smallTownPop()
+              : Math.min(pop, largeVillagePop())
+        } else if (pop < 1000) pop = window.dice.randint(1000, 5000)
         PROVINCE.hub(capital).population = pop
+        if (nation.decentralization && pop <= 1000) PROVINCE.hub(capital).nomadic = true
       })
       const cityScale = scaleLinear().domain([1, 3, 4]).range([10, 6, 5]).clamp(true)
       const tribeScale = scaleLinear().domain([1, 2.5]).range([0.95, 0]).clamp(true)

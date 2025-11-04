@@ -113,7 +113,7 @@ const WorldStatistics: FC<WorldStatisticsProps> = () => {
   // Find largest nation by province count
   const largestNation = nations.reduce(
     (max, nation) =>
-      nation.subjects.length > max.count ? { nation, count: nation.subjects.length } : max,
+      nation.territories.length > max.count ? { nation, count: nation.territories.length } : max,
     { nation: nations[0], count: 0 }
   )
 

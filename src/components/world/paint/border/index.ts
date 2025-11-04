@@ -18,7 +18,7 @@ export const DRAW_BORDERS = {
     const nations = NATION.nations()
     const provinces = window.world.provinces
     // base coloration
-    const wastes = provinces.filter(p => p.subjects.length > 0 && p.desolate)
+    const wastes = provinces.filter(p => p.territories.length > 0 && p.desolate)
     ctx.lineWidth = scale * 2
     ctx.fillStyle = '#f7eedc'
     nations.concat(wastes).forEach(nation => {
@@ -69,7 +69,6 @@ export const DRAW_BORDERS = {
     if (style === 'Topography') DRAW_TOPOGRAPHY.special({ projection, ctx })
     if (style === 'Timezones') DRAW_TIMEZONES.land({ ctx, projection })
     if (style === 'Religion') DRAW_RELIGIONS.minorities({ projection, ctx })
-    if (style === 'Development') DRAW_GOVERNMENT.colonies({ projection, ctx })
     // nation borders
     DRAW_NATION.coloration({ projection, ctx, style, selected: province })
     if (style === 'Nations') {
@@ -77,5 +76,6 @@ export const DRAW_BORDERS = {
       // DRAW_NATION.borders({ projection, ctx })
     }
     if (style === 'Cultures') DRAW_CULTURES.minorities({ projection, ctx, nationSet })
+    if (style === 'Government') DRAW_GOVERNMENT.vassals({ projection, ctx })
   }
 }

@@ -76,8 +76,7 @@ export interface Culture extends TaggedEntity {
     | 'dualistic'
     | 'polytheistic'
     | 'nontheistic'
-    | 'pluralistic'
-    | 'atheistic'
+    | 'irreligious'
   values: CulturalValue[]
   fashion: { color: Hue; scheme: string }
   display: { color: string; hue: number }

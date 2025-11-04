@@ -21,7 +21,7 @@ export const DRAW_CACHE = {
       f: (nation: Province) => {
         return SHAPER_DISPLAY.borders.provinces([
           nation,
-          ...nation.subjects.map(v => window.world.provinces[v])
+          ...nation.territories.map(v => window.world.provinces[v])
         ])
       },
       keyBuilder: nation => nation.idx.toString()
@@ -94,8 +94,7 @@ export const DRAW_CACHE = {
           c =>
             CELL.neighbors({ cell: c }).some(
               n => window.world.provinces[n.province].culture === minority.idx
-            ) ||
-            (c.beach && province.colonists !== undefined)
+            )
         )
         return SHAPER_DISPLAY.borders.cells(minorities)
       },

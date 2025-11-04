@@ -24,8 +24,6 @@ export function HubView() {
   const province = window.world.provinces[state.codex.idx]
   const hub = PROVINCE.hub(province)
   const nation = PROVINCE.nation(province)
-  const provinces = NATION.provinces(nation)
-  const colonists = new Set(provinces.filter(p => p.colonists).map(p => p.minority))
   const { common } = PROVINCE.demographics(province)
   const cultureCount = 4
   const other = common.slice(cultureCount).reduce((sum, { w }) => sum + w, 0)
@@ -86,10 +84,7 @@ export function HubView() {
                     color: culture.display.color
                   })} ${TEXT.decorate({
                     label: culture.name,
-                    details: CULTURE.describe(culture),
-                    underlineColor: colonists.has(culture.idx)
-                      ? MAP_METRICS.government.colors.colonial
-                      : undefined
+                    details: CULTURE.describe(culture)
                   })} (${TEXT.formatters.percent(w)})`
                 })
                 .concat(other > 0 ? [`Other (${TEXT.formatters.percent(other)})`] : [])

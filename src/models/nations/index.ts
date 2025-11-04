@@ -1,18 +1,19 @@
 import { PROVINCE } from '../provinces'
-import { Province } from '../provinces/types'
+import { DiplomaticRelation, Province } from '../provinces/types'
 import { ARRAY } from '../utilities/array'
 import {
   GetRelationParams,
   NationNeighborParams,
-  SetColony,
   SetRelationParams,
   SetVassalage
 } from './types'
 
+const colonies = new Set<DiplomaticRelation>(['colony', 'chartered company', 'dominion'])
+
 export const NATION = {
   atWar: (nation: Province) => nation.war >= 0,
   coastal: (nation: Province) => NATION.provinces(nation).some(p => p.ocean > 0),
-  colonized: (nation: Province) => NATION.provinces(nation).some(p => p.colonists !== undefined),
+  colonized: (nation: Province) => colonies.has(window.world.provinces[nation.overlord]?.relations[nation.idx]),
   neighbors: ({ nation, depth = 0 }: NationNeighborParams): Province[] => {
     const provinces = NATION.provinces(nation)
     const neighbors = ARRAY.unique(
@@ -32,7 +33,7 @@ export const NATION = {
         .filter(n => n !== nation)
     )
   },
-  provinces: (nation: Province) => [nation, ...nation.subjects.map(v => window.world.provinces[v])],
+  provinces: (nation: Province) => [nation, ...nation.territories.map(v => window.world.provinces[v])],
   population: (nation: Province) =>
     NATION.provinces(nation).reduce((sum, province) => sum + province.population, 0),
   nations: () => window.world.provinces.filter(p => p.nation === undefined && !p.desolate),
@@ -44,22 +45,10 @@ export const NATION = {
       n1.relations[n2.idx] = relation
       n2.relations[n1.idx] = relation
     },
-    vassalage: ({ overlord, vassal }: SetVassalage) => {
-      overlord.relations[vassal.idx] = 'vassal'
+    subject: ({ overlord, vassal, type }: SetVassalage) => {
+      overlord.relations[vassal.idx] = type
       vassal.relations[overlord.idx] = 'suzerain'
-      vassal.suzerain = overlord.idx
-    },
-    colonize: ({ overlord, colony }: SetColony) => {
-      const nation = PROVINCE.nation(colony)
-      overlord.relations[nation.idx] = 'colony'
-      nation.relations[overlord.idx] = window.dice.weightedChoice([
-        { v: 'trading company', w: 5 },
-        { v: 'colonial settlers', w: 2 },
-        { v: 'penal colony', w: 1 }
-      ])
-      colony.colonists = overlord.idx
-      colony.minority = overlord.culture
-      overlord.colonial = true
+      vassal.overlord = overlord.idx
     }
   }
 }

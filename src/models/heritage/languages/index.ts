@@ -57,9 +57,8 @@ const baseVowels = ['a', 'e', 'i', 'o', 'u', 'y']
 
 export const LANGUAGE = {
   word: {
-    demonym: (lang: Language) => {
-      const { morphemes } = LANGUAGE.word.unique({ lang, key: 'culture' })
-      const prefix = morphemes.slice(0, window.dice.choice([2, 3])).join('')
+    demonym: (morphemes: string[]) => {
+      const prefix = morphemes.slice(0, -1).join('')
       let index = prefix.length - 1
       while (index >= 0 && CLUSTER.vowel(prefix[index])) {
         index--

@@ -81,7 +81,7 @@ const drawLegend = ({
 
 const cultureLegend = ({ nationSet, province }: CultureLegendParams): LegendParams => {
   const used = new Set()
-  const cultures: { culture: number; minority: boolean; colonists: boolean }[] = []
+  const cultures: { culture: number; minority: boolean }[] = []
   PROVINCE.sort({
     ref: province,
     group: Array.from(nationSet)
@@ -90,12 +90,11 @@ const cultureLegend = ({ nationSet, province }: CultureLegendParams): LegendPara
     type: 'closest'
   }).forEach(r => {
     if (!used.has(r.culture)) {
-      cultures.push({ minority: false, culture: r.culture, colonists: false })
+      cultures.push({ minority: false, culture: r.culture })
       used.add(r.culture)
     }
     if (r.minority && !used.has(r.minority)) {
-      const colonists = r.colonists !== undefined
-      cultures.push({ minority: true, culture: r.minority, colonists })
+      cultures.push({ minority: true, culture: r.minority })
       used.add(r.minority)
     }
   })

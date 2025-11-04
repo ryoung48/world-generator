@@ -36,7 +36,6 @@ export interface Cell extends Point {
     pattern?: number[]
   }
   heat: { min: number; max: number; mean: number }
-  pressure?: number[]
   monsoon?: boolean
   topography?: 'coastal' | 'marsh' | 'flat' | 'hills' | 'plateau' | 'mountains'
   vegetation?: 'desert' | 'sparse' | 'grasslands' | 'woods' | 'forest' | 'jungle'

@@ -13,12 +13,14 @@ export const DRAW_GOVERNMENT = {
     const pathGen = MAP_SHAPES.path.curveClosed(projection)
     ctx.save()
     ctx.lineCap = 'butt'
-    ctx.lineWidth = 1 * scale
+    ctx.lineWidth = 0.6 * scale
     ctx.setLineDash([1 * scale, 0.5 * scale])
-    ctx.strokeStyle = MAP_METRICS.government.colors.vassal
     nations
-      .filter(nation => nation.suzerain !== undefined)
+      .filter(nation => nation.overlord !== undefined)
       .map(nation => {
+        ctx.strokeStyle = NATION.colonized(nation)
+          ? MAP_METRICS.government.colors.colonial
+          : MAP_METRICS.government.colors.vassal
         DRAW_CACHE.paths.nation({ nation: nation, path: pathGen }).forEach(p => {
           ctx.save()
           ctx.clip(p)
@@ -27,23 +29,5 @@ export const DRAW_GOVERNMENT = {
         })
       })
     ctx.restore()
-  },
-  colonies: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
-    const { projection, ctx } = params
-    const scale = MAP_SHAPES.scale.derived(projection)
-    const pathGen = MAP_SHAPES.path.curveClosed(projection)
-    const colonial = MAP_SHAPES.patterns.stripes({
-      ctx,
-      color: MAP_METRICS.government.colors.colonial,
-      scale
-    })
-    window.world.provinces
-      .filter(province => province.colonists !== undefined)
-      .forEach(province => {
-        ctx.fillStyle = ctx.createPattern(colonial, 'repeat')
-        DRAW_CACHE.paths.province({ province, path: pathGen }).forEach(p => {
-          ctx.fill(p)
-        })
-      })
   }
 }
