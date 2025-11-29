@@ -84,9 +84,9 @@ export function WorldMap() {
     projection = newProjection
   }
   return (
-    <Grid container>
-      <Grid item xs={12}>
-        <MapInfoPanels cursor={cursor} units={state.units} />
+    <Grid container sx={{ height: '100%' }}>
+      <Grid item xs={12} sx={{ height: '100%', position: 'relative' }}>
+        <MapInfoPanels cursor={cursor} units={state.units} style={style} />
 
         <MapTranslateControls
           move={moveControls}

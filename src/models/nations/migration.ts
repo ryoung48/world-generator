@@ -22,7 +22,7 @@ const relativeSizes = (nation: Province): Record<number, number> => {
 
 const modifiers = (params: { source: Province; target: Province }): MigrationModifiers => {
   const { source, target } = params
-  const unstable = source.war !== undefined
+  const unstable = false // source.war !== undefined
   const unstableIm = unstable ? 0.5 : 1
   const unstableEm = unstable ? 1.5 : 1
   const underdeveloped = source.development < target.development

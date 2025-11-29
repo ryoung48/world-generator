@@ -1,5 +1,5 @@
 import * as turf from '@turf/turf'
-import { geoInterpolate, scaleLinear } from 'd3'
+import { geoCentroid, geoInterpolate, scaleLinear } from 'd3'
 
 import { GEOGRAPHY } from '../../../../models/cells/geography'
 import { SHAPER_DISPLAY } from '../../../../models/shapers/display'
@@ -9,6 +9,9 @@ import { MAP_SHAPES } from '../shapes'
 import { DRAW_CACHE } from '../shapes/caching'
 import { DrawMapParams } from '../shapes/types'
 import { DrawOceanParams } from './types'
+import { fonts } from '../../../theme/fonts'
+import { MATH } from '../../../../models/utilities/math'
+import { GEOGRAPHY_NAMES } from '../../../../models/cells/geography/names'
 
 const styles = {
   lakes: { color: MAP_SHAPES.color.water.fresh, waves: '41, 84, 94' },
@@ -41,10 +44,12 @@ const oceanBorder = PERFORMANCE.memoize.decorate({
 })
 
 export const DRAW_LANDMARKS = {
-  oceans: ({ ctx, projection }: DrawOceanParams) => {
+  oceans: ({ ctx, projection, visible }: DrawOceanParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.linear(projection)
-    const drawnLands = GEOGRAPHY.landmarks('land')
+
+    const viz = new Set(Array.from(visible).map(i => Object.keys(window.world.provinces[i].islands).map(i => parseInt(i))).flat())
+    const drawnLands = GEOGRAPHY.landmarks('land').filter(n => viz.has(n))
     ctx.save()
     // fill the ocean
     ctx.fillStyle = styles.oceans.color
@@ -88,7 +93,7 @@ export const DRAW_LANDMARKS = {
     })
     ctx.restore()
     // ctx.save()
-    // ctx.fillStyle = 'rgba(0, 0, 0, 0.25)'
+    // ctx.fillStyle = 'rgba(0, 168, 229, 0.5)'
     // ctx.textAlign = 'center'
     // const oceans = window.world.oceanRegions.reduce((acc, region) => {
     //   if (!acc.has(region.ocean)) acc.set(region.ocean, [])
@@ -101,7 +106,7 @@ export const DRAW_LANDMARKS = {
     //     oceans
     //       .map(r => window.world.cells[r.cell])
     //       .map((cell, j) => {
-    //         j === 0 && GEOGRAPHY.landmark(cell)
+    //         j === 0 && GEOGRAPHY_NAMES.landmark(cell)
     //         return [cell.x, cell.y]
     //       })
     //   )
@@ -128,7 +133,7 @@ export const DRAW_LANDMARKS = {
     //   const cell = window.world.cells[found]
     //   const label = path.centroid(turf.point([cell.x, cell.y]))
     //   ctx.fillText(
-    //     `${GEOGRAPHY.landmark(cell).replace(/\(.*\)/, '')} ${sea ? 'Sea' : 'Ocean'}`,
+    //     `${GEOGRAPHY_NAMES.landmark(cell).replace(/\(.*\)/, '')} ${sea ? 'Sea' : 'Ocean'}`,
     //     label[0],
     //     label[1]
     //   )
@@ -136,12 +141,11 @@ export const DRAW_LANDMARKS = {
     // ctx.restore()
     return new Set(drawnLands)
   },
-  lakes: ({ ctx, projection }: DrawOceanParams) => {
+  lakes: ({ ctx, projection, visible }: DrawOceanParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.curveClosed(projection)
-    const drawnLakes = GEOGRAPHY.landmarks('water').filter(
-      i => window.world.landmarks[i].type !== 'ocean'
-    )
+    const viz = new Set(Array.from(visible).map(i => Object.keys(window.world.provinces[i].lakes).map(i => parseInt(i))).flat())
+    const drawnLakes = GEOGRAPHY.landmarks('water').filter(n => viz.has(n))
     const { lakes } = window.world.display
     ctx.lineCap = 'round'
     const mod = scale
@@ -149,12 +153,13 @@ export const DRAW_LANDMARKS = {
     styles.waves.forEach(({ strokeWidth, opacity }, j) => {
       ctx.lineWidth = strokeWidth * mod * 0.5
       drawnLakes.forEach(i => {
+        const salt = window.world.landmarks[i].type === 'salt flat'
         ctx.save()
+        if (salt) ctx.lineWidth /= 2
         const lake = lakes[i]
         if (!cache[i])
           cache[i] = MAP_SHAPES.polygon({ points: lake.path, path, direction: 'inner' })
-        ctx.fillStyle =
-          window.world.landmarks[i].type === 'salt flat' ? '#fffbea' : styles.lakes.color
+        ctx.fillStyle = salt ? MAP_SHAPES.color['salt flat'] : styles.lakes.color
         const waves = styles.lakes.waves
         ctx.strokeStyle = `rgba(${waves},${opacity})`
         ctx.clip(cache[i])

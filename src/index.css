@@ -27,10 +27,7 @@ body {
 }
 
 .tippy-box[data-theme~='codex'] {
-  background-color: #f1f1f1;
-  border: thick double #58180d;
-  color: black;
-  border-radius: 0px;
+  background-color: transparent;
 }
 
 /* width */

@@ -1,11 +1,10 @@
 import { Grid } from '@mui/material'
+import { Gavel, ScaleBalance } from 'mdi-material-ui'
 
 import { Cell } from '../../../models/cells/types'
 import { CULTURE } from '../../../models/heritage'
 import { NATION } from '../../../models/nations'
-import { MILITARY } from '../../../models/nations/military'
 import { PROVINCE } from '../../../models/provinces'
-import { HUB } from '../../../models/provinces/hubs'
 import { MATH } from '../../../models/utilities/math'
 import { TEXT } from '../../../models/utilities/text'
 import { CodexPage } from '../../common/CodexPage'
@@ -16,49 +15,34 @@ import { VIEW } from '../../context'
 import { cssColors } from '../../theme/colors'
 import { MAP_METRICS } from '../../world/paint/shapes/metrics'
 
+import { getLawIcon, getPolicyIcon } from './icons'
+import { DemographicsSection } from './sections/DemographicsSection'
+import { MilitarySection } from './sections/MilitarySection'
+import { PoliciesSection } from './sections/PoliciesSection'
+import { ProvincesSection } from './sections/ProvincesSection'
+import { ExportsSection, ImportsSection } from './sections/TradeSection'
+
 export function NationView() {
   const { state } = VIEW.context()
   const province = window.world.provinces[state.codex.idx]
   if (!province) return <span>No province selected</span>
+
   const nation = PROVINCE.nation(province)
   const provinces = NATION.provinces(nation)
   const cells = provinces.map(PROVINCE.cells.land).flat()
-  const ruling = nation.culture
-  const colonists = new Set(provinces.filter(p => p.colonists).map(p => p.minority))
-  const cultures = MATH.counterDist(
-    provinces
-      .map(province =>
-        province.minority !== undefined ? [province.minority, province.culture] : [province.culture]
-      )
-      .flat()
-  )
-    .sort((a, b) => {
-      const aCount = a.value === ruling ? Infinity : a.count
-      const bCount = b.value === ruling ? Infinity : b.count
-      return bCount - aCount
-    })
-    .slice(0, 5)
   const cellArea = window.world.cell.area
   const totalPop = NATION.population(nation)
   let area = provinces.reduce((sum, province) => sum + province.land, 0) * cellArea
   if (state.units === 'metric') area = MATH.conversion.area.mi.km(area)
   const units = state.units === 'metric' ? 'km²' : 'mi²'
   const neighbors = NATION.relations.all(nation)
-  const religion = window.world.cultures[nation.culture].religion
-  const decoratedProvinces = provinces
-    .sort((a, b) => PROVINCE.hub(b).population - PROVINCE.hub(a).population)
-    .map(province =>
-      TEXT.decorate({
-        link: province,
-        label: PROVINCE.hub(province).name,
-        tooltip: HUB.settlement(PROVINCE.hub(province)),
-        underlineColor:
-          province.colonists !== undefined ? MAP_METRICS.government.colors.colonial : undefined
-      })
-    )
-    .join(', ')
-  const military = MILITARY.get(nation)
-  const might = Math.floor(Math.log2(military.reduce((sum, [, , v]) => sum + v, 0)))
+  const culture = window.world.cultures[nation.culture]
+  const religionObj = CULTURE.religion(culture)
+  const religionType = religionObj?.type
+  const overlord = window.world.provinces[nation.overlord]
+  const subject = overlord?.relations[nation.idx]
+  const colonized = NATION.colonized(nation)
+
   return (
     <CodexPage
       title={nation.name}
@@ -67,14 +51,27 @@ export function NationView() {
           <span style={{ color: cssColors.subtitle }}>
             ({nation.idx}) {nation.decentralization ?? nation.size} (
             <ColoredBox color={MAP_METRICS.government.colors[nation?.government]} />{' '}
-            {nation.government}, <ColoredBox color={MAP_METRICS.religion.colors[religion]} />{' '}
-            {religion})
+            {nation.government}
+            {overlord && (
+              <span>
+                ,{' '}
+                <ColoredBox
+                  color={
+                    colonized
+                      ? MAP_METRICS.government.colors.colonial
+                      : MAP_METRICS.government.colors.vassal
+                  }
+                />{' '}
+                {subject}
+              </span>
+            )}
+            , {<ColoredBox color={MAP_METRICS.religion.colors[religionType]} />} {religionType})
           </span>
         </span>
       }
       content={
         <Grid container>
-          <Grid item xs={4}>
+          <Grid item xs={4.2}>
             <SectionList
               list={[
                 {
@@ -101,11 +98,34 @@ export function NationView() {
                       ></StyledText>
                     </span>
                   )
+                },
+                {
+                  label: 'Legal System',
+                  content: (
+                    <span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          verticalAlign: 'middle',
+                          paddingRight: 3,
+                          lineHeight: 0
+                        }}
+                      >
+                        {getLawIcon(nation.law) ?? <ScaleBalance fontSize='inherit' />}
+                      </span>
+                      <StyledText
+                        text={TEXT.decorate({
+                          label: TEXT.titleCase(nation.law ?? ''),
+                          tooltip: PROVINCE.law[nation.law] ?? ''
+                        })}
+                      />
+                    </span>
+                  )
                 }
               ]}
             ></SectionList>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={7.8}>
             <SectionList
               list={[
                 {
@@ -191,6 +211,31 @@ export function NationView() {
                         })}
                     </span>
                   )
+                },
+                {
+                  label: 'Bureaucracy',
+                  content: (
+                    <span>
+                      <span
+                        style={{
+                          display: 'inline-block',
+                          verticalAlign: 'middle',
+                          paddingRight: 3,
+                          lineHeight: 0
+                        }}
+                      >
+                        {getPolicyIcon('bureaucracy', nation.policies.bureaucracy) ?? (
+                          <Gavel fontSize='inherit' />
+                        )}
+                      </span>
+                      <StyledText
+                        text={TEXT.decorate({
+                          label: TEXT.titleCase(nation.policies.bureaucracy),
+                          tooltip: PROVINCE.policies.bureaucracy[nation.policies.bureaucracy]
+                        })}
+                      />
+                    </span>
+                  )
                 }
               ]}
             ></SectionList>
@@ -199,53 +244,130 @@ export function NationView() {
             <SectionList
               list={[
                 {
-                  label: `Military (⚔️ ${might})`,
+                  label: 'Policies',
+                  content: <PoliciesSection nation={nation} />
+                },
+                {
+                  label: 'Imports',
+                  content: <ImportsSection nation={nation} />
+                },
+                {
+                  label: 'Exports',
+                  content: <ExportsSection nation={nation} />
+                },
+                {
+                  label: `Military`,
+                  content: <MilitarySection nation={nation} />
+                },
+                {
+                  label: 'Demographics',
+                  content: <DemographicsSection nation={nation} />
+                },
+                {
+                  label: 'Languages',
                   content: (
                     <span>
                       {(() => {
-                        return (
-                          <StyledText
-                            text={military
-                              .map(
-                                ([key, value]) =>
-                                  `${TEXT.decorate({
-                                    label: TEXT.titleCase(key),
-                                    tooltip: MILITARY.tooltip[key].toLowerCase()
-                                  })} (${TEXT.formatters.compact(value)})`
-                              )
-                              .join(', ')}
-                          />
+                        const languageCounts = MATH.counterDist(
+                          provinces.map(p => window.world.cultures[p.culture].language)
                         )
+                          .sort((a, b) => b.count - a.count)
+                          .slice(0, 5)
+                        return languageCounts.map(({ value, count }, i) => {
+                          const language = window.world.languages[value]
+                          if (!language) return null
+                          return (
+                            <span key={value}>
+                              <span
+                                style={{
+                                  display: 'inline-block',
+                                  width: '3px',
+                                  height: '3px',
+                                  borderRadius: '50%',
+                                  border: `2px solid ${language.display?.color ?? '#ccc'}`,
+                                  backgroundColor: 'transparent',
+                                  marginRight: '4px',
+                                  verticalAlign: 'middle',
+                                  marginBottom: 2
+                                }}
+                              ></span>
+                              <StyledText
+                                text={`${language.name ?? 'Unknown'} (${TEXT.formatters.percent(
+                                  count
+                                )})`}
+                              ></StyledText>
+                              {i !== languageCounts.length - 1 ? ', ' : ''}
+                            </span>
+                          )
+                        })
                       })()}
                     </span>
                   )
                 },
                 {
-                  label: 'Demographics',
+                  label: 'Religions',
                   content: (
                     <span>
-                      {cultures.map(({ value, count }, i) => {
-                        const culture = window.world.cultures[value]
-                        const bold = value === ruling
-                        return (
-                          <span key={culture.idx.toString()}>
-                            <ColoredBox color={culture.display.color} border={false}></ColoredBox>{' '}
-                            <StyledText
-                              text={`${TEXT.decorate({
-                                label: culture.name,
-                                details: CULTURE.describe(culture),
-                                bold,
-                                underlineColor: colonists.has(culture.idx)
-                                  ? MAP_METRICS.government.colors.colonial
-                                  : undefined
-                              })} ${TEXT.decorate({
-                                label: `(${TEXT.formatters.percent(count)})`
-                              })}`}
-                            ></StyledText>
-                            {i !== cultures.length - 1 ? ', ' : ''}
-                          </span>
+                      {(() => {
+                        const religionCounts = MATH.counterDist(
+                          provinces.map(p => window.world.cultures[p.culture].religion)
                         )
-                      })}
+
+                        // Group all irreligious provinces together
+                        const grouped: Array<{
+                          religion: typeof window.world.religions[0]
+                          count: number
+                          isGrouped: boolean
+                        }> = []
+                        let irreligiousCount = 0
+
+                        religionCounts.forEach(({ value, count }) => {
+                          const religion = window.world.religions[value]
+                          if (!religion) return
+
+                          if (religion.type === 'irreligious') {
+                            irreligiousCount += count
+                          } else {
+                            grouped.push({ religion, count, isGrouped: false })
+                          }
+                        })
+
+                        // Add grouped irreligious at the end if any exist
+                        if (irreligiousCount > 0) {
+                          grouped.push({
+                            religion: {
+                              type: 'irreligious' as const,
+                              display: { color: MAP_METRICS.religion.colors.irreligious, hue: 0 }
+                            },
+                            count: irreligiousCount,
+                            isGrouped: true
+                          })
+                        }
+
+                        return grouped
+                          .sort((a, b) => b.count - a.count)
+                          .slice(0, 5)
+                          .map(({ religion, count, isGrouped }, i) => {
+                            return (
+                              <span
+                                key={
+                                  isGrouped ? 'irreligious-grouped' : religion.name ?? religion.type
+                                }
+                              >
+                                <ColoredBox
+                                  color={MAP_METRICS.religion.colors[religion.type]}
+                                  border={true}
+                                ></ColoredBox>{' '}
+                                <StyledText
+                                  text={`${
+                                    isGrouped ? 'Irreligious' : religion.name ?? religion.type
+                                  } (${TEXT.formatters.percent(count)})`}
+                                ></StyledText>
+                                {i !== grouped.length - 1 ? ', ' : ''}
+                              </span>
+                            )
+                          })
+                      })()}
                     </span>
                   )
                 },
@@ -279,7 +401,10 @@ export function NationView() {
                               ? '#969696'
                               : opinion === 'suspicious'
                               ? '#7c4502'
-                              : opinion === 'vassal' || opinion === 'suzerain'
+                              : opinion === 'vassal' ||
+                                opinion === 'tributary' ||
+                                opinion === 'personal union' ||
+                                opinion === 'suzerain'
                               ? '#59027c'
                               : opinion === 'at war'
                               ? cssColors.primary
@@ -305,19 +430,11 @@ export function NationView() {
                 },
                 {
                   label: `Provinces (${provinces.length})`,
-                  content: <StyledText text={decoratedProvinces}></StyledText>
+                  content: <ProvincesSection provinces={provinces} />
                 }
               ]}
             ></SectionList>
           </Grid>
-          {/* <Grid item xs={12} mt={2}>
-            <Divider>Migration</Divider>
-          </Grid>
-          <Grid item xs={12}>
-            <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-              <MigrationsChart></MigrationsChart>
-            </Box>
-          </Grid> */}
         </Grid>
       }
     ></CodexPage>

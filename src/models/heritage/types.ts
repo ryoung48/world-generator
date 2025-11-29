@@ -3,7 +3,6 @@ import { Hue } from '../utilities/color'
 import { TaggedEntity } from '../utilities/text/types'
 import { Trait } from '../utilities/traits/types'
 import { FindParams } from '../utilities/types'
-import { Language } from './languages/types'
 import { Species, SpeciesAppearance } from './species/types'
 
 type CulturalValue =
@@ -68,15 +67,8 @@ export interface Culture extends TaggedEntity {
   species: Species
   appearance: SpeciesAppearance
   // cultural traits
-  language: Language
-  religion:
-    | 'animistic'
-    | 'syncretic'
-    | 'monotheistic'
-    | 'dualistic'
-    | 'polytheistic'
-    | 'nontheistic'
-    | 'irreligious'
+  language: number
+  religion: number
   values: CulturalValue[]
   fashion: { color: Hue; scheme: string }
   display: { color: string; hue: number }

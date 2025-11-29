@@ -24,7 +24,7 @@ function isDeviationAcceptable(
   lastPoint: Point,
   newPoint: Point,
   penultimatePoint: Point,
-  threshold: number = 50
+  threshold: number = 90
 ): boolean {
   const bearingLastToNew = POINT.bearing.geo(lastPoint, newPoint)
   const bearingPenultimateToLast = POINT.bearing.geo(penultimatePoint, lastPoint)

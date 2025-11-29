@@ -112,40 +112,10 @@ const cultureLegend = ({ nationSet, province }: CultureLegendParams): LegendPara
   }
 }
 
-const resourceLegend = ({ nationSet, province }: CultureLegendParams): LegendParams => {
-  const used = new Set()
-  const resources: TradeGood[] = []
-  PROVINCE.sort({
-    ref: province,
-    group: Array.from(nationSet)
-      .map(r => NATION.provinces(window.world.provinces[r]))
-      .flat(),
-    type: 'closest'
-  }).forEach(r => {
-    r.locations
-      .map(l => window.world.locations[l])
-      .forEach(l => {
-        if (l.resource && !used.has(l.resource)) {
-          resources.push(l.resource)
-          used.add(l.resource)
-        }
-      })
-  })
-  return {
-    items: resources.slice(0, 10).map(resource => {
-      return {
-        text: resource,
-        color: TRADE_GOODS.reference[resource]?.tinto ?? TRADE_GOODS.reference[resource].color
-      }
-    }),
-    width: 10
-  }
-}
-
 // Function to draw compass
 function drawCompass(ctx: CanvasRenderingContext2D, projection: GeoProjection) {
-  const centerX = ctx.canvas.width * 0.07
-  const centerY = ctx.canvas.height * 0.78
+  const centerX = 120
+  const centerY = ctx.canvas.height - 180
   const radius = 60
   const width = 6
 
@@ -330,8 +300,8 @@ export const DRAW_EMBELLISHMENTS = {
     nationSet,
     units
   }: DrawLegendsParams & { units: 'metric' | 'imperial' }) => {
-    const y = ctx.canvas.height * 0.2
-    const x = ctx.canvas.width * 0.025
+    const y = ctx.canvas.height * 0.25
+    const x = 30
     const { items, width } =
       style === 'Temperature'
         ? MAP_METRICS.temperature.legend()
@@ -347,18 +317,20 @@ export const DRAW_EMBELLISHMENTS = {
         ? MAP_METRICS.government.legend()
         : style === 'Population'
         ? MAP_METRICS.population.legend(units)
+        : style === 'Productivity'
+        ? MAP_METRICS.gdp.legend()
         : style === 'Cultures'
         ? cultureLegend({ nationSet, province })
         : style === 'Nations'
         ? MAP_METRICS.settlement.legend()
-        : style === 'Resources'
-        ? resourceLegend({ nationSet, province })
         : style === 'Vegetation'
         ? MAP_METRICS.vegetation.legend()
         : style === 'Development'
         ? MAP_METRICS.development.legend()
         : style === 'Timezones'
         ? MAP_METRICS.timezone.legend()
+        : style === 'Conflicts'
+        ? MAP_METRICS.conflicts.legend()
         : { items: [], width: 0 }
     drawLegend({
       ctx,
@@ -371,7 +343,7 @@ export const DRAW_EMBELLISHMENTS = {
   scale: ({ ctx, projection, units }: DrawMapParams & { units: 'metric' | 'imperial' }) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const len = 65
-    const [sx, sy] = [35, MAP_SHAPES.height * 0.945]
+    const [sx, sy] = [ctx.canvas.width - 320, ctx.canvas.height - 60]
     ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
     ctx.fillRect(sx, sy, len * 4 + 20, 45)
     ctx.font = `${embellishFont}px ${fonts.maps}`

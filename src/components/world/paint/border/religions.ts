@@ -1,12 +1,13 @@
 import { GeoProjection } from 'd3'
 
+import { CULTURE } from '../../../../models/heritage'
 import { MAP_SHAPES } from '../shapes'
 import { DRAW_CACHE } from '../shapes/caching'
 import { MAP_METRICS } from '../shapes/metrics'
 
 export const DRAW_RELIGIONS = {
-  minorities: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
-    const { projection, ctx } = params
+  minorities: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D, visible: Set<number> }) => {
+    const { projection, ctx, visible } = params
     // heretics
     const scale = MAP_SHAPES.scale.derived(projection)
     const mask = MAP_SHAPES.patterns.stripes({
@@ -18,20 +19,23 @@ export const DRAW_RELIGIONS = {
     // minorities
     const patterns: Record<string, CanvasPattern> = {}
     window.world.provinces
-      .filter(province => province.minority !== undefined)
+      .filter(province => province.minority !== undefined && visible.has(province.idx))
       .forEach(province => {
         const minority = window.world.cultures[province.minority]
         const culture = window.world.cultures[province.culture]
-        if (minority.religion === culture.religion) return
-        if (!patterns[minority.religion]) {
+        const minorityReligion = CULTURE.religion(minority)
+        const cultureReligion = CULTURE.religion(culture)
+        if (!minorityReligion || !cultureReligion || minorityReligion.type === cultureReligion.type) return
+        const religionType = minorityReligion.type
+        if (!patterns[religionType]) {
           const pattern = MAP_SHAPES.patterns.masked({
             ctx,
             mask,
-            color: MAP_METRICS.religion.colors[minority.religion]
+            color: MAP_METRICS.religion.colors[religionType]
           })
-          patterns[minority.religion] = ctx.createPattern(pattern, 'repeat')
+          patterns[religionType] = ctx.createPattern(pattern, 'repeat')
         }
-        ctx.fillStyle = patterns[minority.religion]
+        ctx.fillStyle = patterns[religionType]
         DRAW_CACHE.borders.minorities(province).forEach(path => {
           const p = MAP_SHAPES.polygon({
             points: path,

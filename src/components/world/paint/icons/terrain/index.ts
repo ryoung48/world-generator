@@ -37,14 +37,14 @@ export const DRAW_TERRAIN = {
       }
     })
   },
-  icons: ({ ctx, cachedImages, projection }: DrawTerrainIconParams) => {
+  icons: ({ ctx, cachedImages, projection, visible }: DrawTerrainIconParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const pathGen = MAP_SHAPES.path.linear(projection)
     const sortedIcons = window.world.display.icons
       .filter(m => {
         const cell = window.world.cells[m.cell]
         const valid = !CELL.place(cell) || scale <= 20
-        return valid
+        return valid && visible.has(cell.province)
       })
       .sort((a, b) => {
         if (a.y === b.y) {

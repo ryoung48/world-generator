@@ -27,8 +27,8 @@ export function MapOverlay(props: MapOverlayProps) {
       sx={{
         zIndex: 2,
         position: 'absolute',
-        top: MAP_SHAPES.height * 0.145,
-        left: MAP_SHAPES.width * 0.8,
+        top: 20,
+        right: 20,
         fontFamily: fonts.maps,
         fontSize: 20,
         backgroundColor: `rgba(241, 241, 241, 0.95)`,

@@ -8,17 +8,20 @@ import { TEMPERATURE } from '../../models/cells/weather/temperature'
 import { PROVINCE } from '../../models/provinces'
 import { TEXT } from '../../models/utilities/text'
 import { StyledText } from '../common/text/styled'
+import { ColoredBox } from '../common/ColoredBox'
 import { fonts } from '../theme/fonts'
-import { MAP_SHAPES } from './paint/shapes'
 import { MAP_METRICS } from './paint/shapes/metrics'
+
+import { MapStyle } from './types'
 
 type MapInfoPanelsProps = {
   cursor: { x: number; y: number }
   units: 'metric' | 'imperial'
+  style: MapStyle
 }
 
 export function MapInfoPanels(props: MapInfoPanelsProps) {
-  const { cursor, units } = props
+  const { cursor, units, style } = props
   const cell = window.world.cells[window.world.diagram.find(cursor.x, cursor.y)]
   const location = window.world.locations[cell.location]
   const province = window.world.provinces[cell.province]
@@ -29,11 +32,11 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
   const panelStyle = {
     zIndex: 2,
     position: 'absolute' as const,
-    top: MAP_SHAPES.height * 0.145,
+    top: 20,
     fontFamily: fonts.maps,
     fontSize: 20,
     backgroundColor: 'rgba(241, 241, 241, 0.85)',
-    width: 160,
+    width: 200,
     padding: 1
   }
 
@@ -43,7 +46,7 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
         container
         sx={{
           ...panelStyle,
-          left: MAP_SHAPES.width * 0.04
+          left: 20
         }}
       >
         <Grid item xs={12}>
@@ -56,7 +59,7 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
             }, ${MAP_METRICS.topography.format(cell.elevation, units)}`}</span>
           </Grid>
         )}
-        {!cell.isWater && <Grid item xs={12}>{`${cell.climate}, ${cell.vegetation}`}</Grid>}
+        {!cell.isWater && <Grid item xs={12}>{`${cell.climate}, ${cell.vegetation}${province.corruption ? ` (${TEXT.formatters.percent(province.corruption)} corruption)` : ''}`}</Grid>}
         <Grid item xs={12}>
           <StyledText text={GEOGRAPHY_NAMES.name(cell)} />
         </Grid>
@@ -66,7 +69,7 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
         container
         sx={{
           ...panelStyle,
-          left: MAP_SHAPES.width * 0.15
+          left: 240
         }}
       >
         {!cell.isWater && (
@@ -95,7 +98,7 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
         container
         sx={{
           ...panelStyle,
-          left: MAP_SHAPES.width * 0.26
+          left: 460
         }}
       >
         <Grid item xs={12}>
@@ -112,6 +115,26 @@ export function MapInfoPanels(props: MapInfoPanelsProps) {
           {PROVINCE.development.describe(province.development)})
         </Grid>
       </Grid>
+
+      {style === 'Conflicts' && province.conflict && province.conflict.length > 0 && (
+        <Grid container sx={{ ...panelStyle, top: 682, left: 250, width: 260 }}>
+          {province.conflict.map((c, i) => {
+            const conflict = window.world.conflicts[c.idx]
+            return (
+              <Grid item xs={12} key={i}>
+                <ColoredBox color={MAP_METRICS.conflicts.color(conflict.level)} />{' '}
+                <b>{conflict.name}</b>
+                <br></br>
+                <span>
+                  {conflict.type}, {MAP_METRICS.conflicts.labels[conflict.level]}
+                </span>
+                <br></br>
+                <span>{conflict.parties.join(' vs. ')}</span>
+              </Grid>
+            )
+          })}
+        </Grid>
+      )}
     </>
   )
 }

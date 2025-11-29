@@ -4,9 +4,9 @@ import { MAP_SHAPES } from '../shapes'
 import { DRAW_CACHE } from '../shapes/caching'
 
 export const DRAW_TOPOGRAPHY = {
-  coloration: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
-    const { projection, ctx } = params
-    const locations = window.world.locations
+  coloration: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D, visible: Set<number> }) => {
+    const { projection, ctx, visible } = params
+    const locations = window.world.locations.filter(loc => visible.has(loc.province))
     const path = MAP_SHAPES.path.linear(projection)
     locations.forEach(loc => {
       ctx.fillStyle = DRAW_CACHE.borders.location(loc).elevation
@@ -15,8 +15,8 @@ export const DRAW_TOPOGRAPHY = {
       })
     })
   },
-  special: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
-    const { projection, ctx } = params
+  special: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D, visible: Set<number> }) => {
+    const { projection, ctx, visible } = params
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.linear(projection)
     const mask = MAP_SHAPES.patterns.stripes({
@@ -31,7 +31,7 @@ export const DRAW_TOPOGRAPHY = {
     })
     ctx.fillStyle = ctx.createPattern(marsh, 'repeat')
     window.world.locations
-      .filter(loc => loc.topography === 'marsh')
+      .filter(loc => visible.has(loc.province) && loc.topography === 'marsh')
       .forEach(loc => {
         DRAW_CACHE.paths.location({ loc, path }).forEach(p => {
           ctx.fill(p)

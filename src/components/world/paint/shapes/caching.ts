@@ -41,7 +41,7 @@ export const DRAW_CACHE = {
         const culture = window.world.cultures[province.culture]
         const nation = PROVINCE.nation(province)
         const corruptionScale = scaleLinear()
-          .domain([0.5, 1])
+          .domain([0, 1])
           .range([
             MAP_METRICS.vegetation.color[cell.vegetation],
             MAP_METRICS.vegetation.color.corruption
@@ -58,8 +58,16 @@ export const DRAW_CACHE = {
           development: MAP_METRICS.development.color(province.development),
           government:
             MAP_METRICS.government.colors[nation?.government] ?? MAP_SHAPES.color.wasteland,
-          religion: MAP_METRICS.religion.colors[culture?.religion] ?? MAP_SHAPES.color.wasteland,
-          rain: MAP_METRICS.rain.color(cell.rain.annual)
+          religion:
+            culture?.religion !== undefined && culture.religion !== -1
+              ? MAP_METRICS.religion.colors[window.world.religions[culture.religion]?.type] ??
+                MAP_SHAPES.color.wasteland
+              : MAP_SHAPES.color.wasteland,
+          rain: MAP_METRICS.rain.color(cell.rain.annual),
+          gdp: MAP_METRICS.gdp.color(nation?.gdp?.total ?? 3),
+          conflict: MAP_METRICS.conflicts.color(
+            province.conflict?.length ? Math.max(...province.conflict.map(c => c.intensity)) : 0
+          )
         }
       },
       keyBuilder: province => province.idx.toString()
@@ -90,11 +98,10 @@ export const DRAW_CACHE = {
       f: (province: Province) => {
         const cells = PROVINCE.cells.land(province)
         const minority = window.world.cultures[province.minority]
-        const minorities = cells.filter(
-          c =>
-            CELL.neighbors({ cell: c }).some(
-              n => window.world.provinces[n.province].culture === minority.idx
-            )
+        const minorities = cells.filter(c =>
+          CELL.neighbors({ cell: c }).some(
+            n => window.world.provinces[n.province].culture === minority.idx
+          )
         )
         return SHAPER_DISPLAY.borders.cells(minorities)
       },

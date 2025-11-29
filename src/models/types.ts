@@ -3,10 +3,12 @@ import { River } from './cells/geography/rivers/types'
 import { Loc } from './cells/locations/types'
 import { Cell } from './cells/types'
 import { Culture } from './heritage/types'
-import { War } from './nations/wars/types'
+import { Language } from './heritage/languages/types'
+import { Religion } from './heritage/religions/types'
 import { Province } from './provinces/types'
 import type { Display } from './shapers/display/types'
 import { GeoVoronoiDiagram } from './utilities/math/voronoi/types'
+import { Conflict } from './conflicts/types'
 
 export interface CoastalEdge {
   water: number
@@ -53,6 +55,8 @@ export interface World {
   provinces: Province[]
   locations: Loc[]
   cultures: Culture[]
+  languages: Language[]
+  religions: Religion[]
   actors: Actor[]
   rivers?: Record<number, River>
   oceanRegions: {
@@ -68,7 +72,7 @@ export interface World {
     feature?: 'coral reef' | 'kelp forest' | 'seasonal sea ice' | 'permanent sea ice'
   }[]
   uniqueNames: Record<string, boolean>
-  wars: War[]
+  conflicts: Conflict[]
   // planet info
   radius: number // miles
   date: number

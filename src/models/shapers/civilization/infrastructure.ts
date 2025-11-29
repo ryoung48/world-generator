@@ -2,6 +2,7 @@ import { CELL } from '../../cells'
 import { GEOGRAPHY } from '../../cells/geography'
 import { NAVIGATION } from '../../cells/navigation'
 import { Cell } from '../../cells/types'
+import { NATION } from '../../nations'
 import { PROVINCE } from '../../provinces'
 import { HUB } from '../../provinces/hubs'
 import { Province } from '../../provinces/types'
@@ -115,6 +116,7 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
     },
     sea: () => {
       GEOGRAPHY.landmarks('water').forEach(water => {
+        if (window.world.landmarks[water].type === 'salt flat') return
         const settlementFilter = 1e3
         const neighbors = provinceNetworks({
           provinces: window.world.provinces.filter(p => {
@@ -123,7 +125,8 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
               !p.desolate &&
               coast?.landmark === water &&
               (coast?.heat.max > 0 || coast?.heat.min > 0) &&
-              (PROVINCE.hub(p).population > settlementFilter || (PROVINCE.capital(p) && !p.hub.nomadic))
+              (PROVINCE.hub(p).population > settlementFilter ||
+                (PROVINCE.capital(p) && !p.hub.nomadic))
             )
           }),
           filter: n => n.landmark === water && (n.heat.max > 0 || n.heat.min > 0)
@@ -148,7 +151,7 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
       window.world.skyships = []
       const provinces = window.world.provinces.filter(
         p =>
-          (PROVINCE.capital(p) || PROVINCE.hub(p).population >= 50e3) &&
+          PROVINCE.hub(p).population >= 50e3 &&
           (p.development > 3.5 || PROVINCE.hub(p).population > 200e3)
       )
       VORONOI.urquhart(provinces.map(p => [p.hub.x, p.hub.y])).forEach(([x, y]) => {
@@ -173,10 +176,39 @@ export const INFRASTRUCTURE_SHAPER = PERFORMANCE.profile.wrapper({
         }
       })
     },
+    corruption: () => {
+      const CORRUPTION = () => window.dice.random
+      window.world.provinces.forEach(province => {
+        if (
+          province.hub.population < 1e3 &&
+          PROVINCE.cell(province).vegetation !== 'farmlands' &&
+          window.dice.random > (province.development < 1.5 ? 0.9 : 0.95)
+        ) {
+          province.corruption = CORRUPTION()
+
+          if (PROVINCE.capital(province)) {
+            NATION.provinces(province).forEach(n => {
+              n.corruption = CORRUPTION()
+            })
+          } else {
+            PROVINCE.neighbors({ province })
+              .filter(
+                n =>
+                  n.hub.population < 1e3 &&
+                  PROVINCE.cell(n).vegetation !== 'farmlands' &&
+                  window.dice.random > 0.8
+              )
+              .forEach(n => {
+                n.corruption = CORRUPTION()
+              })
+          }
+        }
+      })
+    },
     build: () => {
       INFRASTRUCTURE_SHAPER.imperialRoads()
       INFRASTRUCTURE_SHAPER.land()
-      // INFRASTRUCTURE_SHAPER.sites()
+      INFRASTRUCTURE_SHAPER.corruption()
       INFRASTRUCTURE_SHAPER.sea()
       INFRASTRUCTURE_SHAPER.skyships()
     }

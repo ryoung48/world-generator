@@ -47,9 +47,10 @@ export const HUB = {
     }
   },
   isCity: (place: Hub) => place.population > 10e3,
+  rural: (place: Hub) => place.population < 1e3,
   province: (place: Hub) => CELL.province(window.world.cells[place.cell]),
-  settlement: ({ population, nomadic }: Hub) => {
-    if (nomadic) return 'tribal camp'
+  settlement: ({ population, nomadic }: Hub, raw?: boolean) => {
+    if (nomadic && !raw) return 'tribal camp'
     return population > 200e3
       ? 'metropolis'
       : population > 50e3

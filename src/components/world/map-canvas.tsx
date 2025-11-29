@@ -156,15 +156,14 @@ export const MapCanvas = forwardRef<HTMLCanvasElement, MapCanvasProps>(function 
   }, [style, transform, state.codex, state.units, cachedImages])
 
   return (
-    <div ref={containerRef} style={{ width: '100%' }}>
+    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
       <canvas
         ref={canvasRef}
         style={{
           backgroundColor: cssColors.background.map,
-          border: `thick double ${cssColors.primary}`,
           filter: 'url(#noiseFilter)',
-          height: `${MAP_SHAPES.height}px`,
-          width: `100%`
+          height: '100%',
+          width: '100%'
         }}
         onClick={onTransition}
       />

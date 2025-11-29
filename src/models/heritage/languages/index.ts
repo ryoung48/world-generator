@@ -79,6 +79,28 @@ export const LANGUAGE = {
       ])
       return TEXT.capitalize(cleaned + suffix)
     },
+    language: (morphemes: string[]) => {
+      const prefix = morphemes.slice(0, -1).join('')
+      let index = prefix.length - 1
+      while (index >= 0 && CLUSTER.vowel(prefix[index])) {
+        index--
+      }
+      const cleaned = prefix.slice(0, index + 1)
+      const suffix = window.dice.weightedChoice([
+        { v: 'an', w: cleaned.includes('n') ? 0 : 1 },
+        { v: 'ian', w: cleaned.includes('n') ? 0 : 1 },
+        { v: 'ish', w: cleaned.includes('s') ? 0 : 1 },
+        {
+          v: 'ic',
+          w: cleaned.includes('k') || cleaned.includes('c') || cleaned.includes('q') ? 0 : 1
+        },
+        { v: 'i', w: 1 },
+        { v: 'u', w: 1 },
+        { v: 'a', w: 1 },
+        { v: 'ese', w: 1 }
+      ])
+      return TEXT.capitalize(cleaned + suffix)
+    },
     firstName: (lang: Language, gender: Gender) => LANGUAGE.word.simple({ lang, key: gender }),
     simple: PERFORMANCE.profile.decorate({
       name: 'lang__word',
@@ -241,5 +263,42 @@ export const LANGUAGE = {
   },
   vowel: (vowel: string) => {
     return vowel.includes(PhonemeCatalog.FRONT_VOWEL)
+  },
+  name: (params: { language: Language; cultureIndices: number[] }) => {
+    const { language, cultureIndices } = params
+
+    // Find the largest culture that speaks this language
+    const cultures = cultureIndices.map(idx => window.world.cultures[idx])
+    const largestCulture = cultures.reduce((largest, culture) => {
+      const largestProvinces = window.world.provinces.filter(p => p.culture === largest.idx)
+      const currentProvinces = window.world.provinces.filter(p => p.culture === culture.idx)
+      return currentProvinces.length > largestProvinces.length ? culture : largest
+    })
+
+    // Get demonym from largest culture
+    const provinces = window.world.provinces.filter(p => p.culture === largestCulture.idx)
+    const demonym = provinces[0]?.demonym || 'Unknown'
+
+    // 80% chance to use simple demonym-based name, 20% chance for descriptive name
+    const useSimpleName = cultureIndices.length === 1
+
+    language.display = largestCulture.display
+
+    if (useSimpleName) {
+      language.name = demonym
+    } else {
+      // Descriptive patterns using a generated word from the language
+      const { word, morphemes } = LANGUAGE.word.unique({ lang: language, key: 'language' })
+      const prefix = window.dice.choice(['High', 'Low'])
+      const demonym = LANGUAGE.word.language(morphemes)
+
+      language.name = window.dice.weightedChoice([
+        // "Old [Word]" (e.g., "Old Kesara")
+        { v: `${prefix} ${demonym}`, w: 1 },
+        // "[Word] Tongue/Speech" (e.g., "Kesara Tongue")
+        { v: demonym, w: 10 },
+        { v: word, w: 5 }
+      ])
+    }
   }
 }

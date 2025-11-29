@@ -38,7 +38,7 @@ export interface Cell extends Point {
   heat: { min: number; max: number; mean: number }
   monsoon?: boolean
   topography?: 'coastal' | 'marsh' | 'flat' | 'hills' | 'plateau' | 'mountains'
-  vegetation?: 'desert' | 'sparse' | 'grasslands' | 'woods' | 'forest' | 'jungle'
+  vegetation?: 'desert' | 'sparse' | 'grasslands' | 'woods' | 'forest' | 'jungle' | 'farmlands'
   climate?:
     | 'arctic'
     | 'subarctic'

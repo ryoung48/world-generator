@@ -40,6 +40,8 @@ interface Surnames {
 }
 
 export interface Language {
+  name?: string
+  display?: { color: string; hue: number }
   // chance to pick patterns with stop letters
   stop: string
   stopChance: number

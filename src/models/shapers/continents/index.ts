@@ -29,7 +29,7 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
       SHAPER_CONTINENTS._oceanic()
       SHAPER_CONTINENTS._coastlines()
       SHAPER_CONTINENTS._locations()
-      SHAPER_CONTINENTS._rivers()
+      // SHAPER_CONTINENTS._rivers()
     },
     _coastalDistances: () => {
       // get distance to oceans (for rivers)
@@ -54,8 +54,8 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
       const seed = window.world.id
       const params = {
         octaves: 12,
-        frequency: 0.2,
-        persistence: 0.8
+        frequency: 0.4,
+        persistence: 0.7
       }
       const elev = PERFORMANCE.profile.apply({
         label: 'noise',
@@ -138,16 +138,19 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
           if (!cell.topography) {
             const landmark = window.world.landmarks[cell.landmark]
             const h = GEOGRAPHY.elevation.heightToKM(cell.h)
-            const arid = cell.vegetation === 'sparse' || cell.vegetation === 'desert'
+            const salt = cell.isCoast && CELL.neighbors({ cell }).some(
+              n => window.world.landmarks[n.landmark].type === 'salt flat'
+            )
+            const arid = cell.vegetation === 'sparse' || cell.vegetation === 'desert' || salt
             if (cell.isMountains) cell.topography = 'mountains'
             else if (h > 0.5) cell.topography = 'plateau'
             else if (h > 0.3) cell.topography = 'hills'
             else if (cell.isCoast && cell.beach) {
               cell.topography =
                 CELL.neighbors({ cell }).filter(c => c.isWater).length === 1 &&
-                landmark.type !== 'isle' &&
-                !arid &&
-                window.dice.random > 0.8
+                  landmark.type !== 'isle' &&
+                  !arid &&
+                  window.dice.random > 0.8
                   ? 'marsh'
                   : 'coastal'
             } else if (cell.isCoast && !cell.beach && !arid && window.dice.random > 0.3)
@@ -246,7 +249,6 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
       })
     },
     _rivers: () => {
-      window.world.rivers = {}
       GEOGRAPHY.land()
         .filter(
           cell =>
@@ -265,7 +267,7 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
 
       // cleanup
       Object.values(window.world.rivers)
-        .filter(r => r.branch === -1 && RIVER.length(r.idx) < 15)
+        .filter(r => r.branch === -1 && RIVER.length(r.idx) < 5)
         .map(r => r.idx)
         .forEach(RIVER.remove)
     }

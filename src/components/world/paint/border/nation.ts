@@ -5,76 +5,11 @@ import { CELL } from '../../../../models/cells'
 import { NATION } from '../../../../models/nations'
 import { PROVINCE } from '../../../../models/provinces'
 import { Province } from '../../../../models/provinces/types'
-import { SHAPER_DISPLAY } from '../../../../models/shapers/display'
 import { PERFORMANCE } from '../../../../models/utilities/performance'
 import { MapStyle } from '../../types'
 import { MAP_SHAPES } from '../shapes'
 import { DRAW_CACHE } from '../shapes/caching'
 import { MAP_METRICS } from '../shapes/metrics'
-
-const contestedBorder = PERFORMANCE.memoize.decorate({
-  f: (nation: Province) => {
-    const battlegrounds = NATION.provinces(nation).filter(province => province.battleground >= 0)
-    return SHAPER_DISPLAY.borders.provinces(battlegrounds)
-  },
-  keyBuilder: nation => nation.idx.toString()
-})
-
-const nationBorders = PERFORMANCE.memoize.decorate({
-  f: (nation: Province) => {
-    const defender = window.world.wars[nation.war]?.defender
-    const invader = window.world.wars[nation.war]?.invader
-    const borders = NATION.provinces(nation)
-      .filter(province => PROVINCE.neighbors({ province, type: 'foreign' }).length > 0)
-      .map(province => {
-        return PROVINCE.cells
-          .land(province)
-          .filter(cell =>
-            CELL.neighbors({ cell }).some(
-              n =>
-                CELL.nation(n) !== nation.idx &&
-                !n.isWater &&
-                CELL.nation(n) !== defender &&
-                CELL.nation(n) !== invader
-            )
-          )
-      })
-      .flat()
-    return CELL.wallBoundary({
-      cells: borders,
-      boundary: cell =>
-        CELL.nation(cell) !== nation.idx &&
-        CELL.nation(cell) !== defender &&
-        CELL.nation(cell) !== invader
-    })
-  },
-  keyBuilder: nation => nation.idx.toString()
-})
-
-const warBorders = PERFORMANCE.memoize.decorate({
-  f: (nation: Province) => {
-    const defender = window.world.wars[nation.war]?.defender
-    const invader = window.world.wars[nation.war]?.invader
-    if (nation.idx === invader) return []
-    const borders = NATION.provinces(nation)
-      .filter(province => PROVINCE.neighbors({ province, type: 'foreign' }).length > 0)
-      .map(province => {
-        return PROVINCE.cells
-          .land(province)
-          .filter(cell =>
-            CELL.neighbors({ cell }).some(
-              n =>
-                CELL.nation(n) !== nation.idx &&
-                !n.isWater &&
-                (CELL.nation(n) === defender || CELL.nation(n) === invader)
-            )
-          )
-      })
-      .flat()
-    return SHAPER_DISPLAY.borders.cells(borders)
-  },
-  keyBuilder: nation => nation.idx.toString()
-})
 
 const wallBorders = PERFORMANCE.memoize.decorate({
   f: (nation: Province) => {
@@ -103,11 +38,11 @@ export const DRAW_NATION = {
     ctx: CanvasRenderingContext2D
     style: MapStyle
     selected: Province
+    nations: Province[]
   }) => {
-    const { projection, ctx, style } = params
+    const { projection, ctx, style, nations } = params
     const nationStyle = style === 'Nations'
     const selected = PROVINCE.nation(params.selected)
-    const nations = NATION.nations()
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.linear(projection)
     nations.forEach(nation => {
@@ -145,29 +80,6 @@ export const DRAW_NATION = {
       ctx.restore()
     })
   },
-  contested: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
-    // wars
-    const { projection, ctx } = params
-    const scale = MAP_SHAPES.scale.derived(projection)
-    const pattern = MAP_SHAPES.patterns.stripes({
-      ctx,
-      scale,
-      color: MAP_SHAPES.color.contested(0.4)
-    })
-    const pathGen = MAP_SHAPES.path.linear(projection)
-    ctx.fillStyle = ctx.createPattern(pattern, 'repeat')
-    ctx.lineCap = 'round'
-    NATION.nations().forEach(nation => {
-      contestedBorder(nation).forEach(path => {
-        ctx.save()
-        const p = MAP_SHAPES.polygon({ points: path, path: pathGen, direction: 'inner' })
-        ctx.clip(p)
-        ctx.setLineDash([])
-        ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-        ctx.restore()
-      })
-    })
-  },
   walls: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
     const { projection, ctx } = params
     const scale = MAP_SHAPES.scale.derived(projection)
@@ -190,27 +102,36 @@ export const DRAW_NATION = {
     ctx.setLineDash([])
   },
   borders: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
+    // Simplified borders without war logic for now
     const { projection, ctx } = params
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.linear(projection)
-    ctx.lineCap = 'butt'
-    const pattern = MAP_SHAPES.patterns.stripes({
-      ctx,
-      scale,
-      width: 0.5,
-      color: '#7D5A73'
-    })
-    ctx.fillStyle = ctx.createPattern(pattern, 'repeat')
-    NATION.nations().forEach(nation => {
-      warBorders(nation).forEach(border => {
-        const p = MAP_SHAPES.polygon({
-          points: border,
-          path: MAP_SHAPES.path.curveClosed(projection),
-          direction: 'inner'
+
+    const nationBorders = PERFORMANCE.memoize.decorate({
+      f: (nation: Province) => {
+        const borders = NATION.provinces(nation)
+          .filter(province => PROVINCE.neighbors({ province, type: 'foreign' }).length > 0)
+          .map(province => {
+            return PROVINCE.cells
+              .land(province)
+              .filter(cell =>
+                CELL.neighbors({ cell }).some(
+                  n =>
+                    CELL.nation(n) !== nation.idx &&
+                    !n.isWater
+                )
+              )
+          })
+          .flat()
+        return CELL.wallBoundary({
+          cells: borders,
+          boundary: cell =>
+            CELL.nation(cell) !== nation.idx
         })
-        ctx.fill(p)
-      })
+      },
+      keyBuilder: nation => nation.idx.toString()
     })
+
     NATION.nations().forEach(nation => {
       nationBorders(nation).forEach(border => {
         ctx.save()

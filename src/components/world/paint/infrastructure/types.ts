@@ -7,4 +7,5 @@ export type DrawInfraParams = DrawMapParams & {
   style: MapStyle
   cachedImages: CachedImages
   place: Hub
+  visible: Set<number>
 }

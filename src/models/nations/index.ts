@@ -11,7 +11,6 @@ import {
 const colonies = new Set<DiplomaticRelation>(['colony', 'chartered company', 'dominion'])
 
 export const NATION = {
-  atWar: (nation: Province) => nation.war >= 0,
   coastal: (nation: Province) => NATION.provinces(nation).some(p => p.ocean > 0),
   colonized: (nation: Province) => colonies.has(window.world.provinces[nation.overlord]?.relations[nation.idx]),
   neighbors: ({ nation, depth = 0 }: NationNeighborParams): Province[] => {

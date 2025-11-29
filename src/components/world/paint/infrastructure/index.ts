@@ -9,7 +9,6 @@ import { TIMEZONE_SHAPER } from '../../../../models/shapers/civilization/timezon
 import { fonts } from '../../../theme/fonts'
 import { MAP_SHAPES } from '../shapes'
 import { HERALDRY } from '../shapes/heraldry'
-import { MAP_METRICS } from '../shapes/metrics'
 import { DrawInfraParams } from './types'
 
 const fontFamily = fonts.maps
@@ -31,7 +30,7 @@ const drawHeraldry = (nation: Province) => {
 }
 
 export const DRAW_INFRASTRUCTURE = {
-  provinces: ({ ctx, projection, nationSet, place, style }: DrawInfraParams) => {
+  provinces: ({ ctx, projection, nationSet, place, style, visible }: DrawInfraParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     ctx.textAlign = 'center'
     ctx.shadowColor = 'white'
@@ -110,6 +109,7 @@ export const DRAW_INFRASTRUCTURE = {
     // region titles
     if (scale > MAP_SHAPES.breakpoints.regional) return
     provinces.forEach(capital => {
+      if (!visible.has(capital.properties.idx)) return
       const loc = window.world.provinces[capital.properties.idx]
       const nation = PROVINCE.nation(loc)
       const center = pathGen.centroid(capital)
@@ -214,7 +214,7 @@ export const DRAW_INFRASTRUCTURE = {
   roads: ({ ctx, projection }: Omit<DrawInfraParams, 'place' | 'cachedImages'>) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.curve(projection)
-    const { routes } = window.world.display
+    const routes = window.world.display.routes
     ctx.save()
     const mod = scale > MAP_SHAPES.breakpoints.regional ? 0.5 : 1
     ctx.lineCap = 'butt'

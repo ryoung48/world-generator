@@ -59,8 +59,10 @@ export const DEVELOPMENT_SPREAD = PERFORMANCE.profile.wrapper({
         province.area = province.land * MATH.conversion.area.mi.km(window.world.cell.area)
         province.capacity = province.area * province.habitability
       })
-      const sorted = [...window.world.provinces].sort((a, b) => b.habitability - a.habitability)
-      const cradles = sorted.length * 0.01
+      const sorted = [...window.world.provinces]
+        .filter(p => window.world.landmarks[PROVINCE.cell(p).landmark].type === 'continent')
+        .sort((a, b) => b.habitability - a.habitability)
+      const cradles = sorted.length * 0.015
       sorted.slice(0, cradles).forEach(province => {
         const density = window.dice.uniform(0.5, 1)
         province.population = density * province.area
@@ -116,7 +118,7 @@ export const DEVELOPMENT_SPREAD = PERFORMANCE.profile.wrapper({
         }
         province.population =
           PROVINCE.cells.land(province).reduce(sum => {
-            return sum + province.habitability * province.development ** 1.25
+            return sum + province.habitability * province.development ** 1.5
           }, 0) *
           cellArea *
           6

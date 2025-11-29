@@ -126,6 +126,7 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
   label: 'CLIMATES',
   o: {
     _lakes: () => {
+      // const total = window.world.cells.length
       const lakes = LAKES.get()
       const shallow = lakes.filter(cell => cell.shallow)
       GEOGRAPHY.landmarks('water')
@@ -144,6 +145,14 @@ export const SHAPER_CLIMATES = PERFORMANCE.profile.wrapper({
           const arctic = border.some(cell =>
             CELL.neighbors({ cell }).some(n => n.climate === 'arctic' || n.climate === 'subarctic')
           )
+          // if (arid && window.world.landmarks[landmark].size / total < 0.0001 && window.dice.random > 0.6) {
+          //   window.world.landmarks[landmark].type = 'salt flat'
+          // } else if (mountainous || arctic || arid) {
+          //   LAKES.remove({ lakes, lake: landmark }).forEach(cell => {
+          //     cell.h = GEOGRAPHY.elevation.compute(cell)
+          //     cell.elevation = GEOGRAPHY.elevation.heightToKM(cell.h)
+          //   })
+          // }
           if (mountainous || arctic || arid) {
             LAKES.remove({ lakes, lake: landmark }).forEach(cell => {
               cell.h = GEOGRAPHY.elevation.compute(cell)

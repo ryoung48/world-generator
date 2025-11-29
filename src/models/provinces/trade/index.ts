@@ -1,503 +1,334 @@
+import { PROVINCE } from '..'
 import { NATION } from '../../nations'
 import { ARRAY } from '../../utilities/array'
-import { PROVINCE } from '..'
-import { TradeGood, TradeGoods } from './types'
 import { Province } from '../types'
+import { TradeGood, TradeGoods } from './types'
 
-const tradeGoods: TradeGoods = {
-  alum: {
-    color: '#B0C4DE',
-    tinto: '#694643',
-    w: 0.5,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+export const tradeGoods: TradeGoods = {
+  'academic research': {
+    description: 'experimental theories and designs from scholarly studies.',
+    conditions: params => params.development >= 3.6
   },
-  amber: {
-    color: '#FFBF00',
-    tinto: '#A09A26',
-    w: 0.5,
-    conditions: ({ vegetation, climate, coastal }) =>
-      coastal &&
-      vegetation?.some(b => ['woods', 'forest'].includes(b)) &&
-      climate?.some(c => ['temperate'].includes(c))
+  'aeronautical supplies': {
+    description: 'materials and parts for airships, gliders, and other flying machines.',
+    conditions: params => params.development >= 4.25
+  },
+  'alchemical herbs': {
+    description: 'plants known for their healing or poisonous properties.',
+    conditions: params => params.vegetation.some(v => ['forest', 'jungle', 'woods'].includes(v))
+  },
+  alum: {
+    description: 'a mineral salt used for dyeing, tanning, and medicinal applications.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
+  },
+  'anti-magic alloys': {
+    description: 'rare minerals that dampen or nullify magical energies.',
+    conditions: params => params.development >= 3.6 && params.topography.includes('mountains')
+  },
+  apiaries: {
+    description: 'bee products like honey and wax, used for sweetening and candles.',
+    conditions: params => params.vegetation.some(v => ['grasslands', 'woods', 'forest'].includes(v))
+  },
+  'arcane reagents': {
+    description: 'metals, crystals, and essences used for enchantments, rituals, and spells.',
+    conditions: params => params.development >= 2.75
   },
   artillery: {
-    color: '#4C5866',
-    tinto: '#8A7E74',
-    w: 0.2,
-    conditions: ({ advanced }) => advanced
+    description: 'large-scale ranged weapons, including cannons, bombards, and heavy guns.',
+    conditions: params => params.development >= 3.1
+  },
+  artwork: {
+    description: 'the finest paintings, sculptures, and other decorative elements.',
+    conditions: params => params.development >= 3.1
+  },
+  'astronomical equipment': {
+    description: 'instruments for charting stars, guiding mariners and scholars.',
+    conditions: params => params.development >= 3.6
   },
   beer: {
-    color: '#C4722C',
-    tinto: '#6B3E1F',
-    w: 1,
-    conditions: ({ climate }) => climate?.some(c => ['temperate', 'boreal'].includes(c))
+    description: 'grain-based brew, consumed fresh or aged, and widely enjoyed across regions.',
+    conditions: params => params.climate.some(c => ['temperate', 'boreal'].includes(c))
   },
-  beeswax: {
-    color: '#F9D26A',
-    tinto: '#A8792F',
-    w: 0.8,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['forest', 'woods', 'jungle'].includes(b)) &&
-      climate?.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
-  },
-  books: {
-    color: '#6B4F3A',
-    tinto: '#4A3A2A',
-    w: 0.4,
-    conditions: () => true
+  ceramics: {
+    description: 'fired clay objects, including pottery, statues, utensils, and urns.',
+    conditions: params => params.development >= 3.1
   },
   clay: {
-    color: '#B5651D',
-    tinto: '#865958',
-    w: 2,
-    conditions: ({ vegetation, topography }) =>
-      vegetation?.some(b => ['grasslands', 'sparse'].includes(b)) &&
-      topography?.every(t => t !== 'mountains')
+    description: 'pliable earth used for pottery, bricks, sculptures, and seals.',
+    conditions: params => params.topography.some(t => ['flat', 'marsh'].includes(t))
   },
-  cloth: {
-    color: '#C8D0D9',
-    tinto: '#7C8A93',
-    w: 1.2,
-    conditions: () => true
+  'clockwork devices': {
+    description: 'intricate wound mechanisms for timers, toys, and automata.',
+    conditions: params => params.development >= 3.6
   },
   coal: {
-    color: '#2F4F4F',
-    w: 1,
-    conditions: ({ topography }) => topography?.some(t => ['hills', 'mountains'].includes(t))
+    description: 'carbon-rich fuel for heating, metalworking, and industrial power.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
   cocoa: {
-    color: '#8B4513',
-    tinto: '#73462A',
-    w: 0.5,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['jungle', 'forest', 'woods'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical'].includes(c))
+    description: 'ground cacao seeds used for drinks, confectionery, and luxury foods.',
+    conditions: params =>
+      params.climate.some(c => ['tropical', 'subtropical'].includes(c)) &&
+      params.vegetation.some(c => !['desert', 'sparse', 'grasslands'].includes(c))
   },
   coffee: {
-    color: '#6F4E37',
-    tinto: '#4A3525',
-    w: 0.5,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['jungle', 'forest', 'woods'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical'].includes(c))
+    description: 'roasted beans producing a rich, stimulating beverage.',
+    conditions: params =>
+      params.climate.some(c => ['tropical', 'subtropical'].includes(c)) &&
+      params.vegetation.some(c => !['desert', 'sparse', 'grasslands'].includes(c))
   },
   copper: {
-    color: '#B87333',
-    tinto: '#917644',
-    w: 1.5,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'a malleable reddish metal used for conductors, alloys, and decorative work.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
   cotton: {
-    color: '#FFFFFF',
-    tinto: '#81877A',
-    w: 1.5,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['grasslands', 'sparse', 'woods'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+    description: 'soft plant fiber spun into breathable fabrics for everyday use.',
+    conditions: params =>
+      params.climate.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
+  },
+  cybernetics: {
+    description: 'intricate mechanical parts and prosthetics for bodily enhancement.',
+    conditions: params => params.development >= 4.25
+  },
+  'daemonic curios': {
+    description: 'unsettling artifacts rumored to carry omens or curses.',
+    conditions: params => params.development < 3.5
+  },
+  'deep-sea harvests': {
+    description: 'rare fish, kelp, and abyssal delicacies.',
+    conditions: params => params.topography.includes('coastal')
   },
   dyes: {
-    color: '#800080',
-    tinto: '#764170',
-    w: 1,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+    description: 'substances for coloring fabrics and other materials.',
+    conditions: params =>
+      params.vegetation.some(v => ['forest', 'jungle', 'grasslands'].includes(v))
   },
-  elephants: {
-    color: '#808080',
-    tinto: '#936E47',
-    w: 0.2,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['tropical', 'subtropical'].includes(c))
+  enchantments: {
+    description: 'magical items and elixirs that provide temporary augmentations.',
+    conditions: params => params.development >= 2.75
   },
   'fiber crops': {
-    color: '#F5F5DC',
-    tinto: '#214F35',
-    w: 1,
-    conditions: ({ climate }) =>
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+    description: 'plants used to make ropes, sails, fishing nets, and clothes.',
+    conditions: params => params.vegetation.some(v => ['grasslands', 'flat'].includes(v))
   },
-  'fine cloth': {
-    color: '#E8E2F0',
-    tinto: '#957E9D',
-    w: 0.5,
-    conditions: ({ climate }) =>
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  'fine clothing': {
+    description: 'luxurious garments made from high-quality fabrics.',
+    conditions: params => params.development >= 3.1
   },
-  firearms: {
-    color: '#3E3A39',
-    tinto: '#746C68',
-    w: 0.2,
-    conditions: ({ advanced }) => advanced
+  fishing: {
+    description: 'aquatic creatures, harvested for food; fresh or preserved.',
+    conditions: params => params.topography.some(t => ['coastal', 'marsh'].includes(t))
   },
-  fish: {
-    color: '#1E90FF',
-    tinto: '#416D6D',
-    w: 10,
-    conditions: ({ coastal }) => coastal
-  },
-  fruit: {
-    color: '#FF4500',
-    tinto: '#915453',
-    w: 2,
-    conditions: ({ climate }) =>
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  fruits: {
+    description: 'edible plant produce, from sweet to tangy varieties.',
+    conditions: params =>
+      params.climate.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
   },
   fur: {
-    color: '#A0522D',
-    tinto: '#72695D',
-    w: 0.8,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['boreal', 'temperate', 'subarctic'].includes(c))
+    description: 'animal pelts, used for warm clothing and luxury garments.',
+    conditions: params =>
+      params.climate.some(c => ['arctic', 'subarctic', 'boreal'].includes(c)) ||
+      params.vegetation.some(v => ['forest', 'woods'].includes(v))
   },
   furniture: {
-    color: '#8E5A3C',
-    tinto: '#C1A37E',
-    w: 0.7,
-    conditions: ({ vegetation }) => vegetation?.some(b => ['forest', 'woods', 'jungle'].includes(b))
+    description: 'carved tables, inlaid chests, and cushioned seats.',
+    conditions: params => params.vegetation.some(v => ['forest', 'woods'].includes(v))
   },
-  gems: {
-    color: '#8A2BE2',
-    tinto: '#9E8D8B',
-    w: 1,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+  gemstones: {
+    description: 'precious stones finely cut and polished for jewelry or art.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
-  glass: {
-    color: '#7EC8E3',
-    tinto: '#4E6A78',
-    w: 0.4,
-    conditions: ({ coastal, vegetation }) =>
-      Boolean(coastal || vegetation?.some(b => ['desert', 'sparse'].includes(b)))
+  glassware: {
+    description: 'bottles, lenses, mirrors, and delicate ornaments.',
+    conditions: params => params.development >= 3.1
   },
   gold: {
-    color: '#FFD700',
-    tinto: '#B29E4A',
-    w: 1,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'highly prized metal, used for coinage, adornment, and ceremonial artifacts.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
+  },
+  grain: {
+    description: 'wheat, rice, barley, and other staple crops.',
+    conditions: params =>
+      params.topography.includes('flat') || params.vegetation.includes('grasslands')
   },
   horses: {
-    color: '#D2B48C',
-    tinto: '#7E7973',
-    w: 1.5,
-    conditions: ({ vegetation, climate, topography }) =>
-      vegetation?.some(b => ['grasslands', 'sparse', 'desert'].includes(b)) &&
-      climate?.some(c => !['arctic', 'subarctic'].includes(c)) &&
-      topography?.some(t => ['flat', 'hills'].includes(t))
+    description: 'valuable for transportation, agriculture, and warfare.',
+    conditions: params =>
+      params.vegetation.includes('grasslands') || params.topography.includes('flat')
   },
   incense: {
-    color: '#D2B48C',
-    w: 0.5,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['desert', 'sparse'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical'].includes(c))
+    description: 'aromatic resins, burned for fragrance or ritual.',
+    conditions: params => params.climate.some(c => ['tropical', 'subtropical'].includes(c))
+  },
+  'industrial parts': {
+    description: 'gears, tools, and mechanisms for advanced manufacturing.',
+    conditions: params => params.development >= 4.25
   },
   iron: {
-    color: '#B22222',
-    tinto: '#3A3E40',
-    w: 2,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'a strong, versatile metal essential for tools, construction, and weaponry.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
   ivory: {
-    color: '#FFFFF0',
-    tinto: '#98897C',
-    w: 0.2,
-    conditions: ({ vegetation, climate, coastal }) =>
-      (vegetation?.some(b => b !== 'desert') &&
-        climate?.some(c => ['tropical', 'subtropical'].includes(c))) ||
-      (coastal && climate?.some(c => ['subarctic', 'arctic'].includes(c)))
+    description: 'hard white material from tusks, for art and luxury items.',
+    conditions: params => params.climate.some(c => ['tropical', 'subtropical'].includes(c))
   },
   jewelry: {
-    color: '#DAA520',
-    tinto: '#8B6C2F',
-    w: 0.3,
-    conditions: () => true
+    description: 'crafted adornments made from precious metals, gems, and fine materials.',
+    conditions: params => params.development >= 3.1
   },
   lacquerware: {
-    color: '#A40000',
-    tinto: '#E0A05F',
-    w: 0.2,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['jungle', 'forest'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical'].includes(c))
+    description: 'glossy coated boxes, trays, and art pieces.',
+    conditions: params =>
+      params.vegetation.some(v => ['forest', 'woods'].includes(v)) && params.development >= 3.1
   },
-  lead: {
-    color: '#6E6E6E',
-    tinto: '#4D428F',
-    w: 0.5,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
-  },
-  leather: {
-    color: '#A9744A',
-    tinto: '#6D4C32',
-    w: 1,
-    conditions: () => true
+  'leather products': {
+    description: 'durable goods from treated animal hides.',
+    conditions: params => params.vegetation.includes('grasslands')
   },
   legumes: {
-    color: '#228B22',
-    tinto: '#3E7875',
-    w: 3,
-    conditions: ({ climate }) =>
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+    description: 'protein-rich plant seeds such as beans and lentils.',
+    conditions: params => params.climate.some(c => ['temperate', 'subtropical'].includes(c))
   },
   liquor: {
-    color: '#B37A2C',
-    tinto: '#643D24',
-    w: 0.8,
-    conditions: () => true
+    description: 'distilled spirits offering high potency and long shelf life.',
+    conditions: params => params.development >= 2.75
   },
   livestock: {
-    color: '#A52A2A',
-    tinto: '#5E7A27',
-    w: 6,
-    conditions: ({ vegetation }) => vegetation?.some(b => !['forest', 'jungle'].includes(b))
+    description: 'domesticated animals, for meat, labor, or dairy products.',
+    conditions: params =>
+      params.vegetation.includes('grasslands') || params.topography.includes('flat')
   },
-  lumber: {
-    color: '#8B4513',
-    tinto: '#9A9F77',
-    w: 3,
-    conditions: ({ vegetation }) => vegetation?.some(b => ['forest', 'woods', 'jungle'].includes(b))
+  logging: {
+    description: 'harvested wood used for construction, furniture, and fuel.',
+    conditions: params => params.vegetation.some(v => ['forest', 'woods', 'jungle'].includes(v))
   },
-  maize: {
-    color: '#FFD700',
-    tinto: '#8E792C',
-    w: 4,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['grasslands', 'woods', 'sparse'].includes(b)) &&
-      climate?.some(c => ['subtropical', 'temperate'].includes(c))
+  'manufactured goods': {
+    description: 'mass-produced tools, canned goods, and other everyday items.',
+    conditions: params => params.development >= 3.6
   },
   marble: {
-    color: '#D3D3D3',
-    tinto: '#9C979B',
-    w: 1,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'smooth, elegant stone for art and architecture.',
+    conditions: params => params.topography.some(t => ['mountains', 'plateau'].includes(t))
   },
-  masonry: {
-    color: '#A9A9A9',
-    tinto: '#5F6B76',
-    w: 0.6,
-    conditions: () => true
+  'medical services': {
+    description: 'lab-grown organs, cloning, and longevity treatments.',
+    conditions: params => params.development >= 4.25
   },
-  medicaments: {
-    color: '#32CD32',
-    tinto: '#9D7D7E',
-    w: 1,
-    conditions: ({ vegetation }) => vegetation?.some(b => ['forest', 'woods', 'jungle'].includes(b))
+  mercenaries: {
+    description: 'professional soldiers for hire.'
   },
   mercury: {
-    color: '#696969',
-    tinto: '#98646A',
-    w: 0.5,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'a liquid metal valued for alchemy, measuring devices, and specialized alloys.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
-  'naval supplies': {
-    color: '#466D80',
-    tinto: '#6F8C72',
-    w: 1,
-    conditions: ({ vegetation, coastal }) =>
-      Boolean(coastal && vegetation?.some(b => ['forest', 'woods'].includes(b)))
+  'meteorite fragments': {
+    description: 'rare minerals from space, often possessing exotic properties.'
   },
-  olives: {
-    color: '#556B2F',
-    tinto: '#4E600B',
-    w: 2,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => !['desert', 'sparse'].includes(b)) &&
-      climate?.some(c => ['temperate', 'subtropical'].includes(c))
+  'musical instruments': {
+    description: 'lutes, violins, and flutes crafted by master artisans.',
+    conditions: params => params.development >= 3.1
+  },
+  narcotics: {
+    description: 'addictive substances, used for pain relief and recreation.',
+    conditions: params =>
+      params.climate.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  },
+  'olive oil': {
+    description: 'a rich oil commonly used in cooking and lamps.',
+    conditions: params => params.climate.some(c => ['temperate', 'subtropical'].includes(c))
+  },
+  'ornamental woods': {
+    description: 'exotic hardwoods for fine furniture and decorative items.',
+    conditions: params => params.vegetation.some(v => ['jungle', 'forest'].includes(v))
   },
   paper: {
-    color: '#F5F0DC',
-    tinto: '#9B8D6F',
-    w: 0.6,
-    conditions: ({ vegetation }) => vegetation?.some(b => ['forest', 'woods'].includes(b))
+    description: 'thin sheets made from plant fibers for written works and administration.',
+    conditions: params => params.development >= 3.1
   },
   pearls: {
-    color: '#F0FFFF',
-    tinto: '#AB9A8B',
-    w: 0.5,
-    conditions: ({ climate, coastal }) =>
-      coastal && climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+    description: 'lustrous spheres from mollusks, prized in jewelry and art.',
+    conditions: params => params.topography.includes('coastal')
   },
-  porcelain: {
-    color: '#F0F8FF',
-    tinto: '#7991A5',
-    w: 0.3,
-    conditions: ({ climate }) => climate?.some(c => ['temperate', 'subtropical'].includes(c))
-  },
-  potato: {
-    color: '#D2691E',
-    tinto: '#9B8569',
-    w: 3,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['forest', 'woods', 'grasslands'].includes(b)) &&
-      climate?.some(c => ['temperate'].includes(c))
-  },
-  pottery: {
-    color: '#C0804D',
-    tinto: '#8A5D37',
-    w: 0.9,
-    conditions: ({ vegetation }) =>
-      vegetation?.some(b => ['grasslands', 'woods', 'sparse'].includes(b))
-  },
-  rice: {
-    color: '#EEE8AA',
-    tinto: '#555E45',
-    w: 7,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => !['desert', 'sparse'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  petroleum: {
+    description: 'black crude oil, valued as a fuel source and for making tar and lubricants.',
+    conditions: params => params.topography.some(t => ['flat', 'coastal'].includes(t))
   },
   salt: {
-    color: '#F0F8FF',
-    tinto: '#A0A6A7',
-    w: 2,
-    conditions: ({ vegetation, coastal }) => vegetation?.includes('desert') || coastal
-  },
-  saltpeter: {
-    color: '#DEB887',
-    tinto: '#A0A6A7',
-    w: 0.5,
-    conditions: ({ vegetation }) => vegetation?.some(b => ['desert', 'sparse'].includes(b))
+    description: 'essential mineral, for food preservation and seasoning.',
+    conditions: params =>
+      params.topography.some(t => ['coastal', 'marsh'].includes(t)) ||
+      params.vegetation.includes('desert')
   },
   sand: {
-    color: '#FFDAB9',
-    tinto: '#9CA27A',
-    w: 2,
-    conditions: ({ vegetation, topography }) =>
-      vegetation?.includes('desert') || topography?.some(t => t === 'coastal')
+    description:
+      'granular material, essential for glass production, construction, and metal casting.',
+    conditions: params => params.vegetation.includes('desert')
+  },
+  shipbuilding: {
+    description: 'high quality maritime vessel construction, repair, and supplies.',
+    conditions: params => params.topography.includes('coastal') && params.development >= 2.75
   },
   silk: {
-    color: '#FFFAF0',
-    tinto: '#922F2B',
-    w: 0.8,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['woods', 'forest', 'jungle', 'grasslands'].includes(b)) && //Mulberry trees can grow in various vegetation
-      climate?.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
+    description: 'fine, shimmering fiber prized for luxurious textiles and ceremonial clothing.',
+    conditions: params =>
+      params.climate.some(c => ['temperate', 'subtropical', 'tropical'].includes(c))
   },
   silver: {
-    color: '#C0C0C0',
-    tinto: '#8D9294',
-    w: 1,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'precious metal valued for currency, ornamentation, and refined tableware.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
   slaves: {
-    color: '#3B2F2F',
-    tinto: '#6A4A3C',
-    w: 0.3,
-    conditions: ({ climate }) => climate?.some(c => ['tropical', 'subtropical'].includes(c))
+    description: 'unfree people, traded and exploited for labor.',
+    conditions: params => params.slaves
   },
   spices: {
-    color: '#FF6347',
-    tinto: '#7A855F',
-    w: 1,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['jungle', 'forest', 'woods'].includes(b)) &&
-      climate?.some(c => ['tropical', 'subtropical'].includes(c))
-  },
-  steel: {
-    color: '#5A6C7A',
-    tinto: '#2F353B',
-    w: 0.3,
-    conditions: ({ climate }) =>
-      climate?.some(c => ['temperate', 'subtropical', 'boreal'].includes(c))
+    description: 'aromatic substances, for flavoring food and medicine.',
+    conditions: params => params.climate.some(c => ['tropical', 'subtropical'].includes(c))
   },
   stone: {
-    color: '#808080',
-    tinto: '#434A53',
-    w: 1.5,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
-  },
-  'sturdy grains': {
-    color: '#C0C0C0',
-    w: 7,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => !['desert', 'sparse', 'grasslands'].includes(b)) && // Hardy grains in drier regions
-      climate?.some(c => ['temperate', 'boreal', 'subarctic'].includes(c))
+    description: 'durable material for construction and fortifications.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills', 'plateau'].includes(t))
   },
   sugar: {
-    color: '#FFF8DC',
-    tinto: '#9B9F86',
-    w: 1.5,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => !['desert', 'sparse'].includes(b)) && // Sugar cane can grow in various vegetations with enough water and warmth
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
-  },
-  tar: {
-    color: '#2B2725',
-    tinto: '#665B47',
-    w: 0.5,
-    conditions: ({ coastal, vegetation }) =>
-      Boolean(coastal && vegetation?.some(b => ['forest', 'woods'].includes(b)))
+    description: 'sweet crystalline substance, for food and confectionery.',
+    conditions: params => params.climate.some(c => ['tropical', 'subtropical'].includes(c))
   },
   tea: {
-    color: '#228B22',
-    tinto: '#193214',
-    w: 1,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => ['woods', 'forest', 'jungle'].includes(b)) && // Tea prefers shade and moisture, hillside
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+    description: 'aromatic leaves brewed for a calming or invigorating drink.',
+    conditions: params => params.climate.some(c => ['temperate', 'subtropical'].includes(c))
   },
   tin: {
-    color: '#D3D3D3',
-    tinto: '#5C514C',
-    w: 1,
-    conditions: ({ topography, coastal }) => topography?.some(t => t !== 'flat') && !coastal
+    description: 'a soft metal used to create bronze and to coat other metals for protection.',
+    conditions: params => params.topography.some(t => ['mountains', 'hills'].includes(t))
   },
-  tobacco: {
-    color: '#8B4513',
-    tinto: '#5D7760',
-    w: 1,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => !['desert', 'sparse', 'grasslands'].includes(b)) && // Tobacco needs sunny open areas, but can tolerate some shade
-      climate?.some(c => ['tropical', 'subtropical', 'temperate'].includes(c))
+  tourism: {
+    description: 'accommodations and entertainment for travelers visiting exotic locales.',
+    conditions: params => params.development >= 3.1
   },
-  tools: {
-    color: '#8C8D8F',
-    tinto: '#575F5F',
-    w: 0.7,
-    conditions: () => true
-  },
-  weaponry: {
-    color: '#4F4F4F',
-    tinto: '#8A6D5C',
-    w: 0.2,
-    conditions: () => true
-  },
-  wheat: {
-    color: '#F5DEB3',
-    tinto: '#939636',
-    w: 8.5,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['subtropical', 'temperate', 'boreal'].includes(c))
-  },
-  'wild game': {
-    color: '#6B8E23',
-    tinto: '#949468',
-    w: 4,
-    conditions: ({ vegetation }) => vegetation?.some(b => b !== 'desert')
+  'war armaments': {
+    description: 'the finest weapons and armor used in combat.',
+    conditions: params => params.development >= 3.1
   },
   wine: {
-    color: '#8B0000',
-    tinto: '#553450',
-    w: 1,
-    conditions: ({ vegetation, climate }) =>
-      vegetation?.some(b => b !== 'desert') &&
-      climate?.some(c => ['temperate', 'subtropical'].includes(c))
+    description: 'fermented grape beverage, ranging from common table varieties to rare vintages.',
+    conditions: params => params.climate.some(c => ['temperate', 'subtropical'].includes(c))
   },
   wool: {
-    color: '#FFFFFF',
-    tinto: '#778285',
-    w: 1.5,
-    conditions: ({ climate }) =>
-      climate?.some(c => ['temperate', 'boreal', 'subarctic', 'temperate'].includes(c))
+    description: 'insulating animal fiber used for garments, blankets, and tapestries.',
+    conditions: params =>
+      params.climate.some(c => ['temperate', 'boreal'].includes(c)) ||
+      params.vegetation.includes('grasslands')
+  },
+  'whale products': {
+    description: 'materials from whales, like oil or baleen.',
+    conditions: params =>
+      params.topography.includes('coastal') &&
+      params.climate.some(c => ['arctic', 'subarctic', 'boreal'].includes(c))
   }
 }
 
 export const TRADE_GOODS = {
-  reference: tradeGoods,
-  spawn: () => {
+  exports: () => {
     const goods = Object.keys(tradeGoods) as TradeGood[]
     const used: Partial<Record<TradeGood, number>> = {}
     NATION.nations().forEach(nation => {
@@ -513,15 +344,17 @@ export const TRADE_GOODS = {
       const topography = ARRAY.unique(locations.map(l => l.topography))
       const climate = ARRAY.unique(locations.map(l => l.climate))
       const vegetation = ARRAY.unique(locations.map(l => l.vegetation))
-      const coastal = locations.some(l => l.coastal)
+      const development = nation.development
+      const slaves = nation.policies.slavery === 'slave trade'
       const prospects = goods
         .map(good => {
           const { conditions } = tradeGoods[good]
           if (!used[good]) used[good] = 0
           const occurrence = used[good]
-          const w = conditions({ vegetation, climate, topography, coastal })
-            ? 1 / 10 ** occurrence
-            : 0
+          const w =
+            conditions?.({ vegetation, climate, topography, development, slaves }) ?? true
+              ? 1 / 10 ** occurrence
+              : 0
           used[good] += 1
           if (used[good] > 100) used[good] = 0
           return { w, v: good }
@@ -534,9 +367,19 @@ export const TRADE_GOODS = {
     if (!nation.imports) {
       const n = ARRAY.unique(
         NATION.neighbors({ nation, depth: 2 })
-          .map(n => n.exports ?? [])
+          .map(n => (n.exports ?? []).concat(n.imports ?? []))
           .flat()
-          .filter(good => !nation.exports.includes(good) && good !== 'wild game' && good !== 'fish')
+          .filter(
+            good =>
+              good !== 'tourism' &&
+              good !== 'medical services' &&
+              good !== 'academic research' &&
+              good !== 'fishing' &&
+              good !== 'daemonic curios' &&
+              good !== 'deep-sea harvests' &&
+              !nation.exports.includes(good) &&
+              (['slave trade'].includes(nation.policies.slavery) || good !== 'slaves')
+          )
       )
       nation.imports = window.dice.sample(n, 3)
     }

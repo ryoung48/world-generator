@@ -1,5 +1,7 @@
 import { ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material'
+import { ChartBar, ContentCopy } from 'mdi-material-ui'
 import { Ruler, RulerSquare } from 'mdi-material-ui'
+import { useState } from 'react'
 
 import { VIEW } from '../context'
 import { fonts } from '../theme/fonts'
@@ -14,12 +16,22 @@ type MapControlsProps = {
   onProjectionChange: (_type: ProjectionType) => void
 }
 
-const hidden: MapStyle[] = ['Resources', 'Temperature', 'Rain', 'Population', 'Timezones']
+const hidden: MapStyle[] = ['Temperature', 'Rain', 'Population', 'Timezones']
 
 export function MapControls(props: MapControlsProps) {
-  const { state } = VIEW.context()
+  const { state, dispatch } = VIEW.context()
   const { style, onStyleChange, onUnitsChange, projectionType, onProjectionChange } = props
   const units = state.units
+  const [copied, setCopied] = useState(false)
+
+  const handleCopySeed = () => {
+    if (state.id) {
+      navigator.clipboard.writeText(state.id)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
   return (
     <>
       <ToggleButtonGroup
@@ -33,8 +45,9 @@ export function MapControls(props: MapControlsProps) {
         style={{
           zIndex: 2,
           position: 'absolute',
-          top: MAP_SHAPES.height + 35,
-          left: MAP_SHAPES.width * 0.4,
+          bottom: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
           background: 'rgba(241, 241, 241, 0.95)'
         }}
       >
@@ -49,35 +62,70 @@ export function MapControls(props: MapControlsProps) {
           ))}
       </ToggleButtonGroup>
 
-      <ToggleButtonGroup
-        color='primary'
-        exclusive
-        value={units}
-        onChange={(_, value) => {
-          if (value && value !== units) {
-            onUnitsChange()
-          }
-        }}
-        size='small'
+      <div
         style={{
           zIndex: 2,
           position: 'absolute',
-          top: MAP_SHAPES.height * 1.045,
-          left: MAP_SHAPES.width * 0.22,
-          background: 'rgba(241, 241, 241, 0.95)'
+          bottom: 20,
+          left: 20,
+          display: 'flex',
+          gap: 8
         }}
       >
-        <Tooltip title='Metric (km, °C)' arrow>
-          <ToggleButton value='metric'>
-            <Ruler />
+        <ToggleButtonGroup
+          color='primary'
+          exclusive
+          value={units}
+          onChange={(_, value) => {
+            if (value && value !== units) {
+              onUnitsChange()
+            }
+          }}
+          size='small'
+          style={{
+            background: 'rgba(241, 241, 241, 0.95)'
+          }}
+        >
+          <Tooltip title='Metric (km, °C)' arrow>
+            <ToggleButton value='metric'>
+              <Ruler />
+            </ToggleButton>
+          </Tooltip>
+          <Tooltip title='Imperial (mi, °F)' arrow>
+            <ToggleButton value='imperial'>
+              <RulerSquare />
+            </ToggleButton>
+          </Tooltip>
+        </ToggleButtonGroup>
+
+        <Tooltip title={copied ? 'Copied!' : 'Copy seed to clipboard'} arrow>
+          <ToggleButton
+            value='seed'
+            size='small'
+            onClick={handleCopySeed}
+            style={{ background: 'rgba(241, 241, 241, 0.95)' }}
+          >
+            <ContentCopy sx={{ mr: 0.5 }} />
+            <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 14 }}>
+              {state.id || 'No seed'}
+            </span>
           </ToggleButton>
         </Tooltip>
-        <Tooltip title='Imperial (mi, °F)' arrow>
-          <ToggleButton value='imperial'>
-            <RulerSquare />
+
+        <Tooltip title='View statistics' arrow>
+          <ToggleButton
+            value='stats'
+            size='small'
+            onClick={() => dispatch({ type: 'toggle stats' })}
+            style={{ background: 'rgba(241, 241, 241, 0.95)' }}
+          >
+            <ChartBar sx={{ mr: 0.5 }} />
+            <span style={{ fontFamily: fonts.maps, textTransform: 'none', fontSize: 14 }}>
+              Stats
+            </span>
           </ToggleButton>
         </Tooltip>
-      </ToggleButtonGroup>
+      </div>
 
       <ToggleButtonGroup
         color='primary'
@@ -90,8 +138,9 @@ export function MapControls(props: MapControlsProps) {
         style={{
           zIndex: 2,
           position: 'absolute',
-          top: MAP_SHAPES.height * 0.15,
-          left: MAP_SHAPES.width * 0.5,
+          top: 20,
+          left: '50%',
+          transform: 'translateX(-50%)',
           background: 'rgba(241, 241, 241, 0.95)'
         }}
       >

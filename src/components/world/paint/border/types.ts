@@ -7,4 +7,5 @@ export type DrawBorderParams = DrawMapParams & {
   nations: Province[]
   nationSet: Set<number>
   province: Province
+  visible: Set<number>
 }

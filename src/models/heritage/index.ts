@@ -2,7 +2,8 @@ import { PROVINCE } from '../provinces'
 import { COLOR } from '../utilities/color'
 import { TEXT } from '../utilities/text'
 import { TRAIT } from '../utilities/traits'
-import { LANGUAGE } from './languages'
+import { Language } from './languages/types'
+import { Religion } from './religions/types'
 import { SPECIES } from './species'
 import { Species } from './species/types'
 import { Culture, CultureColorParams, CultureSpawnParams, CultureValues } from './types'
@@ -108,9 +109,11 @@ export const CULTURE = {
           .join(', ')
       }
     ]
+    const religionObj = CULTURE.religion(culture)
+    const religion = religionObj?.name ?? religionObj?.type ?? 'unassigned'
     return {
       title: culture.name,
-      subtitle: `(${culture.idx}) ${`${species} (${climate}, ${culture.religion})`}`,
+      subtitle: `(${culture.idx}) ${`${species} (${climate}, ${religion})`}`,
       content
     }
   },
@@ -119,6 +122,10 @@ export const CULTURE = {
   origin: (culture: Culture) => window.world.provinces[culture.provinces[0]],
   provinces: (culture: Culture) =>
     culture.provinces.map(province => window.world.provinces[province]),
+  language: (culture: Culture): Language | undefined =>
+    culture.language !== -1 ? window.world.languages[culture.language] : undefined,
+  religion: (culture: Culture): Religion | undefined =>
+    culture.religion !== -1 ? window.world.religions[culture.religion] : undefined,
   spawn: ({ provinces }: CultureSpawnParams) => {
     const origin = provinces[0]
     const cell = window.world.cells[origin.cell]
@@ -151,7 +158,6 @@ export const CULTURE = {
             { w: 0.025, v: 'bovine' },
             { w: 0.025, v: 'draconic' }
           ])
-    const language = LANGUAGE.spawn(species)
     const hue = window.dice.randint(0, 360)
     const coastal = PROVINCE.coastal(origin)
     const culture: Culture = {
@@ -161,16 +167,8 @@ export const CULTURE = {
       provinces: provinces.map(province => province.idx),
       neighbors: [],
       species,
-      language,
-      religion: window.dice.weightedChoice([
-        { v: 'monotheistic', w: origin.development < 2 ? 1 : 2 },
-        { v: 'dualistic', w: origin.development > 3 ? 0 : 0.15 },
-        { v: 'polytheistic', w: origin.development > 3 ? 0 : 0.5 },
-        { v: 'animistic', w: origin.development > 2 ? 0 : 1 },
-        { v: 'nontheistic', w: 1 },
-        { v: 'irreligious', w: origin.development < 2 ? 0 : 1 },
-        { v: 'syncretic', w: 0.15 }
-      ]),
+      language: -1,
+      religion: -1,
       appearance: SPECIES.appearance({ province: origin, species }),
       fashion: {
         color: window.dice.choice([...COLOR.hues]),
@@ -203,24 +201,10 @@ export const CULTURE = {
       display: { color: coloration([hue, hue]), hue }
     }
     window.world.cultures.push(culture)
+    // Assign culture to provinces (naming will happen later after languages are assigned)
     provinces.forEach(province => {
-      const { word, morphemes } = LANGUAGE.word.unique({
-        lang: language,
-        key: 'region'
-      })
-      province.name = word
-      province.demonym = LANGUAGE.word.demonym(morphemes).replace(' ', '')
-      PROVINCE.hub(province).name = LANGUAGE.word.unique({
-        lang: language,
-        key: 'settlement'
-      }).word
       province.culture = culture.idx
     })
-    const largest = provinces.reduce(
-      (largest, curr) => (curr.territories.length > largest.territories.length ? curr : largest),
-      provinces[0]
-    )
-    culture.name = largest.demonym
     return culture
   },
   values

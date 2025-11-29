@@ -15,6 +15,7 @@ export type DrawTerrainIconParams = {
   ctx: CanvasRenderingContext2D
   cachedImages: CachedImages
   projection: GeoProjection
+  visible: Set<number>
 }
 
 export type DrawIcon<Icon extends string> = {

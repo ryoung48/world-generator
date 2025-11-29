@@ -7,6 +7,7 @@ import { TIMEZONE_SHAPER } from '../../../../models/shapers/civilization/timezon
 import { MATH } from '../../../../models/utilities/math'
 import { DrawLegendParams, LegendParams } from '../embellishments/types'
 import { MAP_SHAPES } from '.'
+import { TEXT } from '../../../../models/utilities/text'
 
 const elevation = [0, 300, 600, 1200, 2000, 3000, 4000, 6000, 9000, 12000, 16000, 20000, 26000].map(
   MATH.conversion.distance.feet.km
@@ -85,7 +86,7 @@ export const MAP_METRICS = {
   },
   topography: {
     color: d3.scaleLinear(elevation, [
-      '#8AAB78',
+      '#A6BF97',
       '#8AAB78',
       '#97b584',
       '#D6D2AD',
@@ -131,7 +132,17 @@ export const MAP_METRICS = {
         },
         { text: 'plateau', color: MAP_METRICS.topography.color(0.9) },
         { text: 'hills', color: MAP_METRICS.topography.color(0.35) },
-        { text: 'flat', color: MAP_METRICS.topography.color(0.2) },
+        {
+          text: 'flat',
+          shape: ({ ctx, point, scale }) =>
+            MAP_SHAPES.gradient({
+              ctx,
+              point,
+              scale,
+              from: MAP_METRICS.topography.color(0),
+              to: MAP_METRICS.topography.color(0.3)
+            })
+        },
         { text: 'coastal', color: MAP_SHAPES.color.coastal },
         {
           text: 'marsh',
@@ -142,6 +153,17 @@ export const MAP_METRICS = {
         //   text: 'major river',
         //   shape: ({ ctx, point }) =>
         //     MAP_SHAPES.river.path({ ctx, point, color: MAP_SHAPES.river.color(0.8) })
+        // },
+        // {
+        //   text: 'salt flat',
+        //   shape: ({ ctx, point }) =>
+        //     MAP_SHAPES.circle({
+        //       ctx,
+        //       point,
+        //       fill: MAP_SHAPES.color['salt flat'],
+        //       radius: 6,
+        //       border: { color: 'black', width: 0.5 }
+        //     })
         // },
         {
           text: 'freshwater',
@@ -437,6 +459,7 @@ export const MAP_METRICS = {
       desert: '#F5F3E9',
       sparse: '#E3E1D1',
       grasslands: '#D4E5C6',
+      farmlands: '#bcfcc2ff',
       woods: '#ABBDA7',
       forest: '#91B69A',
       jungle: '#7ECBA9'
@@ -488,6 +511,53 @@ export const MAP_METRICS = {
           { text: 'none', color: MAP_METRICS.timezone.colors.uncivilized }
         ],
         width: 10
+      }
+    }
+  },
+  gdp: {
+    scale: () => {
+      return d3.scaleLog([10e6, 120e9], [0, 1]).base(2).clamp(true)
+    },
+    color: (gdpValue: number) => {
+      const scale = MAP_METRICS.gdp.scale()
+      return d3.interpolateRdYlGn(scale(gdpValue))
+    },
+    format: (value: number) => {
+      return TEXT.formatters.compact(value)
+    },
+    legend: (): LegendParams => {
+      const scale = MAP_METRICS.gdp.scale()
+      return {
+        items: Array.from({ length: 10 }, (_, i) => {
+          const high = scale.invert((i + 1) / 10) / 1e9
+          const low = scale.invert(i / 10) / 1e9
+          return {
+            text: `${low.toFixed(low < 0.1 ? 2 : low < 1 ? 1 : 0)} - ${high.toFixed(
+              high < 0.1 ? 2 : high < 1 ? 1 : 0
+            )}`,
+            color: MAP_METRICS.gdp.color(high * 1e9)
+          }
+        }).reverse(),
+        width: 10
+      }
+    }
+  },
+  conflicts: {
+    color: (intensity: number) => d3.interpolateOrRd(intensity / 5),
+    labels: {
+      1: 'dispute',
+      2: 'non-violent crisis',
+      3: 'violent crisis',
+      4: 'limited war',
+      5: 'war'
+    } as Record<number, string>,
+    legend: (): LegendParams => {
+      return {
+        items: [1, 2, 3, 4, 5].map(intensity => ({
+          color: MAP_METRICS.conflicts.color(intensity),
+          text: MAP_METRICS.conflicts.labels[intensity]
+        })),
+        width: 15
       }
     }
   }

@@ -1,9 +1,6 @@
 import { Grid } from '@mui/material'
-
-// import { HookView } from './Hooks'
 import { ACTOR } from '../../../models/actors'
 import { CULTURE } from '../../../models/heritage'
-import { NATION } from '../../../models/nations'
 import { PROVINCE } from '../../../models/provinces'
 import { HUB } from '../../../models/provinces/hubs'
 import { TEXT } from '../../../models/utilities/text'
@@ -17,7 +14,7 @@ import { MAP_METRICS } from '../../world/paint/shapes/metrics'
 import { DaylightView } from './weather/Daylight'
 import { RainView } from './weather/Rain'
 import { TemperatureView } from './weather/Temperature'
-// import { WindView } from './weather/Wind'
+
 
 export function HubView() {
   const { state } = VIEW.context()

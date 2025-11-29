@@ -1,6 +1,7 @@
 import { range } from 'd3'
 
 import { cssColors } from '../../components/theme/colors'
+import { CULTURE } from '../heritage'
 import { LANGUAGE } from '../heritage/languages'
 import { SPECIES } from '../heritage/species'
 import { Culture } from '../heritage/types'
@@ -51,12 +52,13 @@ export const ACTOR = {
         : common.filter(c => profession.culture !== 'tribal' || c.v !== province.minority)
     )
     const culture = window.world.cultures[cidx]
+    const language = CULTURE.language(culture)
     const age = params.age ?? profession.age
     const npc: Actor = {
       tag: 'actor',
       idx: window.world.actors.length,
       province: HUB.province(place).idx,
-      name: LANGUAGE.word.firstName(culture.language, gender).word,
+      name: language ? LANGUAGE.word.firstName(language, gender).word : 'Unknown',
       culture: culture.idx,
       age,
       gender,
@@ -81,8 +83,7 @@ export const ACTOR = {
       title: actor.name,
       subtitle: `${actor.age}, ${actor.gender} ${TEXT.decorate({
         label: culture.species,
-        tooltip: culture.name,
-        color: cssColors.subtitle
+        tooltip: culture.name
       })}, ${actor.profession.title}`,
       content
     }

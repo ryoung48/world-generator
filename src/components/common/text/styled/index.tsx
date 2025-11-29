@@ -7,7 +7,6 @@ import { TaggedEntity } from '../../../../models/utilities/text/types'
 import { VIEW } from '../../../context'
 import { cssColors } from '../../../theme/colors'
 import { fonts } from '../../../theme/fonts'
-import { DetailedTableRow } from '../../DataTable'
 import { LazyTippy } from '../LazyTippy'
 import { DetailedToolTipParams } from './types'
 
@@ -19,37 +18,64 @@ const setActiveTooltip = (id: string | null) => {
 
 const DescriptiveToolTip = ({ title, subtitle, content }: DetailedToolTipParams) => {
   return (
-    <Grid container p={0.5}>
-      <Grid item xs={12}>
-        <DetailedTableRow
-          title={
-            <span
-              style={{
-                fontSize: 35,
-                color: cssColors.primary,
-                fontWeight: 600,
-                fontFamily: fonts.maps
+    <Grid
+      container
+      sx={{
+        maxWidth: 320,
+        minWidth: 220,
+        background: '#fff',
+        borderRadius: 1,
+        overflow: 'hidden'
+      }}
+    >
+      <Grid
+        item
+        xs={12}
+        sx={{
+          background: cssColors.primary,
+          px: 2,
+          py: 1,
+          color: 'white'
+        }}
+      >
+        <span
+          style={{
+            fontSize: 32,
+            fontWeight: 700,
+            fontFamily: fonts.maps,
+            display: 'block'
+          }}
+        >
+          {title}
+        </span>
+        <span style={{ fontSize: 9, opacity: 0.9 }}>
+          <StyledText color='white' text={subtitle}></StyledText>
+        </span>
+      </Grid>
+      <Grid item xs={12} sx={{ p: 1 }}>
+        {content.map(({ label, text }) => {
+          return (
+            <Grid
+              container
+              key={label}
+              sx={{
+                py: 0.25,
+                fontSize: 10
               }}
             >
-              {title}
-            </span>
-          }
-          subtitle={
-            <span style={{ fontSize: 10 }}>
-              <StyledText color={cssColors.subtitle} text={subtitle}></StyledText>
-            </span>
-          }
-        ></DetailedTableRow>
+              <Grid
+                item
+                xs={12}
+                sx={{
+                  color: cssColors.black
+                }}
+              >
+                <b style={{ color: cssColors.primary }}>{label}:</b> <StyledText text={text}></StyledText>
+              </Grid>
+            </Grid>
+          )
+        })}
       </Grid>
-      {content.map(({ label, text }) => {
-        return (
-          <Grid key={label} item xs={12} style={{ fontSize: 10 }}>
-            <span>
-              <b>{label}:</b> <StyledText text={text}></StyledText>
-            </span>
-          </Grid>
-        )
-      })}
     </Grid>
   )
 }

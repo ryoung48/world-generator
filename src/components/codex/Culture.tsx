@@ -24,6 +24,8 @@ export function CultureView() {
   const species = culture.species
   const region = CULTURE.origin(culture)
   const climate = PROVINCE.climate(region)
+  const language = CULTURE.language(culture)
+  const religion = CULTURE.religion(culture)
 
   const provinces = culture.provinces.map(idx => window.world.provinces[idx]).filter(Boolean)
 
@@ -31,12 +33,12 @@ export function CultureView() {
 
   // Generate sample names
   const sampleMaleNames = useMemo(
-    () => Array.from({ length: 10 }, () => LANGUAGE.word.firstName(culture.language, 'male').word),
+    () => language ? Array.from({ length: 10 }, () => LANGUAGE.word.firstName(language, 'male').word) : [],
     [state.codex]
   )
   const sampleFemaleNames = useMemo(
     () =>
-      Array.from({ length: 10 }, () => LANGUAGE.word.firstName(culture.language, 'female').word),
+      language ? Array.from({ length: 10 }, () => LANGUAGE.word.firstName(language, 'female').word) : [],
     [state.codex]
   )
 
@@ -46,7 +48,7 @@ export function CultureView() {
       subtitle={
         <span>
           <span style={{ color: cssColors.subtitle }}>
-            ({culture.idx}) culture ({culture.species}, {climate}, {culture.religion})
+            ({culture.idx}) culture ({culture.species}, {climate}, {religion?.name ?? religion?.type ?? 'unassigned'})
           </span>
         </span>
       }
@@ -120,27 +122,27 @@ export function CultureView() {
                   list={[
                     {
                       label: 'Start Consonants',
-                      content: culture.language.phonemes[PhonemeCatalog.START_CONSONANT]
+                      content: language?.phonemes[PhonemeCatalog.START_CONSONANT]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     },
                     {
                       label: 'Middle Consonants',
-                      content: culture.language.phonemes[PhonemeCatalog.MIDDLE_CONSONANT]
+                      content: language?.phonemes[PhonemeCatalog.MIDDLE_CONSONANT]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     },
                     {
                       label: 'End Consonants',
-                      content: culture.language.phonemes[PhonemeCatalog.END_CONSONANT]
+                      content: language?.phonemes[PhonemeCatalog.END_CONSONANT]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     }
                   ]}
                 />
@@ -154,35 +156,35 @@ export function CultureView() {
                   list={[
                     {
                       label: 'Start Vowels',
-                      content: culture.language.phonemes[PhonemeCatalog.START_VOWEL]
+                      content: language?.phonemes[PhonemeCatalog.START_VOWEL]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     },
                     {
                       label: 'Middle Vowels',
-                      content: culture.language.phonemes[PhonemeCatalog.MIDDLE_VOWEL]
+                      content: language?.phonemes[PhonemeCatalog.MIDDLE_VOWEL]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     },
                     {
                       label: 'Back Vowels',
-                      content: culture.language.phonemes[PhonemeCatalog.BACK_VOWEL]
+                      content: language?.phonemes[PhonemeCatalog.BACK_VOWEL]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     },
                     {
                       label: 'End Vowels',
-                      content: culture.language.phonemes[PhonemeCatalog.END_VOWEL]
+                      content: language?.phonemes[PhonemeCatalog.END_VOWEL]
                         .sort((a, b) => b.w - a.w)
                         .slice(0, 8)
                         .map(p => `${p.v} (${Math.round(p.w * 100)}%)`)
-                        .join(', ')
+                        .join(', ') ?? 'N/A'
                     }
                   ]}
                 />

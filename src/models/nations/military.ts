@@ -26,16 +26,38 @@ const calculate = (nation: Province) => {
   const navy = NATION.coastal(nation) && !decentralized && nation.size !== 'city-state'
   const development = nation.development
   const theocracy = nation.government === 'theocracy'
-  const irreligious = window.world.cultures[nation.culture].religion === 'irreligious'
+  const culture = window.world.cultures[nation.culture]
+  const irreligious =
+    culture.religion !== -1
+      ? window.world.religions[culture.religion]?.type === 'irreligious'
+      : false
 
   const colonial = Object.values(nation.relations).some(
     relation => relation === 'colony' || relation === 'chartered company' || relation === 'dominion'
   )
 
+  const slavery = nation.policies.slavery === 'slave trade'
+
+  const base: WeightedDistribution<Unit> =
+    development < 2
+      ? [,
+          { v: 'levies', w: decentralized ? 0 : 0.23 },
+          { v: 'tribal warbands', w: decentralized ? 1 : 0.33 }
+        ]
+      : development < 3
+      ? [
+          { v: 'standing army', w: decentralized ? 0 : 0.1 },
+          { v: 'levies', w: 0.2 }
+        ]
+      : [
+          { v: 'standing army', w: decentralized ? 0 : 0.35 },
+          { v: 'levies', w: 0.12 }
+        ]
+
   const composition: WeightedDistribution<Unit> =
     development < 2
       ? [
-          { v: 'slaves', w: decentralized ? 0 : 0.03 },
+          { v: 'slaves', w: !slavery || decentralized ? 0 : 0.05 },
           { v: 'standing army', w: decentralized ? 0 : 0.05 },
           { v: 'levies', w: decentralized ? 0 : 0.23 },
           { v: 'tribal warbands', w: decentralized ? 1 : 0.33 },
@@ -46,7 +68,7 @@ const calculate = (nation: Province) => {
         ]
       : development < 3
       ? [
-          { v: 'slaves', w: decentralized ? 0 : 0.1 },
+          { v: 'slaves', w: !slavery || decentralized ? 0 : 0.2 },
           { v: 'standing army', w: decentralized ? 0 : 0.2 },
           { v: 'levies', w: 0.2 },
           { v: 'tribal warbands', w: 0.08 },
@@ -56,7 +78,7 @@ const calculate = (nation: Province) => {
           { v: 'warships', w: navy ? 0.15 : 0 }
         ]
       : [
-          { v: 'slaves', w: decentralized ? 0 : 0.1 },
+          { v: 'slaves', w: !slavery || decentralized ? 0 : 0.2 },
           { v: 'standing army', w: decentralized ? 0 : 0.35 },
           { v: 'levies', w: 0.12 },
           { v: 'tribal warbands', w: 0 },
@@ -70,23 +92,23 @@ const calculate = (nation: Province) => {
   const count = 3
   const selected = ARRAY.counter(
     window.dice
-      .weightedSample(composition, colonial ? 2 : count, false)
+      .weightedSample(composition, colonial ? 1 : 2, false)
       .concat(colonial ? ['warships'] : [])
+      .concat([window.dice.weightedChoice(base)])
   )
 
   // Cap warships at 1, redistribute leftovers
   const singular: Unit[] = ['holy orders', 'slaves', 'mercenaries', 'national militia', 'warships']
   singular.forEach(unit => {
-  if (selected[unit] && selected[unit] > 1) {
-    const leftover = selected[unit] - 1
-    selected[unit] = 1
-    if (decentralized) {
-      selected['tribal warbands'] = (selected['tribal warbands'] || 0) + leftover
-    } else {
-      selected['standing army'] = (selected['standing army'] || 0) + leftover
+    if (selected[unit] && selected[unit] > 1) {
+      const leftover = selected[unit] - 1
+      selected[unit] = 1
+      if (decentralized) {
+        selected['tribal warbands'] = (selected['tribal warbands'] || 0) + leftover
+      } else {
+        selected['standing army'] = (selected['standing army'] || 0) + leftover
+      }
     }
-  }
-
   })
   const military: [Unit, number, number][] = []
 

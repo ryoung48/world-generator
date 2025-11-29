@@ -10,6 +10,7 @@ export type ViewState = {
   codex: { tag: 'nation' | 'province' | 'culture' | 'actor'; idx: number }
   units: 'metric' | 'imperial'
   history: { tag: 'nation' | 'province' | 'culture' | 'actor'; idx: number }[]
+  stats: boolean
 }
 
 export type ViewActions =
@@ -21,6 +22,7 @@ export type ViewActions =
   | { type: 'update gps'; payload: { gps: ViewState['gps'] } }
   | { type: 'loading'; payload: boolean }
   | { type: 'toggle units' }
+  | { type: 'toggle stats' }
   | { type: 'back' }
 
 export type LoadingParams = {

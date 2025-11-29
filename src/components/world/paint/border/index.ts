@@ -5,18 +5,17 @@ import { DRAW_CULTURES } from './cultures'
 import { DRAW_GOVERNMENT } from './government'
 import { DRAW_NATION } from './nation'
 import { DRAW_RELIGIONS } from './religions'
-import { DRAW_RESOURCES } from './resources'
 import { DRAW_TIMEZONES } from './timezones'
 import { DRAW_TOPOGRAPHY } from './topography'
 import { DrawBorderParams } from './types'
 
 export const DRAW_BORDERS = {
-  regions: ({ ctx, style, projection, province, nationSet }: DrawBorderParams) => {
+  regions: ({ ctx, style, projection, province, nationSet, visible }: DrawBorderParams) => {
     const scale = MAP_SHAPES.scale.derived(projection)
     const path = MAP_SHAPES.path.linear(projection)
     const regionStyle = style === 'Nations'
-    const nations = NATION.nations()
-    const provinces = window.world.provinces
+    const nations = NATION.nations().filter(n => NATION.provinces(n).some(p => visible.has(p.idx)))
+    const provinces = window.world.provinces.filter(p => visible.has(p.idx))
     // base coloration
     const wastes = provinces.filter(p => p.territories.length > 0 && p.desolate)
     ctx.lineWidth = scale * 2
@@ -27,9 +26,7 @@ export const DRAW_BORDERS = {
       })
     })
     if (style === 'Topography') {
-      DRAW_TOPOGRAPHY.coloration({ projection, ctx })
-    } else if (style === 'Resources') {
-      DRAW_RESOURCES.coloration({ projection, ctx })
+      DRAW_TOPOGRAPHY.coloration({ projection, ctx, visible })
     } else if (style !== 'Nations' && style !== 'Timezones') {
       provinces.forEach(province => {
         const coloration = DRAW_CACHE.borders.province(province)
@@ -48,6 +45,10 @@ export const DRAW_BORDERS = {
             ? coloration.government
             : style === 'Religion'
             ? coloration.religion
+            : style === 'Productivity'
+            ? coloration.gdp
+            : style === 'Conflicts'
+            ? coloration.conflict
             : coloration.rain
         DRAW_CACHE.paths.province({ province, path }).forEach(p => {
           ctx.fill(p)
@@ -66,16 +67,16 @@ export const DRAW_BORDERS = {
         }
       })
     })
-    if (style === 'Topography') DRAW_TOPOGRAPHY.special({ projection, ctx })
+    if (style === 'Topography') DRAW_TOPOGRAPHY.special({ projection, ctx, visible })
     if (style === 'Timezones') DRAW_TIMEZONES.land({ ctx, projection })
-    if (style === 'Religion') DRAW_RELIGIONS.minorities({ projection, ctx })
+    if (style === 'Religion') DRAW_RELIGIONS.minorities({ projection, ctx, visible })
     // nation borders
-    DRAW_NATION.coloration({ projection, ctx, style, selected: province })
+    DRAW_NATION.coloration({ projection, ctx, style, selected: province, nations })
     if (style === 'Nations') {
-      DRAW_NATION.contested({ projection, ctx })
       // DRAW_NATION.borders({ projection, ctx })
     }
-    if (style === 'Cultures') DRAW_CULTURES.minorities({ projection, ctx, nationSet })
-    if (style === 'Government') DRAW_GOVERNMENT.vassals({ projection, ctx })
+    if (style === 'Cultures' && scale > MAP_SHAPES.breakpoints.global)
+      DRAW_CULTURES.minorities({ projection, ctx, nationSet })
+    if (style === 'Government') DRAW_GOVERNMENT.vassals({ projection, ctx, nations })
   }
 }

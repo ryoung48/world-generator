@@ -4,11 +4,11 @@ import { NATION } from '../../../../models/nations'
 import { MAP_SHAPES } from '../shapes'
 import { DRAW_CACHE } from '../shapes/caching'
 import { MAP_METRICS } from '../shapes/metrics'
+import { Province } from '../../../../models/provinces/types'
 
 export const DRAW_GOVERNMENT = {
-  vassals: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D }) => {
-    const { projection, ctx } = params
-    const nations = NATION.nations()
+  vassals: (params: { projection: GeoProjection; ctx: CanvasRenderingContext2D, nations: Province[] }) => {
+    const { projection, ctx, nations } = params
     const scale = MAP_SHAPES.scale.derived(projection)
     const pathGen = MAP_SHAPES.path.curveClosed(projection)
     ctx.save()

@@ -1,3 +1,4 @@
+import { Point } from '@nivo/core'
 import { CELL } from '../cells'
 import { PLACEMENT } from '../cells/placement'
 import { Cell } from '../cells/types'
@@ -20,38 +21,71 @@ const LAW: Record<Province.Province['law'], string> = {
   'localized codes': 'each region enforces its own laws under local rulers or councils',
   'hierarchical law': 'written law favors elites; nobles stand above common justice',
   'bureaucratic law': 'standardized codes enforced by trained magistrates ensure relative fairness',
-  'esoteric codified': 'a deeply textual, precedent-layered legal system that only trained jurists can navigate',
-  'arbitrary rule': 'law follows the ruler\'s whim; fear and loyalty replace justice'
+  'esoteric codified':
+    'a deeply textual, precedent-layered legal system that only trained jurists can navigate',
+  'arbitrary rule': "law follows the ruler's whim; fear and loyalty replace justice"
 }
 
 const RELIGION_POLICY: Record<NonNullable<Province.Province['policies']>['religion'], string> = {
-  'atheism': 'the state suppresses or prohibits religious practice; reason and materialism reign',
-  'pluralism': 'all faiths are tolerated equally; religious diversity is accepted and protected',
-  'secularized': 'religion is separated from state affairs; private belief without public interference',
-  'moralism': 'one faith is enforced or heavily favored; orthodoxy shapes law and culture'
+  atheism: 'the state suppresses or prohibits religious practice; reason and materialism reign',
+  pluralism: 'all faiths are tolerated equally; religious diversity is accepted and protected',
+  secularized:
+    'religion is separated from state affairs; private belief without public interference',
+  moralism: 'one faith is enforced or heavily favored; orthodoxy shapes law and culture'
 }
 
 const TRADE_POLICY: Record<NonNullable<Province.Province['policies']>['trade'], string> = {
-  'isolationist': 'minimal foreign trade; the nation relies on internal resources and autarky',
-  'protectionism': 'tariffs and restrictions shield domestic industries from foreign competition',
-  'mercantilism': 'state-guided trade seeks to accumulate wealth through exports and colonial monopolies',
+  isolationist: 'minimal foreign trade; the nation relies on internal resources and autarky',
+  protectionism: 'tariffs and restrictions shield domestic industries from foreign competition',
+  mercantilism:
+    'state-guided trade seeks to accumulate wealth through exports and colonial monopolies',
   'free trade': 'open borders for commerce; markets operate with minimal state intervention'
 }
 
 const ECONOMY_POLICY: Record<NonNullable<Province.Province['policies']>['economy'], string> = {
-  'traditionalism': 'economic life follows ancient customs; guilds and land-based hierarchies dominate',
-  'laissez-faire': 'minimal state involvement; private enterprise operates freely with little regulation',
-  'interventionism': 'the state actively regulates markets and provides public goods to shape growth',
+  traditionalism:
+    'economic life follows ancient customs; guilds and land-based hierarchies dominate',
+  'laissez-faire':
+    'minimal state involvement; private enterprise operates freely with little regulation',
+  interventionism: 'the state actively regulates markets and provides public goods to shape growth',
   'state capitalism': 'key industries are state-owned but operate on market principles for profit',
-  'command economy': 'central planning dictates production, distribution, and prices across all sectors'
+  'command economy':
+    'central planning dictates production, distribution, and prices across all sectors'
 }
 
-const BUREAUCRACY_POLICY: Record<NonNullable<Province.Province['policies']>['bureaucracy'], string> = {
-  'meritocratic exams': 'officials are selected through rigorous testing; talent and learning determine rank',
+const BUREAUCRACY_POLICY: Record<
+  NonNullable<Province.Province['policies']>['bureaucracy'],
+  string
+> = {
+  'meritocratic exams':
+    'officials are selected through rigorous testing; talent and learning determine rank',
   'venal offices': 'positions are bought and sold; wealth grants access to power and privilege',
   'hereditary officials': 'birth determines station; noble families monopolize governance by blood',
   'court eunuchs': 'castrated servants hold administrative power; loyalty through dependency',
-  'appointed officials': 'the ruler grants titles and offices to chosen individuals; favor creates hierarchy'
+  'appointed officials':
+    'the ruler grants titles and offices to chosen individuals; favor creates hierarchy'
+}
+
+const SLAVERY_POLICY: Record<NonNullable<Province.Province['policies']>['slavery'], string> = {
+  'abolished slavery': 'slavery is outlawed and prohibited; forced bondage is a criminal act',
+  'legacy slavery':
+    'slavery persists but is in decline; new enslavement is discouraged or restricted',
+  'domestic servants':
+    'household slavery is common; servants are owned but often treated as extended family',
+  'indentured labor': 'debt bondage and contract servitude bind workers in temporary unfreedom',
+  'slave trade': 'human chattel slavery thrives; people are bought, sold, and owned as property'
+}
+
+const LAND_POLICY: Record<NonNullable<Province.Province['policies']>['land'], string> = {
+  'ancestral holdings':
+    'land belongs to clan or tribe; communal tenure follows lineage and customary rights',
+  serfdom: 'peasants are bound to the land they work; labor and freedom are constrained by birth',
+  'tenant farmers':
+    'farmers rent land from owners; contracts and rents govern agricultural production',
+  'commercial farms':
+    'land is a commodity; market forces and private ownership drive agricultural profit',
+  'collective farms':
+    'land is collectively owned and worked; production serves the community or state'
 }
 
 export const PROVINCE = {
@@ -63,6 +97,9 @@ export const PROVINCE = {
   coastal: (province: Province.Province) => {
     return PROVINCE.hub(province).coastal
   },
+  culture: (province: Province.Province) => window.world.cultures[province.culture],
+  religion: (province: Province.Province) =>
+    window.world.religions[PROVINCE.culture(province)?.religion],
   isBorder: (province: Province.Province) => {
     const neighbors = province.neighbors.map(n => window.world.provinces[n])
     return neighbors.some(n => PROVINCE.nation(n) !== PROVINCE.nation(province))
@@ -184,7 +221,9 @@ export const PROVINCE = {
     religion: RELIGION_POLICY,
     trade: TRADE_POLICY,
     economy: ECONOMY_POLICY,
-    bureaucracy: BUREAUCRACY_POLICY
+    bureaucracy: BUREAUCRACY_POLICY,
+    slavery: SLAVERY_POLICY,
+    land: LAND_POLICY
   },
   nation: (province: Province.Province) => window.world.provinces[province.nation] ?? province,
   neighbors: ({ province, type, unpopulated }: Province.ProvinceNeighborParams) => {
@@ -230,6 +269,10 @@ export const PROVINCE = {
       const index = values.findIndex(v => v <= density)
       return keys[index]
     }
+  },
+  roads: {
+    land: (province: Province.Province) =>
+      province.cells.map(c => window.world.cells[c]).some(c => c.roads.land.length > 0)
   },
   sort: ({ group, ref, type }: Province.ProvinceSortParams) => {
     const closest = (a: number, b: number) => a - b

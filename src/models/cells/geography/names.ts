@@ -1,3 +1,4 @@
+import { CULTURE } from '../../heritage'
 import { LANGUAGE } from '../../heritage/languages'
 import { Cell } from '../types'
 import { RIVER } from './rivers'
@@ -8,11 +9,13 @@ const nameFeature = (cell: Cell) => {
   const province = window.world.provinces[cell.province]
   if (!province.desolate) {
     const culture = window.world.cultures[province.culture]
-    return LANGUAGE.word.unique({ key: 'landmark', lang: culture.language }).word
+    const language = CULTURE.language(culture)
+    return language ? LANGUAGE.word.unique({ key: 'landmark', lang: language }).word : 'Unknown'
   }
   const empire = window.dice.choice(window.world.provinces)
   const culture = window.world.cultures[empire.culture]
-  return LANGUAGE.word.unique({ key: 'landmark', lang: culture.language }).word
+  const language = CULTURE.language(culture)
+  return language ? LANGUAGE.word.unique({ key: 'landmark', lang: language }).word : 'Unknown'
 }
 
 export const GEOGRAPHY_NAMES = {

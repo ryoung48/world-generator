@@ -11,7 +11,8 @@ const init: ViewState = {
   loading: false,
   codex: { idx: 0, tag: 'nation' },
   units: 'metric',
-  history: []
+  history: [],
+  stats: false
 }
 
 export const ViewContext = createContext(
@@ -58,6 +59,9 @@ export const VIEW = {
       }
       case 'toggle units': {
         return { ...state, units: state.units === 'metric' ? 'imperial' : 'metric' }
+      }
+      case 'toggle stats': {
+        return { ...state, stats: !state.stats }
       }
       case 'back': {
         if (state.history.length === 0) return state
