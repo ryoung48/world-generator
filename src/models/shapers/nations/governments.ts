@@ -1,4 +1,5 @@
 import { CULTURE } from '../../heritage'
+import { RELIGION } from '../../heritage/religions'
 import { NATION } from '../../nations'
 import { PROVINCE } from '../../provinces'
 import { DiplomaticRelation, Province } from '../../provinces/types'
@@ -15,7 +16,7 @@ export const shapeGovernments = () => {
     const corrupted = nation.corruption > 0.5
     const small = NATION.provinces(nation).length < 3
     const large = nation.size === 'kingdom' || nation.size === 'empire'
-    const irreligious = CULTURE.religion(culture)?.type === 'irreligious'
+    const irreligious = RELIGION.irreligious(CULTURE.religion(culture))
     const climate = PROVINCE.climate(nation)
     nation.government = window.dice.weightedChoice([
       { w: uncivilized ? 1 : 2, v: 'autocracy' },

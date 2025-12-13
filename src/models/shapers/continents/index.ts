@@ -7,6 +7,7 @@ import { SIMPLEX } from '../../utilities/math/dice/noise'
 import { POINT } from '../../utilities/math/points'
 import { VORONOI } from '../../utilities/math/voronoi'
 import { PERFORMANCE } from '../../utilities/performance'
+import { SHAPER_ATMOSPHERE } from './atmosphere'
 import { SHAPER_CLIMATES } from './climate'
 import { LANDMARKS as SHAPER_LANDMARKS } from './landmarks'
 import { SHAPER_MOUNTAINS } from './mountains'
@@ -24,6 +25,7 @@ export const SHAPER_CONTINENTS = PERFORMANCE.profile.wrapper({
       SHAPER_OCEANS.build()
       SHAPER_MOUNTAINS.build()
       SHAPER_CLIMATES.build()
+      // SHAPER_ATMOSPHERE.build()
       // SHAPER_WIND.build()
       SHAPER_CONTINENTS._topography()
       SHAPER_CONTINENTS._oceanic()

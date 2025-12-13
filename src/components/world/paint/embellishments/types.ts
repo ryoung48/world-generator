@@ -36,6 +36,7 @@ export type CultureLegendParams = {
 
 export interface DrawCloudParams extends DrawMapParams {
   cachedImages: CachedImages
+  visible: Set<number>
 }
 
 export type DrawCompassParams = {

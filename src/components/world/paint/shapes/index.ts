@@ -4,6 +4,7 @@ import * as d3 from 'd3'
 import { Point } from '../../../../models/utilities/math/points/types'
 import {
   CircleParams,
+  CircleGradientParams,
   CrossParams,
   DrawFeaturesParams,
   DrawPolygonParams,
@@ -105,6 +106,27 @@ export const MAP_SHAPES = {
     ctx.fillStyle = fill
     ctx.fill()
     if (width > 0) ctx.stroke()
+  },
+  circleGradient: (params: CircleGradientParams) => {
+    const { ctx, point, radius, colorCenter, colorEdge = colorCenter.replace(', 1)', ', 0)') } = params
+    const gradient = ctx.createRadialGradient(point.x, point.y, 0, point.x, point.y, radius)
+    gradient.addColorStop(0, colorCenter)
+    gradient.addColorStop(1, colorEdge)
+
+    ctx.beginPath()
+    ctx.arc(point.x, point.y, radius, 0, 2 * Math.PI)
+    ctx.fillStyle = gradient
+    ctx.fill()
+  },
+  holySite: (params: CircleGradientParams) => {
+    const { ctx, point, radius } = params
+    MAP_SHAPES.circleGradient(params)
+    ctx.beginPath()
+    ctx.arc(point.x, point.y, radius * 0.25, 0, 2 * Math.PI)
+    ctx.lineWidth = 0.75
+    ctx.strokeStyle = 'black'
+    ctx.fill()
+    ctx.stroke()
   },
   color: {
     coastal: '#79a896',

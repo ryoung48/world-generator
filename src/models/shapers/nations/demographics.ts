@@ -5,6 +5,8 @@ import { NATION } from '../../nations'
 import { PROVINCE } from '../../provinces'
 import { HUB } from '../../provinces/hubs'
 import { POINT } from '../../utilities/math/points'
+import { WindowClosed } from 'mdi-material-ui'
+import { RELIGION } from '../../heritage/religions'
 
 export const shapeDemographics = () => {
   const hugeCityPop = () => window.dice.randint(50e3, 150e3)
@@ -133,4 +135,14 @@ export const shapeDemographics = () => {
         })
     }
   })
+  // holy sites
+  window.world.provinces
+    .filter(
+      p =>
+        p.government === 'theocracy' ||
+        (!p.desolate && !RELIGION.irreligious(PROVINCE.religion(p)) && window.dice.random > 0.96)
+    )
+    .forEach(province => {
+      province.holySite = true
+    })
 }

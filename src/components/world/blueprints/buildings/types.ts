@@ -117,40 +117,41 @@ type offices =
 export interface Building extends Point {
   idx: number
   type:
-    | "lord's manor"
-    | "lord's keep"
-    | 'royal palace'
-    | 'residence'
-    | 'government'
-    | 'asylum'
-    | 'barrack'
-    | 'bath'
-    | 'lodging'
-    | `cemetary (${'small' | 'large'})`
-    | 'religious'
-    | 'cistern'
-    | 'coliseum'
-    | 'docks'
-    | 'gates'
-    | 'livestock'
-    | 'fountain'
-    | 'garden'
-    | `park (${'small' | 'large'})`
-    | 'granary'
-    | 'guild house'
-    | 'library'
-    | 'mill'
-    | `office (${offices})`
-    | 'plaza'
-    | 'prison'
-    | `shop (${shops})`
-    | 'stable'
-    | 'tavern'
-    | 'tenement'
-    | 'theater'
-    | 'university'
-    | 'warehouse'
-    | 'well'
-    | `workshop (${workshops})`
+  | "lord's manor"
+  | "lord's keep"
+  | 'royal palace'
+  | 'residence'
+  | 'government'
+  | 'asylum'
+  | 'barrack'
+  | 'bath'
+  | 'lodging'
+  | `cemetary (${'small' | 'large'})`
+  | 'religious'
+  | 'cistern'
+  | 'coliseum'
+  | 'docks'
+  | 'gates'
+  | 'livestock'
+  | 'fountain'
+  | 'garden'
+  | `park (${'small' | 'large'})`
+  | 'granary'
+  | 'guild house'
+  | 'library'
+  | 'mill'
+  | `office (${offices})`
+  | 'plaza'
+  | 'prison'
+  | `shop (${shops})`
+  | 'stable'
+  | 'tavern'
+  | 'tenement'
+  | 'theater'
+  | 'university'
+  | 'warehouse'
+  | 'well'
+  | `workshop (${workshops})`
   quality: { grade: 'A' | 'B' | 'C' | 'D'; desc: string }
+  isDistrictEdge?: boolean
 }

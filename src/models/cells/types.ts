@@ -35,19 +35,20 @@ export interface Cell extends Point {
     annual: number
     pattern?: number[]
   }
+  clouds?: number
   heat: { min: number; max: number; mean: number }
   monsoon?: boolean
   topography?: 'coastal' | 'marsh' | 'flat' | 'hills' | 'plateau' | 'mountains'
   vegetation?: 'desert' | 'sparse' | 'grasslands' | 'woods' | 'forest' | 'jungle' | 'farmlands'
   climate?:
-    | 'arctic'
-    | 'subarctic'
-    | 'boreal'
-    | 'temperate'
-    | 'subtropical'
-    | 'tropical'
-    | 'infernal'
-    | 'chaotic'
+  | 'arctic'
+  | 'subarctic'
+  | 'boreal'
+  | 'temperate'
+  | 'subtropical'
+  | 'tropical'
+  | 'infernal'
+  | 'chaotic'
   river?: number
   nRiver?: number
   // distances

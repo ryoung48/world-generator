@@ -73,12 +73,12 @@ const spawnRichDistricts = (params: { spread: number; cityDistricts: Block[] }) 
   const admin: District[] =
     spread * 0.1 > 1
       ? cityDistricts.splice(0, 1).map(({ district, idx }) =>
-          createDistrict({
-            block: idx,
-            idx: district.idx,
-            type: 'administration'
-          })
-        )
+        createDistrict({
+          block: idx,
+          idx: district.idx,
+          type: 'administration'
+        })
+      )
       : []
   const noble: District[] = cityDistricts
     .splice(0, Math.floor(spread * 0.05))
@@ -260,7 +260,8 @@ export const DISTRICT = {
       const districtBlock = blocks[district.block]
       district.buildings = window.dice
         .sample(blocks[district.block].structures, 10)
-        .map(({ vertices }) => {
+        .map((structure) => {
+          const { vertices, isDistrictEdge } = structure
           const [x, y] = polygonCentroid(vertices)
           const grade = window.dice.weightedChoice(template.quality)
           return {
@@ -268,7 +269,8 @@ export const DISTRICT = {
             x,
             y,
             type: window.dice.weightedChoice(template.buildings),
-            quality: { grade, desc: BUILDING.qualityDescription({ grade, dice }) }
+            quality: { grade, desc: BUILDING.qualityDescription({ grade, dice }) },
+            isDistrictEdge
           }
         })
       if (district.dock !== undefined) {

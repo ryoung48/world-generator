@@ -5,7 +5,9 @@ export type ReligionType =
   | 'dualistic'
   | 'polytheistic'
   | 'nontheistic'
-  | 'irreligious'
+  | 'pluralistic'
+  | 'atheistic'
+  | 'machine cult'
 
 export interface Religion {
   type: ReligionType

@@ -131,6 +131,7 @@ export interface Province extends TaggedEntity {
   gdp?: { total: number, capita: number }
   imports?: TradeGood[]
   exports?: TradeGood[]
+  holySite?: boolean
   // networking
   relations: Record<number, DiplomaticRelation>
   neighbors: number[]

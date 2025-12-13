@@ -27,6 +27,7 @@ import { TIME } from '../../models/utilities/math/time'
 import { PERFORMANCE } from '../../models/utilities/performance'
 import { VIEW } from '../context'
 import { fonts } from '../theme/fonts'
+import UrbanMap from '../settlement'
 
 const catchup = 500
 
@@ -187,6 +188,9 @@ export function Landing() {
             </Stepper>
           </Box>
         )}
+      </Grid>
+      <Grid item xs={12} sx={{ px: 2 }}>
+        {/* <UrbanMap city={{ name: 'Tes3t', type: 'city' }} /> */}
       </Grid>
     </Grid>
   )

@@ -157,7 +157,12 @@ const UrbanMap: React.FC<UrbanMapProps> = ({ city }) => {
     ctx.translate(transform.x, transform.y)
     ctx.scale(transform.k, transform.k)
 
-    const { blocks, districts: d, wall } = BLUEPRINT.spawn()
+    const { blocks, districts: d, wall, rivers } = BLUEPRINT.spawn()
+
+
+    
+
+    
     blocks.forEach(({ path, land }) => {
       const p = new Path2D(path)
       ctx.strokeStyle = !land ? 'rgba(4, 47, 83, 0.04)' : 'rgba(136, 136, 136, 0.1)'
@@ -166,17 +171,19 @@ const UrbanMap: React.FC<UrbanMapProps> = ({ city }) => {
       ctx.stroke(p)
     })
 
+
+
     const districts = blocks
       .filter(({ district }) => district)
       .filter(({ type }) => type !== 'river')
 
     // Draw buildings
-    ctx.strokeStyle = 'white'
+    ctx.strokeStyle = 'black'
     ctx.textAlign = 'center'
     ctx.fillStyle = '#caccbb'
     const averageArea = districts.reduce((sum, { area }) => sum + area, 0) / districts.length
     const radius = Math.sqrt(averageArea) / 1.5
-    ctx.lineWidth = radius * 0.2
+    ctx.lineWidth = radius * 0.1
 
     districts.forEach(({ structures }) => {
       structures.forEach(({ path }) => {
@@ -185,6 +192,9 @@ const UrbanMap: React.FC<UrbanMapProps> = ({ city }) => {
         ctx.fill(p)
       })
     })
+
+    
+    ctx.strokeStyle = 'white'
 
     // Draw districts
     const showDistricts = DISTRICT.cutoff({ count: districts.length }) > transform.k
@@ -336,6 +346,39 @@ const UrbanMap: React.FC<UrbanMapProps> = ({ city }) => {
           drawGate(ctx, bestEdgeStart, bestEdgeEnd, radius * 0.75)
         }
       })
+    }
+
+    // Draw Rivers - Draw last to be on top of everything (city, walls, etc)
+    if (rivers && rivers.length > 0) {
+      ctx.beginPath()
+      rivers.forEach(river => {
+        if (river.length > 0) {
+            ctx.moveTo(river[0][0], river[0][1])
+            for (let i = 1; i < river.length; i++) {
+                ctx.lineTo(river[i][0], river[i][1])
+            }
+        }
+      })
+      ctx.lineCap = 'round'
+      ctx.lineJoin = 'round'
+      // Match the ocean color #95b5b84c, but make it solid for the river line
+      ctx.strokeStyle = '#95b5b8' 
+      ctx.lineWidth = 4 // Thinner rivers (was 15)
+      ctx.stroke()
+      
+      // Draw a lighter inner stroke for depth effect
+      ctx.beginPath()
+      rivers.forEach(river => {
+         if (river.length > 0) {
+            ctx.moveTo(river[0][0], river[0][1])
+            for (let i = 1; i < river.length; i++) {
+                ctx.lineTo(river[i][0], river[i][1])
+            }
+        }
+      })
+      ctx.strokeStyle = '#DAE8E8' // Lighter version of the river color
+      ctx.lineWidth = 2 // Thinner inner stroke (was 10)
+      ctx.stroke()
     }
 
     // Restore canvas state

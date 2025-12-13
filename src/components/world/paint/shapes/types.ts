@@ -18,6 +18,14 @@ export interface CircleParams {
   }
 }
 
+export interface CircleGradientParams {
+  point: Point
+  radius: number
+  ctx: CanvasRenderingContext2D
+  colorCenter: string
+  colorEdge?: string
+}
+
 export interface CrossParams {
   point: Point
   radius: number

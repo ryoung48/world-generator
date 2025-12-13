@@ -166,7 +166,7 @@ export const MAP_METRICS = {
         //     })
         // },
         {
-          text: 'freshwater',
+          text: 'lakes',
           shape: ({ ctx, point }) =>
             MAP_SHAPES.circle({
               ctx,
@@ -177,7 +177,7 @@ export const MAP_METRICS = {
             })
         },
         {
-          text: 'saltwater',
+          text: 'oceans',
           shape: ({ ctx, point }) =>
             MAP_SHAPES.circle({
               ctx,
@@ -310,14 +310,18 @@ export const MAP_METRICS = {
     units: (units: 'metric' | 'imperial') => (isMetric(units) ? 'mm' : 'in')
   },
   religion: {
+    holySite: 'rgba(255, 252, 95, 1)',
+    secular: 'rgba(0, 0, 0, 1)',
     colors: {
-      irreligious: 'hsl(0, 100%, 72%)',
+      atheistic: 'hsl(0, 100%, 72%)',
+      pluralistic: 'hsl(0, 69%, 80%)',
       nontheistic: 'hsl(46, 58%, 78%)',
       monotheistic: 'hsl(214, 41%, 63%)',
       dualistic: 'hsl(195, 65.90%, 60%)',
       polytheistic: 'hsl(28, 100%, 71%)',
       syncretic: 'hsl(154, 24%, 51%)',
-      animistic: 'hsl(120, 57.60%, 62%)'
+      animistic: 'hsl(120, 57.60%, 62%)',
+      'machine cult': 'hsl(0, 0%, 74%)'
     },
     legend: (): LegendParams => ({
       items: [
@@ -325,7 +329,29 @@ export const MAP_METRICS = {
           shape: ({ ctx, point, scale }) =>
             MAP_SHAPES.hatched.partial({ ctx, point, scale, color: v }),
           text: k
-        })) as DrawLegendParams['items'])
+        })) as DrawLegendParams['items']),
+        {
+          text: 'secularized',
+          shape: ({ ctx, point, scale }) =>
+            MAP_SHAPES.square({
+              ctx,
+              point,
+              color: 'white',
+              border: MAP_METRICS.religion.secular,
+              dash: [2, 3],
+              scale
+            })
+        },
+        {
+          text: 'holy site',
+          shape: ({ ctx, point }) =>
+            MAP_SHAPES.holySite({
+              ctx,
+              point,
+              radius: 10,
+              colorCenter: MAP_METRICS.religion.holySite
+            })
+        }
       ],
       width: 12
     })
@@ -455,7 +481,7 @@ export const MAP_METRICS = {
   },
   vegetation: {
     color: {
-      corruption: '#bcd5ff',
+      corruption: '#aab1c0ff',
       desert: '#F5F3E9',
       sparse: '#E3E1D1',
       grasslands: '#D4E5C6',

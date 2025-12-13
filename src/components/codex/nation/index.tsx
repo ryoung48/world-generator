@@ -243,134 +243,134 @@ export function NationView() {
           <Grid item xs={12}>
             <SectionList
               list={[
-                {
-                  label: 'Policies',
-                  content: <PoliciesSection nation={nation} />
-                },
-                {
-                  label: 'Imports',
-                  content: <ImportsSection nation={nation} />
-                },
-                {
-                  label: 'Exports',
-                  content: <ExportsSection nation={nation} />
-                },
-                {
-                  label: `Military`,
-                  content: <MilitarySection nation={nation} />
-                },
+                // {
+                //   label: 'Policies',
+                //   content: <PoliciesSection nation={nation} />
+                // },
+                // {
+                //   label: 'Imports',
+                //   content: <ImportsSection nation={nation} />
+                // },
+                // {
+                //   label: 'Exports',
+                //   content: <ExportsSection nation={nation} />
+                // },
+                // {
+                //   label: `Military`,
+                //   content: <MilitarySection nation={nation} />
+                // },
                 {
                   label: 'Demographics',
                   content: <DemographicsSection nation={nation} />
                 },
-                {
-                  label: 'Languages',
-                  content: (
-                    <span>
-                      {(() => {
-                        const languageCounts = MATH.counterDist(
-                          provinces.map(p => window.world.cultures[p.culture].language)
-                        )
-                          .sort((a, b) => b.count - a.count)
-                          .slice(0, 5)
-                        return languageCounts.map(({ value, count }, i) => {
-                          const language = window.world.languages[value]
-                          if (!language) return null
-                          return (
-                            <span key={value}>
-                              <span
-                                style={{
-                                  display: 'inline-block',
-                                  width: '3px',
-                                  height: '3px',
-                                  borderRadius: '50%',
-                                  border: `2px solid ${language.display?.color ?? '#ccc'}`,
-                                  backgroundColor: 'transparent',
-                                  marginRight: '4px',
-                                  verticalAlign: 'middle',
-                                  marginBottom: 2
-                                }}
-                              ></span>
-                              <StyledText
-                                text={`${language.name ?? 'Unknown'} (${TEXT.formatters.percent(
-                                  count
-                                )})`}
-                              ></StyledText>
-                              {i !== languageCounts.length - 1 ? ', ' : ''}
-                            </span>
-                          )
-                        })
-                      })()}
-                    </span>
-                  )
-                },
-                {
-                  label: 'Religions',
-                  content: (
-                    <span>
-                      {(() => {
-                        const religionCounts = MATH.counterDist(
-                          provinces.map(p => window.world.cultures[p.culture].religion)
-                        )
+                // {
+                //   label: 'Languages',
+                //   content: (
+                //     <span>
+                //       {(() => {
+                //         const languageCounts = MATH.counterDist(
+                //           provinces.map(p => window.world.cultures[p.culture].language)
+                //         )
+                //           .sort((a, b) => b.count - a.count)
+                //           .slice(0, 5)
+                //         return languageCounts.map(({ value, count }, i) => {
+                //           const language = window.world.languages[value]
+                //           if (!language) return null
+                //           return (
+                //             <span key={value}>
+                //               <span
+                //                 style={{
+                //                   display: 'inline-block',
+                //                   width: '3px',
+                //                   height: '3px',
+                //                   borderRadius: '50%',
+                //                   border: `2px solid ${language.display?.color ?? '#ccc'}`,
+                //                   backgroundColor: 'transparent',
+                //                   marginRight: '4px',
+                //                   verticalAlign: 'middle',
+                //                   marginBottom: 2
+                //                 }}
+                //               ></span>
+                //               <StyledText
+                //                 text={`${language.name ?? 'Unknown'} (${TEXT.formatters.percent(
+                //                   count
+                //                 )})`}
+                //               ></StyledText>
+                //               {i !== languageCounts.length - 1 ? ', ' : ''}
+                //             </span>
+                //           )
+                //         })
+                //       })()}
+                //     </span>
+                //   )
+                // },
+                // {
+                //   label: 'Religions',
+                //   content: (
+                //     <span>
+                //       {(() => {
+                //         const religionCounts = MATH.counterDist(
+                //           provinces.map(p => window.world.cultures[p.culture].religion)
+                //         )
 
-                        // Group all irreligious provinces together
-                        const grouped: Array<{
-                          religion: typeof window.world.religions[0]
-                          count: number
-                          isGrouped: boolean
-                        }> = []
-                        let irreligiousCount = 0
+                //         // Group all irreligious provinces together
+                //         const grouped: Array<{
+                //           religion: typeof window.world.religions[0]
+                //           count: number
+                //           isGrouped: boolean
+                //         }> = []
+                //         let irreligiousCount = 0
 
-                        religionCounts.forEach(({ value, count }) => {
-                          const religion = window.world.religions[value]
-                          if (!religion) return
+                //         religionCounts.forEach(({ value, count }) => {
+                //           const religion = window.world.religions[value]
+                //           if (!religion) return
 
-                          if (religion.type === 'irreligious') {
-                            irreligiousCount += count
-                          } else {
-                            grouped.push({ religion, count, isGrouped: false })
-                          }
-                        })
+                //           if (religion.type === 'irreligious') {
+                //             irreligiousCount += count
+                //           } else {
+                //             grouped.push({ religion, count, isGrouped: false })
+                //           }
+                //         })
 
-                        // Add grouped irreligious at the end if any exist
-                        if (irreligiousCount > 0) {
-                          grouped.push({
-                            religion: {
-                              type: 'irreligious' as const,
-                              display: { color: MAP_METRICS.religion.colors.irreligious, hue: 0 }
-                            },
-                            count: irreligiousCount,
-                            isGrouped: true
-                          })
-                        }
+                //         // Add grouped irreligious at the end if any exist
+                //         if (irreligiousCount > 0) {
+                //           grouped.push({
+                //             religion: {
+                //               type: 'irreligious' as const,
+                //               display: { color: MAP_METRICS.religion.colors.irreligious, hue: 0 }
+                //             },
+                //             count: irreligiousCount,
+                //             isGrouped: true
+                //           })
+                //         }
 
-                        return grouped
-                          .sort((a, b) => b.count - a.count)
-                          .slice(0, 5)
-                          .map(({ religion, count, isGrouped }, i) => {
-                            return (
-                              <span
-                                key={
-                                  isGrouped ? 'irreligious-grouped' : religion.name ?? religion.type
-                                }
-                              >
-                                <ColoredBox
-                                  color={MAP_METRICS.religion.colors[religion.type]}
-                                  border={true}
-                                ></ColoredBox>{' '}
-                                <StyledText
-                                  text={`${
-                                    isGrouped ? 'Irreligious' : religion.name ?? religion.type
-                                  } (${TEXT.formatters.percent(count)})`}
-                                ></StyledText>
-                                {i !== grouped.length - 1 ? ', ' : ''}
-                              </span>
-                            )
-                          })
-                      })()}
-                    </span>
-                  )
-                },
+                //         return grouped
+                //           .sort((a, b) => b.count - a.count)
+                //           .slice(0, 5)
+                //           .map(({ religion, count, isGrouped }, i) => {
+                //             return (
+                //               <span
+                //                 key={
+                //                   isGrouped ? 'irreligious-grouped' : religion.name ?? religion.type
+                //                 }
+                //               >
+                //                 <ColoredBox
+                //                   color={MAP_METRICS.religion.colors[religion.type]}
+                //                   border={true}
+                //                 ></ColoredBox>{' '}
+                //                 <StyledText
+                //                   text={`${
+                //                     isGrouped ? 'Irreligious' : religion.name ?? religion.type
+                //                   } (${TEXT.formatters.percent(count)})`}
+                //                 ></StyledText>
+                //                 {i !== grouped.length - 1 ? ', ' : ''}
+                //               </span>
+                //             )
+                //           })
+                //       })()}
+                //     </span>
+                //   )
+                // },
                 {
                   label: `Relations (${neighbors.length})`,
                   content: (

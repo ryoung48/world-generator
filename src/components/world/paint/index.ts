@@ -11,6 +11,7 @@ import { DRAW_TERRAIN } from './icons/terrain'
 import { DRAW_INFRASTRUCTURE } from './infrastructure'
 import { MAP_SHAPES } from './shapes'
 import { DRAW_CACHE } from './shapes/caching'
+import { DRAW_RELIGIONS } from './border/religions'
 
 const loadImage = (path: string): Promise<HTMLImageElement> => {
   return new Promise(resolve => {
@@ -90,12 +91,13 @@ export const paint = ({
   DRAW_LANDMARKS.oceans({ ctx, projection, style, visible })
   DRAW_BORDERS.regions({ ctx, projection, style, nations, province, nationSet, visible })
   DRAW_LANDMARKS.lakes({ ctx, projection, style, visible })
-  DRAW_LANDMARKS.rivers({ ctx, projection })
+  if (style === 'Religion') DRAW_RELIGIONS.holySites({ projection, ctx, visible })
+  // DRAW_LANDMARKS.rivers({ ctx, projection })
   DRAW_INFRASTRUCTURE.roads({ ctx, projection, nationSet, style, visible })
   DRAW_TERRAIN.icons({ ctx, projection, cachedImages, visible })
   DRAW_INFRASTRUCTURE.provinces({ ctx, projection, nationSet, style, cachedImages, place, visible })
   DRAW_EMBELLISHMENTS.graticule({ ctx, projection })
-  DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages })
+  DRAW_EMBELLISHMENTS.clouds({ ctx, projection, cachedImages, visible })
   DRAW_EMBELLISHMENTS.scale({ ctx, projection, units })
   DRAW_EMBELLISHMENTS.legend({ ctx, style, province, nationSet, units })
   DRAW_EMBELLISHMENTS.compass({ ctx, rotation, projection })

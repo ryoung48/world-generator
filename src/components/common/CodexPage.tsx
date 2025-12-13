@@ -36,7 +36,7 @@ export function CodexPage(props: { content: ReactNode } & CodexTitleProps) {
 
   return (
     <Grid container p={2} justifyContent='space-between'>
-      <Grid item xs={7}>
+      <Grid item xs={8}>
         <CodexTitle title={title} subtitle={subtitle}></CodexTitle>
       </Grid>
       <Grid item xs={2}>

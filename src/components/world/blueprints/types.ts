@@ -17,4 +17,5 @@ export type Blueprint = {
   diagram?: Voronoi<Delaunay.Point>
   miles?: number
   wall?: Array<[number, number]>
+  rivers?: Array<Array<[number, number]>>
 }

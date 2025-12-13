@@ -4,6 +4,7 @@ import { Province } from '../provinces/types'
 import { ARRAY } from '../utilities/array'
 import { WeightedDistribution } from '../utilities/math/dice/types'
 import { NATION } from '.'
+import { RELIGION } from '../heritage/religions'
 
 const units = [
   'slaves',
@@ -29,7 +30,7 @@ const calculate = (nation: Province) => {
   const culture = window.world.cultures[nation.culture]
   const irreligious =
     culture.religion !== -1
-      ? window.world.religions[culture.religion]?.type === 'irreligious'
+      ? RELIGION.irreligious(window.world.religions[culture.religion])
       : false
 
   const colonial = Object.values(nation.relations).some(

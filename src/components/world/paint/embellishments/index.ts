@@ -1,5 +1,6 @@
 import { geoGraticule, GeoProjection, range, scaleLinear } from 'd3'
 
+import { CELL } from '../../../../models/cells'
 import { NATION } from '../../../../models/nations'
 import { PROVINCE } from '../../../../models/provinces'
 import { TRADE_GOODS } from '../../../../models/provinces/trade'
@@ -277,6 +278,45 @@ export const DRAW_EMBELLISHMENTS = {
     ctx.drawImage(cloudImage, cloudX, 0, w, h)
     ctx.drawImage(cloudImage, cloudX - w, 0, w, h) // Wrap around left
     ctx.drawImage(cloudImage, cloudX + w, 0, w, h) // Wrap around right
+    ctx.restore()
+  },
+  _clouds: ({ ctx, projection, visible }: DrawCloudParams) => {
+    const scale = MAP_SHAPES.scale.derived(projection)
+    if (scale >= 6) return
+    ctx.save()
+    ctx.globalAlpha = scaleLinear().domain([2, 6]).range([1, 0]).clamp(true)(scale)
+
+    const cells = window.world.cells
+    const provinces = window.world.provinces
+
+    // Filter visible provinces, then get their cells
+    const visibleCells = new Set<number>()
+    visible.forEach(pIdx => {
+      const province = provinces[pIdx]
+      province.cells.forEach(cIdx => visibleCells.add(cIdx))
+    })
+
+    // Calculate circle radius based on scale
+    const baseRadius = 2 * scale // Adjust size based on zoom level
+
+    visibleCells.forEach(cIdx => {
+      const cell = cells[cIdx]
+      if (cell.clouds && cell.clouds > 0.15) {
+        const projected = projection([cell.x, cell.y])
+        if (!projected) return
+
+        const [px, py] = projected
+
+        // Draw circle at cell center
+        ctx.beginPath()
+        ctx.arc(px, py, baseRadius, 0, 2 * Math.PI)
+
+        // Opacity based on cloud density
+        ctx.fillStyle = `rgba(255, 255, 255, ${cell.clouds * 1})`
+        ctx.fill()
+      }
+    })
+
     ctx.restore()
   },
   compass: ({ ctx, projection }: DrawCompassParams) => {

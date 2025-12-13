@@ -229,6 +229,11 @@ const Legend: React.FC<LegendProps> = ({ x, y, city, transform }) => {
                   }}
                 >
                   {building.quality.desc}
+                  {building.isDistrictEdge !== undefined && (
+                    <span style={{ marginLeft: 4, fontWeight: 'bold', color: building.isDistrictEdge ? '#d32f2f' : '#388e3c' }}>
+                       [{building.isDistrictEdge ? 'Edge' : 'Internal'}]
+                    </span>
+                  )}
                 </Typography>
               </Box>
             )}
