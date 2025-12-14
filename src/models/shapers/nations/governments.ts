@@ -127,20 +127,21 @@ export const shapeGovernments = () => {
   // vassals
   const union = (n: Province) => Object.values(n.relations).some(r => r === 'personal union')
   nations
-    .filter(n => (n.size === 'empire' || n.size === 'kingdom') && n.government !== 'fragmented')
+    .filter(n => (n.size === 'empire' || n.size === 'kingdom') && n.decentralization === undefined)
     .forEach(nation => {
       const condition =
         nation.size === 'kingdom'
           ? (n: Province) => n.size === 'city-state' || n.size === 'principality'
           : (n: Province) =>
               n.size === 'city-state' || n.size === 'principality' || nation.size === 'kingdom'
+      const chance = nation.size === 'kingdom' ? 0.65 : 0.45
       NATION.neighbors({ nation })
         .filter(
           n =>
             condition(n) &&
             n.overlord === undefined &&
             n.government !== 'fragmented' &&
-            window.dice.random > 0.75 &&
+            window.dice.random > chance &&
             !PROVINCE.far(nation, n) &&
             nation.territories.length - n.territories.length > 4
         )
@@ -177,7 +178,7 @@ export const shapeGovernments = () => {
           0,
           window.dice.randint(
             0,
-            nation.size === 'principality' ? 1 : nation.size === 'kingdom' ? 2 : 3
+            nation.size === 'principality' ? 1 : nation.size === 'kingdom' ? 2 : 4
           )
         )
         .forEach(neighbor => {
