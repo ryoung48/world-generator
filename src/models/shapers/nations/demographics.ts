@@ -32,8 +32,8 @@ export const shapeDemographics = () => {
         nation.size === 'empire'
           ? largeTownPop()
           : nation.size === 'kingdom'
-          ? smallTownPop()
-          : Math.min(pop, largeVillagePop())
+            ? smallTownPop()
+            : Math.min(pop, largeVillagePop())
     } else if (pop < 1000) pop = window.dice.randint(1000, 5000)
     PROVINCE.hub(capital).population = pop
     if (nation.decentralization && pop <= 1000) PROVINCE.hub(capital).nomadic = true
@@ -137,12 +137,22 @@ export const shapeDemographics = () => {
   })
   // holy sites
   window.world.provinces
-    .filter(
-      p =>
-        p.government === 'theocracy' ||
-        (!p.desolate && !RELIGION.irreligious(PROVINCE.religion(p)) && window.dice.random > 0.96)
-    )
+    .filter(p => p.government === 'theocracy')
     .forEach(province => {
       province.holySite = true
+    })
+  // holy sites
+  const target = Math.round(window.world.provinces.length * 0.03)
+  let count = 0
+  window.dice.shuffle(window.world.provinces)
+    .filter(
+      p =>
+        (!p.desolate && !RELIGION.irreligious(PROVINCE.religion(p)))
+    )
+    .forEach(province => {
+      if (count < target && PROVINCE.neighbors({ province }).every(n => !n.holySite)) {
+        province.holySite = true
+        count++
+      }
     })
 }
