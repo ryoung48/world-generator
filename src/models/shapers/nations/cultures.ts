@@ -7,7 +7,7 @@ export const shapeCultures = () => {
   const provinces = window.world.provinces.filter(p => !p.desolate)
   const { groups, unassigned } = distribute({
     items: window.dice.shuffle(provinces),
-    percentages: [0.4, 0.3, 0.2, 0.1],
+    percentages: [0.5, 0.3, 0.1, 0.05],
     buckets: [
       [1, 1],
       [2, 4],
